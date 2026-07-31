@@ -1,0 +1,72 @@
+/* ==========================================================================
+   Protección de datos — Estilos específicos
+   Reutiliza los tokens del núcleo, con un layout simple: solo secciones de texto.
+   ========================================================================== */
+
+.legal { max-width: 880px; }
+
+.cabecera-legal { padding: 24px 0 var(--espacio); text-align: center; }
+.cabecera-legal h1 {
+  font-size: var(--texto-titulo);
+  margin: 12px 0 0;
+  letter-spacing: -0.02em;
+}
+.cabecera-legal .lema {
+  font-size: var(--texto-grande);
+  font-weight: 700;
+  color: var(--color-texto-suave);
+  margin: 8px 0 0;
+}
+.cabecera-legal .entradilla {
+  font-size: var(--texto-base);
+  max-width: 640px;
+  margin: var(--espacio) auto 0;
+  color: var(--color-texto);
+}
+.logo-legal { margin-top: 8px; }
+
+.idioma-selector { display: flex; flex-wrap: wrap; gap: var(--espacio); justify-content: center; margin-bottom: var(--espacio); }
+.btn-idioma {
+  min-height: var(--boton-min); min-width: 64px; padding: 0 var(--espacio);
+  font-family: var(--fuente); font-size: var(--texto-base); font-weight: 700;
+  color: var(--color-texto); background: var(--color-superficie);
+  border: 3px solid var(--color-borde); border-radius: var(--radio);
+  cursor: pointer;
+}
+.btn-idioma:hover { border-color: var(--color-foco); }
+.btn-idioma[aria-pressed="true"] {
+  border-color: var(--color-foco); background: var(--color-acento-suave);
+}
+
+/* Índice de la página ----------------------------------------------- */
+.legal .indice { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: var(--espacio); }
+.legal .indice a {
+  padding: 10px 16px; border-radius: var(--radio);
+  background: var(--color-superficie); border: 2px solid var(--color-borde);
+  color: var(--color-texto); text-decoration: none;
+  font-size: var(--texto-pequeno); font-weight: 700;
+}
+.legal .indice a:hover, .legal .indice a:focus { border-color: var(--color-foco); }
+
+/* Secciones como cards --------------------------------------------------- */
+.legal section { padding: var(--espacio); }
+.legal section h2 { margin-bottom: 12px; }
+.legal section ul { padding-left: 24px; }
+.legal section li { margin-bottom: 8px; }
+.legal section code {
+  background: var(--color-fondo); padding: 2px 6px; border-radius: 6px;
+  font-size: 0.95em; border: 1px solid var(--color-borde);
+}
+
+/* Footer -------------------------------------------------------------- */
+.pie-legal {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: var(--espacio);
+  padding: var(--espacio) 0 40px;
+}
+
+/* Móvil --------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .cabecera-legal h1 { font-size: 2em; }
+  .cabecera-legal .lema { font-size: 1.2em; }
+  .legal section { padding: var(--espacio); }
+}

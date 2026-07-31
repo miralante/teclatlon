@@ -1,0 +1,51 @@
+/* ==========================================================================
+   Teclatlon — Design tokens
+   High-contrast light theme. See doc/en/technical.md (accessibility rules).
+   ========================================================================== */
+
+:root {
+  /* Base colors — accessible light theme */
+  --color-fondo: #FAF7F2;
+  --color-superficie: #FFFFFF;
+  --color-texto: #1A1A2E;
+  --color-texto-suave: #4A4A68;
+  --color-borde: #D8D2C8;
+
+  /* Accent + hand/finger palette (used to color the visual keyboard by
+     hand or by finger; --color-acento also doubles as the primary UI
+     accent for buttons, links and focus states). */
+  --color-acento: #1B6CA8;         /* blue — left hand / thumbs */
+  --color-acento-suave: #E3EEF6;
+  --color-mano-derecha: #2E7D32;   /* green — right hand / index fingers */
+  --color-mano-derecha-suave: #E6F2E6;
+  --color-dedo-anular: #C05621;    /* orange — ring fingers */
+  --color-dedo-anular-suave: #F9EBE2;
+  --color-dedo-medio: #6B3FA0;     /* purple — middle fingers */
+  --color-dedo-medio-suave: #EFE8F7;
+  --color-dedo-menique: #B3446C;   /* raspberry — little fingers */
+  --color-dedo-menique-suave: #F7E8EE;
+
+  /* Feedback */
+  --color-acierto: #2E7D32;
+  --color-acierto-suave: #E6F2E6;
+  --color-animo: #C05621;        /* never an aggressive red for mistakes */
+  --color-animo-suave: #F9EBE2;
+  --color-estrella: #B8860B;
+
+  /* Typography */
+  --fuente: 'Atkinson Hyperlegible', 'Nunito', system-ui, -apple-system, sans-serif;
+  --texto-base: 20px;
+  --texto-pequeno: 17px;
+  --texto-grande: 28px;
+  --texto-titulo: 36px;
+
+  /* Touch and spacing */
+  --boton-min: 64px;
+  --espacio: 16px;
+  --espacio-grande: 24px;
+  --radio: 16px;
+  --sombra: 0 2px 8px rgba(26, 26, 46, 0.12);
+
+  /* Visible focus */
+  --color-foco: #1B6CA8;
+}

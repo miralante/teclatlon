@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es" data-i18n-title="pageTitle">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teclatlon — Protección de datos</title>
+  <meta name="description" content="Teclatlon: qué datos guarda, dónde y por qué. Sin registro, sin cookies, sin analítica.">
+  <meta name="theme-color" content="#FAF7F2">
+  <link rel="icon" href="../assets/img/icono.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/css/tokens.css">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container legal">
+    <a href="../index.html" class="back-link" data-i18n="core.back">← Volver</a>
+    <header class="cabecera-legal">
+      <div class="idioma-selector" role="group" aria-label="Elegir idioma">
+        <button type="button" class="btn-idioma" id="btnIdiomaEs" data-locale="es" aria-pressed="false">🇪🇸 Español</button>
+        <button type="button" class="btn-idioma" id="btnIdiomaEn" data-locale="en" aria-pressed="false">🇬🇧 English</button>
+      </div>
+      <img src="../assets/img/icono.svg" alt="" width="72" height="72" class="logo-legal">
+      <h1 data-i18n="pageTitle">Protección de datos</h1>
+      <p class="lema" data-i18n="tagline">Sin registro. Sin cookies. Sin analítica.</p>
+      <p class="entradilla" data-i18n="lead">Teclatlon no pide tus datos personales. Todo lo que guarda vive únicamente en este dispositivo. Aquí explicamos, en detalle, qué guardamos y por qué.</p>
+
+      <nav class="indice" aria-label="Índice de esta página">
+        <a href="#responsable" data-i18n="navResponsible">Quién trata tus datos</a>
+        <a href="#datos" data-i18n="navData">Qué guardamos</a>
+        <a href="#derechos" data-i18n="navRights">Tus derechos</a>
+        <a href="#menores" data-i18n="navMinors">Menores de edad</a>
+        <a href="#contacto" data-i18n="navContact">Cambios y contacto</a>
+      </nav>
+    </header>
+
+    <main class="pila">
+
+      <section id="responsable" class="card">
+        <h2 data-i18n="responsibleTitle">Quién trata tus datos</h2>
+        <p data-i18n="responsibleP1">Teclatlon es una aplicación desarrollada de forma independiente. No hay ningún servidor propio que reciba o almacene tus datos: la aplicación es un conjunto de páginas estáticas que se ejecutan en tu navegador, en tu propio ordenador.</p>
+      </section>
+
+      <section id="datos" class="card">
+        <h2 data-i18n="dataTitle">Qué guardamos y por qué</h2>
+        <p data-i18n="dataP1">Teclatlon funciona sin cuentas, sin cookies y sin analítica: no sabemos quién eres ni cómo usas la aplicación.</p>
+        <p data-i18n="dataP2">Lo único que se guarda vive en el <code>localStorage</code> de tu navegador, en tu propio dispositivo, y nunca se envía a ningún servidor:</p>
+        <ul>
+          <li><strong data-i18n="dataItem1Label">Progreso</strong>: <span data-i18n="dataItem1Text">las estrellas ganadas y las lecciones completadas.</span></li>
+          <li><strong data-i18n="dataItem2Label">Nombre (opcional)</strong>: <span data-i18n="dataItem2Text">si lo escribes al empezar, para que aparezca en pantalla mientras practicas.</span></li>
+        </ul>
+        <p data-i18n="dataP3">Nunca guardamos: fallos, tiempo empleado, número de intentos, comparaciones con otras personas ni historiales de uso detallados.</p>
+        <p data-i18n="dataP4">Esta información se guarda mientras no se borre, y sirve únicamente para que el progreso no se pierda al cerrar la aplicación.</p>
+      </section>
+
+      <section id="derechos" class="card">
+        <h2 data-i18n="rightsTitle">Tus derechos y cómo ejercerlos</h2>
+        <p data-i18n="rightsP1">Como todo lo guardado está en tu dispositivo y no en un servidor, tú tienes el control directo: puedes verlo, cambiarlo o borrarlo en cualquier momento, sin pedírnoslo a nosotros.</p>
+        <p data-i18n="rightsP2">Para borrarlo, usa el botón "Borrar mi progreso" que aparece en la aplicación, o borra los datos de navegación de tu navegador para este sitio, desde su configuración.</p>
+        <p><a class="btn btn-secundario" href="../index.html" data-i18n="rightsLinkApp">Ir a Teclatlon</a></p>
+      </section>
+
+      <section id="menores" class="card">
+        <h2 data-i18n="minorsTitle">Menores de edad y personas con discapacidad</h2>
+        <p data-i18n="minorsP1">Teclatlon está pensada para que la use de forma autónoma cualquier persona, incluidas personas menores de edad y personas con discapacidad intelectual.</p>
+        <p data-i18n="minorsP2">Como la aplicación no recoge datos personales en ningún servidor, no es necesario el consentimiento de un tutor para tratar datos: no hay ningún tratamiento que autorizar. Sí recomendamos la supervisión habitual que una familia o un profesional haga sobre el uso de cualquier dispositivo.</p>
+      </section>
+
+      <section id="contacto" class="card">
+        <h2 data-i18n="contactTitle">Cambios y contacto</h2>
+        <p data-i18n="contactP1">Esta página puede actualizarse si cambia la aplicación.</p>
+        <p data-i18n="contactP2">Última actualización: 31 de julio de 2026.</p>
+      </section>
+
+    </main>
+
+    <footer class="pie-legal">
+      <a class="btn btn-secundario" href="../index.html" data-i18n="footerApp">Ir a Teclatlon</a>
+    </footer>
+  </div>
+
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/i18n.js"></script>
+  <script src="strings.es.js"></script>
+  <script src="strings.en.js"></script>
+  <script>
+    (function () {
+      'use strict';
+      function paintLanguageSelector() {
+        var active = App.i18n.locale();
+        document.getElementById('btnIdiomaEs').setAttribute('aria-pressed', String(active === 'es'));
+        document.getElementById('btnIdiomaEn').setAttribute('aria-pressed', String(active === 'en'));
+      }
+      document.getElementById('btnIdiomaEs').addEventListener('click', function () { App.i18n.setLocale('es'); });
+      document.getElementById('btnIdiomaEn').addEventListener('click', function () { App.i18n.setLocale('en'); });
+      paintLanguageSelector();
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('../sw.js').catch(function () {});
+      }
+    })();
+  </script>
+</body>
+</html>

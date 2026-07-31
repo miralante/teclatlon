@@ -1,0 +1,32 @@
+name: Validate
+
+# Runs the project's structural and i18n check on every push and pull
+# request. Deploy to Cloudflare Pages is handled by the Cloudflare Git
+# connector reading _headers from the repo root — this workflow does
+# not deploy.
+#
+# scripts/check.js requires no npm dependencies: it runs with plain
+# node and only uses stdlib modules (fs, path, vm, child_process).
+# The repo has no package.json — nothing to install.
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  check:
+    name: node scripts/check.js
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run structural and i18n checks
+        run: node scripts/check.js

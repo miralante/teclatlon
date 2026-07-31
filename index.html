@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es" data-i18n-title="title">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teclatlon</title>
+  <meta name="description" content="Aprende a escribir con el teclado del ordenador, a tu ritmo.">
+  <meta name="theme-color" content="#FAF7F2">
+  <link rel="icon" href="assets/img/icono.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header class="tool-header">
+      <h1 data-i18n="title">⌨️ Teclatlon</h1>
+      <span class="stars" id="stars">⭐ 0</span>
+    </header>
+
+    <!-- Pantalla: tu nombre -->
+    <section id="pantallaNombre" class="oculto pila">
+      <div class="fila centrado-fila">
+        <p class="instruccion" id="textoNombre" data-i18n="textoNombre">¡Hola! ¿Cómo te llamas? Escribe tu nombre con el teclado.</p>
+        <button type="button" class="btn btn-audio" id="btnLeerNombre" data-i18n-aria="core.listenInstructions" aria-label="Escuchar las instrucciones">🔊</button>
+      </div>
+      <input id="inputNombre" class="input-nombre" type="text" maxlength="20" autocomplete="off" spellcheck="false" data-i18n-aria="inputNombreAria" aria-label="Escribe tu nombre">
+      <div class="fila centrado-fila">
+        <button type="button" class="btn" id="btnGuardarNombre" data-i18n="btnGuardarNombre">✅ Listo</button>
+        <button type="button" class="btn btn-secundario" id="btnSinNombre" data-i18n="btnSinNombre">Ahora no</button>
+      </div>
+      <p class="feedback" id="avisoNombre" aria-live="polite"></p>
+      <div class="teclado-panel pila">
+        <div class="fila opciones-teclado" role="group" data-i18n-aria="tipoTecladoAria" aria-label="Tipo de teclado">
+          <button type="button" class="btn btn-secundario btn-teclado" data-teclado="simplificado" data-i18n="btnSimple" aria-pressed="false">🔤 Simple</button>
+          <button type="button" class="btn btn-secundario btn-teclado" data-teclado="normal" data-i18n="btnNormal" aria-pressed="false">⌨️ Normal</button>
+          <button type="button" class="btn btn-secundario btn-teclado" data-teclado="extendido" data-i18n="btnExtendido" aria-pressed="false">🔢 Extendido</button>
+          <button type="button" class="btn btn-secundario btn-color" data-i18n="btnColoresManos" aria-pressed="false">🎨 Colores: manos</button>
+        </div>
+        <div class="fila-vista-teclado">
+          <div class="teclado" aria-hidden="true"></div>
+          <div class="numpad-inline oculto" aria-hidden="true"></div>
+        </div>
+        <p class="leyenda-teclado"></p>
+      </div>
+      <div class="fila centrado-fila">
+        <button type="button" class="btn btn-secundario" id="btnBorrarTodo" data-i18n="btnBorrarProgreso">🗑️ Borrar mi progreso</button>
+      </div>
+    </section>
+
+    <!-- Screen: game menu -->
+    <section id="pantallaMenu" class="oculto pila">
+      <div class="fila centrado-fila">
+        <h2 id="saludo" data-i18n="saludoHola">¡Hola!</h2>
+        <button type="button" class="btn btn-audio" id="btnLeerSaludo" data-i18n-aria="core.listenText" aria-label="Escuchar el saludo">🔊</button>
+      </div>
+      <p class="instruccion centrado" data-i18n="eligeJuego">Elige un juego.</p>
+      <div class="grid-tarjetas" id="menuJuegos">
+        <button type="button" class="tarjeta-modo" data-modo="posicion">
+          <span class="picto" aria-hidden="true">🖐️</span>
+          <span class="nombre" data-i18n="modoPosicionNombre">Coloca los dedos</span>
+          <span class="detalle" data-i18n="modoPosicionDetalle">Cada dedo tiene su tecla.</span>
+          <span class="hecho"></span>
+        </button>
+        <button type="button" class="tarjeta-modo" data-modo="lecciones">
+          <span class="picto" aria-hidden="true">🔤</span>
+          <span class="nombre" data-i18n="modoLeccionesNombre">Paso a paso</span>
+          <span class="detalle" data-i18n="modoLeccionesDetalle">Aprende las letras en orden.</span>
+          <span class="hecho"></span>
+        </button>
+        <button type="button" class="tarjeta-modo" data-modo="palabras">
+          <span class="picto" aria-hidden="true">✏️</span>
+          <span class="nombre" data-i18n="modoPalabrasNombre">Palabras</span>
+          <span class="detalle" data-i18n="modoPalabrasDetalle">Escribe palabras y tu nombre.</span>
+          <span class="hecho"></span>
+        </button>
+        <button type="button" class="tarjeta-modo" data-modo="todas">
+          <span class="picto" aria-hidden="true">🌈</span>
+          <span class="nombre" data-i18n="modoTodasNombre">Todas las teclas</span>
+          <span class="detalle" data-i18n="modoTodasDetalle">Enciende todas las teclas.</span>
+          <span class="hecho"></span>
+        </button>
+        <button type="button" class="tarjeta-modo" data-modo="numeros">
+          <span class="picto" aria-hidden="true">🔢</span>
+          <span class="nombre" data-i18n="modoNumerosNombre">Números</span>
+          <span class="detalle" data-i18n="modoNumerosDetalle">Usa el teclado de números.</span>
+          <span class="hecho"></span>
+        </button>
+        <button type="button" class="tarjeta-modo" data-modo="libre">
+          <span class="picto" aria-hidden="true">✍️</span>
+          <span class="nombre" data-i18n="modoLibreNombre">Escribe libre</span>
+          <span class="detalle" data-i18n="modoLibreDetalle">Escribe y escucha tu texto.</span>
+          <span class="hecho"></span>
+        </button>
+      </div>
+      <div class="fila centrado-fila">
+        <button type="button" class="btn btn-secundario" id="btnCambiarNombre" data-i18n="btnMiNombre">✏️ Mi nombre</button>
+      </div>
+    </section>
+
+    <!-- Pantalla: lista de lecciones -->
+    <section id="pantallaLecciones" class="oculto pila">
+      <div class="fila">
+        <button type="button" class="btn btn-secundario" id="btnVolverMenu" data-i18n="btnMenu">← Menú</button>
+        <h2 class="titulo-juego" data-i18n="modoLeccionesNombre">Paso a paso</h2>
+      </div>
+      <p class="instruccion" data-i18n="leccionesInstruccion">Termina una lección para abrir la siguiente.</p>
+      <div class="grid-lecciones" id="listaLecciones"></div>
+    </section>
+
+    <!-- Screen: game (position, lessons, words, challenge and numbers) -->
+    <section id="pantallaJuego" class="oculto pila">
+      <div class="fila">
+        <button type="button" class="btn btn-secundario" id="btnSalirJuego" data-i18n="btnMenu">← Menú</button>
+        <h2 class="titulo-juego" id="tituloJuego" data-i18n="tituloJuegoDefault">Juego</h2>
+        <button type="button" class="btn btn-audio" id="btnLeerJuego" data-i18n-aria="core.listenInstructions" aria-label="Escuchar las instrucciones">🔊</button>
+      </div>
+      <p class="instruccion centrado" id="instruccionJuego"></p>
+      <div class="card centrado">
+        <div id="zonaObjetivo" class="objetivo-zona"></div>
+        <div id="zonaReto" class="progress-bar oculto">
+          <div class="progress-fill" id="retoFill"></div>
+          <span class="progress-text" id="retoTexto">0 de 0</span>
+        </div>
+      </div>
+      <div class="feedback" id="feedback" aria-live="polite"></div>
+      <div class="fila guia" id="guia">
+        <div class="manos" id="manosSvg" aria-hidden="true"></div>
+        <p class="guia-texto" id="guiaTexto"></p>
+      </div>
+      <div class="teclado-panel pila" id="panelTeclado">
+        <div class="fila opciones-teclado" role="group" data-i18n-aria="tipoTecladoAria" aria-label="Tipo de teclado">
+          <button type="button" class="btn btn-secundario btn-teclado" data-teclado="simplificado" data-i18n="btnSimple" aria-pressed="false">🔤 Simple</button>
+          <button type="button" class="btn btn-secundario btn-teclado" data-teclado="normal" data-i18n="btnNormal" aria-pressed="false">⌨️ Normal</button>
+          <button type="button" class="btn btn-secundario btn-teclado" data-teclado="extendido" data-i18n="btnExtendido" aria-pressed="false">🔢 Extendido</button>
+          <button type="button" class="btn btn-secundario btn-color" data-i18n="btnColoresManos" aria-pressed="false">🎨 Colores: manos</button>
+        </div>
+        <div class="fila-vista-teclado">
+          <div class="teclado" aria-hidden="true"></div>
+          <div class="numpad-inline oculto" aria-hidden="true"></div>
+        </div>
+        <p class="leyenda-teclado"></p>
+      </div>
+      <div id="panelNumpad" class="pila oculto">
+        <div class="numpad" id="numpad" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- Pantalla: escritura libre -->
+    <section id="pantallaLibre" class="oculto pila">
+      <div class="fila">
+        <button type="button" class="btn btn-secundario" id="btnSalirLibre" data-i18n="btnMenu">← Menú</button>
+        <h2 class="titulo-juego" data-i18n="modoLibreNombre">Escribe libre</h2>
+        <button type="button" class="btn btn-audio" id="btnLeerLibre" data-i18n="core.listen" data-i18n-aria="escucharTextoAria" aria-label="Escuchar mi texto">🔊 Escuchar</button>
+        <button type="button" class="btn btn-secundario" id="btnBorrarLibre" data-i18n-aria="borrarTextoAria" aria-label="Borrar el texto">🗑️</button>
+      </div>
+      <textarea id="areaLibre" class="area-libre" rows="4" spellcheck="false" data-i18n-aria="areaLibreAria" aria-label="Escribe aquí lo que quieras" placeholder="Escribe aquí..."></textarea>
+      <div class="teclado-panel pila">
+        <div class="fila opciones-teclado" role="group" data-i18n-aria="tipoTecladoAria" aria-label="Tipo de teclado">
+          <button type="button" class="btn btn-secundario btn-teclado" data-teclado="simplificado" data-i18n="btnSimple" aria-pressed="false">🔤 Simple</button>
+          <button type="button" class="btn btn-secundario btn-teclado" data-teclado="normal" data-i18n="btnNormal" aria-pressed="false">⌨️ Normal</button>
+          <button type="button" class="btn btn-secundario btn-teclado" data-teclado="extendido" data-i18n="btnExtendido" aria-pressed="false">🔢 Extendido</button>
+          <button type="button" class="btn btn-secundario btn-color" data-i18n="btnColoresManos" aria-pressed="false">🎨 Colores: manos</button>
+        </div>
+        <div class="fila-vista-teclado">
+          <div class="teclado" aria-hidden="true"></div>
+          <div class="numpad-inline oculto" aria-hidden="true"></div>
+        </div>
+        <p class="leyenda-teclado"></p>
+      </div>
+    </section>
+    <footer class="pie-app">
+      <a href="legal/index.html" class="enlace-legal" data-i18n="core.dataProtection">Protección de datos</a>
+    </footer>
+  </div>
+
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/tts.js"></script>
+  <script src="assets/js/storage.js"></script>
+  <script src="assets/js/feedback.js"></script>
+  <script src="strings.es.js"></script>
+  <script src="strings.en.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(function () {});
+    }
+  </script>
+</body>
+</html>

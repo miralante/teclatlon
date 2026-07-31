@@ -1,0 +1,19 @@
+{
+  "name": "Teclatlon",
+  "short_name": "Teclatlon",
+  "description": "Aprende a escribir con el teclado del ordenador, a tu ritmo.",
+  "lang": "es",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FAF7F2",
+  "theme_color": "#FAF7F2",
+  "icons": [
+    {
+      "src": "./assets/img/icono.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
