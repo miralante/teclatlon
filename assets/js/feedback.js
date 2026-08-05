@@ -1,7 +1,7 @@
 /* ==========================================================================
    Teclatlon — Positive reinforcement and encouragement messages
-   Exposes window.App.feedback.success(zona, pan) / .encourage(zona) /
-   .celebrate(msg, after) / .sonidoAcierto(pan).
+   Exposes window.App.feedback.success(zone, pan) / .encourage(zone) /
+   .celebrate(msg, after) / .successSound(pan).
    Mistakes are never punished; feedback stays brief (<= 2 s).
    Messages follow the active language (App.i18n.pick). Requires i18n.js.
 
@@ -19,25 +19,25 @@
 
   window.App = window.App || {};
 
-  function alAzar(clave) {
-    if (window.App.i18n) return window.App.i18n.pick(clave);
+  function randomPick(key) {
+    if (window.App.i18n) return window.App.i18n.pick(key);
     return '';
   }
 
-  function leerOpcion(clave, defecto) {
+  function readOption(key, fallback) {
     try {
-      var datos = window.App.storage && window.App.storage.get('keyboard');
-      if (datos && datos.opciones && typeof datos.opciones[clave] === 'boolean') {
-        return datos.opciones[clave];
+      var data = window.App.storage && window.App.storage.get('keyboard');
+      if (data && data.opciones && typeof data.opciones[key] === 'boolean') {
+        return data.opciones[key];
       }
     } catch (e) { /* ignore */ }
-    return defecto;
+    return fallback;
   }
 
   /* Soft sound with Web Audio (no audio files). Fails silently. */
   var audioCtx = null;
 
-  function contexto() {
+  function audioContext() {
     if (audioCtx) return audioCtx;
     var AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return null;
@@ -45,121 +45,121 @@
     return audioCtx;
   }
 
-  function tono(frecuencia, duracion, tipo, pan) {
-    var ctx = contexto();
+  function tone(frequency, duration, type, pan) {
+    var ctx = audioContext();
     if (!ctx) return;
     try {
       var osc = ctx.createOscillator();
       var gain = ctx.createGain();
-      osc.type = tipo || 'sine';
-      osc.frequency.value = frecuencia;
+      osc.type = type || 'sine';
+      osc.frequency.value = frequency;
       gain.gain.setValueAtTime(0.12, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duracion);
-      var destino = ctx.destination;
-      if (typeof pan === 'number' && leerOpcion('espacial', false)) {
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+      var destination = ctx.destination;
+      if (typeof pan === 'number' && readOption('espacial', false)) {
         var panner = ctx.createStereoPanner();
         panner.pan.value = Math.max(-1, Math.min(1, pan));
         osc.connect(gain);
         gain.connect(panner);
-        panner.connect(destino);
+        panner.connect(destination);
       } else {
         osc.connect(gain);
-        gain.connect(destino);
+        gain.connect(destination);
       }
       osc.start();
-      osc.stop(ctx.currentTime + duracion);
+      osc.stop(ctx.currentTime + duration);
     } catch (e) { /* silent */ }
   }
 
   /* Two-note "ding" used as the success cue. Exposed so callers that
-     want the sound without the on-screen "⭐ ¡Muy bien!" message
+     want the sound without the on-screen "⭐ Well done!" message
      (e.g. the all-keys challenge, which fires one tone per key and
      mustn't spam the live region) can play it directly. */
-  function sonidoAcierto(pan) {
-    tono(523.25, 0.15, 'sine', pan);          /* C */
-    setTimeout(function () { tono(659.25, 0.2, 'sine', pan); }, 120); /* E */
+  function successSound(pan) {
+    tone(523.25, 0.15, 'sine', pan);          /* C */
+    setTimeout(function () { tone(659.25, 0.2, 'sine', pan); }, 120); /* E */
   }
 
-  function sonidoAnimo() {
+  function cheerSound() {
     /* Soft and neutral, never harsh */
-    tono(392, 0.2, 'sine');
+    tone(392, 0.2, 'sine');
   }
 
   /**
    * Positive reinforcement in a feedback zone (element with aria-live).
-   * @param {Element} [zona] - element to write the message into
+   * @param {Element} [zone] - element to write the message into
    * @param {number} [pan] - spatial pan (-1..1) for the success tone
    * @returns {string} the message used
    */
-  function success(zona, pan) {
-    var msg = alAzar('feedback.success');
-    if (zona) {
-      zona.textContent = '⭐ ' + msg;
-      zona.classList.remove('encourage');
-      zona.classList.add('success');
+  function success(zone, pan) {
+    var msg = randomPick('feedback.success');
+    if (zone) {
+      zone.textContent = '⭐ ' + msg;
+      zone.classList.remove('encourage');
+      zone.classList.add('success');
     }
-    sonidoAcierto(pan);
+    successSound(pan);
     return msg;
   }
 
   /**
    * Encouragement message after a mistake. Never punitive.
-   * @param {Element} [zona]
+   * @param {Element} [zone]
    * @returns {string} the message used
    */
-  function encourage(zona) {
-    var msg = alAzar('feedback.encourage');
-    if (zona) {
-      zona.textContent = msg;
-      zona.classList.remove('success');
-      zona.classList.add('encourage');
+  function encourage(zone) {
+    var msg = randomPick('feedback.encourage');
+    if (zone) {
+      zone.textContent = msg;
+      zone.classList.remove('success');
+      zone.classList.add('encourage');
     }
-    sonidoAnimo();
+    cheerSound();
     return msg;
   }
 
   /* Rounds completed in this page session (never in localStorage, never
      pressure — just a kind phrase every 5 rounds). */
-  var rondasSesion = 0;
+  var sessionRounds = 0;
 
   /**
    * Brief celebration screen (uses .celebration from components.css).
    * Creates the element if it doesn't exist. Hides itself after 2 s.
-   * @param {string} mensaje - e.g. 'Well done!'
-   * @param {function} [despues] - callback when it hides
+   * @param {string} message - e.g. 'Well done!'
+   * @param {function} [after] - callback when it hides
    */
-  function celebrate(mensaje, despues) {
-    rondasSesion += 1;
-    if (rondasSesion % 5 === 0) {
+  function celebrate(message, after) {
+    sessionRounds += 1;
+    if (sessionRounds % 5 === 0) {
       var rest = window.App.i18n ? window.App.i18n.t('core.rest') : '';
-      if (rest) mensaje = mensaje + ' ' + rest;
+      if (rest) message = message + ' ' + rest;
     }
-    var capa = document.getElementById('app-celebration');
-    if (!capa) {
-      capa = document.createElement('div');
-      capa.id = 'app-celebration';
-      capa.className = 'celebration hidden';
-      capa.setAttribute('role', 'status');
-      capa.innerHTML =
+    var layer = document.getElementById('app-celebration');
+    if (!layer) {
+      layer = document.createElement('div');
+      layer.id = 'app-celebration';
+      layer.className = 'celebration hidden';
+      layer.setAttribute('role', 'status');
+      layer.innerHTML =
         '<div class="emoji">🎉</div>' +
-        '<div class="mensaje"></div>';
-      document.body.appendChild(capa);
+        '<div class="message"></div>';
+      document.body.appendChild(layer);
     }
-    capa.querySelector('.mensaje').textContent = mensaje;
-    capa.classList.remove('hidden');
-    sonidoAcierto();
+    layer.querySelector('.message').textContent = message;
+    layer.classList.remove('hidden');
+    successSound();
 
-    var duracion = (window.App.utils && window.App.utils.reducedMotion()) ? 1200 : 2000;
+    var duration = (window.App.utils && window.App.utils.reducedMotion()) ? 1200 : 2000;
     setTimeout(function () {
-      capa.classList.add('hidden');
-      if (despues) despues();
-    }, duracion);
+      layer.classList.add('hidden');
+      if (after) after();
+    }, duration);
   }
 
   window.App.feedback = {
     success: success,
     encourage: encourage,
     celebrate: celebrate,
-    sonidoAcierto: sonidoAcierto
+    successSound: successSound
   };
 })();

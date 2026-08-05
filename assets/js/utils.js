@@ -42,13 +42,13 @@
   /**
    * Returns a stereo pan value (-1..1) for a key column (0 = leftmost).
    * The pan is only used when the user has enabled spatial audio.
-   * @param {number} columna - 0-based position of the key in its row
+   * @param {number} column - 0-based position of the key in its row
    * @param {number} total - total number of columns in the row
    * @returns {number} pan in [-1, 1]
    */
-  function panDeColumna(columna, total) {
+  function panOfColumn(column, total) {
     if (!total || total <= 1) return 0;
-    return (columna / (total - 1)) * 2 - 1;
+    return (column / (total - 1)) * 2 - 1;
   }
 
   /**
@@ -56,15 +56,15 @@
    * rows of DATA (letters, number row) and the numpad. Returns null
    * if the key is not found.
    * @param {string} ch
-   * @param {boolean} enNumpad
+   * @param {boolean} inNumpad
    * @returns {number|null}
    */
-  function columnaDe(ch, enNumpad) {
+  function columnOf(ch, inNumpad) {
     if (!ch) return null;
-    var filas = enNumpad ? window.DATA.numpad : window.DATA.rows.concat([window.DATA.numberRow]);
-    for (var i = 0; i < filas.length; i++) {
-      for (var j = 0; j < filas[i].length; j++) {
-        if (filas[i][j].ch === ch) return j;
+    var rows = inNumpad ? window.DATA.numpad : window.DATA.rows.concat([window.DATA.numberRow]);
+    for (var i = 0; i < rows.length; i++) {
+      for (var j = 0; j < rows[i].length; j++) {
+        if (rows[i][j].ch === ch) return j;
       }
     }
     return null;
@@ -77,18 +77,18 @@
      automatically when the tab is hidden). */
   if ('wakeLock' in navigator) {
     var wakeLockSentinel = null;
-    var pedirWakeLock = function () {
+    var requestWakeLock = function () {
       navigator.wakeLock.request('screen').then(function (sentinel) {
         wakeLockSentinel = sentinel;
       }).catch(function () { /* denied or unavailable: keep going without the lock */ });
     };
-    document.addEventListener('pointerdown', function primeraVez() {
-      pedirWakeLock();
-      document.removeEventListener('pointerdown', primeraVez);
+    document.addEventListener('pointerdown', function firstTime() {
+      requestWakeLock();
+      document.removeEventListener('pointerdown', firstTime);
     });
     document.addEventListener('visibilitychange', function () {
       if (document.visibilityState === 'visible' && wakeLockSentinel) {
-        pedirWakeLock();
+        requestWakeLock();
       }
     });
   }
@@ -98,7 +98,7 @@
     $: $,
     $$: $$,
     reducedMotion: reducedMotion,
-    panDeColumna: panDeColumna,
-    columnaDe: columnaDe
+    panOfColumn: panOfColumn,
+    columnOf: columnOf
   };
 })();

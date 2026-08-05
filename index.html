@@ -19,26 +19,26 @@
        overlay before the first paint. Must run synchronously, before
        the stylesheet cascade evaluates, and without any project
        dependency (assets/js/* isn't loaded yet at this point). The
-       detection here mirrors assets/js/i18n.js#detectar on purpose —
+       detection here mirrors assets/js/i18n.js#detect on purpose —
        keep both in sync if the supported-locales list changes. */
     (function () {
-      var SOPORTADOS = ['es', 'en'];
-      var POR_DEFECTO = 'es';
+      var SUPPORTED = ['es', 'en'];
+      var DEFAULT_LOCALE = 'es';
 
-      function detectarIdioma() {
+      function detectLocale() {
         try {
-          var idiomas = navigator.languages && navigator.languages.length
+          var langs = navigator.languages && navigator.languages.length
             ? navigator.languages
             : [navigator.language || ''];
-          for (var i = 0; i < idiomas.length; i++) {
-            var prefijo = (idiomas[i] || '').slice(0, 2).toLowerCase();
-            if (SOPORTADOS.indexOf(prefijo) !== -1) return prefijo;
+          for (var i = 0; i < langs.length; i++) {
+            var prefix = (langs[i] || '').slice(0, 2).toLowerCase();
+            if (SUPPORTED.indexOf(prefix) !== -1) return prefix;
           }
         } catch (e) { /* ignore */ }
-        return POR_DEFECTO;
+        return DEFAULT_LOCALE;
       }
 
-      var lang = detectarIdioma();
+      var lang = detectLocale();
       document.documentElement.lang = lang;
 
       /* Device gate: Teclatlon is computer-only (see SPEC.md §2).

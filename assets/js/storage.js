@@ -9,7 +9,7 @@
 
   window.App = window.App || {};
 
-  var PREFIJO = 'teclatlon:';
+  var PREFIX = 'teclatlon:';
 
   /**
    * Reads saved progress.
@@ -18,7 +18,7 @@
    */
   function get(id) {
     try {
-      var raw = localStorage.getItem(PREFIJO + id);
+      var raw = localStorage.getItem(PREFIX + id);
       return raw ? JSON.parse(raw) : {};
     } catch (e) {
       return {};
@@ -33,7 +33,7 @@
    */
   function set(id, data) {
     try {
-      localStorage.setItem(PREFIJO + id, JSON.stringify(data));
+      localStorage.setItem(PREFIX + id, JSON.stringify(data));
       return true;
     } catch (e) {
       return false;
@@ -43,7 +43,7 @@
   /** Deletes saved progress. */
   function remove(id) {
     try {
-      localStorage.removeItem(PREFIJO + id);
+      localStorage.removeItem(PREFIX + id);
       return true;
     } catch (e) {
       return false;

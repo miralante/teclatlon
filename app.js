@@ -1,10 +1,10 @@
 /* ==========================================================================
-   Teclatlon — Lógica
-   Aprende a escribir con el teclado físico del ordenador.
-   El teclado que se ve en pantalla es SOLO visual (no se puede tocar):
-   enseña la tecla objetivo, refleja cada pulsación y colorea las teclas
-   por mano o por dedo (método de mecanografía con row guía F/J).
-   Requiere assets/js (App.utils, App.tts, App.storage, App.feedback) y data.js.
+   Teclatlon — Logic
+   Learn to type on the computer's physical keyboard.
+   The on-screen keyboard is VISUAL only (not tappable): it shows the
+   target key, reflects each keystroke, and colours keys by hand or
+   by finger (touch-typing method with F/J home-row landmarks).
+   Requires assets/js (App.utils, App.tts, App.storage, App.feedback) and data.js.
    ========================================================================== */
 (function () {
   'use strict';
@@ -12,9 +12,9 @@
   var $ = App.utils.$;
   var $$ = App.utils.$$;
   var SLUG = 'keyboard';
-  var PANTALLAS = ['pantallaNombre', 'pantallaMenu', 'pantallaLecciones', 'pantallaPlantillas', 'pantallaJuego', 'pantallaLibre'];
+  var SCREENS = ['pantallaNombre', 'pantallaMenu', 'pantallaLecciones', 'pantallaPlantillas', 'pantallaJuego', 'pantallaLibre'];
 
-  /* ---------- Estado y progreso ---------- */
+  /* ---------- State and progress ---------- */
   var state = App.storage.get(SLUG);
   state.nombre = typeof state.nombre === 'string' ? state.nombre : '';
   state.estrellas = state.estrellas || 0;
@@ -30,20 +30,20 @@
   state.opciones.espacial = !!state.opciones.espacial;
   state.opciones.metricas = !!state.opciones.metricas;
 
-  function guardar() { App.storage.set(SLUG, state); }
+  function save() { App.storage.set(SLUG, state); }
 
-  /* Partida en curso. null fuera de pantallaJuego.
-     type 'seq': { cfg: { modo, titulo, pasos, claveEstrella, alTerminar }, idx, pos, esperando }
+  /* In-progress game. null outside pantallaJuego.
+     type 'seq': { cfg: { mode, title, steps, starKey, onFinish }, idx, pos, waiting }
      type 'reto': { set: { ch: true } } */
   var game = null;
 
-  function bonito(nombre) {
+  function capitalize(nombre) {
     return nombre ? nombre.charAt(0).toUpperCase() + nombre.slice(1) : '';
   }
 
-  function mensajeFinal() {
+  function finalMessage() {
     return state.nombre
-      ? App.i18n.t('muyBienNombre').replace('{nombre}', bonito(state.nombre))
+      ? App.i18n.t('muyBienNombre').replace('{nombre}', capitalize(state.nombre))
       : App.i18n.t('muyBien');
   }
 
@@ -51,35 +51,35 @@
      exercise to writing real messages on a real computer. Appended to
      the celebration overlay itself, since this activity has no
      separate "round complete" screen to hold it. */
-  function celebrarConTransferencia(despues) {
-    App.feedback.celebrate(mensajeFinal() + ' ' + App.i18n.t('transferencia'), despues);
+  function celebrateWithTransfer(after) {
+    App.feedback.celebrate(finalMessage() + ' ' + App.i18n.t('transferencia'), after);
   }
 
-  function actualizarEstrellas() {
+  function updateStars() {
     $('#stars').textContent = '⭐ ' + state.estrellas;
   }
 
-  function premiar(clave) {
-    if (!state.completado[clave]) {
-      state.completado[clave] = true;
+  function award(key) {
+    if (!state.completado[key]) {
+      state.completado[key] = true;
       state.estrellas += 1;
-      guardar();
-      actualizarEstrellas();
+      save();
+      updateStars();
     }
   }
 
-  /* ---------- Datos de teclas ---------- */
-  function filasVisibles() {
+  /* ---------- Key data ---------- */
+  function visibleRows() {
     return DATA.layouts[state.opciones.teclado] || DATA.layouts.simplificado;
   }
 
-  function esExtendido() {
+  function isExtended() {
     return state.opciones.teclado === 'extendido';
   }
 
-  function clavesTipeables(filas) {
+  function typeableKeys(rows) {
     var out = {};
-    filas.forEach(function (f) {
+    rows.forEach(function (f) {
       /* k.special (Home/End/PageUp/PageDown/Delete, DATA.layouts.extendido)
          has a real 'ch' so the special-keys lesson can target it, but it's
          not part of the core alphanumeric layout this challenge covers. */
@@ -88,14 +88,14 @@
     return out;
   }
 
-  function dedoDe(ch, enNumpad) {
+  function fingerOf(ch, inNumpad) {
     if (!ch) return null;
     if (ch === ' ') return 'th';
-    if (enNumpad) return DATA.numpadFingers[ch] || null;
-    var filas = [DATA.numberRow].concat(DATA.rows);
-    for (var i = 0; i < filas.length; i++) {
-      for (var j = 0; j < filas[i].length; j++) {
-        if (filas[i][j].ch === ch) return filas[i][j].finger;
+    if (inNumpad) return DATA.numpadFingers[ch] || null;
+    var rows = [DATA.numberRow].concat(DATA.rows);
+    for (var i = 0; i < rows.length; i++) {
+      for (var j = 0; j < rows[i].length; j++) {
+        if (rows[i][j].ch === ch) return rows[i][j].finger;
       }
     }
     return null;
@@ -106,12 +106,12 @@
      success tone comes from the same side as the key the player just
      hit. The numpad is intentionally excluded (no horizontal spread
      to speak of) and returns 0 (centre). */
-  function panDe(ch) {
+  function panOf(ch) {
     if (!ch) return 0;
-    if (game && game.cfg && game.cfg.modo === 'numeros') return 0;
-    var filas = [DATA.numberRow].concat(DATA.rows);
-    for (var i = 0; i < filas.length; i++) {
-      var tipeables = filas[i].filter(function (k) { return !!k.ch; });
+    if (game && game.cfg && game.cfg.mode === 'numeros') return 0;
+    var rows = [DATA.numberRow].concat(DATA.rows);
+    for (var i = 0; i < rows.length; i++) {
+      var tipeables = rows[i].filter(function (k) { return !!k.ch; });
       if (tipeables.length < 2) continue;
       for (var j = 0; j < tipeables.length; j++) {
         if (tipeables[j].ch === ch) {
@@ -122,8 +122,8 @@
     return 0;
   }
 
-  /* ---------- Teclado visual (nunca clicable: pointer-events none) ---------- */
-  function crearTecla(k) {
+  /* ---------- Visual keyboard (never clickable: pointer-events none) ---------- */
+  function createKey(k) {
     var d = document.createElement('div');
     var mano = k.finger === 'th' ? 'ambas' : (k.finger.charAt(0) === 'l' ? 'izq' : 'der');
     var ancho = k.wide === true ? ' ancha' : (k.wide === 'media' ? ' media' : '');
@@ -138,48 +138,48 @@
     return d;
   }
 
-  function pintarFilas(cont, filas) {
+  function renderRows(cont, rows) {
     cont.innerHTML = '';
-    filas.forEach(function (row) {
+    rows.forEach(function (row) {
       var f = document.createElement('div');
       f.className = 'row-teclas';
-      row.forEach(function (k) { f.appendChild(crearTecla(k)); });
+      row.forEach(function (k) { f.appendChild(createKey(k)); });
       cont.appendChild(f);
     });
   }
 
   function renderTeclados() {
     $$('.teclado').forEach(function (c) {
-      pintarFilas(c, filasVisibles());
+      renderRows(c, visibleRows());
     });
     $$('.numpad-inline').forEach(function (c) {
-      c.classList.toggle('hidden', !esExtendido());
-      pintarFilas(c, DATA.numpad);
+      c.classList.toggle('hidden', !isExtended());
+      renderRows(c, DATA.numpad);
     });
     $$('.teclado, .numpad, .numpad-inline, .manos').forEach(function (c) {
       c.classList.toggle('color-dedos', state.opciones.color === 'dedos');
       c.classList.toggle('color-manos', state.opciones.color === 'manos');
     });
-    actualizarOpcionesUI();
-    /* Recompute the whole guide (not just marcarObjetivo): switching
+    updateOptionsUI();
+    /* Recompute the whole guide (not just markTarget): switching
        keyboard type mid-game doesn't change fingers today (only
        "simple/normal/extended" are physical layouts), but keeps the
        guide consistent if a layout ever changes finger mapping. */
-    if (game && game.type === 'seq') actualizarGuia();
-    if (game && game.type === 'reto') reaplicarReto();
+    if (game && game.type === 'seq') updateGuide();
+    if (game && game.type === 'reto') reapplyChallenge();
   }
 
-  function actualizarOpcionesUI() {
+  function updateOptionsUI() {
     $$('.btn-teclado').forEach(function (b) {
       b.setAttribute('aria-pressed', String(b.dataset.teclado === state.opciones.teclado));
     });
-    var claveDetalle = ({
+    var detailKey = ({
       simplificado: 'btnSimpleDetalle',
       normal: 'btnNormalDetalle',
       extendido: 'btnExtendidoDetalle'
     })[state.opciones.teclado];
     $$('.detalle-teclado').forEach(function (p) {
-      p.textContent = claveDetalle ? App.i18n.t(claveDetalle) : '';
+      p.textContent = detailKey ? App.i18n.t(detailKey) : '';
     });
     $$('.btn-color').forEach(function (b) {
       b.setAttribute('aria-pressed', String(state.opciones.color === 'dedos'));
@@ -191,14 +191,14 @@
   }
 
   /* ---------- Ajustes de accesibilidad ---------- */
-  function etiquetaOnOff(clave, activo) {
-    return App.i18n.t(clave + (activo ? 'On' : 'Off'));
+  function onOffLabel(key, active) {
+    return App.i18n.t(key + (active ? 'On' : 'Off'));
   }
 
-  function actualizarBotonAjuste(id, clave, activo) {
+  function updateSettingsButton(id, key, active) {
     var b = $(id);
-    b.setAttribute('aria-pressed', String(activo));
-    b.textContent = etiquetaOnOff(clave, activo);
+    b.setAttribute('aria-pressed', String(active));
+    b.textContent = onOffLabel(key, active);
   }
 
   /* Applies state.opciones to the page (theme/text-size custom
@@ -208,7 +208,7 @@
      set earlier, before first paint, by the inline script in
      index.html (reads localStorage directly) -- this just keeps
      everything consistent once app.js has taken over. */
-  function aplicarOpciones() {
+  function applyOptions() {
     var html = document.documentElement;
     if (state.opciones.tema === 'auto') html.removeAttribute('data-tema');
     else html.setAttribute('data-tema', state.opciones.tema);
@@ -217,30 +217,30 @@
     html.classList.toggle('modo-foco', state.opciones.foco);
 
     $$('.btn-texto-tam').forEach(function (b) {
-      b.setAttribute('aria-pressed', String(b.dataset.texto === state.opciones.texto));
+      b.setAttribute('aria-pressed', String(b.dataset.text === state.opciones.texto));
     });
     $$('.btn-tema').forEach(function (b) {
       b.setAttribute('aria-pressed', String(b.dataset.tema === state.opciones.tema));
     });
-    actualizarBotonAjuste('#btnModoFoco', 'etiquetaModoFoco', state.opciones.foco);
-    actualizarBotonAjuste('#btnEspacial', 'etiquetaSonidoEspacial', state.opciones.espacial);
-    actualizarBotonAjuste('#btnMetricas', 'etiquetaMetricas', state.opciones.metricas);
-    actualizarMetricasVivas();
+    updateSettingsButton('#btnModoFoco', 'etiquetaModoFoco', state.opciones.foco);
+    updateSettingsButton('#btnEspacial', 'etiquetaSonidoEspacial', state.opciones.espacial);
+    updateSettingsButton('#btnMetricas', 'etiquetaMetricas', state.opciones.metricas);
+    updateLiveMetrics();
   }
 
   /* ---------- Drawer lateral de ajustes ---------- */
   var disparadorAjustes = null;
 
-  function elementosFocalizablesAjustes() {
+  function focusableSettingsElements() {
     return $$('#drawerAjustes button, #drawerAjustes [href], #drawerAjustes input, #drawerAjustes select, #drawerAjustes textarea')
       .filter(function (el) { return !el.disabled; });
   }
 
-  function ajustesAbiertos() {
+  function settingsOpen() {
     return !$('#drawerAjustes').hidden;
   }
 
-  function abrirAjustes() {
+  function openSettings() {
     disparadorAjustes = document.activeElement;
     var fondo = $('#fondoAjustes');
     var drawer = $('#drawerAjustes');
@@ -254,7 +254,7 @@
     $('#btnCerrarAjustes').focus();
   }
 
-  function cerrarAjustes() {
+  function closeSettings() {
     var fondo = $('#fondoAjustes');
     var drawer = $('#drawerAjustes');
     fondo.classList.remove('visible');
@@ -268,9 +268,9 @@
 
   /* Keeps Tab/Shift+Tab cycling inside the open drawer (basic focus
      trap -- accessibility rule: complete keyboard navigation). */
-  function manejarTabDrawer(e) {
+  function handleDrawerTab(e) {
     if (e.key !== 'Tab') return;
-    var focables = elementosFocalizablesAjustes();
+    var focables = focusableSettingsElements();
     if (!focables.length) return;
     var primero = focables[0];
     var ultimo = focables[focables.length - 1];
@@ -284,28 +284,28 @@
   }
 
   document.addEventListener('click', function (e) {
-    if (e.target.closest('#btnAbrirAjustes')) { abrirAjustes(); return; }
-    if (e.target.closest('#btnCerrarAjustes')) { cerrarAjustes(); return; }
-    if (e.target === $('#fondoAjustes')) { cerrarAjustes(); return; }
+    if (e.target.closest('#btnAbrirAjustes')) { openSettings(); return; }
+    if (e.target.closest('#btnCerrarAjustes')) { closeSettings(); return; }
+    if (e.target === $('#fondoAjustes')) { closeSettings(); return; }
 
     var bTexto = e.target.closest('.btn-texto-tam');
-    if (bTexto) { state.opciones.texto = bTexto.dataset.texto; guardar(); aplicarOpciones(); return; }
+    if (bTexto) { state.opciones.texto = bTexto.dataset.text; save(); applyOptions(); return; }
 
     var bTema = e.target.closest('.btn-tema');
-    if (bTema) { state.opciones.tema = bTema.dataset.tema; guardar(); aplicarOpciones(); return; }
+    if (bTema) { state.opciones.tema = bTema.dataset.tema; save(); applyOptions(); return; }
 
-    if (e.target.closest('#btnModoFoco')) { state.opciones.foco = !state.opciones.foco; guardar(); aplicarOpciones(); return; }
-    if (e.target.closest('#btnEspacial')) { state.opciones.espacial = !state.opciones.espacial; guardar(); aplicarOpciones(); return; }
-    if (e.target.closest('#btnMetricas')) { state.opciones.metricas = !state.opciones.metricas; guardar(); aplicarOpciones(); return; }
+    if (e.target.closest('#btnModoFoco')) { state.opciones.foco = !state.opciones.foco; save(); applyOptions(); return; }
+    if (e.target.closest('#btnEspacial')) { state.opciones.espacial = !state.opciones.espacial; save(); applyOptions(); return; }
+    if (e.target.closest('#btnMetricas')) { state.opciones.metricas = !state.opciones.metricas; save(); applyOptions(); return; }
   });
 
-  /* ---------- Métricas en vivo (precisión y velocidad) ---------- */
-  function iniciarMetricas() {
+  /* ---------- Live metrics (accuracy and speed) ---------- */
+  function startMetrics() {
     state.metricas = { teclas: 0, aciertos: 0, fallos: 0, inicioMs: Date.now() };
-    actualizarMetricasVivas();
+    updateLiveMetrics();
   }
 
-  function actualizarMetricasVivas() {
+  function updateLiveMetrics() {
     var zona = $('#metricasVivas');
     if (!state.opciones.metricas || !game || !state.metricas) {
       zona.classList.add('hidden');
@@ -320,31 +320,31 @@
     [
       App.i18n.t('precisionCorto').replace('{n}', precision),
       App.i18n.t('ppmCorto').replace('{n}', ppm)
-    ].forEach(function (texto) {
+    ].forEach(function (text) {
       var pill = document.createElement('span');
       pill.className = 'metrica-viva';
-      pill.textContent = texto;
+      pill.textContent = text;
       zona.appendChild(pill);
     });
   }
 
-  function teclasDe(ch) {
+  function keysOf(ch) {
     if (!ch || ch === '"') return [];
     return $$('.tecla[data-ch="' + ch + '"]');
   }
 
-  function flashTecla(ch, abajo) {
-    teclasDe(ch).forEach(function (t) { t.classList.toggle('pulsada', abajo); });
-    if (abajo) {
+  function flashKey(ch, down) {
+    keysOf(ch).forEach(function (t) { t.classList.toggle('pulsada', down); });
+    if (down) {
       setTimeout(function () {
-        teclasDe(ch).forEach(function (t) { t.classList.remove('pulsada'); });
+        keysOf(ch).forEach(function (t) { t.classList.remove('pulsada'); });
       }, 600);
     }
   }
 
-  function marcarObjetivo(ch) {
+  function markTarget(ch) {
     $$('.tecla.objetivo').forEach(function (t) { t.classList.remove('objetivo'); });
-    teclasDe(ch).forEach(function (t) { t.classList.add('objetivo'); });
+    keysOf(ch).forEach(function (t) { t.classList.add('objetivo'); });
   }
 
   /* Touch-typing convention for capitals: hold Shift with the pinky
@@ -352,96 +352,96 @@
      never leaves the home row. Returns the finger id of that pinky
      ('lp'/'rp'), or null when the base finger doesn't have an
      opposite pinky to speak of (thumb/space, unknown key). */
-  function ladoMayusOpuesto(finger) {
+  function oppositeShiftSide(finger) {
     if (!finger || finger === 'th') return null;
     return finger.charAt(0) === 'l' ? 'rp' : 'lp';
   }
 
   /* ---------- Hand guide ---------- */
-  function manosSVG(activo, activoMayus) {
-    function dedo(f, x, y, h) {
-      var clases = 'dedo f-' + f + (activo === f ? ' activo' : '') + (activoMayus === f ? ' activo-mayus' : '');
+  function handsSVG(active, activeShift) {
+    function finger(f, x, y, h) {
+      var clases = 'dedo f-' + f + (active === f ? ' activo' : '') + (activeShift === f ? ' activo-mayus' : '');
       return '<rect class="' + clases + '" x="' + x + '" y="' + y + '" width="32" height="' + h + '" rx="15"/>';
     }
     function pulgar(x) {
-      var act = (activo === 'th') ? ' activo' : '';
+      var act = (active === 'th') ? ' activo' : '';
       return '<rect class="dedo f-th' + act + '" x="' + x + '" y="112" width="42" height="28" rx="14"/>';
     }
     return '<svg viewBox="0 0 405 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-      dedo('lp', 0, 48, 60) + dedo('lr', 38, 26, 82) + dedo('lm', 76, 16, 92) + dedo('li', 114, 26, 82) +
+      finger('lp', 0, 48, 60) + finger('lr', 38, 26, 82) + finger('lm', 76, 16, 92) + finger('li', 114, 26, 82) +
       '<rect class="palma" x="0" y="96" width="146" height="70" rx="22"/>' + pulgar(147) +
-      pulgar(216) + dedo('ri', 259, 26, 82) + dedo('rm', 297, 16, 92) + dedo('rr', 335, 26, 82) + dedo('rp', 373, 48, 60) +
+      pulgar(216) + finger('ri', 259, 26, 82) + finger('rm', 297, 16, 92) + finger('rr', 335, 26, 82) + finger('rp', 373, 48, 60) +
       '<rect class="palma" x="259" y="96" width="146" height="70" rx="22"/>' +
       '<text x="73" y="192">' + App.i18n.t('izquierdaEtiqueta') + '</text>' +
       '<text x="332" y="192">' + App.i18n.t('derechaEtiqueta') + '</text>' +
       '</svg>';
   }
 
-  function pintarManos(dedo, dedoMayus) {
-    $('#manosSvg').innerHTML = manosSVG(dedo, dedoMayus);
-    var texto;
-    if (dedo === 'th') texto = App.i18n.t('pulgarTexto');
-    else if (dedo) {
-      texto = App.i18n.t('manoDedoTexto')
-        .replace('{mano}', App.i18n.t('dedo.' + dedo + '.mano'))
-        .replace('{dedo}', App.i18n.t('dedo.' + dedo + '.nombre'));
-      if (dedoMayus) texto += ' ' + App.i18n.t('mayusTexto').replace('{mano}', App.i18n.t('dedo.' + dedoMayus + '.mano'));
+  function renderHands(finger, shiftFinger) {
+    $('#manosSvg').innerHTML = handsSVG(finger, shiftFinger);
+    var text;
+    if (finger === 'th') text = App.i18n.t('pulgarTexto');
+    else if (finger) {
+      text = App.i18n.t('manoDedoTexto')
+        .replace('{mano}', App.i18n.t('dedo.' + finger + '.mano'))
+        .replace('{dedo}', App.i18n.t('dedo.' + finger + '.nombre'));
+      if (shiftFinger) text += ' ' + App.i18n.t('mayusTexto').replace('{mano}', App.i18n.t('dedo.' + shiftFinger + '.mano'));
     }
-    else texto = App.i18n.t('buscaTecla');
-    $('#guiaTexto').textContent = texto;
+    else text = App.i18n.t('buscaTecla');
+    $('#guiaTexto').textContent = text;
   }
 
-  /* ---------- Pantallas ---------- */
-  function mostrarPantalla(id) {
+  /* ---------- Screens ---------- */
+  function showScreen(id) {
     PANTALLAS.forEach(function (p) {
       document.getElementById(p).classList.toggle('hidden', p !== id);
     });
   }
 
-  function irMenu() {
-    pintarMenu();
-    mostrarPantalla('pantallaMenu');
+  function goMenu() {
+    renderMenu();
+    showScreen('pantallaMenu');
   }
 
-  function irLecciones() {
-    pintarLecciones();
-    mostrarPantalla('pantallaLecciones');
+  function goLessons() {
+    renderLessons();
+    showScreen('pantallaLecciones');
   }
 
-  function irNombre() {
+  function goName() {
     $('#inputNombre').value = state.nombre;
     $('#avisoNombre').textContent = '';
-    mostrarPantalla('pantallaNombre');
+    showScreen('pantallaNombre');
     $('#inputNombre').focus();
   }
 
-  function irLibre() {
-    mostrarPantalla('pantallaLibre');
+  function goFree() {
+    showScreen('pantallaLibre');
     $('#areaLibre').focus();
   }
 
   function lecciones() { return DATA.lessons[App.i18n.locale()] || DATA.lessons.es; }
-  function plantillas() { return DATA.templates[App.i18n.locale()] || DATA.templates.es; }
+  function templates() { return DATA.templates[App.i18n.locale()] || DATA.templates.es; }
 
-  function pintarMenu() {
+  function renderMenu() {
     $('#saludo').textContent = state.nombre
-      ? App.i18n.t('saludoConNombre').replace('{nombre}', bonito(state.nombre))
+      ? App.i18n.t('saludoConNombre').replace('{nombre}', capitalize(state.nombre))
       : App.i18n.t('saludoHola');
     var todasLecciones = lecciones();
     var hechas = todasLecciones.filter(function (l) { return state.completado[l.id]; }).length;
-    var todasPlantillas = plantillas();
+    var todasPlantillas = templates();
     var hechasPlantillas = todasPlantillas.filter(function (p) { return state.completado['plantilla_' + p.id]; }).length;
     $$('.tarjeta-modo').forEach(function (t) {
       var badge = t.querySelector('.hecho');
-      var m = t.dataset.modo;
+      var m = t.dataset.mode;
       if (m === 'lecciones') badge.textContent = hechas > 0 ? App.i18n.t('deTexto').replace('{hechas}', hechas).replace('{total}', todasLecciones.length) : '';
-      else if (m === 'plantillas') badge.textContent = hechasPlantillas > 0 ? App.i18n.t('deTexto').replace('{hechas}', hechasPlantillas).replace('{total}', todasPlantillas.length) : '';
+      else if (m === 'templates') badge.textContent = hechasPlantillas > 0 ? App.i18n.t('deTexto').replace('{hechas}', hechasPlantillas).replace('{total}', todasPlantillas.length) : '';
       else badge.textContent = state.completado[m] ? '⭐' : '';
     });
-    actualizarEstrellas();
+    updateStars();
   }
 
-  function pintarLecciones() {
+  function renderLessons() {
     var cont = $('#listaLecciones');
     cont.innerHTML = '';
     var todasLecciones = lecciones();
@@ -462,7 +462,7 @@
       est.textContent = hecha ? '⭐' : (abierta ? '' : '🔒');
       b.appendChild(num); b.appendChild(tit); b.appendChild(est);
       if (abierta) {
-        b.addEventListener('click', function () { jugarLeccion(l); });
+        b.addEventListener('click', function () { playLesson(l); });
       } else {
         b.disabled = true;
         b.setAttribute('aria-label', App.i18n.t('leccionCerradaAria').replace('{n}', i + 1));
@@ -471,13 +471,13 @@
     });
   }
 
-  /* "Real texts" (plantillas): unlike pintarLecciones(), every entry
+  /* "Real texts" (templates): unlike renderLessons(), every entry
      is always open -- these are independent practice texts, not a
      graded, linearly-unlocked curriculum. */
-  function pintarPlantillas() {
+  function renderTemplates() {
     var cont = $('#listaPlantillas');
     cont.innerHTML = '';
-    plantillas().forEach(function (p, i) {
+    templates().forEach(function (p, i) {
       var hecha = !!state.completado['plantilla_' + p.id];
       var b = document.createElement('button');
       b.type = 'button';
@@ -492,57 +492,57 @@
       est.setAttribute('aria-hidden', 'true');
       est.textContent = hecha ? '⭐' : '';
       b.appendChild(num); b.appendChild(tit); b.appendChild(est);
-      b.addEventListener('click', function () { jugarPlantilla(p); });
+      b.addEventListener('click', function () { playTemplate(p); });
       cont.appendChild(b);
     });
   }
 
-  function irPlantillas() {
-    pintarPlantillas();
-    mostrarPantalla('pantallaPlantillas');
+  function goTemplates() {
+    renderTemplates();
+    showScreen('pantallaPlantillas');
   }
 
   /* ---------- Motor de secuencias ---------- */
-  function iniciarSecuencia(cfg) {
-    game = { type: 'seq', cfg: cfg, idx: 0, pos: 0, esperando: false };
-    $('#tituloJuego').textContent = cfg.titulo;
-    var enNumpad = cfg.modo === 'numeros';
-    $('#panelTeclado').classList.toggle('hidden', enNumpad);
-    $('#panelNumpad').classList.toggle('hidden', !enNumpad);
+  function startSequence(cfg) {
+    game = { type: 'seq', cfg: cfg, idx: 0, pos: 0, waiting: false };
+    $('#tituloJuego').textContent = cfg.title;
+    var inNumpad = cfg.mode === 'numeros';
+    $('#panelTeclado').classList.toggle('hidden', inNumpad);
+    $('#panelNumpad').classList.toggle('hidden', !inNumpad);
     $('#zonaObjetivo').classList.remove('hidden');
     $('#zonaReto').classList.add('hidden');
     $('#guia').classList.remove('hidden');
-    limpiarFeedback();
-    iniciarMetricas();
-    mostrarPantalla('pantallaJuego');
-    cargarPaso();
+    clearFeedback();
+    startMetrics();
+    showScreen('pantallaJuego');
+    loadStep();
   }
 
-  function pasoActual() { return game.cfg.pasos[game.idx]; }
+  function currentStep() { return game.cfg.pasos[game.idx]; }
 
   /* A step is either a typed sequence ({ seq: 'hola' }, matched
      character by character) or a single special key ({ especial:
      'Home' }, matched in one shot against the raw KeyboardEvent.key --
      see DATA.lessons "Teclas especiales"/"Special keys" and
-     normalizarTecla()). Special-key steps have no printable character
+     normalizeKey()). Special-key steps have no printable character
      and no fixed finger (the convention varies too much by keyboard),
      so they skip the finger-guide highlighting entirely. */
-  function esPasoEspecial(p) { return !!p && typeof p.especial === 'string'; }
+  function isSpecialStep(p) { return !!p && typeof p.especial === 'string'; }
 
-  function charEsperado() {
-    var p = pasoActual();
-    return (p && !esPasoEspecial(p)) ? p.seq[game.pos] : null;
+  function expectedChar() {
+    var p = currentStep();
+    return (p && !isSpecialStep(p)) ? p.seq[game.pos] : null;
   }
 
-  function cargarPaso() {
+  function loadStep() {
     game.pos = 0;
-    $('#instruccionJuego').textContent = pasoActual().text || '';
-    renderObjetivo();
-    actualizarGuia();
+    $('#instruccionJuego').textContent = currentStep().text || '';
+    renderTarget();
+    updateGuide();
   }
 
-  function renderObjetivo() {
-    var p = pasoActual();
+  function renderTarget() {
+    var p = currentStep();
     var zona = $('#zonaObjetivo');
     zona.innerHTML = '';
     /* "Real texts" (plantilla) lines are full sentences, unlike the
@@ -552,9 +552,9 @@
        as one wrap unit while spaces stay valid wrap points; the
        smaller '--compacta' box size (styles.css) fits more of a
        sentence per line before that wrap is even needed. */
-    var compacto = game.cfg.modo === 'plantilla';
+    var compacto = game.cfg.mode === 'plantilla';
     zona.classList.toggle('objetivo-zona--compacta', compacto);
-    if (esPasoEspecial(p)) {
+    if (isSpecialStep(p)) {
       var etiqueta = App.i18n.t('teclaLabel.' + p.especial);
       zona.setAttribute('aria-label', App.i18n.t('pulsaTeclaAria').replace('{tecla}', etiqueta));
       var pill = document.createElement('span');
@@ -582,54 +582,54 @@
     }
   }
 
-  /* charEsperado() keeps its original case ('A' for a required capital)
-     so renderObjetivo() can display it as typed. Everything that looks
+  /* expectedChar() keeps its original case ('A' for a required capital)
+     so renderTarget() can display it as typed. Everything that looks
      up a physical key (finger tables, data-ch on the on-screen keyboard)
      needs the base lowercase letter instead -- there's no separate 'A'
      key, just 'a' held with Shift. */
-  function charBaseEsperado() {
-    var ch = charEsperado();
+  function expectedBaseChar() {
+    var ch = expectedChar();
     return ch ? ch.toLowerCase() : null;
   }
 
-  function mayusEsperado() {
-    var ch = charEsperado();
+  function expectedShift() {
+    var ch = expectedChar();
     return !!ch && ch !== ch.toLowerCase();
   }
 
-  function actualizarGuia() {
-    if (esPasoEspecial(pasoActual())) {
-      marcarObjetivo(pasoActual().especial);
-      pintarManos(null, null);
+  function updateGuide() {
+    if (isSpecialStep(currentStep())) {
+      markTarget(currentStep().especial);
+      renderHands(null, null);
       return;
     }
-    var base = charBaseEsperado();
-    var finger = dedoDe(base, game.cfg.modo === 'numeros');
-    marcarObjetivo(base);
-    pintarManos(finger, mayusEsperado() ? ladoMayusOpuesto(finger) : null);
+    var base = expectedBaseChar();
+    var finger = fingerOf(base, game.cfg.mode === 'numeros');
+    markTarget(base);
+    renderHands(finger, expectedShift() ? oppositeShiftSide(finger) : null);
   }
 
-  function limpiarFeedback() {
+  function clearFeedback() {
     var f = $('#feedback');
     f.textContent = '';
     f.className = 'feedback';
   }
 
-  function teclaJuego(ch, mayus) {
-    if (game.esperando) return;
-    var p = pasoActual();
+  function gameKey(ch, mayus) {
+    if (game.waiting) return;
+    var p = currentStep();
     state.metricas.teclas += 1;
 
-    if (esPasoEspecial(p)) {
+    if (isSpecialStep(p)) {
       /* Single-action step: no character sequence to walk through,
          it's done as soon as the right key is detected. */
       if (ch === p.especial) {
         state.metricas.aciertos += 1;
-        actualizarMetricasVivas();
-        pasoCompletado(ch);
+        updateLiveMetrics();
+        stepCompleted(ch);
       } else {
         state.metricas.fallos += 1;
-        actualizarMetricasVivas();
+        updateLiveMetrics();
         App.feedback.encourage($('#feedback'));
       }
       return;
@@ -645,14 +645,14 @@
     if (ch === esperado.toLowerCase() && (!necesitaMayus || mayus)) {
       state.metricas.aciertos += 1;
       game.pos += 1;
-      renderObjetivo();
-      actualizarMetricasVivas();
-      if (game.pos >= seq.length) pasoCompletado(ch);
-      else actualizarGuia();
+      renderTarget();
+      updateLiveMetrics();
+      if (game.pos >= seq.length) stepCompleted(ch);
+      else updateGuide();
     } else {
       state.metricas.fallos += 1;
-      actualizarMetricasVivas();
-      teclasDe(ch).forEach(function (t) {
+      updateLiveMetrics();
+      keysOf(ch).forEach(function (t) {
         t.classList.add('fallo');
         setTimeout(function () { t.classList.remove('fallo'); }, 500);
       });
@@ -660,57 +660,57 @@
     }
   }
 
-  function pasoCompletado(ultimoCh) {
-    game.esperando = true;
-    marcarObjetivo(null);
+  function stepCompleted(lastCh) {
+    game.waiting = true;
+    markTarget(null);
     /* The success tone for the last key of the step is panned to that
        key's column (spatial-sound option). Earlier keystrokes inside
        the same step are silent in feedback.js; only the step-complete
        "ding" is panned. */
-    App.feedback.success($('#feedback'), panDe(ultimoCh));
+    App.feedback.success($('#feedback'), panOf(lastCh));
     setTimeout(function () {
       if (!game) return;
-      game.esperando = false;
+      game.waiting = false;
       game.idx += 1;
       if (game.idx >= game.cfg.pasos.length) {
-        terminarSecuencia();
+        endSequence();
       } else {
-        limpiarFeedback();
-        cargarPaso();
+        clearFeedback();
+        loadStep();
       }
     }, 1000);
   }
 
-  function terminarSecuencia() {
+  function endSequence() {
     var cfg = game.cfg;
     game = null;
-    premiar(cfg.claveEstrella);
-    celebrarConTransferencia(cfg.alTerminar);
+    award(cfg.claveEstrella);
+    celebrateWithTransfer(cfg.alTerminar);
   }
 
-  /* ---------- Modos de juego ---------- */
-  function jugarPosicion() {
-    iniciarSecuencia({
-      modo: 'posicion', titulo: App.i18n.t('modoPosicionNombre'),
+  /* ---------- Game modes ---------- */
+  function playPosition() {
+    startSequence({
+      mode: 'posicion', title: App.i18n.t('modoPosicionNombre'),
       pasos: DATA.placement[App.i18n.locale()] || DATA.placement.es,
-      claveEstrella: 'posicion', alTerminar: irMenu
+      claveEstrella: 'posicion', alTerminar: goMenu
     });
   }
 
-  function jugarLeccion(l) {
+  function playLesson(l) {
     /* Most lessons' steps are plain strings (a typed sequence). The
        special-keys lesson uses { especial: 'inicio' } objects instead
-       -- see esPasoEspecial(). */
+       -- see isSpecialStep(). */
     var pasos = l.steps.map(function (s) {
       return typeof s === 'string' ? { text: l.intro, seq: s } : { text: l.intro, especial: s.especial };
     });
-    iniciarSecuencia({
-      modo: 'leccion', titulo: App.i18n.t('leccionTitulo').replace('{titulo}', l.title),
-      pasos: pasos, claveEstrella: l.id, alTerminar: irLecciones
+    startSequence({
+      mode: 'leccion', title: App.i18n.t('leccionTitulo').replace('{titulo}', l.title),
+      pasos: pasos, claveEstrella: l.id, alTerminar: goLessons
     });
   }
 
-  function jugarPalabras() {
+  function playWords() {
     var pasos = [];
     if (state.nombre) {
       /* no accents: the exercise uses the basic keys */
@@ -722,32 +722,32 @@
     App.utils.shuffle(banco).slice(0, 4).forEach(function (w) {
       pasos.push({ text: App.i18n.t('escribeLaPalabra'), seq: w });
     });
-    iniciarSecuencia({
-      modo: 'palabras', titulo: App.i18n.t('modoPalabrasNombre'),
-      pasos: pasos, claveEstrella: 'palabras', alTerminar: irMenu
+    startSequence({
+      mode: 'palabras', title: App.i18n.t('modoPalabrasNombre'),
+      pasos: pasos, claveEstrella: 'palabras', alTerminar: goMenu
     });
   }
 
-  function jugarPlantilla(p) {
+  function playTemplate(p) {
     var pasos = p.lines.map(function (linea) {
       return { text: App.i18n.t('plantillaInstruccion'), seq: linea };
     });
-    iniciarSecuencia({
-      modo: 'plantilla', titulo: p.title,
-      pasos: pasos, claveEstrella: 'plantilla_' + p.id, alTerminar: irPlantillas
+    startSequence({
+      mode: 'plantilla', title: p.title,
+      pasos: pasos, claveEstrella: 'plantilla_' + p.id, alTerminar: goTemplates
     });
   }
 
-  function jugarNumeros() {
-    iniciarSecuencia({
-      modo: 'numeros', titulo: App.i18n.t('modoNumerosNombre'),
+  function playNumbers() {
+    startSequence({
+      mode: 'numeros', title: App.i18n.t('modoNumerosNombre'),
       pasos: DATA.numpadSteps[App.i18n.locale()] || DATA.numpadSteps.es,
-      claveEstrella: 'numeros', alTerminar: irMenu
+      claveEstrella: 'numeros', alTerminar: goMenu
     });
   }
 
-  /* ---------- Reto: todas las teclas ---------- */
-  function jugarReto() {
+  /* ---------- Challenge: all keys ---------- */
+  function playChallenge() {
     game = { type: 'reto', set: {} };
     $('#tituloJuego').textContent = App.i18n.t('tituloTodasLasTeclas');
     $('#instruccionJuego').textContent = App.i18n.t('instruccionTodasLasTeclas');
@@ -756,43 +756,43 @@
     $('#zonaObjetivo').classList.add('hidden');
     $('#zonaReto').classList.remove('hidden');
     $('#guia').classList.remove('hidden');
-    limpiarFeedback();
-    marcarObjetivo(null);
+    clearFeedback();
+    markTarget(null);
     $$('.tecla.hecha').forEach(function (t) { t.classList.remove('hecha'); });
-    iniciarMetricas();
-    mostrarPantalla('pantallaJuego');
-    actualizarReto();
+    startMetrics();
+    showScreen('pantallaJuego');
+    updateChallenge();
   }
 
-  function teclaReto(ch) {
-    var visibles = clavesTipeables(filasVisibles());
+  function challengeKey(ch) {
+    var visibles = typeableKeys(visibleRows());
     if (!visibles[ch] || game.set[ch]) return;
     game.set[ch] = true;
     state.metricas.teclas += 1;
     state.metricas.aciertos += 1;
-    actualizarMetricasVivas();
-    teclasDe(ch).forEach(function (t) { t.classList.add('hecha'); });
+    updateLiveMetrics();
+    keysOf(ch).forEach(function (t) { t.classList.add('hecha'); });
     /* Quiet per-key ack: just the "ding" panned to that column.
        Avoids spamming success messages during the challenge but lets
        the spatial-sound option be audible. */
-    App.feedback.sonidoAcierto(panDe(ch));
-    actualizarReto();
+    App.feedback.successSound(panOf(ch));
+    updateChallenge();
   }
 
-  function reaplicarReto() {
+  function reapplyChallenge() {
     Object.keys(game.set).forEach(function (ch) {
-      teclasDe(ch).forEach(function (t) { t.classList.add('hecha'); });
+      keysOf(ch).forEach(function (t) { t.classList.add('hecha'); });
     });
-    actualizarReto();
+    updateChallenge();
   }
 
   /* Pick the next key the player still has to press in the "all keys"
      challenge. Iteration is stable (layout row order) so the player
      sees a predictable left-to-right, top-to-bottom rhythm instead of
      a random-looking highlight jumping around. */
-  function siguienteTeclaPendiente() {
+  function nextPendingKey() {
     var pendientes = null;
-    filasVisibles().forEach(function (f) {
+    visibleRows().forEach(function (f) {
       f.forEach(function (k) {
         if (!k.ch || k.special) return;
         if (game.set[k.ch]) return;
@@ -807,40 +807,40 @@
      next key still pending in the challenge. The marker reuses the
      same "objetivo" class the rest of the modes use to light up the
      target key, so the visual cue is consistent across modes. */
-  function guiaReto() {
-    var k = siguienteTeclaPendiente();
+  function challengeGuide() {
+    var k = nextPendingKey();
     if (!k) {
-      marcarObjetivo(null);
+      markTarget(null);
       $('#guiaTexto').textContent = '';
-      $('#manosSvg').innerHTML = manosSVG(null, null);
+      $('#manosSvg').innerHTML = handsSVG(null, null);
       return;
     }
     var ch = k.ch;
-    var enNumpad = !!DATA.numpadFingers[ch];
-    var finger = dedoDe(ch, enNumpad);
-    marcarObjetivo(ch);
-    pintarManos(finger, null);
+    var inNumpad = !!DATA.numpadFingers[ch];
+    var finger = fingerOf(ch, inNumpad);
+    markTarget(ch);
+    renderHands(finger, null);
     var teclaTxt;
     if (ch === ' ') teclaTxt = App.i18n.t('teclaLabel.espacio') || ch;
     else if (ch.length === 1 && /[a-zA-Z]/.test(ch)) teclaTxt = ch.toUpperCase();
     else teclaTxt = ch;
-    var texto;
+    var text;
     if (finger === 'th') {
-      texto = App.i18n.t('retoSiguientePulgar').replace('{tecla}', teclaTxt);
+      text = App.i18n.t('retoSiguientePulgar').replace('{tecla}', teclaTxt);
     } else if (finger) {
-      texto = App.i18n.t('retoSiguiente')
+      text = App.i18n.t('retoSiguiente')
         .replace('{tecla}', teclaTxt)
         .replace('{dedo}', App.i18n.t('dedo.' + finger + '.nombre'))
         .replace('{mano}', App.i18n.t('dedo.' + finger + '.mano'));
     } else {
-      texto = App.i18n.t('buscaTecla');
+      text = App.i18n.t('buscaTecla');
     }
-    $('#guiaTexto').textContent = texto;
+    $('#guiaTexto').textContent = text;
   }
 
-  function actualizarReto() {
+  function updateChallenge() {
     var total = 0, hechas = 0;
-    filasVisibles().forEach(function (f) {
+    visibleRows().forEach(function (f) {
       f.forEach(function (k) {
         if (!k.ch || k.special) return;
         total += 1;
@@ -854,14 +854,14 @@
       /* Clear the next-key highlight and the hand guide so the
          completion feedback doesn't leave a stale "press X" prompt
          on screen while the success banner shows. */
-      marcarObjetivo(null);
+      markTarget(null);
       $('#guiaTexto').textContent = '';
-      $('#manosSvg').innerHTML = manosSVG(null, null);
-      premiar('todas');
-      celebrarConTransferencia(irMenu);
+      $('#manosSvg').innerHTML = handsSVG(null, null);
+      award('todas');
+      celebrateWithTransfer(goMenu);
       return;
     }
-    guiaReto();
+    challengeGuide();
   }
 
   /* ---------- Physical keyboard: the only real input ---------- */
@@ -869,12 +869,12 @@
      (see DATA.lessons "Teclas especiales"/"Special keys") to an
      internal id. The id is what ends up in data-ch on the on-screen
      decorative key (DATA.layouts.extendido) and in a lesson step's
-     `especial` field -- normalizarTecla() is the only place that knows
+     `especial` field -- normalizeKey() is the only place that knows
      about the real DOM key names, same as it's the only place that
      knows 'Spacebar' means ' '. */
   var TECLA_ESPECIAL_DOM = { Home: 'inicio', End: 'fin', PageUp: 'pagArriba', PageDown: 'pagAbajo', Delete: 'suprimir' };
 
-  function normalizarTecla(k) {
+  function normalizeKey(k) {
     if (k === 'Spacebar') k = ' ';
     if (TECLA_ESPECIAL_DOM[k]) return TECLA_ESPECIAL_DOM[k];
     if (typeof k !== 'string' || k.length !== 1) return null;
@@ -882,27 +882,27 @@
   }
 
   document.addEventListener('keydown', function (e) {
-    if (ajustesAbiertos()) {
-      if (e.key === 'Escape') cerrarAjustes();
-      else manejarTabDrawer(e);
+    if (settingsOpen()) {
+      if (e.key === 'Escape') closeSettings();
+      else handleDrawerTab(e);
       return;
     }
     if (e.ctrlKey || e.metaKey || e.altKey) return;
-    var ch = normalizarTecla(e.key);
+    var ch = normalizeKey(e.key);
     if (!ch) return;
-    flashTecla(ch, true);
+    flashKey(ch, true);
     var foco = document.activeElement;
     if (foco && (foco.tagName === 'INPUT' || foco.tagName === 'TEXTAREA')) return;
     if (!game) return;
     e.preventDefault();
     if (e.repeat) return;
-    if (game.type === 'reto') teclaReto(ch);
-    else teclaJuego(ch, e.shiftKey);
+    if (game.type === 'reto') challengeKey(ch);
+    else gameKey(ch, e.shiftKey);
   });
 
   document.addEventListener('keyup', function (e) {
-    var ch = normalizarTecla(e.key);
-    if (ch) flashTecla(ch, false);
+    var ch = normalizeKey(e.key);
+    if (ch) flashKey(ch, false);
   });
 
   /* ---------- Keyboard options (delegation: there are several panels) ---------- */
@@ -910,37 +910,37 @@
     var bt = e.target.closest('.btn-teclado');
     if (bt) {
       state.opciones.teclado = bt.dataset.teclado;
-      guardar();
+      save();
       renderTeclados();
       return;
     }
     var bc = e.target.closest('.btn-color');
     if (bc) {
       state.opciones.color = state.opciones.color === 'manos' ? 'dedos' : 'manos';
-      guardar();
+      save();
       renderTeclados();
     }
   });
 
   /* ---------- Nombre ---------- */
-  function guardarNombre() {
+  function saveName() {
     var v = $('#inputNombre').value.trim().slice(0, 20);
     state.nombre = v;
-    guardar();
+    save();
     /* Audio only plays if the user taps the "Listen" button (btnLeerNombre) */
-    irMenu();
+    goMenu();
   }
 
-  $('#btnGuardarNombre').addEventListener('click', guardarNombre);
+  $('#btnGuardarNombre').addEventListener('click', saveName);
   $('#btnSinNombre').addEventListener('click', function () {
     state.nombre = '';
-    guardar();
-    irMenu();
+    save();
+    goMenu();
   });
   $('#inputNombre').addEventListener('keydown', function (e) {
     if (e.key === 'Enter') {
       e.preventDefault();
-      guardarNombre();
+      saveName();
     }
   });
   $('#btnLeerNombre').addEventListener('click', function () {
@@ -964,59 +964,59 @@
     state = {
       nombre: '', estrellas: 0, completado: {},
       opciones: {
-        teclado: 'simplificado', color: 'manos', tema: 'auto', texto: 'normal',
+        teclado: 'simplificado', color: 'manos', tema: 'auto', text: 'normal',
         foco: false, espacial: false, metricas: false
       }
     };
-    guardar();
+    save();
     btn.textContent = App.i18n.t('btnBorrarProgreso');
     $('#inputNombre').value = '';
     $('#avisoNombre').textContent = App.i18n.t('avisoBorrado');
     renderTeclados();
-    aplicarOpciones();
-    actualizarEstrellas();
+    applyOptions();
+    updateStars();
   });
 
   /* ---------- Menu and navigation ---------- */
   $('#menuJuegos').addEventListener('click', function (e) {
     var t = e.target.closest('.tarjeta-modo');
     if (!t) return;
-    var m = t.dataset.modo;
-    if (m === 'posicion') jugarPosicion();
-    else if (m === 'lecciones') irLecciones();
-    else if (m === 'palabras') jugarPalabras();
-    else if (m === 'todas') jugarReto();
-    else if (m === 'numeros') jugarNumeros();
-    else if (m === 'libre') irLibre();
-    else if (m === 'plantillas') irPlantillas();
+    var m = t.dataset.mode;
+    if (m === 'posicion') playPosition();
+    else if (m === 'lecciones') goLessons();
+    else if (m === 'palabras') playWords();
+    else if (m === 'todas') playChallenge();
+    else if (m === 'numeros') playNumbers();
+    else if (m === 'libre') goFree();
+    else if (m === 'templates') goTemplates();
   });
 
   $('#btnLeerSaludo').addEventListener('click', function () {
     App.tts.speak($('#saludo').textContent + ' ' + App.i18n.t('eligeJuego'));
   });
 
-  $('#btnCambiarNombre').addEventListener('click', irNombre);
-  $('#btnVolverMenu').addEventListener('click', irMenu);
-  $('#btnVolverMenuPlantillas').addEventListener('click', irMenu);
+  $('#btnCambiarNombre').addEventListener('click', goName);
+  $('#btnVolverMenu').addEventListener('click', goMenu);
+  $('#btnVolverMenuPlantillas').addEventListener('click', goMenu);
 
   $('#btnSalirJuego').addEventListener('click', function () {
-    var modo = game && game.cfg ? game.cfg.modo : null;
+    var mode = game && game.cfg ? game.cfg.mode : null;
     game = null;
     App.tts.stop();
-    marcarObjetivo(null);
-    if (modo === 'leccion') irLecciones();
-    else if (modo === 'plantilla') irPlantillas();
-    else irMenu();
+    markTarget(null);
+    if (mode === 'leccion') goLessons();
+    else if (mode === 'plantilla') goTemplates();
+    else goMenu();
   });
 
   $('#btnLeerJuego').addEventListener('click', function () {
-    var texto = $('#tituloJuego').textContent + '. ' + $('#instruccionJuego').textContent;
-    if (game && game.type === 'seq') texto += ' ' + $('#guiaTexto').textContent;
-    App.tts.speak(texto);
+    var text = $('#tituloJuego').textContent + '. ' + $('#instruccionJuego').textContent;
+    if (game && game.type === 'seq') text += ' ' + $('#guiaTexto').textContent;
+    App.tts.speak(text);
   });
 
   /* ---------- Escritura libre ---------- */
-  $('#btnSalirLibre').addEventListener('click', irMenu);
+  $('#btnSalirLibre').addEventListener('click', goMenu);
   $('#btnLeerLibre').addEventListener('click', function () {
     var t = $('#areaLibre').value.trim();
     App.tts.speak(t || App.i18n.t('noHasEscrito'));
@@ -1063,10 +1063,10 @@
   }
 
   $('#areaLibre').setAttribute('placeholder', App.i18n.t('areaLibrePlaceholder'));
-  pintarFilas($('#numpad'), DATA.numpad);
+  renderRows($('#numpad'), DATA.numpad);
   renderTeclados();
-  aplicarOpciones();
-  actualizarEstrellas();
-  if (state.nombre) irMenu();
-  else irNombre();
+  applyOptions();
+  updateStars();
+  if (state.nombre) goMenu();
+  else goName();
 })();
