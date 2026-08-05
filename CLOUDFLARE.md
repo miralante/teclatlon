@@ -116,10 +116,26 @@ directly without ever invoking npm.
 
 The service worker (`sw.js`) is registered from every HTML entry
 point (`./index.html` registers `./sw.js`; `/legal/index.html`
-registers `../sw.js`). The SW only caches 200 responses — Safari
-rejects a top-level navigation served by a SW that carries a
-`Location` header ("Response served by service worker has
-redirections") — and serves a tiny inline "Sin conexión" HTML for
-offline failures, with no `Location` header. Bump `VERSION` in
-`sw.js` whenever you change `ARCHIVOS` to force a clean reinstall
-on existing clients.
+registers `../sw.js`). Strategy is **network-first, cache
+fallback**:
+
+- **Network-first** — every GET request goes to the network first,
+  and the response is mirrored into the SW cache for offline use.
+  This keeps the latest server version authoritative whenever the
+  device is online, so a redeploy is visible on the next page
+  load instead of being trapped behind a 1-year cache.
+- **Cache fallback** — when the network is unreachable (offline /
+  CDN outage), the SW serves the last cached copy.
+- **Offline shell** — for navigations that have neither a network
+  response nor a cached copy, the SW replies with a tiny inline
+  "Sin conexión" HTML with no `Location` header (Safari rejects a
+  top-level navigation served by the SW that carries a redirect:
+  "Response served by service worker has redirections").
+- **Resilient install** — `install` caches each asset individually,
+  never `cache.addAll`, so a single missing or failing file does
+  not take the whole cache down. Failures are logged with
+  `console.warn` and skipped.
+
+Bump `VERSION` in `sw.js` whenever you change `ARCHIVOS` to discard
+the old cache. The agent-workflow checklist in [`CLAUDE.md`](CLAUDE.md)
+documents which files trigger a required `VERSION` bump.

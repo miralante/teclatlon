@@ -3,7 +3,7 @@
    Cache-first strategy for the app shell (works offline).
    When adding new files: add them to ARCHIVOS and bump VERSION.
    ============================================================ */
-var VERSION = 'teclatlon-v15';
+var VERSION = 'teclatlon-v16';
 
 var ARCHIVOS = [
   './index.html',
@@ -35,13 +35,32 @@ var ARCHIVOS = [
 self.addEventListener('install', function (event) {
   event.waitUntil(
     caches.open(VERSION).then(function (cache) {
-      /* cache: 'reload' avoids storing stale copies from the browser's HTTP cache */
-      var peticiones = ARCHIVOS.map(function (a) {
-        return new Request(a, { cache: 'reload' });
+      /* One file at a time, never cache.addAll -- addAll aborts the
+         whole batch on the first failure, which leaves the cache empty
+         and bricks the app (the catch-all fetch below would then
+         serve 0-byte responses for every asset). Put each file
+         individually so a single missing/failing asset doesn't take
+         the rest down. cache:'reload' skips the HTTP cache so the SW
+         always sees the latest server version during install. */
+      var fallos = [];
+      return Promise.all(ARCHIVOS.map(function (a) {
+        return fetch(new Request(a, { cache: 'reload' })).then(function (r) {
+          if (r && r.ok) return cache.put(a, r);
+          fallos.push(a + ' -> ' + (r ? r.status : 'no-response'));
+          return null;
+        }).catch(function (err) {
+          fallos.push(a + ' -> ' + err);
+          return null;
+        });
+      })).then(function () {
+        if (fallos.length) {
+          /* Don't crash the install: log and move on. The fetch
+             handler below falls back to the network for anything
+             missing in the cache. */
+          console.warn('[sw] install: ' + fallos.length + ' files failed to cache', fallos);
+        }
+        return self.skipWaiting();
       });
-      return cache.addAll(peticiones);
-    }).then(function () {
-      return self.skipWaiting();
     })
   );
 });
@@ -61,25 +80,30 @@ self.addEventListener('activate', function (event) {
 
 self.addEventListener('fetch', function (event) {
   if (event.request.method !== 'GET') return;
+  /* Network-first, cache fallback. Earlier this SW used pure
+     cache-first, which pinned already-installed clients to the first
+     version of every asset and made deploys invisible until the user
+     cleared site data. Network-first keeps the latest server version
+     authoritative whenever the device is online; the cache only kicks
+     in when the network is unreachable (offline / CDN outage). */
   event.respondWith(
-    caches.match(event.request).then(function (respuesta) {
-      if (respuesta) return respuesta;
-      return fetch(event.request).then(function (r) {
-        /* Also cache new same-origin resources — but never cache a
-           redirect. Safari (and the Fetch spec) rejects a top-level
-           navigation served by the SW that carries a Location header
-           ("Response served by service worker has redirections"), so we
-           follow the redirect and cache only the final 200. */
-        if (r.status === 200) {
-          var copia = r.clone();
-          caches.open(VERSION).then(function (cache) {
-            cache.put(event.request, copia);
-          });
-        }
-        return r;
-      }).catch(function () {
-        /* Offline / network failure: reply with a tiny inline HTML that
-           stays at the current URL and offers a link to the app. */
+    fetch(event.request).then(function (r) {
+      /* Cache successful same-origin responses (final 200 only --
+         Safari rejects a top-level navigation served by the SW that
+         carries a Location header, "Response served by service
+         worker has redirections"). */
+      if (r && r.status === 200) {
+        var copia = r.clone();
+        caches.open(VERSION).then(function (cache) {
+          cache.put(event.request, copia);
+        });
+      }
+      return r;
+    }).catch(function () {
+      /* Offline / network failure: try the cache, otherwise reply
+         with a tiny inline HTML that stays at the current URL. */
+      return caches.match(event.request).then(function (deCache) {
+        if (deCache) return deCache;
         return new Response(
           '<!doctype html><html lang="es"><head><meta charset="utf-8">' +
           '<meta name="viewport" content="width=device-width,initial-scale=1">' +
