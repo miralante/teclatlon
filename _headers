@@ -1,13 +1,75 @@
-# Cloudflare Pages headers — applied to every matching path.
+# Cloudflare Pages headers \u2014 applied to every matching path.
 #
 # The HTML entry point and service worker must NOT be long-cached, otherwise
 # the PWA's cache-first strategy gets pinned to an old shell. JS/CSS/font
 # assets are fingerprinted only when changed, so a 1-year cache is safe.
+#
+# See doc/en/technical.md (or doc/es/tecnico.md) for the matching
+# security model; the directives below mirror what the app actually
+# does at runtime, no more.
 
-/
-  X-Content-Type-Options: nosniff
+# ---------------------------------------------------------------------------
+# Security headers \u2014 applied to every response, including HTML.
+# ---------------------------------------------------------------------------
+/*
   X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  # Hides the full URL (which may contain a search) from cross-origin
+  # Referer headers, while still letting the browser send our origin to
+  # any same-site request.
   Referrer-Policy: strict-origin-when-cross-origin
+  # Disable features we don't use. Cheap, belt-and-braces hardening.
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), midi=()
+  # Cross-origin isolation. `credentialless` is the modern alternative
+  # that doesn't require `Cross-Origin-Opener-Policy: same-origin`; it
+  # lets us keep the site embeddable in iframes with credentials off
+  # without breaking asset loads.
+  Cross-Origin-Resource-Policy: same-origin
+  Cross-Origin-Opener-Policy: same-origin
+  # Upgrade any accidental http:// subresources to https. Belt-and-braces \u2014
+  # we don't link to any http:// URLs ourselves.
+  Upgrade-Insecure-Requests: 1
+  # Strict CSP. Directives:
+  #   default-src 'self'                          \u2014 deny everything by default
+  #   script-src 'self'                           \u2014 no inline scripts, no eval
+  #   style-src 'self' 'unsafe-inline'            \u2014 external stylesheets AND
+  #                                                the one inline `style.X =`
+  #                                                write done by storage.js
+  #                                                (CSS custom prop overrides
+  #                                                for --color-tema etc.)
+  #                                                We do NOT use `style-src-elem`
+  #                                                on purpose: Safari had
+  #                                                inconsistent support and the
+  #                                                single `style-src` directive
+  #                                                is enough here.
+  #   img-src 'self' data:                        \u2014 favicon data: + all app
+  #                                                icons shipped in assets/img
+  #   font-src 'self'                             \u2014 only the bundled Atkinson /
+  #                                                Nunito woff2 files
+  #   connect-src 'self'                          \u2014 no XHR/fetch to third
+  #                                                parties; TTS uses the local
+  #                                                Web Speech API, not the net
+  #   worker-src 'self'                           \u2014 Teclatlon ships its own
+  #                                                service worker (sw.js) for
+  #                                                the offline PWA experience
+  #   manifest-src 'self'                         \u2014 manifest.json
+  #   object-src 'none'                           \u2014 no <object>/<embed>/<applet>
+  #   base-uri 'self'                             \u2014 block <base> hijacking
+  #   form-action 'self'                          \u2014 block form submission to
+  #                                                third parties (the app has
+  #                                                no forms, but belt-and-braces)
+  #   frame-ancestors 'self'                      \u2014 allow SAMEORIGIN embeds
+  #                                                (matches X-Frame-Options)
+  Content-Security-Policy: default-src ''self''; script-src ''self''; style-src ''self'' ''unsafe-inline''; img-src ''self'' data:; font-src ''self''; connect-src ''self''; worker-src ''self''; manifest-src ''self''; object-src ''none''; base-uri ''self''; form-action ''self''; frame-ancestors ''self''
+
+# ---------------------------------------------------------------------------
+# Cache policy per asset type.
+#
+# `index.html`, `legal/*`, `manifest.json` and `sw.js` are the shell:
+# they MUST be revalidated on every visit, otherwise the PWA's
+# cache-first strategy pins users to an old shell (see sw.js). All
+# other assets are content-hashed or fingerprinted only when changed,
+# so a 1-year cache is safe.
 
 /index.html
   Cache-Control: public, max-age=0, must-revalidate

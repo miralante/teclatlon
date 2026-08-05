@@ -12,47 +12,169 @@
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/components.css">
   <link rel="stylesheet" href="styles.css">
+  <script>
+    /* Pre-paint bootstrap: pick the UI language from the browser so
+       English-speaking visitors don't see a flash of Spanish, and
+       short-circuit the app on phones/tablets with a full-screen
+       overlay before the first paint. Must run synchronously, before
+       the stylesheet cascade evaluates, and without any project
+       dependency (assets/js/* isn't loaded yet at this point). The
+       detection here mirrors assets/js/i18n.js#detectar on purpose —
+       keep both in sync if the supported-locales list changes. */
+    (function () {
+      var SOPORTADOS = ['es', 'en'];
+      var POR_DEFECTO = 'es';
+
+      function detectarIdioma() {
+        try {
+          var idiomas = navigator.languages && navigator.languages.length
+            ? navigator.languages
+            : [navigator.language || ''];
+          for (var i = 0; i < idiomas.length; i++) {
+            var prefijo = (idiomas[i] || '').slice(0, 2).toLowerCase();
+            if (SOPORTADOS.indexOf(prefijo) !== -1) return prefijo;
+          }
+        } catch (e) { /* ignore */ }
+        return POR_DEFECTO;
+      }
+
+      var lang = detectarIdioma();
+      document.documentElement.lang = lang;
+
+      /* Device gate: Teclatlon is computer-only (see SPEC.md §2).
+         Detection combines UA + coarse pointer + touch capability +
+         viewport width. UA of mobile/tablet always blocks; a desktop
+         UA (Windows / Mac / Linux X11 / ChromeOS) is allowed even
+         with a touch screen (Surface, MacBook Touch Bar, Chromebook)
+         so people with a physical keyboard can still play. */
+      function esMovil() {
+        var ua = (navigator.userAgent || '').toLowerCase();
+        var uaMovil = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile|tablet/.test(ua);
+        var uaEscritorio = /windows nt|macintosh|x11|cros /.test(ua);
+        var coarse = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+        var tactil = (navigator.maxTouchPoints || 0) > 0;
+        var pequeno = window.matchMedia && window.matchMedia('(max-width: 900px)').matches;
+        /* Touch-screen desktop / Chromebook / convertible laptop with
+           a physical keyboard -> allow. */
+        if (uaEscritorio && !uaMovil) return false;
+        if (uaMovil && (coarse || pequeno)) return true;
+        if (coarse && tactil) return true;
+        if (pequeno && tactil) return true;
+        return false;
+      }
+
+      if (esMovil()) {
+        /* Hide the app shell — every section has the .hidden class
+           except this overlay; we also force-hide via inline style so
+           it works even before styles.css loads. */
+        document.documentElement.setAttribute('data-app-bloqueada', 'movil');
+        /* Override the <title> so the browser tab reads the gate too. */
+        document.title = lang === 'en' ? 'Computer only — Teclatlon' : 'Solo en el ordenador — Teclatlon';
+      }
+
+      /* Apply saved accessibility settings before the first paint, the
+         same way the language above is applied early: otherwise the
+         page would flash the default theme/size/font for a moment
+         before app.js#aplicarOpciones() runs. Reads the same
+         localStorage key assets/js/storage.js writes to
+         ('teclatlon:keyboard'); kept in a try/catch since storage can
+         throw in private mode. */
+      try {
+        var guardado = JSON.parse(localStorage.getItem('teclatlon:keyboard') || '{}');
+        var opciones = guardado.opciones || {};
+        var html = document.documentElement;
+        /* Default theme is "claro" (light). If the user has chosen
+           "auto" we still need a concrete data-tema before first paint
+           to avoid flashing dark on systems with prefers-color-scheme:
+           dark — auto resolves to "claro" for first paint and the real
+           OS theme is applied right after by app.js#aplicarOpciones()
+           when it swaps back to data-tema unset for "auto". If they
+           picked an explicit theme we honour it as before. */
+        if (opciones.tema === 'oscuro' || opciones.tema === 'contraste') {
+          html.setAttribute('data-tema', opciones.tema);
+        } else if (opciones.tema === 'claro' || opciones.tema === 'auto') {
+          html.setAttribute('data-tema', 'claro');
+        } else {
+          html.setAttribute('data-tema', 'claro');
+        }
+        if (opciones.texto && opciones.texto !== 'normal') html.setAttribute('data-texto', opciones.texto);
+        if (opciones.foco) html.classList.add('modo-foco');
+      } catch (e) { /* ignore */ }
+    })();
+  </script>
 </head>
 <body>
+  <!-- Overlay: "computer only" gate. Rendered inline (no JS dep, no
+       extra HTTP request) so it appears before the first paint on
+       phones/tablets. On desktop the <html> attribute is not set and
+       this overlay stays display:none. The text lives in i18n strings
+       and is filled in by the same script that wires the rest of the
+       app (App.i18n.apply on DOMContentLoaded), so it respects the
+       detected language automatically. -->
+  <div id="bloqueoMovil" class="bloqueo-movil" role="alertdialog" aria-modal="true" aria-labelledby="bloqueoMovilTitulo" aria-describedby="bloqueoMovilMotivo" hidden>
+    <div class="bloqueo-movil-caja">
+      <div class="bloqueo-movil-picto" aria-hidden="true">🖥️</div>
+      <h2 class="bloqueo-movil-titulo" id="bloqueoMovilTitulo" data-i18n="soloOrdenador">Solo en el ordenador</h2>
+      <p class="bloqueo-movil-motivo" id="bloqueoMovilMotivo" data-i18n="soloOrdenadorMotivo">Teclatlon se usa con el teclado físico del ordenador. En un móvil o tablet el teclado que ves en pantalla es solo un dibujo: no se puede pulsar para escribir. Abre esta página desde un portátil o un PC.</p>
+      <p class="bloqueo-movil-sugerencia" data-i18n="soloOrdenadorSugerencia">Si tu móvil u ordenador tienen teclado físico, conecta uno por Bluetooth o USB y vuelve a intentarlo.</p>
+    </div>
+  </div>
   <div class="container">
     <header class="tool-header">
-      <h1 data-i18n="title">⌨️ Teclatlon</h1>
-      <span class="stars" id="stars">⭐ 0</span>
+      <div class="tool-header-fila">
+        <h1 data-i18n="title">⌨️ Teclatlon</h1>
+        <div class="header-datos">
+          <span class="dato racha" id="racha" hidden>🔥 0</span>
+          <span class="stars" id="stars">⭐ 0</span>
+          <button type="button" class="btn-icono btn-abrir-ajustes" id="btnAbrirAjustes" aria-haspopup="dialog" aria-expanded="false" aria-controls="drawerAjustes" data-i18n-aria="abrirAjustesAria" aria-label="Ajustes">⚙️</button>
+        </div>
+      </div>
+      <!-- Single source of truth for the keyboard-view selector. Lived
+           inline inside pantallaNombre/pantallaJuego/pantallaLibre before
+           and was duplicated three times; hoisted into the header so
+           it's always one click away (no scrolling mid-game) and so the
+           per-section keyboard panels can shed that row to gain
+           vertical room on small screens. The .detalle-teclado and
+           .leyenda-teclado stay where they were (they read in the
+           context of the keyboard they describe) and are still scoped
+           per section by app.js (uses $$('.detalle-teclado') /
+           $$('.leyenda-teclado') so it fills every copy). -->
+      <div class="row opciones-teclado opciones-teclado--header" role="group" data-i18n-aria="tipoTecladoAria" aria-label="Vista del teclado">
+        <button type="button" class="btn btn-secondary btn-compacto btn-teclado" data-teclado="simplificado" data-i18n="btnSimple" aria-pressed="false">🔤 Solo letras</button>
+        <button type="button" class="btn btn-secondary btn-compacto btn-teclado" data-teclado="normal" data-i18n="btnNormal" aria-pressed="false">⌨️ Letras y números</button>
+        <button type="button" class="btn btn-secondary btn-compacto btn-teclado" data-teclado="extendido" data-i18n="btnExtendido" aria-pressed="false">🔢 Con números al lado</button>
+        <button type="button" class="btn btn-secondary btn-compacto btn-color" data-i18n="btnColoresManos" aria-pressed="false">🎨 Colores: manos</button>
+      </div>
     </header>
 
     <!-- Pantalla: tu nombre -->
-    <section id="pantallaNombre" class="oculto pila">
-      <div class="fila centrado-fila">
+    <section id="pantallaNombre" class="hidden stack">
+      <div class="row centrado-row">
         <p class="instruccion" id="textoNombre" data-i18n="textoNombre">¡Hola! ¿Cómo te llamas? Escribe tu nombre con el teclado.</p>
         <button type="button" class="btn btn-audio" id="btnLeerNombre" data-i18n-aria="core.listenInstructions" aria-label="Escuchar las instrucciones">🔊</button>
       </div>
       <input id="inputNombre" class="input-nombre" type="text" maxlength="20" autocomplete="off" spellcheck="false" data-i18n-aria="inputNombreAria" aria-label="Escribe tu nombre">
-      <div class="fila centrado-fila">
+      <div class="row centrado-row">
         <button type="button" class="btn" id="btnGuardarNombre" data-i18n="btnGuardarNombre">✅ Listo</button>
-        <button type="button" class="btn btn-secundario" id="btnSinNombre" data-i18n="btnSinNombre">Ahora no</button>
+        <button type="button" class="btn btn-secondary" id="btnSinNombre" data-i18n="btnSinNombre">Ahora no</button>
       </div>
       <p class="feedback" id="avisoNombre" aria-live="polite"></p>
-      <div class="teclado-panel pila">
-        <div class="fila opciones-teclado" role="group" data-i18n-aria="tipoTecladoAria" aria-label="Tipo de teclado">
-          <button type="button" class="btn btn-secundario btn-teclado" data-teclado="simplificado" data-i18n="btnSimple" aria-pressed="false">🔤 Simple</button>
-          <button type="button" class="btn btn-secundario btn-teclado" data-teclado="normal" data-i18n="btnNormal" aria-pressed="false">⌨️ Normal</button>
-          <button type="button" class="btn btn-secundario btn-teclado" data-teclado="extendido" data-i18n="btnExtendido" aria-pressed="false">🔢 Extendido</button>
-          <button type="button" class="btn btn-secundario btn-color" data-i18n="btnColoresManos" aria-pressed="false">🎨 Colores: manos</button>
-        </div>
-        <div class="fila-vista-teclado">
+      <div class="teclado-panel stack">
+        <p class="detalle-teclado" aria-live="polite"></p>
+        <div class="row-vista-teclado">
           <div class="teclado" aria-hidden="true"></div>
-          <div class="numpad-inline oculto" aria-hidden="true"></div>
+          <div class="numpad-inline hidden" aria-hidden="true"></div>
         </div>
         <p class="leyenda-teclado"></p>
       </div>
-      <div class="fila centrado-fila">
-        <button type="button" class="btn btn-secundario" id="btnBorrarTodo" data-i18n="btnBorrarProgreso">🗑️ Borrar mi progreso</button>
+      <div class="row centrado-row">
+        <button type="button" class="btn btn-secondary btn-compacto" id="btnBorrarTodo" data-i18n="btnBorrarProgreso">🗑️ Borrar mi progreso</button>
       </div>
     </section>
 
     <!-- Screen: game menu -->
-    <section id="pantallaMenu" class="oculto pila">
-      <div class="fila centrado-fila">
+    <section id="pantallaMenu" class="hidden stack">
+      <div class="row centrado-row">
         <h2 id="saludo" data-i18n="saludoHola">¡Hola!</h2>
         <button type="button" class="btn btn-audio" id="btnLeerSaludo" data-i18n-aria="core.listenText" aria-label="Escuchar el saludo">🔊</button>
       </div>
@@ -88,6 +210,12 @@
           <span class="detalle" data-i18n="modoNumerosDetalle">Usa el teclado de números.</span>
           <span class="hecho"></span>
         </button>
+        <button type="button" class="tarjeta-modo" data-modo="plantillas">
+          <span class="picto" aria-hidden="true">📩</span>
+          <span class="nombre" data-i18n="modoPlantillasNombre">Textos reales</span>
+          <span class="detalle" data-i18n="modoPlantillasDetalle">Practica con un correo o una carta.</span>
+          <span class="hecho"></span>
+        </button>
         <button type="button" class="tarjeta-modo" data-modo="libre">
           <span class="picto" aria-hidden="true">✍️</span>
           <span class="nombre" data-i18n="modoLibreNombre">Escribe libre</span>
@@ -95,86 +223,153 @@
           <span class="hecho"></span>
         </button>
       </div>
-      <div class="fila centrado-fila">
-        <button type="button" class="btn btn-secundario" id="btnCambiarNombre" data-i18n="btnMiNombre">✏️ Mi nombre</button>
+      <div class="row centrado-row">
+        <button type="button" class="btn btn-secondary btn-compacto" id="btnCambiarNombre" data-i18n="btnMiNombre">✏️ Mi nombre</button>
+      </div>
+      <p class="instruccion centrado" id="resumen" aria-live="polite"></p>
+      <div class="panel-ajustes stack" aria-labelledby="insigniasTitulo">
+        <h3 id="insigniasTitulo" data-i18n="insigniasTitulo">Insignias</h3>
+        <div class="grid-insignias" id="gridInsignias"></div>
+        <p class="ayuda" id="insigniasVacia" data-i18n="insigniasVacia">Aún no hay insignias. ¡Sigue practicando!</p>
       </div>
     </section>
 
     <!-- Pantalla: lista de lecciones -->
-    <section id="pantallaLecciones" class="oculto pila">
-      <div class="fila">
-        <button type="button" class="btn btn-secundario" id="btnVolverMenu" data-i18n="btnMenu">← Menú</button>
+    <section id="pantallaLecciones" class="hidden stack">
+      <div class="row pantalla-juego-barra">
+        <button type="button" class="btn btn-secondary btn-compacto" id="btnVolverMenu" data-i18n="btnMenu">← Menú</button>
         <h2 class="titulo-juego" data-i18n="modoLeccionesNombre">Paso a paso</h2>
       </div>
       <p class="instruccion" data-i18n="leccionesInstruccion">Termina una lección para abrir la siguiente.</p>
       <div class="grid-lecciones" id="listaLecciones"></div>
     </section>
 
+    <!-- Pantalla: lista de plantillas (textos reales: correo, carta...) -->
+    <section id="pantallaPlantillas" class="hidden stack">
+      <div class="row pantalla-juego-barra">
+        <button type="button" class="btn btn-secondary btn-compacto" id="btnVolverMenuPlantillas" data-i18n="btnMenu">← Menú</button>
+        <h2 class="titulo-juego" data-i18n="modoPlantillasNombre">Textos reales</h2>
+      </div>
+      <p class="instruccion" data-i18n="plantillasInstruccion">Elige un texto para practicar.</p>
+      <div class="grid-lecciones" id="listaPlantillas"></div>
+    </section>
+
     <!-- Screen: game (position, lessons, words, challenge and numbers) -->
-    <section id="pantallaJuego" class="oculto pila">
-      <div class="fila">
-        <button type="button" class="btn btn-secundario" id="btnSalirJuego" data-i18n="btnMenu">← Menú</button>
+    <section id="pantallaJuego" class="hidden stack">
+      <div class="row pantalla-juego-barra">
+        <button type="button" class="btn btn-secondary btn-compacto" id="btnSalirJuego" data-i18n="btnMenu">← Menú</button>
         <h2 class="titulo-juego" id="tituloJuego" data-i18n="tituloJuegoDefault">Juego</h2>
-        <button type="button" class="btn btn-audio" id="btnLeerJuego" data-i18n-aria="core.listenInstructions" aria-label="Escuchar las instrucciones">🔊</button>
+        <button type="button" class="btn btn-audio btn-compacto" id="btnLeerJuego" data-i18n-aria="core.listenInstructions" aria-label="Escuchar las instrucciones">🔊</button>
       </div>
       <p class="instruccion centrado" id="instruccionJuego"></p>
       <div class="card centrado">
         <div id="zonaObjetivo" class="objetivo-zona"></div>
-        <div id="zonaReto" class="progress-bar oculto">
+        <div id="zonaReto" class="progress-bar hidden">
           <div class="progress-fill" id="retoFill"></div>
           <span class="progress-text" id="retoTexto">0 de 0</span>
         </div>
       </div>
       <div class="feedback" id="feedback" aria-live="polite"></div>
-      <div class="fila guia" id="guia">
+      <div class="metricas-vivas hidden" id="metricasVivas" aria-live="polite"></div>
+      <div class="row guia" id="guia">
         <div class="manos" id="manosSvg" aria-hidden="true"></div>
         <p class="guia-texto" id="guiaTexto"></p>
       </div>
-      <div class="teclado-panel pila" id="panelTeclado">
-        <div class="fila opciones-teclado" role="group" data-i18n-aria="tipoTecladoAria" aria-label="Tipo de teclado">
-          <button type="button" class="btn btn-secundario btn-teclado" data-teclado="simplificado" data-i18n="btnSimple" aria-pressed="false">🔤 Simple</button>
-          <button type="button" class="btn btn-secundario btn-teclado" data-teclado="normal" data-i18n="btnNormal" aria-pressed="false">⌨️ Normal</button>
-          <button type="button" class="btn btn-secundario btn-teclado" data-teclado="extendido" data-i18n="btnExtendido" aria-pressed="false">🔢 Extendido</button>
-          <button type="button" class="btn btn-secundario btn-color" data-i18n="btnColoresManos" aria-pressed="false">🎨 Colores: manos</button>
-        </div>
-        <div class="fila-vista-teclado">
+      <div class="teclado-panel stack" id="panelTeclado">
+        <p class="detalle-teclado" aria-live="polite"></p>
+        <div class="row-vista-teclado">
           <div class="teclado" aria-hidden="true"></div>
-          <div class="numpad-inline oculto" aria-hidden="true"></div>
+          <div class="numpad-inline hidden" aria-hidden="true"></div>
         </div>
         <p class="leyenda-teclado"></p>
       </div>
-      <div id="panelNumpad" class="pila oculto">
+      <div id="panelNumpad" class="stack hidden">
         <div class="numpad" id="numpad" aria-hidden="true"></div>
       </div>
     </section>
 
     <!-- Pantalla: escritura libre -->
-    <section id="pantallaLibre" class="oculto pila">
-      <div class="fila">
-        <button type="button" class="btn btn-secundario" id="btnSalirLibre" data-i18n="btnMenu">← Menú</button>
+    <section id="pantallaLibre" class="hidden stack">
+      <div class="row pantalla-juego-barra">
+        <button type="button" class="btn btn-secondary btn-compacto" id="btnSalirLibre" data-i18n="btnMenu">← Menú</button>
         <h2 class="titulo-juego" data-i18n="modoLibreNombre">Escribe libre</h2>
-        <button type="button" class="btn btn-audio" id="btnLeerLibre" data-i18n="core.listen" data-i18n-aria="escucharTextoAria" aria-label="Escuchar mi texto">🔊 Escuchar</button>
-        <button type="button" class="btn btn-secundario" id="btnBorrarLibre" data-i18n-aria="borrarTextoAria" aria-label="Borrar el texto">🗑️</button>
+        <button type="button" class="btn btn-audio btn-compacto" id="btnLeerLibre" data-i18n="core.listen" data-i18n-aria="escucharTextoAria" aria-label="Escuchar mi texto">🔊 Escuchar</button>
+        <button type="button" class="btn btn-secondary btn-compacto" id="btnBorrarLibre" data-i18n-aria="borrarTextoAria" aria-label="Borrar el texto">🗑️</button>
       </div>
       <textarea id="areaLibre" class="area-libre" rows="4" spellcheck="false" data-i18n-aria="areaLibreAria" aria-label="Escribe aquí lo que quieras" placeholder="Escribe aquí..."></textarea>
-      <div class="teclado-panel pila">
-        <div class="fila opciones-teclado" role="group" data-i18n-aria="tipoTecladoAria" aria-label="Tipo de teclado">
-          <button type="button" class="btn btn-secundario btn-teclado" data-teclado="simplificado" data-i18n="btnSimple" aria-pressed="false">🔤 Simple</button>
-          <button type="button" class="btn btn-secundario btn-teclado" data-teclado="normal" data-i18n="btnNormal" aria-pressed="false">⌨️ Normal</button>
-          <button type="button" class="btn btn-secundario btn-teclado" data-teclado="extendido" data-i18n="btnExtendido" aria-pressed="false">🔢 Extendido</button>
-          <button type="button" class="btn btn-secundario btn-color" data-i18n="btnColoresManos" aria-pressed="false">🎨 Colores: manos</button>
-        </div>
-        <div class="fila-vista-teclado">
+      <div class="row guia">
+        <div class="manos" id="manosSvgLibre" aria-hidden="true"></div>
+        <p class="guia-texto" id="guiaTextoLibre"></p>
+      </div>
+      <div class="teclado-panel stack">
+        <p class="detalle-teclado" aria-live="polite"></p>
+        <div class="row-vista-teclado">
           <div class="teclado" aria-hidden="true"></div>
-          <div class="numpad-inline oculto" aria-hidden="true"></div>
+          <div class="numpad-inline hidden" aria-hidden="true"></div>
         </div>
         <p class="leyenda-teclado"></p>
       </div>
     </section>
     <footer class="pie-app">
-      <a href="legal/index.html" class="enlace-legal" data-i18n="core.dataProtection">Protección de datos</a>
+      <a href="legal/index.html" class="footer-link" data-i18n="core.dataProtection">Protección de datos</a>
     </footer>
   </div>
+
+  <div id="fondoAjustes" class="drawer-fondo" hidden></div>
+  <aside id="drawerAjustes" class="drawer-ajustes panel-ajustes stack" role="dialog" aria-modal="true" aria-labelledby="panelAjustesTitulo" hidden>
+    <div class="row drawer-cabecera">
+      <h3 id="panelAjustesTitulo" data-i18n="headerAjustes">Ajustes</h3>
+      <button type="button" class="btn-icono btn-cerrar-ajustes" id="btnCerrarAjustes" data-i18n-aria="cerrarAjustesAria" aria-label="Cerrar ajustes">✕</button>
+    </div>
+    <p class="instruccion" data-i18n="panelAjustes">Ajustes de accesibilidad y juego</p>
+
+    <div class="ajuste-row">
+      <span class="ajuste-etiqueta" data-i18n="etiquetaIdioma">🌐 Idioma</span>
+      <span class="grupo-texto" role="group" id="grupoIdioma" data-i18n-aria="etiquetaIdiomaAria" aria-label="Elegir idioma">
+        <button type="button" class="btn-icono btn-idioma" data-locale="es" aria-pressed="false">🇪🇸 Español</button>
+        <button type="button" class="btn-icono btn-idioma" data-locale="en" aria-pressed="false">🇬🇧 English</button>
+      </span>
+    </div>
+
+    <div class="ajuste-row">
+      <span class="ajuste-etiqueta" data-i18n="etiquetaTextoAria">Tamaño del texto</span>
+      <span class="grupo-texto" role="group" data-i18n-aria="etiquetaTextoAAria" aria-label="Aumentar o reducir el tamaño del texto">
+        <button type="button" class="btn-icono btn-texto-tam" data-texto="chico" data-i18n="etiquetaTextoA">A−</button>
+        <button type="button" class="btn-icono btn-texto-tam" data-texto="normal">A</button>
+        <button type="button" class="btn-icono btn-texto-tam" data-texto="grande">A+</button>
+        <button type="button" class="btn-icono btn-texto-tam" data-texto="enorme">A++</button>
+      </span>
+    </div>
+
+    <div class="ajuste-row">
+      <span class="ajuste-etiqueta" data-i18n="etiquetaTema">Tema</span>
+      <span class="grupo-texto" role="group" data-i18n-aria="etiquetaTemaAria" aria-label="Cambiar el tema claro, oscuro o alto contraste">
+        <button type="button" class="btn-icono btn-tema" data-tema="auto" data-i18n="etiquetaTemaAuto">Auto</button>
+        <button type="button" class="btn-icono btn-tema" data-tema="claro" data-i18n="etiquetaTemaClaro">Claro</button>
+        <button type="button" class="btn-icono btn-tema" data-tema="oscuro" data-i18n="etiquetaTemaOscuro">Oscuro</button>
+        <button type="button" class="btn-icono btn-tema" data-tema="contraste" data-i18n="etiquetaTemaContraste">Contraste</button>
+      </span>
+    </div>
+
+    <div class="ajuste-row">
+      <span class="ajuste-etiqueta" data-i18n="etiquetaModoFoco">Modo foco</span>
+      <button type="button" id="btnModoFoco" class="btn-icono" aria-pressed="false" data-i18n-aria="etiquetaModoFocoAria" aria-label="Activar o desactivar el modo foco">Modo foco: apagado</button>
+    </div>
+
+    <div class="ajuste-row">
+      <span class="ajuste-etiqueta" data-i18n="etiquetaSonidoEspacial">Sonido espacial</span>
+      <button type="button" id="btnEspacial" class="btn-icono" aria-pressed="false" data-i18n-aria="etiquetaSonidoEspacialAria" aria-label="Activar o desactivar el sonido espacial">Sonido espacial: apagado</button>
+    </div>
+
+    <div class="ajuste-row">
+      <span class="ajuste-etiqueta" data-i18n="etiquetaMetricas">Métricas</span>
+      <button type="button" id="btnMetricas" class="btn-icono" aria-pressed="false" data-i18n-aria="etiquetaMetricasAria" aria-label="Activar o desactivar las métricas de precisión y velocidad">Métricas: apagadas</button>
+    </div>
+
+    <p class="ayuda" data-i18n="ajustesAyuda">Estos ajustes se guardan en este dispositivo.</p>
+  </aside>
+
+  <div id="app-bandera-insignia" class="bandera-insignia hidden" role="status" aria-live="polite"></div>
 
   <script src="assets/js/utils.js"></script>
   <script src="assets/js/i18n.js"></script>

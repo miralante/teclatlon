@@ -61,12 +61,31 @@ uses — don't re-add the multi-tool features (progress aggregation across
 tools, font-size preference, structured data-tree merging) without a
 concrete need; they were cut deliberately, not by oversight.
 
-## Product change policy
+## Language policy
 
-Any change to product content (UI strings, lessons, words) must be applied
-to **both** `es` and `en` — `es` is the default and source of truth. Never
-ship a product change in only one language. `scripts/check.js` enforces
-key parity but not translation quality — proofread both.
+- **UI**: multilingual. Default locales are **Spanish (`es`)** and
+  **English (`en`)**; `es` is the default and fallback when a key is
+  missing or the detected locale is unsupported. UI text lives in
+  `strings.<locale>.js` files (root app and `legal/`).
+- **Technical code**: **always English** — variables, functions,
+  identifiers, comments, and commit messages. Dictionary **keys** are
+  code and must be English. UI copy lives in `strings.<locale>.js`,
+  never hardcoded in `app.js` or `index.html`. Per-locale practice
+  content (lessons, words, number-pad steps) lives in `data.js`
+  locale-split arrays.
+- **Product changes apply to all locales by default**: any change to
+  product content (UI strings, lessons, words, accessibility labels,
+  catalog entries, etc.) **must be applied to every supported
+  locale** — at minimum `es` and `en`. Spanish (`es`) is the source of
+  truth when not dictated otherwise; English (`en`) must keep parity.
+  If a new locale is added, the same change applies there too. Never
+  ship a product change that exists only in one language.
+- **Self-test**: change the `es` file, then mirror in the `en` file
+  before opening the PR. `scripts/check.js` enforces key parity but
+  not translation quality — proofread both.
+- Full reference (App.i18n core, number/time formatting, recipe to add
+  a third language): [`doc/en/I18N.md`](doc/en/I18N.md) ·
+  [`doc/es/I18N.md`](doc/es/I18N.md).
 
 ## Agent workflow
 

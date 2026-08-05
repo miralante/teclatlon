@@ -14,7 +14,6 @@
     "navResponsible": 'Quién trata tus datos',
     "navData": 'Qué guardamos',
     "navRights": 'Tus derechos',
-    "navMinors": 'Menores de edad',
     "navContact": 'Cambios y contacto',
 
     "responsibleTitle": 'Quién trata tus datos',
@@ -27,6 +26,12 @@
     "dataItem1Text": 'las estrellas ganadas y las lecciones completadas.',
     "dataItem2Label": 'Nombre (opcional)',
     "dataItem2Text": 'si lo escribes al empezar, para que aparezca en pantalla mientras practicas.',
+"dataItem3Label": "Rachas e insignias",
+    "dataItem3Text": "la racha actual y la mejor racha, y las insignias que ya has conseguido.",
+    "dataItem4Label": "Mejor precisión",
+    "dataItem4Text": "el porcentaje más alto de teclas correctas seguidas en una partida.",
+    "dataItem5Label": "Ajustes de accesibilidad y juego",
+    "dataItem5Text": "tamaño del texto, tema, modo foco, lectura fácil y otros ajustes del panel.",
     "dataP3": 'Nunca guardamos: fallos, tiempo empleado, número de intentos, comparaciones con otras personas ni historiales de uso detallados.',
     "dataP4": 'Esta información se guarda mientras no se borre, y sirve únicamente para que el progreso no se pierda al cerrar la aplicación.',
 
@@ -34,10 +39,6 @@
     "rightsP1": 'Como todo lo guardado está en tu dispositivo y no en un servidor, tú tienes el control directo: puedes verlo, cambiarlo o borrarlo en cualquier momento, sin pedírnoslo a nosotros.',
     "rightsP2": 'Para borrarlo, usa el botón "Borrar mi progreso" que aparece en la aplicación, o borra los datos de navegación de tu navegador para este sitio, desde su configuración.',
     "rightsLinkApp": 'Ir a Teclatlon',
-
-    "minorsTitle": 'Menores de edad y personas con discapacidad',
-    "minorsP1": 'Teclatlon está pensada para que la use de forma autónoma cualquier persona, incluidas personas menores de edad y personas con discapacidad intelectual.',
-    "minorsP2": 'Como la aplicación no recoge datos personales en ningún servidor, no es necesario el consentimiento de un tutor para tratar datos: no hay ningún tratamiento que autorizar. Sí recomendamos la supervisión habitual que una familia o un profesional haga sobre el uso de cualquier dispositivo.',
 
     "contactTitle": 'Cambios y contacto',
     "contactP1": 'Esta página puede actualizarse si cambia la aplicación.',

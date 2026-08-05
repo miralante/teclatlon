@@ -3,10 +3,11 @@
    Cache-first strategy for the app shell (works offline).
    When adding new files: add them to ARCHIVOS and bump VERSION.
    ============================================================ */
-var VERSION = 'teclatlon-v1';
+var VERSION = 'teclatlon-v14';
 
 var ARCHIVOS = [
   './index.html',
+  './404.html',
   './manifest.json',
   './app.js',
   './data.js',

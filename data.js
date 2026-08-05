@@ -129,7 +129,11 @@ const DATA = {
       { id: 'l14', title: 'Z y X', intro: 'Baja el meñique y el anular de la mano izquierda. Después vuelve.',
         steps: ['aza', 'sxs', 'zx', 'zumo', 'taxi'] },
       { id: 'l15', title: 'Frases cortas', intro: 'Ya conoces todas las letras. Escribe frases cortas.',
-        steps: ['hola', 'me gusta', 'buenos dias', 'hola amigo'] }
+        steps: ['hola', 'me gusta', 'buenos dias', 'hola amigo'] },
+      { id: 'l16', title: 'Mayúsculas', intro: 'Para escribir una mayúscula, mantén pulsada la tecla Mayús con el meñique del lado contrario y pulsa la letra con la otra mano.',
+        steps: ['A', 'J', 'Sa', 'Hola', 'Buenos dias'] },
+      { id: 'l17', title: 'Teclas especiales', intro: 'Estas teclas no tienen un dedo fijo: usa la mano que te resulte más cómoda. Cambia a la vista de teclado "Con números al lado" para verlas dibujadas.',
+        steps: [{ especial: 'inicio' }, { especial: 'fin' }, { especial: 'pagArriba' }, { especial: 'pagAbajo' }, { especial: 'suprimir' }] }
     ],
     en: [
       { id: 'l1', title: 'F and J', intro: 'Put your left index finger on F. Put your right index finger on J. Both keys have a bump.',
@@ -161,7 +165,11 @@ const DATA = {
       { id: 'l14', title: 'Z and X', intro: 'Move down the little and ring fingers of your left hand.',
         steps: ['aza', 'sxs', 'zx', 'zoo', 'taxi'] },
       { id: 'l15', title: 'Short sentences', intro: 'You know all the letters now. Type short sentences.',
-        steps: ['hi there', 'i like it', 'good morning', 'hi my friend'] }
+        steps: ['hi there', 'i like it', 'good morning', 'hi my friend'] },
+      { id: 'l16', title: 'Capitals', intro: 'To type a capital letter, hold the Shift key with the pinky on the opposite side and press the letter with your other hand.',
+        steps: ['A', 'J', 'Sa', 'Hello', 'Good morning'] },
+      { id: 'l17', title: 'Special keys', intro: 'These keys don\'t have a fixed finger: use whichever hand is comfortable. Switch to the "With numbers on the side" keyboard view to see them drawn.',
+        steps: [{ especial: 'inicio' }, { especial: 'fin' }, { especial: 'pagArriba' }, { especial: 'pagAbajo' }, { especial: 'suprimir' }] }
     ]
   },
 
@@ -213,6 +221,274 @@ const DATA = {
       { text: 'Type your postal code, number by number. Here is an example.', seq: '28001' },
       { text: 'The last one! Type this phone number.', seq: '600123456' }
     ]
+  },
+
+  /* "Real texts" mode ("Textos reales"/plantillas): full, real-world
+     writing tasks (an email, a letter...) instead of single words or
+     short drill sentences -- the transfer-to-real-life step the rest
+     of the app builds up to. Unlike DATA.lessons, these are NOT
+     gated behind a linear unlock chain: they're independent practice
+     texts a player can pick in any order (see pintarPlantillas() in
+     app.js), so completing one doesn't unlock another.
+     Shape: { id, title, lines: [...] }. 'lines' is the text split
+     into short lines/sentences -- each becomes one step of the
+     sequence engine (jugarPlantilla() in app.js), same mechanism as
+     a lesson step's plain-string 'seq'. Keep lines to characters the
+     physical layout models (lowercase letters, ñ, the punctuation in
+     DATA.rows: ',' '.' '-', and uppercase letters via Shift -- see
+     lesson "Mayúsculas"/"Capitals") so every character has a real
+     key and a finger to guide it. Avoid '¡', '¿', '!', '?' and
+     accented vowels: those keys aren't modeled in DATA.rows, so they
+     would silently swallow the keystroke.
+     TO EXTEND: add a new { id, title, lines } entry to BOTH the 'es'
+     and 'en' arrays below (see doc/en/technical.md §2.3 "Extensible
+     templates"). 'id' must be unique and stable (used as the badge
+     key: 'plantilla_' + id in app.js#jugarPlantilla). */
+  templates: {
+    es: [
+      { id: 'correo', title: 'Correo a una amiga', lines: [
+        'Hola Marta,',
+        'Espero que estes bien.',
+        'Hoy aprendi a escribir con el teclado.',
+        'Un abrazo.'
+      ] },
+      { id: 'carta', title: 'Carta a la familia', lines: [
+        'Querida familia,',
+        'Os escribo esta carta a mano.',
+        'Estoy aprendiendo a escribir rapido - poco a poco.',
+        'Os quiero mucho.'
+      ] },
+      { id: 'mensaje', title: 'Mensaje a un amigo', lines: [
+        'Hola Pablo,',
+        'Quedamos manana a las cinco.',
+        'Te espero en la plaza del pueblo.',
+        'Hasta luego.'
+      ] },
+      { id: 'invitacion', title: 'Invitacion de cumpleanos', lines: [
+        'Querida Lucia,',
+        'El sabado es mi cumple.',
+        'Te invito a merendar a casa.',
+        'Espero que vengas.'
+      ] },
+      { id: 'nota', title: 'Nota en la nevera', lines: [
+        'Hola mama,',
+        'Salgo a dar un paseo.',
+        'Vuelvo antes de la cena.',
+        'Un beso.'
+      ] },
+      { id: 'agradecimiento', title: 'Carta de agradecimiento', lines: [
+        'Hola Ana,',
+        'Gracias por tu regalo.',
+        'Me ha encantado el libro.',
+        'Eres muy amable.'
+      ] },
+      { id: 'felicidades', title: 'Mensaje de felicitacion', lines: [
+        'Hola Luis,',
+        'Felicidades por tu nuevo trabajo.',
+        'Te lo mereces mucho.',
+        'Un abrazo grande.'
+      ] },
+      { id: 'disculpa', title: 'Carta de disculpa', lines: [
+        'Querido Pedro,',
+        'Perdona por el retraso.',
+        'No volvera a pasar.',
+        'Un saludo cordial.'
+      ] },
+      { id: 'profesor', title: 'Correo al profesor', lines: [
+        'Estimado profesor,',
+        'No podre ir a clase manana.',
+        'Tengo cita en el medico.',
+        'Gracias por su ayuda.'
+      ] },
+      { id: 'vecino', title: 'Nota al vecino', lines: [
+        'Hola senor Garcia,',
+        'Su gato esta en mi jardin.',
+        'No se preocupe, esta bien.',
+        'Un saludo.'
+      ] },
+      { id: 'medico', title: 'Mensaje al medico', lines: [
+        'Estimado doctor,',
+        'Confirmo la cita del jueves.',
+        'Llegare a las cuatro.',
+        'Muchas gracias.'
+      ] },
+      { id: 'biblioteca', title: 'Correo a la biblioteca', lines: [
+        'Hola,',
+        'Quiero devolver un libro.',
+        'Lo llevare el viernes por la tarde.',
+        'Gracias.'
+      ] },
+      { id: 'receta', title: 'Receta de cocina', lines: [
+        'Tarta de manzana.',
+        'Mezclar harina, huevos y azucar.',
+        'Anadir las manzanas troceadas.',
+        'Hornear durante una hora.'
+      ] },
+      { id: 'lista', title: 'Lista de la compra', lines: [
+        'Lunes - lista de la compra.',
+        'Pan, leche y huevos.',
+        'Manzanas, peras y naranjas.',
+        'No olvidar el aceite.'
+      ] },
+      { id: 'diario', title: 'Entrada de diario', lines: [
+        'Hoy fue un dia bonito.',
+        'Pasee por el parque con mi perro.',
+        'Hice los deberes de matematicas.',
+        'Me senti muy feliz.'
+      ] },
+      { id: 'cuento', title: 'Cuento corto', lines: [
+        'Habia una vez un gato azul.',
+        'Vivía en un pequeno pueblo.',
+        'Le gustaba dormir al sol.',
+        'Y correr por el jardin.'
+      ] },
+      { id: 'postal', title: 'Postal de vacaciones', lines: [
+        'Hola desde la playa.',
+        'El mar es muy bonito.',
+        'Hace sol todo el dia.',
+        'Os envio un abrazo.'
+      ] },
+      { id: 'plan', title: 'Plan para el fin de semana', lines: [
+        'Sabado por la manana:',
+        'Ir al mercado a comprar fruta.',
+        'Sabado por la tarde:',
+        'Pasear por el centro.'
+      ] },
+      { id: 'regalo', title: 'Nota para un regalo', lines: [
+        'Querido abuelo,',
+        'Te envio este regalo por tu cumple.',
+        'Es un jersey de lana.',
+        'Espero que te guste.'
+      ] },
+      { id: 'despedida', title: 'Mensaje de despedida', lines: [
+        'Hola a todos,',
+        'Me voy de viaje una semana.',
+        'Vuelvo el domingo proximo.',
+        'Nos vemos pronto.'
+      ] }
+    ],
+    en: [
+      { id: 'correo', title: 'Email to a friend', lines: [
+        'Hi Sam,',
+        'I hope you are well.',
+        'Today I learned to type on the keyboard.',
+        'Take care.'
+      ] },
+      { id: 'carta', title: 'Letter to family', lines: [
+        'Dear family,',
+        'I am writing this letter by hand.',
+        'I am learning to type fast - step by step.',
+        'I love you all.'
+      ] },
+      { id: 'mensaje', title: 'Message to a friend', lines: [
+        'Hi Tom,',
+        'See you tomorrow at five.',
+        'I will wait for you at the park.',
+        'See you later.'
+      ] },
+      { id: 'invitacion', title: 'Birthday invitation', lines: [
+        'Dear Lucy,',
+        'Saturday is my birthday.',
+        'Please come to my house for cake.',
+        'I hope you can come.'
+      ] },
+      { id: 'nota', title: 'Note on the fridge', lines: [
+        'Hi mom,',
+        'I am going for a walk.',
+        'I will be back before dinner.',
+        'Love you.'
+      ] },
+      { id: 'agradecimiento', title: 'Thank-you letter', lines: [
+        'Hi Anna,',
+        'Thank you for your gift.',
+        'I really like the book.',
+        'You are very kind.'
+      ] },
+      { id: 'felicidades', title: 'Congratulations note', lines: [
+        'Hi Lou,',
+        'Congrats on your new job.',
+        'You deserve it a lot.',
+        'Big hug.'
+      ] },
+      { id: 'disculpa', title: 'Apology letter', lines: [
+        'Dear Pat,',
+        'Sorry for the delay.',
+        'It will not happen again.',
+        'Best regards.'
+      ] },
+      { id: 'profesor', title: 'Email to the teacher', lines: [
+        'Dear teacher,',
+        'I cannot come to class tomorrow.',
+        'I have a doctor appointment.',
+        'Thank you for your help.'
+      ] },
+      { id: 'vecino', title: 'Note to the neighbor', lines: [
+        'Hi Mr. Hall,',
+        'Your cat is in my garden.',
+        'Do not worry, it is fine.',
+        'Best regards.'
+      ] },
+      { id: 'medico', title: 'Message to the doctor', lines: [
+        'Dear doctor,',
+        'I confirm the visit on Thursday.',
+        'I will arrive at four.',
+        'Thank you very much.'
+      ] },
+      { id: 'biblioteca', title: 'Email to the library', lines: [
+        'Hello,',
+        'I want to return a book.',
+        'I will bring it on Friday afternoon.',
+        'Thank you.'
+      ] },
+      { id: 'receta', title: 'Cooking recipe', lines: [
+        'Apple pie.',
+        'Mix flour, eggs and sugar.',
+        'Add the chopped apples.',
+        'Bake for one hour.'
+      ] },
+      { id: 'lista', title: 'Shopping list', lines: [
+        'Monday - shopping list.',
+        'Bread, milk and eggs.',
+        'Apples, pears and oranges.',
+        'Do not forget the oil.'
+      ] },
+      { id: 'diario', title: 'Diary entry', lines: [
+        'Today was a nice day.',
+        'I walked in the park with my dog.',
+        'I did my math homework.',
+        'I felt very happy.'
+      ] },
+      { id: 'cuento', title: 'Short story', lines: [
+        'Once upon a time there was a blue cat.',
+        'It lived in a small town.',
+        'It liked to nap in the sun.',
+        'And run in the garden.'
+      ] },
+      { id: 'postal', title: 'Holiday postcard', lines: [
+        'Hi from the beach.',
+        'The sea is very pretty.',
+        'It is sunny every day.',
+        'Sending you a big hug.'
+      ] },
+      { id: 'plan', title: 'Weekend plan', lines: [
+        'Saturday morning:',
+        'Go to the market to buy fruit.',
+        'Saturday afternoon:',
+        'Walk around the city center.'
+      ] },
+      { id: 'regalo', title: 'Note for a gift', lines: [
+        'Dear grandpa,',
+        'I send you this gift for your birthday.',
+        'It is a wool sweater.',
+        'I hope you like it.'
+      ] },
+      { id: 'despedida', title: 'Farewell message', lines: [
+        'Hi everyone,',
+        'I am going on a trip for a week.',
+        'I will be back next Sunday.',
+        'See you soon.'
+      ] }
+    ]
   }
 };
 
@@ -223,9 +499,31 @@ function teclaDecorativa(finger, wide, label) {
   return { ch: null, finger: finger, wide: wide, decor: true, label: label };
 }
 
+/* Same shape as a decorative key, but with a real 'ch' -- the internal
+   id normalizarTecla() (app.js) maps the physical key to -- so it CAN
+   be a lesson target. Used only by the "less frequent keys" lesson
+   (Home/End/PageUp/PageDown/Delete: see DATA.lessons "Teclas
+   especiales"/"Special keys"). 'special: true' keeps these out of the
+   "all keys" challenge, which is only about the core alphanumeric
+   layout. No fixed finger convention exists for them (varies too much
+   by keyboard/user), so 'finger' here is purely cosmetic -- which side
+   of the on-screen keyboard they're tinted, not a practice target. */
+function teclaEspecial(id) {
+  return { ch: id, finger: 'rp', decor: true, special: true, label: id, wide: 'media' };
+}
+
 DATA.layouts = {
-  /* Letters only: the classic touch-typing method. */
-  simplificado: [DATA.rows[0], DATA.rows[1], DATA.rows[2], DATA.rows[3]],
+  /* Letters only, plus both Shift keys: the classic touch-typing
+     method needs Shift visible for the capitals lesson (see
+     DATA.lessons "Mayúsculas"/"Capitals"), even in this stripped-down
+     view. No Tab/Enter/Backspace here on purpose -- those aren't
+     practiced yet. */
+  simplificado: [
+    DATA.rows[0],
+    DATA.rows[1],
+    [teclaDecorativa('lp', 'media', 'mayus')].concat(DATA.rows[2]).concat([teclaDecorativa('rp', 'media', 'mayus')]),
+    DATA.rows[3]
+  ],
 
   /* Full computer keyboard: numbers on top and function keys
      around it (Tab, Shift, Enter, Backspace), like a real one. */
@@ -238,6 +536,90 @@ DATA.layouts = {
   ]
 };
 
-/* Extendido: el mismo teclado normal, y aparte se ve el teclado
-   numérico (DATA.numpad) para practicar los dos juntos. */
-DATA.layouts.extendido = DATA.layouts.normal;
+/* Extendido: el teclado normal, con una fila extra arriba para las
+   teclas menos frecuentes (Inicio/Fin/Re Pág/Av Pág/Supr — ver la
+   lección "Teclas especiales"/"Special keys"), y aparte se ve el
+   teclado numérico (DATA.numpad) para practicar los tres juntos. */
+DATA.layouts.extendido = [
+  ['inicio', 'fin', 'pagArriba', 'pagAbajo', 'suprimir'].map(teclaEspecial)
+].concat(DATA.layouts.normal);
+/* -------- Avatares (SVGs inline, sin recursos externos) --------
+   8 avatares simples en 2 colores de pelo × 2 expresiones × 2 tonos
+   de piel. Identificador string + viewBox unificado (0 0 64 64).  */
+DATA.avatares = [
+  { id: 'a1', svg: '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<circle cx="32" cy="32" r="30" fill="#FFD9B5"/>' +
+    '<circle cx="32" cy="28" r="16" fill="#FFE3C2"/>' +
+    '<path d="M16 26 Q32 8 48 26 Q48 18 32 14 Q16 18 16 26 Z" fill="#3D2B1F"/>' +
+    '<circle cx="26" cy="30" r="2" fill="#1A1A2E"/><circle cx="38" cy="30" r="2" fill="#1A1A2E"/>' +
+    '<path d="M27 40 Q32 44 37 40" stroke="#1A1A2E" stroke-width="2" fill="none" stroke-linecap="round"/>' +
+    '</svg>' },
+  { id: 'a2', svg: '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<circle cx="32" cy="32" r="30" fill="#F2C49B"/>' +
+    '<circle cx="32" cy="28" r="16" fill="#FBD0A8"/>' +
+    '<path d="M14 30 Q14 14 32 12 Q50 14 50 30 Q50 24 32 22 Q14 24 14 30 Z" fill="#8B4513"/>' +
+    '<circle cx="26" cy="30" r="2" fill="#1A1A2E"/><circle cx="38" cy="30" r="2" fill="#1A1A2E"/>' +
+    '<path d="M27 40 Q32 43 37 40" stroke="#1A1A2E" stroke-width="2" fill="none" stroke-linecap="round"/>' +
+    '</svg>' },
+  { id: 'a3', svg: '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<circle cx="32" cy="32" r="30" fill="#D89860"/>' +
+    '<circle cx="32" cy="28" r="16" fill="#E8AE7A"/>' +
+    '<path d="M16 30 Q16 8 32 6 Q48 8 48 30 L46 24 Q32 16 18 24 Z" fill="#1A1A2E"/>' +
+    '<circle cx="26" cy="30" r="2" fill="#1A1A2E"/><circle cx="38" cy="30" r="2" fill="#1A1A2E"/>' +
+    '<path d="M26 41 Q32 38 38 41" stroke="#1A1A2E" stroke-width="2" fill="none" stroke-linecap="round"/>' +
+    '</svg>' },
+  { id: 'a4', svg: '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<circle cx="32" cy="32" r="30" fill="#FFD9B5"/>' +
+    '<circle cx="32" cy="28" r="16" fill="#FFE3C2"/>' +
+    '<path d="M18 14 Q32 4 46 14 Q44 22 32 18 Q20 22 18 14 Z" fill="#DAA520"/>' +
+    '<circle cx="26" cy="30" r="2" fill="#1A1A2E"/><circle cx="38" cy="30" r="2" fill="#1A1A2E"/>' +
+    '<path d="M27 40 Q32 47 37 40" stroke="#1A1A2E" stroke-width="2" fill="none" stroke-linecap="round"/>' +
+    '</svg>' },
+  { id: 'a5', svg: '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<circle cx="32" cy="32" r="30" fill="#F2C49B"/>' +
+    '<circle cx="32" cy="28" r="16" fill="#FBD0A8"/>' +
+    '<path d="M14 32 Q14 16 32 14 Q50 16 50 32 L48 28 Q32 18 16 28 Z" fill="#C0392B"/>' +
+    '<circle cx="26" cy="30" r="2" fill="#1A1A2E"/><circle cx="38" cy="30" r="2" fill="#1A1A2E"/>' +
+    '<path d="M26 41 Q32 45 38 41" stroke="#1A1A2E" stroke-width="2" fill="none" stroke-linecap="round"/>' +
+    '</svg>' },
+  { id: 'a6', svg: '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<circle cx="32" cy="32" r="30" fill="#D89860"/>' +
+    '<circle cx="32" cy="28" r="16" fill="#E8AE7A"/>' +
+    '<path d="M16 30 Q32 12 48 30 Q48 22 32 18 Q16 22 16 30 Z" fill="#FFB300"/>' +
+    '<circle cx="26" cy="30" r="2" fill="#1A1A2E"/><circle cx="38" cy="30" r="2" fill="#1A1A2E"/>' +
+    '<path d="M27 40 Q32 44 37 40" stroke="#1A1A2E" stroke-width="2" fill="none" stroke-linecap="round"/>' +
+    '</svg>' },
+  { id: 'a7', svg: '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<circle cx="32" cy="32" r="30" fill="#FFD9B5"/>' +
+    '<circle cx="32" cy="28" r="16" fill="#FFE3C2"/>' +
+    '<path d="M14 28 Q14 12 32 10 Q50 12 50 28 Q40 22 32 22 Q24 22 14 28 Z" fill="#6B3FA0"/>' +
+    '<circle cx="26" cy="30" r="2" fill="#1A1A2E"/><circle cx="38" cy="30" r="2" fill="#1A1A2E"/>' +
+    '<path d="M26 41 Q32 38 38 41" stroke="#1A1A2E" stroke-width="2" fill="none" stroke-linecap="round"/>' +
+    '</svg>' },
+  { id: 'a8', svg: '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<circle cx="32" cy="32" r="30" fill="#F2C49B"/>' +
+    '<circle cx="32" cy="28" r="16" fill="#FBD0A8"/>' +
+    '<path d="M18 14 Q32 6 46 14 L48 22 Q32 18 18 22 Z" fill="#1B6CA8"/>' +
+    '<circle cx="26" cy="30" r="2" fill="#1A1A2E"/><circle cx="38" cy="30" r="2" fill="#1A1A2E"/>' +
+    '<path d="M27 40 Q32 47 37 40" stroke="#1A1A2E" stroke-width="2" fill="none" stroke-linecap="round"/>' +
+    '</svg>' }
+];
+
+/* -------- Insignias (badges) --------
+   id: clave interna que se guarda en state.insignias (set).
+   clave: clave i18n para el nombre visible.
+   descripcion: clave i18n para la descripción (opcional).
+   condicion: función (state) => bool. Se evalúa cada vez que se
+   concede una recompensa. Si devuelve true y la insignia no estaba,
+   se desbloquea. */
+DATA.insignias = [
+  { id: 'primera', clave: 'insigniaPrimera', condicion: function (s) { return Object.keys(s.completado).length >= 1; } },
+  { id: 'posicion', clave: 'insigniaPosicion', condicion: function (s) { return !!s.completado.posicion; } },
+  { id: 'palabras', clave: 'insigniaPalabras', condicion: function (s) { return !!s.completado.palabras; } },
+  { id: 'numeros', clave: 'insigniaNumeros', condicion: function (s) { return !!s.completado.numeros; } },
+  { id: 'todas', clave: 'insigniaTodas', condicion: function (s) { return !!s.completado.todas; } },
+  { id: 'libre', clave: 'insigniaLibre', condicion: function (s) { return (s.vecesLibre || 0) >= 1; } },
+  { id: 'racha5', clave: 'insigniaRacha5', condicion: function (s) { return (s.rachaMejor || 0) >= 5; } },
+  { id: 'racha10', clave: 'insigniaRacha10', condicion: function (s) { return (s.rachaMejor || 0) >= 10; } },
+  { id: 'precision', clave: 'insigniaPrecision', condicion: function (s) { return s.precisionMejor != null && s.precisionMejor >= 90; } }
+];

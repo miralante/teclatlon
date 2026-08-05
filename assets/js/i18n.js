@@ -1,34 +1,42 @@
 /* ==========================================================================
-   Teclatlon — Internationalization (i18n)
+   Teclatlon · Internationalization (i18n)
    Exposes window.App.i18n. Load AFTER utils.js and BEFORE tts.js/feedback.js.
-   Standard order: utils.js -> i18n.js -> tts.js -> storage.js -> feedback.js ->
-   conditional load of strings.<locale>.js -> data.js -> app.js.
+   Standard order: utils.js -> i18n.js -> tts.js -> storage.js -> feedback.js
+   -> strings.es.js -> strings.en.js -> data.js -> app.js.
 
    Active language: localStorage 'teclatlon:locale' if supported; otherwise
-   detected from navigator.language ('en' prefix -> 'en', anything else -> 'es').
+   detected from navigator.language (first 2-letter prefix in SUPPORTED,
+   fallback `es`, the source of truth).
 
-   Texts are split by language: strings.es.js, strings.en.js. Only the
-   active locale's file is loaded (saves bandwidth, simpler maintenance).
-   Each file calls App.i18n.register({key: 'text', ...}, 'es'|'en').
+   Each strings.<locale>.js calls App.i18n.register({key: 'text', ...}, 'es'|'en').
    ========================================================================== */
 (function () {
   'use strict';
 
   window.App = window.App || {};
 
-  var CLAVE_LOCALE = 'teclatlon:locale';
-  var SOPORTADOS = ['es', 'en'];
-  var POR_DEFECTO = 'es';
+  var LOCALE_KEY = 'teclatlon:locale';
+  var SUPPORTED = ['es', 'en'];
+  var DEFAULT_LOCALE = 'es';
+  /* BCP47 mapping for speechSynthesis voices. Add a new entry for each
+     locale in SUPPORTED. Falls back to DEFAULT_LOCALE if a language
+     isn't listed. */
+  var BCP47 = { es: 'es-ES', en: 'en-US' };
 
   var DICT = {
     es: {
       core: {
         back: '← Volver',
+        close: 'Cerrar',
+        next: 'Siguiente →',
+        save: 'Guardar',
+        cancel: 'Cancelar',
         understood: 'Entendido',
         listen: '🔊 Escuchar',
         listenInstructions: 'Escuchar las instrucciones',
         listenText: 'Escuchar el texto',
         rest: '¡Llevas un buen rato! Puedes descansar si quieres.',
+        loading: 'Cargando…',
         dataProtection: 'Teclatlon no recolecta datos'
       },
       feedback: {
@@ -39,11 +47,16 @@
     en: {
       core: {
         back: '← Back',
+        close: 'Close',
+        next: 'Next →',
+        save: 'Save',
+        cancel: 'Cancel',
         understood: 'Got it',
         listen: '🔊 Listen',
         listenInstructions: 'Listen to the instructions',
         listenText: 'Listen to the text',
         rest: 'You have been playing a while! You can rest if you want.',
+        loading: 'Loading…',
         dataProtection: 'Teclatlon does not collect data'
       },
       feedback: {
@@ -53,132 +66,112 @@
     }
   };
 
-  function detectar() {
+  function detect() {
     try {
-      var idiomas = navigator.languages && navigator.languages.length
+      var langs = navigator.languages && navigator.languages.length
         ? navigator.languages
         : [navigator.language || ''];
-      for (var i = 0; i < idiomas.length; i++) {
-        var prefijo = (idiomas[i] || '').slice(0, 2).toLowerCase();
-        if (SOPORTADOS.indexOf(prefijo) !== -1) return prefijo;
+      for (var i = 0; i < langs.length; i++) {
+        var prefix = (langs[i] || '').slice(0, 2).toLowerCase();
+        if (SUPPORTED.indexOf(prefix) !== -1) return prefix;
       }
     } catch (e) { /* ignore */ }
-    return POR_DEFECTO;
+    return DEFAULT_LOCALE;
   }
 
   function locale() {
     try {
-      var guardado = localStorage.getItem(CLAVE_LOCALE);
-      if (guardado && SOPORTADOS.indexOf(guardado) !== -1) return guardado;
+      var saved = localStorage.getItem(LOCALE_KEY);
+      if (saved && SUPPORTED.indexOf(saved) !== -1) return saved;
     } catch (e) { /* ignore */ }
-    return detectar();
+    return detect();
   }
 
   function setLocale(loc) {
-    if (SOPORTADOS.indexOf(loc) === -1) return;
+    if (SUPPORTED.indexOf(loc) === -1) return;
     try {
-      localStorage.setItem(CLAVE_LOCALE, loc);
+      localStorage.setItem(LOCALE_KEY, loc);
     } catch (e) { /* ignore */ }
     location.reload();
   }
 
   function lang() {
-    return locale() === 'en' ? 'en-US' : 'es-ES';
+    return BCP47[locale()] || BCP47[DEFAULT_LOCALE];
   }
 
-  /**
-   * Merges texts into the internal dictionary.
-   *
-   * Two backward-compatible signatures:
-   *  1. Multi-file (recommended): App.i18n.register(dict, locale)
-   *       Loads only the active language. E.g.: App.i18n.register({title: 'Teclado', ...}, 'es');
-   *  2. Legacy (single file with both languages): App.i18n.register({es: {...}, en: {...}})
-   *       Registers into every locale present in the dict.
-   */
-  function register(dict, locale) {
-    if (typeof locale === 'string') {
-      if (SOPORTADOS.indexOf(locale) === -1) return;
-      if (!dict || typeof dict !== 'object') return;
-      DICT[locale] = DICT[locale] || {};
-      for (var clave in dict) {
-        if (Object.prototype.hasOwnProperty.call(dict, clave)) {
-          DICT[locale][clave] = dict[clave];
-        }
+  /** Merges one language's texts into the internal dictionary.
+      App.i18n.register({title: 'Mi dinero', ...}, 'es'); */
+  function register(dict, loc) {
+    if (SUPPORTED.indexOf(loc) === -1 || !dict || typeof dict !== 'object') return;
+    DICT[loc] = DICT[loc] || {};
+    for (var key in dict) {
+      if (Object.prototype.hasOwnProperty.call(dict, key)) {
+        DICT[loc][key] = dict[key];
       }
-      return;
     }
-    SOPORTADOS.forEach(function (loc) {
-      if (!dict[loc]) return;
-      DICT[loc] = DICT[loc] || {};
-      for (var clave in dict[loc]) {
-        if (Object.prototype.hasOwnProperty.call(dict[loc], clave)) {
-          DICT[loc][clave] = dict[loc][clave];
-        }
-      }
-    });
   }
 
-  function buscar(dictLoc, key) {
-    var partes = key.split('.');
-    var actual = dictLoc;
-    for (var i = 0; i < partes.length; i++) {
-      if (actual == null) return undefined;
-      actual = actual[partes[i]];
+  function lookup(dictForLocale, key) {
+    var parts = key.split('.');
+    var current = dictForLocale;
+    for (var i = 0; i < parts.length; i++) {
+      if (current == null) return undefined;
+      current = current[parts[i]];
     }
-    return actual;
+    return current;
   }
 
   function t(key) {
     var loc = locale();
-    var valor = buscar(DICT[loc], key);
-    if (valor === undefined && loc !== POR_DEFECTO) {
-      valor = buscar(DICT[POR_DEFECTO], key);
+    var value = lookup(DICT[loc], key);
+    if (value === undefined && loc !== DEFAULT_LOCALE) {
+      value = lookup(DICT[DEFAULT_LOCALE], key);
     }
-    if (valor === undefined) return key;
-    if (Array.isArray(valor)) return valor.join(', ');
-    return valor;
+    if (value === undefined) return key;
+    if (Array.isArray(value)) return value.join(', ');
+    return value;
   }
 
   function pick(key) {
     var loc = locale();
-    var valor = buscar(DICT[loc], key);
-    if (!Array.isArray(valor) && loc !== POR_DEFECTO) {
-      valor = buscar(DICT[POR_DEFECTO], key);
+    var value = lookup(DICT[loc], key);
+    if (!Array.isArray(value) && loc !== DEFAULT_LOCALE) {
+      value = lookup(DICT[DEFAULT_LOCALE], key);
     }
-    if (!Array.isArray(valor) || !valor.length) return '';
-    return valor[Math.floor(Math.random() * valor.length)];
+    if (!Array.isArray(value) || !value.length) return '';
+    return value[Math.floor(Math.random() * value.length)];
   }
 
   function apply(root) {
     root = root || document;
-    var nodos = root.querySelectorAll('[data-i18n]');
-    for (var i = 0; i < nodos.length; i++) {
-      nodos[i].textContent = t(nodos[i].getAttribute('data-i18n'));
+    var nodes = root.querySelectorAll('[data-i18n]');
+    for (var i = 0; i < nodes.length; i++) {
+      nodes[i].textContent = t(nodes[i].getAttribute('data-i18n'));
     }
-    var ariaNodos = root.querySelectorAll('[data-i18n-aria]');
-    for (var j = 0; j < ariaNodos.length; j++) {
-      ariaNodos[j].setAttribute('aria-label', t(ariaNodos[j].getAttribute('data-i18n-aria')));
+    var ariaNodes = root.querySelectorAll('[data-i18n-aria]');
+    for (var j = 0; j < ariaNodes.length; j++) {
+      ariaNodes[j].setAttribute('aria-label', t(ariaNodes[j].getAttribute('data-i18n-aria')));
     }
-    var tituloClave = document.documentElement.getAttribute('data-i18n-title');
-    if (tituloClave) {
-      document.title = t(tituloClave) + ' | Teclatlon';
+    var titleKey = document.documentElement.getAttribute('data-i18n-title');
+    if (titleKey) {
+      document.title = t(titleKey) + ' | Teclatlon';
     }
   }
 
-  function inicio() {
+  function init() {
     document.documentElement.lang = locale();
     apply(document);
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', inicio);
+    document.addEventListener('DOMContentLoaded', init);
   } else {
-    inicio();
+    init();
   }
 
   window.App.i18n = {
-    SOPORTADOS: SOPORTADOS,
-    POR_DEFECTO: POR_DEFECTO,
+    SUPPORTED: SUPPORTED,
+    DEFAULT_LOCALE: DEFAULT_LOCALE,
     locale: locale,
     setLocale: setLocale,
     lang: lang,
@@ -187,4 +180,16 @@
     pick: pick,
     apply: apply
   };
+
+  /* ---- language selector metadata (drives the index.html button list) ----
+     LABEL is the visible text on the language button, FLAG is the emoji
+     shown before it. Add a new entry per locale in SUPPORTED. */
+  var LABEL = { es: 'Español', en: 'English' };
+  var FLAG = { es: '🇪🇸', en: '🇬🇧' };
+
+  /* Expose for the language selector (rendered by index.html /
+     app.js). Read-only at runtime; extend these maps when adding a
+     supported language. */
+  window.App.i18n.LABEL = LABEL;
+  window.App.i18n.FLAG = FLAG;
 })();

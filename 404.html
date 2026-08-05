@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teclatlon — Página no encontrada</title>
+  <meta http-equiv="refresh" content="0; url=index.html">
+  <style>
+    body { font-family: system-ui, sans-serif; text-align: center; padding: 4rem 1rem; color: #2a2a2a; }
+    a { color: #2563eb; }
+  </style>
+</head>
+<body>
+  <h1>404</h1>
+  <p>La página que buscas no existe.</p>
+  <p><a href="index.html">Volver al inicio de Teclatlon</a></p>
+  <script>
+    // Register the service worker on this fallback too, so a 404 hit
+    // still leaves the SW active for the next navigation back into the
+    // app (matches the pattern in ./index.html).
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(function () {});
+    }
+  </script>
+</body>
+</html>

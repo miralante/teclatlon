@@ -39,6 +39,37 @@
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
 
+  /**
+   * Returns a stereo pan value (-1..1) for a key column (0 = leftmost).
+   * The pan is only used when the user has enabled spatial audio.
+   * @param {number} columna - 0-based position of the key in its row
+   * @param {number} total - total number of columns in the row
+   * @returns {number} pan in [-1, 1]
+   */
+  function panDeColumna(columna, total) {
+    if (!total || total <= 1) return 0;
+    return (columna / (total - 1)) * 2 - 1;
+  }
+
+  /**
+   * Returns the column of a key inside its row, searching across all
+   * rows of DATA (letters, number row) and the numpad. Returns null
+   * if the key is not found.
+   * @param {string} ch
+   * @param {boolean} enNumpad
+   * @returns {number|null}
+   */
+  function columnaDe(ch, enNumpad) {
+    if (!ch) return null;
+    var filas = enNumpad ? window.DATA.numpad : window.DATA.rows.concat([window.DATA.numberRow]);
+    for (var i = 0; i < filas.length; i++) {
+      for (var j = 0; j < filas[i].length; j++) {
+        if (filas[i][j].ch === ch) return j;
+      }
+    }
+    return null;
+  }
+
   /* Keep the screen awake while typing (Screen Wake Lock). Progressive
      enhancement: if the browser doesn't support it, nothing happens.
      Requires a user gesture, so it's requested on the first tap/click;
@@ -66,6 +97,8 @@
     shuffle: shuffle,
     $: $,
     $$: $$,
-    reducedMotion: reducedMotion
+    reducedMotion: reducedMotion,
+    panDeColumna: panDeColumna,
+    columnaDe: columnaDe
   };
 })();

@@ -14,7 +14,6 @@
     "navResponsible": 'Who processes your data',
     "navData": 'What we save',
     "navRights": 'Your rights',
-    "navMinors": 'Minors',
     "navContact": 'Changes and contact',
 
     "responsibleTitle": 'Who processes your data',
@@ -27,6 +26,12 @@
     "dataItem1Text": 'the stars earned and the lessons completed.',
     "dataItem2Label": 'Name (optional)',
     "dataItem2Text": 'if you type it in when you start, so it shows on screen while you practice.',
+"dataItem3Label": "Streaks and badges",
+    "dataItem3Text": "the current streak and the best streak, and the badges you have already earned.",
+    "dataItem4Label": "Best accuracy",
+    "dataItem4Text": "the highest percentage of correct keys in a row in a single run.",
+    "dataItem5Label": "Accessibility and game settings",
+    "dataItem5Text": "text size, theme, focus mode, easy reading, and other settings from the panel.",
     "dataP3": 'We never save: mistakes, time spent, number of attempts, comparisons with other people, or detailed usage history.',
     "dataP4": 'This information is saved until you erase it, and is used only so your progress is not lost when you close the app.',
 
@@ -34,10 +39,6 @@
     "rightsP1": 'Since everything saved is on your device and not on a server, you have direct control: you can see it, change it, or delete it at any time, without asking us.',
     "rightsP2": 'To delete it, use the "Erase my progress" button in the app, or clear this site\'s browsing data from your browser\'s settings.',
     "rightsLinkApp": 'Go to Teclatlon',
-
-    "minorsTitle": 'Minors and people with a disability',
-    "minorsP1": 'Teclatlon is designed to be used autonomously by anyone, including minors and people with an intellectual disability.',
-    "minorsP2": 'Since the app does not collect personal data on any server, no guardian consent is needed to process data: there is no processing to authorize. We do recommend the usual supervision a family or professional would give to the use of any device.',
 
     "contactTitle": 'Changes and contact',
     "contactP1": 'This page may be updated if the app changes.',

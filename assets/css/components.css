@@ -8,7 +8,7 @@
 .container {
   max-width: 900px;
   margin: 0 auto;
-  padding: var(--espacio-grande) var(--espacio);
+  padding: 8px var(--space);
 }
 
 /* ---- Buttons ---- */
@@ -17,41 +17,41 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  min-height: var(--boton-min);
-  min-width: var(--boton-min);
+  min-height: var(--button-min);
+  min-width: var(--button-min);
   padding: 12px 28px;
   border: 3px solid transparent;
-  border-radius: var(--radio);
-  background: var(--color-acento);
+  border-radius: var(--radius);
+  background: var(--accent);
   color: #FFFFFF;
-  font-size: var(--texto-base);
+  font-size: var(--text-base);
   font-weight: 700;
   text-decoration: none;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.btn:hover { transform: scale(1.03); box-shadow: var(--sombra); }
+.btn:hover { transform: scale(1.03); box-shadow: var(--shadow); }
 .btn:active { transform: scale(0.98); }
 
-.btn-secundario {
-  background: var(--color-superficie);
-  color: var(--color-texto);
-  border-color: var(--color-borde);
+.btn-secondary {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-border);
 }
 
-.btn-acierto { background: var(--color-acierto); }
+.btn-acierto { background: var(--color-success); }
 
 /* Audio button */
 .btn-audio {
-  background: var(--color-superficie);
-  color: var(--color-texto);
-  border: 3px solid var(--color-borde);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 3px solid var(--color-border);
 }
 
 .btn-audio[aria-pressed="true"],
 .btn-audio.hablando {
-  border-color: var(--color-acento);
-  background: var(--color-acento-suave);
+  border-color: var(--accent);
+  background: var(--accent-soft);
 }
 
 /* ---- Back link (always top left) ---- */
@@ -59,34 +59,34 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  min-height: var(--boton-min);
+  min-height: var(--button-min);
   padding: 12px 20px;
-  border-radius: var(--radio);
-  background: var(--color-superficie);
-  border: 3px solid var(--color-borde);
-  color: var(--color-texto);
-  font-size: var(--texto-base);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  border: 3px solid var(--color-border);
+  color: var(--color-text);
+  font-size: var(--text-base);
   font-weight: 700;
   text-decoration: none;
 }
 
-.back-link:hover { border-color: var(--color-acento); }
+.back-link:hover { border-color: var(--accent); }
 
 /* ---- Cards ---- */
 .card {
-  background: var(--color-superficie);
-  border: 3px solid var(--color-borde);
-  border-radius: var(--radio);
-  padding: var(--espacio-grande);
-  box-shadow: var(--sombra);
+  background: var(--color-surface);
+  border: 3px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space);
+  box-shadow: var(--shadow);
 }
 
 /* ---- Progress bar (no pressure: informational only) ---- */
 .progress-bar {
   position: relative;
   height: 28px;
-  background: var(--color-superficie);
-  border: 2px solid var(--color-borde);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
   border-radius: 14px;
   overflow: hidden;
 }
@@ -94,7 +94,7 @@
 .progress-fill {
   height: 100%;
   width: 0%;
-  background: var(--color-acierto);
+  background: var(--color-success);
   border-radius: 14px;
   transition: width 0.4s ease;
 }
@@ -105,9 +105,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--texto-pequeno);
+  font-size: var(--text-small);
   font-weight: 700;
-  color: var(--color-texto);
+  color: var(--color-text);
 }
 
 /* ---- Stars ---- */
@@ -115,26 +115,26 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: var(--texto-grande);
+  font-size: var(--text-base);
   font-weight: 700;
-  color: var(--color-estrella);
+  color: var(--color-star);
 }
 
 /* ---- Feedback zone (aria-live). Class names match assets/js/feedback.js
    (success()/encourage()), not the "acierto"/"animo" Spanish names. ---- */
 .feedback {
-  min-height: 64px;
+  min-height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  font-size: var(--texto-grande);
+  font-size: var(--text-base);
   font-weight: 700;
   text-align: center;
 }
 
-.feedback.success { color: var(--color-acierto); }
-.feedback.encourage { color: var(--color-animo); }
+.feedback.success { color: var(--color-success); }
+.feedback.encourage { color: var(--color-encourage); }
 
 /* ---- Celebration (brief, <= 2 s) ---- */
 .celebration {
@@ -144,11 +144,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--espacio);
+  gap: var(--space);
   background: rgba(250, 247, 242, 0.95);
   z-index: 100;
   text-align: center;
-  padding: var(--espacio);
+  padding: var(--space);
 }
 
 .celebration.hidden { display: none; }
@@ -159,9 +159,9 @@
 }
 
 .celebration .mensaje {
-  font-size: var(--texto-titulo);
+  font-size: var(--text-title);
   font-weight: 700;
-  color: var(--color-acierto);
+  color: var(--color-success);
 }
 
 @keyframes celebrar {
@@ -173,45 +173,384 @@
 /* ---- Standard tool header ---- */
 .tool-header {
   display: flex;
-  align-items: center;
-  gap: var(--espacio);
+  flex-direction: column;
+  gap: 6px;
   flex-wrap: wrap;
-  margin-bottom: var(--espacio-grande);
+  margin-bottom: var(--space);
+}
+
+/* Row 1: title + data badges + settings button.
+   Row 2: keyboard-view selector (.opciones-teclado--header). Kept on
+   its own line so it stays readable on narrow screens and never
+   pushes the title aside. */
+.tool-header-fila {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .tool-header h1 {
   flex: 1;
-  font-size: var(--texto-grande);
+  font-size: 20px;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Header variant of the keyboard-view selector: smaller chips so it
+   sits comfortably in the header on small screens and stops looking
+   like a primary CTA. Visually a peer of the data badges (⚙️ / ⭐) but
+   bigger, since it actually does something. */
+.opciones-teclado--header {
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.opciones-teclado--header .btn {
+  padding: 4px 10px;
+  font-size: 13px;
+  min-height: 32px;
+  border-width: 2px;
+}
+
+/* Compact button variant for chrome-only rows (header, game top bar).
+   These are NOT the primary CTAs -- accessibility rule of 64px min
+   applies to primary buttons; chrome can sit at 36px so it doesn't
+   eat half the viewport on a normal screen. The hit target remains
+   comfortably above WCAG 2.5.5 (44px) on touch via the natural button
+   padding, and keyboard focus is preserved (`:focus-visible` ring is
+   still drawn at 3px). */
+.btn-compacto {
+  min-height: 36px;
+  min-width: 36px;
+  padding: 4px 12px;
+  font-size: var(--text-small);
+  border-width: 2px;
+}
+.btn-compacto.btn-audio { font-size: 16px; }
+
+/* ---- Responsive header ----
+   The header has two rows (title row + keyboard-view chips). At desktop
+   sizes the title row fits on one line and the chips fit on the next.
+   At intermediate sizes (641–1024 px) the title still fits but the
+   chips need to pack tighter; on small screens the title wraps and the
+   chips become a wrap-friendly cluster under it. The 640 px breakpoint
+   here intentionally matches styles.css's own breakpoint so both pass
+   through the same gate. */
+
+@media (max-width: 1024px) {
+  .tool-header { gap: 4px; margin-bottom: 6px; }
+  .tool-header h1 { font-size: 18px; }
+  .opciones-teclado--header .btn { padding: 3px 8px; font-size: 12px; min-height: 28px; }
+}
+
+@media (max-width: 640px) {
+  /* Title takes its own row, badges wrap below it on the same row,
+     chips cluster underneath and are allowed to wrap freely. */
+  .tool-header-fila { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .tool-header h1 { flex: none; font-size: 16px; }
+  .header-datos { gap: 6px; }
+  .header-datos .dato { padding: 3px 8px; font-size: 12px; }
+  .opciones-teclado--header { width: 100%; gap: 6px; }
+  .opciones-teclado--header .btn { padding: 4px 8px; font-size: 12px; }
 }
 
 /* ---- Grid of large cards (game menu) ---- */
 .grid-tarjetas {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: var(--espacio-grande);
+  gap: var(--space-large);
 }
 
 /* ---- Legal footer link (present on every page) ---- */
 .pie-app {
   display: flex;
   justify-content: center;
-  padding: var(--espacio) 0 8px;
-  margin-top: var(--espacio);
+  padding: 4px 0 4px;
+  margin-top: 4px;
 }
 
-.enlace-legal {
-  color: var(--color-texto-suave);
-  font-size: var(--texto-pequeno);
+.footer-link {
+  color: var(--color-text-soft);
+  font-size: var(--text-small);
   padding: 8px 12px;
   text-decoration: underline;
 }
 
-.enlace-legal:hover, .enlace-legal:focus {
-  color: var(--color-texto);
+.footer-link:hover, .footer-link:focus {
+  color: var(--color-text);
 }
 
 /* Utilities */
 .centrado { text-align: center; }
-.oculto { display: none !important; }
-.pila { display: flex; flex-direction: column; gap: var(--espacio); }
-.fila { display: flex; align-items: center; gap: var(--espacio); flex-wrap: wrap; }
+.hidden { display: none !important; }
+.stack { display: flex; flex-direction: column; gap: var(--space); }
+/* Game/lessons/plantillas/libre screens have many stacked blocks
+   (top bar + instruction + target + feedback + metrics + guide +
+   keyboard). At the default --space (16px) the cumulative gap eats a
+   big chunk of the viewport on a normal screen; tightening the gap
+   inside these sections keeps the operative zone (target + keyboard)
+   visible without scrolling. */
+#pantallaJuego.stack,
+#pantallaLibre.stack,
+#pantallaLecciones.stack,
+#pantallaPlantillas.stack { gap: 8px; }
+.row { display: flex; align-items: center; gap: var(--space); flex-wrap: wrap; }
+
+/* ---- Settings panel (accessibility & game) ---- */
+.panel-ajustes {
+  background: var(--color-surface);
+  border: 3px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space);
+  box-shadow: var(--shadow);
+}
+
+.panel-ajustes h3 {
+  margin-bottom: 8px;
+  font-size: var(--text-base);
+}
+
+.panel-ajustes .ayuda {
+  font-size: var(--text-small);
+  color: var(--color-text-soft);
+  margin-top: 8px;
+}
+
+.ajuste-row {
+  display: block;
+  flex-shrink: 0;
+  min-height: var(--button-min);
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.ajuste-etiqueta { display: block; margin-bottom: 8px; }
+
+.ajuste-row:last-child { border-bottom: 0; }
+
+.ajuste-etiqueta {
+  font-weight: 700;
+  font-size: var(--text-base);
+}
+
+.ajuste-valor {
+  font-size: var(--text-small);
+  color: var(--color-text-soft);
+  font-weight: 700;
+  min-width: 8em;
+  text-align: right;
+}
+
+/* Compact icon button used inside settings rows */
+.btn-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  min-width: 48px;
+  padding: 4px 12px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: var(--text-base);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-icono[aria-pressed="true"] {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn-icono:hover { border-color: var(--accent); }
+
+.grupo-texto { display: flex; flex-wrap: wrap; gap: 4px; width: 100%; }
+
+/* ---- Settings drawer ---- */
+.btn-abrir-ajustes { font-size: 18px; padding: 2px; min-height: 36px; min-width: 36px; }
+
+.drawer-fondo {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: 90;
+}
+
+.drawer-fondo.visible { opacity: 1; }
+.drawer-fondo[hidden] { display: none; }
+
+.drawer-ajustes {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(380px, 92vw);
+  margin: 0;
+  border-radius: 0;
+  border-width: 0 0 0 3px;
+  overflow-y: auto;
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+  z-index: 91;
+}
+
+.drawer-ajustes.abierto { transform: translateX(0); }
+.drawer-ajustes[hidden] { display: none; }
+
+.drawer-cabecera { justify-content: space-between; }
+.drawer-cabecera h3 { margin: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer-fondo, .drawer-ajustes { transition: none; }
+}
+
+/* ---- Header badges (streak + metrics summary) ---- */
+.header-datos {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.dato {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 2px solid var(--accent);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dato.racha { background: var(--color-encourage-suave); border-color: var(--color-encourage); color: var(--color-encourage); }
+.dato.metrica { background: var(--color-success-soft); border-color: var(--color-success); color: var(--color-success); }
+
+/* ---- Badges (insignias) ---- */
+.grid-insignias {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space);
+}
+
+.tarjeta-insignia {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 110px;
+  padding: 12px;
+  background: var(--color-surface);
+  border: 3px solid var(--color-border);
+  border-radius: var(--radius);
+  text-align: center;
+  font-size: var(--text-small);
+  font-weight: 700;
+}
+
+.tarjeta-insignia.conseguida {
+  border-color: var(--color-success);
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.tarjeta-insignia .icono { font-size: 36px; }
+
+/* ---- Live metrics overlay (game screen) ---- */
+.metricas-vivas {
+  display: flex;
+  gap: var(--space);
+  justify-content: center;
+  font-size: var(--text-small);
+  font-weight: 700;
+  color: var(--color-text-soft);
+}
+
+.metricas-vivas .metrica-viva {
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  padding: 6px 12px;
+}
+
+/* ---- Avatar picker ---- */
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: var(--space);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.avatar-btn {
+  background: var(--color-surface);
+  border: 3px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80px;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.avatar-btn:hover { transform: scale(1.05); border-color: var(--accent); }
+
+.avatar-btn[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.avatar-btn svg { width: 56px; height: 56px; }
+
+/* ---- Avatar shown in the menu greeting ---- */
+.avatar-actual {
+  width: 64px;
+  height: 64px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-actual svg { width: 100%; height: 100%; }
+
+/* ---- Banner for a newly unlocked badge ---- */
+.bandera-insignia {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-success);
+  color: #FFFFFF;
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-size: var(--text-base);
+  font-weight: 700;
+  box-shadow: var(--shadow);
+  z-index: 110;
+  animation: entradaInsignia 0.3s ease;
+}
+
+.bandera-insignia.hidden { display: none; }
+
+@keyframes entradaInsignia {
+  from { transform: translate(-50%, -100%); opacity: 0; }
+  to   { transform: translate(-50%, 0); opacity: 1; }
+}
+
+/* Focus mode: dim the celebration background for less distraction */
+html.modo-foco .celebration {
+  background: rgba(0, 0, 0, 0.85);
+  color: #FFFFFF;
+}
+
+html.modo-foco .celebration .mensaje { color: #FFFFFF; }

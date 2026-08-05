@@ -5,47 +5,139 @@
 
 :root {
   /* Base colors — accessible light theme */
-  --color-fondo: #FAF7F2;
-  --color-superficie: #FFFFFF;
-  --color-texto: #1A1A2E;
-  --color-texto-suave: #4A4A68;
-  --color-borde: #D8D2C8;
+  --color-bg: #FAF7F2;
+  --color-surface: #FFFFFF;
+  --color-text: #1A1A2E;
+  --color-text-soft: #4A4A68;
+  --color-border: #D8D2C8;
 
   /* Accent + hand/finger palette (used to color the visual keyboard by
-     hand or by finger; --color-acento also doubles as the primary UI
+     hand or by finger; --accent also doubles as the primary UI
      accent for buttons, links and focus states). */
-  --color-acento: #1B6CA8;         /* blue — left hand / thumbs */
-  --color-acento-suave: #E3EEF6;
-  --color-mano-derecha: #2E7D32;   /* green — right hand / index fingers */
-  --color-mano-derecha-suave: #E6F2E6;
-  --color-dedo-anular: #C05621;    /* orange — ring fingers */
-  --color-dedo-anular-suave: #F9EBE2;
-  --color-dedo-medio: #6B3FA0;     /* purple — middle fingers */
-  --color-dedo-medio-suave: #EFE8F7;
-  --color-dedo-menique: #B3446C;   /* raspberry — little fingers */
-  --color-dedo-menique-suave: #F7E8EE;
+  --accent: #1B6CA8;         /* blue — left hand / thumbs */
+  --accent-soft: #E3EEF6;
+  --color-hand-right: #2E7D32;   /* green — right hand / index fingers */
+  --color-hand-right-soft: #E6F2E6;
+  --color-finger-ring: #C05621;    /* orange — ring fingers */
+  --color-finger-ring-soft: #F9EBE2;
+  --color-finger-middle: #6B3FA0;     /* purple — middle fingers */
+  --color-finger-middle-suave: #EFE8F7;
+  --color-finger-pinky: #B3446C;   /* raspberry — little fingers */
+  --color-finger-pinky-suave: #F7E8EE;
 
   /* Feedback */
-  --color-acierto: #2E7D32;
-  --color-acierto-suave: #E6F2E6;
-  --color-animo: #C05621;        /* never an aggressive red for mistakes */
-  --color-animo-suave: #F9EBE2;
-  --color-estrella: #B8860B;
+  --color-success: #2E7D32;
+  --color-success-soft: #E6F2E6;
+  --color-encourage: #C05621;        /* never an aggressive red for mistakes */
+  --color-encourage-suave: #F9EBE2;
+  --color-star: #B8860B;
 
   /* Typography */
-  --fuente: 'Atkinson Hyperlegible', 'Nunito', system-ui, -apple-system, sans-serif;
-  --texto-base: 20px;
-  --texto-pequeno: 17px;
-  --texto-grande: 28px;
-  --texto-titulo: 36px;
+  --font: 'Atkinson Hyperlegible', 'Nunito', system-ui, -apple-system, sans-serif;
+  --text-base: 20px;
+  --text-small: 17px;
+  --text-large: 28px;
+  --text-title: 36px;
 
   /* Touch and spacing */
-  --boton-min: 64px;
-  --espacio: 16px;
-  --espacio-grande: 24px;
-  --radio: 16px;
-  --sombra: 0 2px 8px rgba(26, 26, 46, 0.12);
+  --button-min: 64px;
+  --space: 16px;
+  --space-large: 24px;
+  --radius: 16px;
+  --shadow: 0 2px 8px rgba(26, 26, 46, 0.12);
 
   /* Visible focus */
-  --color-foco: #1B6CA8;
+  --color-focus: #1B6CA8;
+
+  /* Theme defaults — overridden by [data-tema="oscuro"] / [data-tema="contraste"] */
+  --color-bg: #FAF7F2;
+  --color-surface: #FFFFFF;
+  --color-text: #1A1A2E;
+  --color-text-soft: #4A4A68;
+  --color-border: #D8D2C8;
+  --accent: #1B6CA8;
+  --accent-soft: #E3EEF6;
+  --color-success: #2E7D32;
+  --color-success-soft: #E6F2E6;
+  --color-encourage: #C05621;
+  --color-encourage-suave: #F9EBE2;
+  --color-shadow: rgba(26, 26, 46, 0.12);
 }
+
+/* -------- Dark theme -------- */
+[data-tema="oscuro"] {
+  --color-bg: #14161E;
+  --color-surface: #1E2230;
+  --color-text: #F2F0EA;
+  --color-text-soft: #B3B0C8;
+  --color-border: #2E3346;
+  --accent: #6BB4F2;
+  --accent-soft: #19354D;
+  --color-success: #7BD389;
+  --color-success-soft: #1E2A20;
+  --color-encourage: #F2B07A;
+  --color-encourage-suave: #2E2418;
+  --color-shadow: rgba(0, 0, 0, 0.4);
+  /* Hand/finger key backgrounds (keyboard color-coding) — must stay dark
+     enough for the near-white --color-text of this theme to read on top.
+     --accent-soft (left hand) and --color-hand-right-soft (right hand)
+     are pushed further apart in hue/lightness than a plain darkened tint
+     would give: at very low lightness, blue and green read as the same
+     near-black to the eye, so the left/right key colors were not
+     distinguishable in this theme. */
+  --color-hand-right-soft: #194D22;
+  --color-finger-ring-soft: #2E2418;
+  --color-finger-middle-suave: #241E38;
+  --color-finger-pinky-suave: #2E1E28;
+}
+
+/* -------- High contrast (forced colors) -------- */
+[data-tema="contraste"] {
+  --color-bg: #000000;
+  --color-surface: #000000;
+  --color-text: #FFFFFF;
+  --color-text-soft: #FFFFFF;
+  --color-border: #FFFFFF;
+  --accent: #FFFF00;
+  --accent-soft: #000000;
+  --color-success: #00FF66;
+  --color-success-soft: #000000;
+  --color-encourage: #FF8800;
+  --color-encourage-suave: #000000;
+  --color-shadow: rgba(255, 255, 255, 0.5);
+  --color-focus: #FFFF00;
+  /* Same hand/finger key backgrounds as above: must go black, otherwise
+     the white key symbols disappear against their light default suave
+     colors (this was the actual bug — right-hand/finger-colored keys
+     were unreadable in this theme). */
+  --color-hand-right-soft: #000000;
+  --color-finger-ring-soft: #000000;
+  --color-finger-middle-suave: #000000;
+  --color-finger-pinky-suave: #000000;
+}
+
+
+
+/* -------- Distraction-free mode ("etiquetaModoFoco" -- previously
+   called "modo foco"/"focus mode", renamed for clarity: see
+   strings.*.js): hides secondary text-based chrome (the keyboard-type
+   legend/description and the inline numpad). The on-screen keyboard
+   (including the highlighted target key) AND the hand/finger guide
+   stay, since for many players the hand picture is the PRIMARY way to
+   find the next key, not supporting chrome -- hiding it here would
+   work against the whole point of the mode. The keyboard-type buttons
+   (Simple/Normal/Extended/Colours) are hidden by a separate, future
+   option, not by this one. The on-screen keyboard is never the input;
+   it's an anchor (see SPEC.md §2 and the pointer-events:none rule in
+   components.css). -------- */
+html.modo-foco .leyenda-teclado,
+html.modo-foco .detalle-teclado,
+html.modo-foco .panel-numpad-inline {
+  display: none !important;
+}
+
+/* -------- Text size steps (controlled by --text-base) -------- */
+:root { --text-base: 20px; }
+[data-texto="chico"] { --text-base: 18px; }
+[data-texto="grande"] { --text-base: 24px; }
+[data-texto="enorme"] { --text-base: 30px; }
