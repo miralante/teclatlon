@@ -393,7 +393,7 @@
 
   /* ---------- Screens ---------- */
   function showScreen(id) {
-    PANTALLAS.forEach(function (p) {
+    SCREENS.forEach(function (p) {
       document.getElementById(p).classList.toggle('hidden', p !== id);
     });
   }
