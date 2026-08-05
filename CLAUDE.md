@@ -96,8 +96,11 @@ not a copy in this file. Keep changes minimal and on-target.
 
 Before finishing:
 1. Run `node scripts/check.js`.
-2. If you touched `index.html`, `styles.css`, `sw.js`, or added assets,
-   bump `VERSION` in `sw.js` and add new files to `ARCHIVOS`.
+2. If you touched `index.html`, `styles.css`, `sw.js`, `app.js`,
+   `data.js`, the `strings.*.js` or `assets/js/*` files, or added
+   assets, bump `VERSION` in `sw.js` and add new files to `ARCHIVOS`.
+   Anything in `ARCHIVOS` is served cache-first by the SW: a change
+   there without a `VERSION` bump stays trapped in old clients.
 3. Report only verifications you actually ran; flag remaining manual
    tests (e.g. a real browser check of the physical-keyboard flow).
 
