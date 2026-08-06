@@ -99,8 +99,12 @@ Before finishing:
 2. If you touched `index.html`, `styles.css`, `sw.js`, `app.js`,
    `data.js`, the `strings.*.js` or `assets/js/*` files, or added
    assets, bump `VERSION` in `sw.js` and add new files to `ARCHIVOS`.
-   Anything in `ARCHIVOS` is served cache-first by the SW: a change
-   there without a `VERSION` bump stays trapped in old clients.
+   Anything in `ARCHIVOS` is served **network-first with cache
+   fallback** by the SW (the SW always asks the network first and
+   only uses the cache when the network is unreachable). The cache
+   only becomes the source of truth if you fail to bump `VERSION`,
+   in which case a change stays trapped in old clients. Full
+   contract: `CLOUDFLARE.md` §"Cache contract".
 3. Report only verifications you actually ran; flag remaining manual
    tests (e.g. a real browser check of the physical-keyboard flow).
 

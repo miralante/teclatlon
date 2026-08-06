@@ -139,3 +139,97 @@ fallback**:
 Bump `VERSION` in `sw.js` whenever you change `ARCHIVOS` to discard
 the old cache. The agent-workflow checklist in [`CLAUDE.md`](CLAUDE.md)
 documents which files trigger a required `VERSION` bump.
+
+## Cache contract
+
+There are **three independent cache layers** between the user and the
+source code. Each one is correct for what it does; the goal of this
+section is to make the contract explicit so a change is not trapped
+in any of them.
+
+### 1. Cloudflare edge (CDN)
+
+- Serves the static files from the closest PoP. Honoured
+  automatically by Cloudflare Pages; no config in the repo.
+- We do **not** purge the edge cache manually on every push. The
+  `_headers` file pins `max-age=0, must-revalidate` on the shell
+  (`/index.html`, `/legal/*`, `/manifest.json`, `/sw.js`), so the
+  next browser request always revalidates and picks up the new
+  bytes; fingerprinted assets use `immutable, max-age=31536000` and
+  are content-addressed, so they only change when the bytes change.
+- Verifying: `curl -sI https://<host>/sw.js` should show the new
+  `ETag` after a push that touched `sw.js`, and
+  `CF-Cache-Status: HIT` is expected (HIT means the edge is
+  serving a fresh, revalidated copy).
+
+### 2. Browser HTTP cache (per origin)
+
+- Driven by `Cache-Control` in [`_headers`](_headers). Policy:
+  - Shell files (`index.html`, `legal/*`, `manifest.json`, `sw.js`)
+    → `public, max-age=0, must-revalidate`. The browser always
+    revalidates before reusing, so a redeploy is visible on the
+    next page load.
+  - Fingerprinted assets (`*.js`, `*.css`, `*.png`, `*.svg`,
+    `*.woff2`) → `public, max-age=31536000, immutable`. Safe for a
+    year because they only change when the file bytes change.
+- We deliberately do **not** set `no-store`: the SW relies on being
+  able to cache the response to provide the offline shell, and
+  `no-store` would break that.
+
+### 3. Service-worker cache (`caches.open(VERSION)`)
+
+- Strategy: **network-first, cache fallback** (see comments in
+  [`sw.js`](sw.js)).
+  - `install` caches every file in `ARCHIVOS` individually (never
+    `cache.addAll`, so one missing asset does not brick the cache).
+  - `fetch` always tries the network first; on success it mirrors
+    the response into the SW cache and returns the live response.
+    Only when the network fails does it serve the cached copy, and
+    only when the cache also misses does it reply with the inline
+    "Sin conexión" HTML.
+- Cache key: `teclatlon-vN`. On `activate`, every cache whose name
+  is not the current `VERSION` is deleted, so bumping `VERSION` is
+  the **only** mechanism that purges stale SW state on the client.
+- Rule (mirrors the checklist in [`CLAUDE.md`](CLAUDE.md)):
+  bump `VERSION` whenever you change any file in `ARCHIVOS`,
+  including `app.js`, `data.js`, the `strings.*.js` files, and
+  anything under `assets/`. Forgetting the bump means the redeploy
+  is invisible to every client that already has the SW installed —
+  the SW keeps serving the previous shell from cache because the
+  network path is never reached for files the user already has.
+
+### What to do after a deploy that did not show up
+
+If a push is live on GitHub and on the Cloudflare dashboard but a
+client keeps showing the old UI, walk the three layers in order:
+
+1. **Service-worker cache (most common cause).** The client has an
+   old SW. Bump `VERSION` in `sw.js` and push. The `activate`
+   handler deletes the old cache on the next app open.
+2. **Browser HTTP cache.** Rare with `_headers` as it is, but
+   possible if the user opened the app inside the `max-age` window
+   with an older `_headers` deployed. Force-reload
+   (DevTools → Application → Service workers → Update) clears it.
+3. **Cloudflare edge cache.** Should auto-revalidate thanks to
+   `max-age=0, must-revalidate`. If a stale asset is still served,
+   check `curl -sI <url>` for the `ETag` and the
+   `CF-Cache-Status` header; the dashboard has a "Purge cache"
+   option as a last resort.
+
+### Verifying after a deploy
+
+```bash
+# Effective SW version on the edge
+curl -s https://<host>/sw.js | grep "^var VERSION"
+
+# ETag of a shell file (must change when the file changes)
+curl -sI https://<host>/index.html | grep -i etag
+
+# Whether the edge is serving a fresh copy
+curl -sI https://<host>/sw.js | grep -i cf-cache-status
+```
+
+`HIT` with a current `ETag` and a current `VERSION` is the green
+state. `MISS` immediately after a push is also normal (the first
+request after a deploy rebuilds the edge entry); what matters is
+that the bytes served match `master`.

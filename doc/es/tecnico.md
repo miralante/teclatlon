@@ -27,8 +27,10 @@ Cada tema tiene una fuente canónica: producto en `SPEC.md`, cuestiones técnica
 - **Sin CDNs de JS.** Las fuentes están autoalojadas en `assets/fonts/`.
 - **Persistencia solo en `localStorage`.** Sin login, sin cookies, sin
   datos personales, sin analítica.
-- **PWA offline-first**: `manifest.json` + `sw.js` (caché cache-first de
-  la app shell).
+- **PWA offline-first**: `manifest.json` + `sw.js` (network-first con
+  caché de respaldo para la app shell). El contrato completo de
+  caché — qué cachea cada capa, cuándo bumpear `VERSION`, cómo
+  verificar — vive en [`CLOUDFLARE.md` §"Contrato de caché"](../../CLOUDFLARE.md#contrato-de-caché).
 - **Estilo de código**: JS estilo ES5 (`var`, funciones clásicas, IIFE
   con `'use strict'`); identificadores, comentarios y mensajes de commit
   siempre en inglés. El texto de interfaz (`strings.es.js` /
@@ -375,10 +377,20 @@ añadir los arrays por idioma en `data.js`, y añadir un botón
 
 ## 4. PWA y service worker
 
-- `sw.js` es cache-first para la app shell. Contrato al tocar archivos:
+- `sw.js` es **network-first con caché de respaldo** (no cache-first:
+  esa frase en documentos antiguos es incorrecta). El handler de
+  fetch va a la red primero y replica la respuesta en la caché del
+  SW, así la última versión del servidor es autoritativa siempre
+  que el dispositivo tenga red; la caché solo entra cuando la red
+  no responde.
+- Contrato al tocar archivos:
   1. Archivo nuevo → añádelo a la lista `ARCHIVOS`.
   2. Cualquier cambio a un archivo cacheado → sube `VERSION`
      (`teclatlon-vN`), o quienes tengan la PWA instalada no recibirán el cambio.
+     `VERSION` es el único mecanismo que purga la caché SW vieja la
+     próxima vez que se abra la app; sin bump, un redespliegue
+     permanece invisible para los clientes que ya tienen el SW
+     instalado.
 - `manifest.json` usa un único icono SVG (`sizes: "any"`) — esta es una
   app solo de escritorio, así que no hace falta el conjunto de PNG
   192/512 que necesitaría un destino de pantalla de inicio de iOS.
@@ -480,7 +492,7 @@ Los otros cuatro:
 | `assets/img/icono.svg` | ✅ | ✅ | ✅ | ✅ | ✅ (`img/logo.svg`) |
 | `scripts/check.js` (sin deps, Node stdlib) | ✅ N-locales | ✅ N-locales | ✅ amplio (`tools/`, `site/`, …) | ✅ con catalog-parity lock | ❌ `scripts/validar.js` |
 | Idioma de identificadores en `check.js` | inglés | inglés | español (convención antigua) | inglés | español (archivo distinto) |
-| `sw.js` (cache-first PWA) | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `sw.js` (PWA network-first con caché de respaldo) | ✅ | ✅ | ✅ | ✅ | ❌ |
 | `manifest.json` (un único icono SVG) | ✅ | ✅ | ✅ (también tenía PNG) | ✅ (solo SVG) | ❌ |
 | `_headers` (CSP + Permissions-Policy + CORP + COOP + Upgrade-Insecure-Requests) | ✅ | ✅ | parcial (sin CSP) | ✅ | ✅ (con CSP) |
 | `404.html`, `robots.txt`, `sitemap.xml` | ✅ | ❌ (Okeymoney depende de `not_found_handling` en `wrangler.toml`) | ❌ (`quick-guide.md`) | ✅ | ❌ |

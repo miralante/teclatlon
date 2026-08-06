@@ -26,8 +26,10 @@ Each subject has one canonical source: product in `SPEC.md`, technical matters i
 - **No JS CDNs.** Fonts are self-hosted in `assets/fonts/`.
 - **Persistence only in `localStorage`.** No login, no cookies, no
   personal data, no analytics.
-- **Offline-first PWA**: `manifest.json` + `sw.js` (cache-first of the
-  app shell).
+- **Offline-first PWA**: `manifest.json` + `sw.js` (network-first with
+  cache fallback for the app shell). The full cache contract — what
+  each layer caches, when to bump `VERSION`, how to verify — lives in
+  [`CLOUDFLARE.md` §"Cache contract"](../../CLOUDFLARE.md#cache-contract).
 - **Code style**: ES5-style JS (`var`, classic functions, IIFE with
   `'use strict'`); identifiers, comments and commit messages always in
   English. UI text (`strings.es.js` / `strings.en.js`, lesson/word
@@ -362,10 +364,18 @@ button in `index.html`.
 
 ## 4. PWA and service worker
 
-- `sw.js` is cache-first for the app shell. Contract when touching files:
+- `sw.js` is **network-first with cache fallback** (not cache-first:
+  that wording in older docs is wrong). The fetch handler hits the
+  network first and mirrors the response into the SW cache, so the
+  latest server version is authoritative whenever the device is
+  online; the cache only kicks in when the network is unreachable.
+- Contract when touching files:
   1. New file → add it to the `ARCHIVOS` list.
   2. Any change to a cached file → bump `VERSION` (`teclatlon-vN`),
      otherwise users with the installed PWA won't receive the change.
+     `VERSION` is the only knob that purges the old SW cache on next
+     app open; without a bump, a redeploy stays invisible to clients
+     that already have the SW installed.
 - `manifest.json` uses a single SVG icon (`sizes: "any"`) — this is a
   desktop-only app, so there's no need for the 192/512 PNG set an
   iOS-home-screen target would require.
@@ -464,7 +474,7 @@ The other four:
 | `assets/img/icono.svg` | ✅ | ✅ | ✅ | ✅ | ✅ (`img/logo.svg`) |
 | `scripts/check.js` (no deps, Node stdlib) | ✅ N-locales | ✅ N-locales | ✅ sprawling (`tools/`, `site/`, …) | ✅ with catalog-parity lock | ❌ `scripts/validar.js` |
 | `scripts/check.js` identifier language | English | English | Spanish (older convention) | English | Spanish (different file) |
-| `sw.js` (cache-first PWA) | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `sw.js` (network-first PWA with cache fallback) | ✅ | ✅ | ✅ | ✅ | ❌ |
 | `manifest.json` (single SVG icon) | ✅ | ✅ | ✅ (also had PNG raster) | ✅ (SVG only) | ❌ |
 | `_headers` (CSP + Permissions-Policy + CORP + COOP + Upgrade-Insecure-Requests) | ✅ | ✅ | partial (no CSP) | ✅ | ✅ (with CSP) |
 | `404.html`, `robots.txt`, `sitemap.xml` | ✅ | ❌ (Okeymoney depends on `wrangler.toml`'s `not_found_handling`) | ❌ (`quick-guide.md`) | ✅ | ❌ |
