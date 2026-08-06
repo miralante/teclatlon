@@ -5,7 +5,7 @@
    and bump VERSION so the activate step purges the old cache.
    See CLOUDFLARE.md §"Cache contract" for the full contract.
    ============================================================ */
-var VERSION = 'teclatlon-v20';
+var VERSION = 'teclatlon-v21';
 
 var ARCHIVOS = [
   './index.html',
@@ -82,6 +82,7 @@ self.addEventListener('activate', function (event) {
 
 self.addEventListener('fetch', function (event) {
   if (event.request.method !== 'GET') return;
+
   /* Network-first, cache fallback. Earlier this SW used pure
      cache-first, which pinned already-installed clients to the first
      version of every asset and made deploys invisible until the user
@@ -90,36 +91,59 @@ self.addEventListener('fetch', function (event) {
      in when the network is unreachable (offline / CDN outage). */
   event.respondWith(
     fetch(event.request).then(function (r) {
-      /* Cache successful same-origin responses (final 200 only --
-         Safari rejects a top-level navigation served by the SW that
-         carries a Location header, "Response served by service
-         worker has redirections"). */
-      if (r && r.status === 200) {
+      /* Cache successful same-origin GET responses whose final body
+         is 200 (final: no Location header). Safari rejects a
+         top-level navigation served by the SW that carries a
+         Location header ("Response served by service worker has
+         redirections"), so we explicitly drop 3xx here and let the
+         browser follow the redirect normally. For navigations to
+         "/" specifically, also cache under "/index.html" so the
+         next offline open of the root URL finds a copy: Cloudflare
+         Pages issues a 307 for `/index.html -> /`, so we never get
+         a clean 200 to cache under that exact key otherwise. */
+      if (r && r.status === 200 && event.request.url.startsWith(self.location.origin)) {
         var copia = r.clone();
+        var key = event.request;
+        if (event.request.mode === 'navigate') {
+          var u = new URL(event.request.url);
+          if (u.pathname === '/') key = new Request(self.location.origin + '/index.html');
+        }
         caches.open(VERSION).then(function (cache) {
-          cache.put(event.request, copia);
+          cache.put(key, copia);
         });
       }
       return r;
     }).catch(function () {
-      /* Offline / network failure: try the cache, otherwise reply
-         with a tiny inline HTML that stays at the current URL. */
+      /* Offline / network failure: try the cache (under both the
+         original key and, for navigations, the index.html alias),
+         otherwise reply with a tiny inline HTML that stays at the
+         current URL. */
       return caches.match(event.request).then(function (deCache) {
         if (deCache) return deCache;
-        return new Response(
-          '<!doctype html><html lang="es"><head><meta charset="utf-8">' +
-          '<meta name="viewport" content="width=device-width,initial-scale=1">' +
-          '<title>Sin conexión</title><style>body{font-family:system-ui,sans-serif;' +
-          'margin:2rem auto;max-width:32rem;padding:0 1rem;line-height:1.5}' +
-          'a{color:#1d4ed8}</style></head><body>' +
-          '<h1>Sin conexión</h1>' +
-          '<p>No hemos podido cargar esta página. Comprueba tu conexión a ' +
-          'Internet y vuelve a intentarlo.</p>' +
-          '<p><a href="./index.html">Volver a Teclatlon</a></p>' +
-          '</body></html>',
-          { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
-        );
+        if (event.request.mode === 'navigate') {
+          return caches.match('/index.html').then(function (alias) {
+            if (alias) return alias;
+            return offlineResponse();
+          });
+        }
+        return offlineResponse();
       });
     })
   );
 });
+
+function offlineResponse() {
+  return new Response(
+    '<!doctype html><html lang="es"><head><meta charset="utf-8">' +
+    '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<title>Sin conexión</title><style>body{font-family:system-ui,sans-serif;' +
+    'margin:2rem auto;max-width:32rem;padding:0 1rem;line-height:1.5}' +
+    'a{color:#1d4ed8}</style></head><body>' +
+    '<h1>Sin conexión</h1>' +
+    '<p>No hemos podido cargar esta página. Comprueba tu conexión a ' +
+    'Internet y vuelve a intentarlo.</p>' +
+    '<p><a href="./index.html">Volver a Teclatlon</a></p>' +
+    '</body></html>',
+    { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+  );
+}
