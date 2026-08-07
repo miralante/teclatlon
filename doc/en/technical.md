@@ -44,7 +44,8 @@ The app is served as a static site on **Cloudflare Workers (static
 assets)** via the Git connector — reachable at
 `https://teclatlon.miralante.workers.dev`, not classic Cloudflare
 Pages — with no build step (the repo root *is* the build output). The
-operational details — why there is no `wrangler.toml`, `_redirects`,
+operational details — why `wrangler.toml` exists (static-assets
+binding + 404 handling) and there is still no `_redirects`,
 `functions/` or `package.json`; the Cloudflare dashboard
 configuration; the `sw.js` and SW-redirect note — live in
 [`CLOUDFLARE.md`](../../CLOUDFLARE.md). Three things suffice here:
@@ -444,8 +445,8 @@ The other four:
 - **Okeymoney** (single-activity, money/personal-finance domain):
   the closest sibling to Teclatlon — both single-activity, both
   trimmed `assets/js/`, both share the same Cloudflare Workers
-  (static assets) shape, though Okeymoney commits a `wrangler.toml`
-  and Teclatlon doesn't (see the file-layout table below).
+  (static assets) shape, both commit a `wrangler.toml` with an
+  `[assets]` binding (see the file-layout table below).
 - **Sinonimia** (legacy flat layout): pre-pattern PWA, uses flat
   `css/` / `js/` / `img/` at the repo root instead of `assets/`, no
   `sw.js` / `manifest.json` (no PWA contract), a different
@@ -480,8 +481,8 @@ The other four:
 | `sw.js` (network-first PWA with cache fallback) | ✅ | ✅ | ✅ | ✅ | ❌ |
 | `manifest.json` (single SVG icon) | ✅ | ✅ | ✅ (also had PNG raster) | ✅ (SVG only) | ❌ |
 | `_headers` (CSP + Permissions-Policy + CORP + COOP + Upgrade-Insecure-Requests) | ✅ | ✅ | partial (no CSP) | ✅ | ✅ (with CSP) |
-| `404.html`, `robots.txt`, `sitemap.xml` | ✅ | ❌ (Okeymoney depends on `wrangler.toml`'s `not_found_handling`) | ❌ (`quick-guide.md`) | ✅ | ❌ |
-| `wrangler.toml` | ❌ absent — dashboard-managed Workers (static assets) deploy, no committed config (documented in `CLOUDFLARE.md`) | ✅ (`[assets] directory = "."`, Workers + static assets, committed) | ❌ | ✅ | ✅ (kept on purpose, Pinned name) |
+| `404.html`, `robots.txt`, `sitemap.xml` | ✅ (served via `wrangler.toml`'s `not_found_handling`; a bare 404 with no `wrangler.toml`, verified in prod) | ❌ (Okeymoney depends on `wrangler.toml`'s `not_found_handling`) | ❌ (`quick-guide.md`) | ✅ | ❌ |
+| `wrangler.toml` | ✅ (`[assets] directory = "."`, `not_found_handling = "404-page"`, Workers + static assets, committed — added after `_headers`' CSP fix surfaced the missing-404 gap) | ✅ (`[assets] directory = "."`, Workers + static assets, committed) | ❌ | ✅ | ✅ (kept on purpose, Pinned name) |
 | `_redirects` | ❌ absent (documented in `CLOUDFLARE.md` — Cloudflare rejects the SPA catch-all as a loop) | ❌ | ❌ | ❌ | ❌ |
 | `package.json` | ❌ absent (deliberate: avoids `npm install` overshooting the 25 MiB asset limit) | ❌ | ❌ | ❌ | ❌ |
 
@@ -492,7 +493,7 @@ The other four:
 | "No landing page, no per-tool routing, no `/settings/`" | This file §2 and `CLAUDE.md` "Architecture" |
 | "`tools/<slug>/` per activity was deliberately dropped" | This file §2 "Architecture" paragraph |
 | "`assets/js/` trimmed to what this single activity actually uses" | This file §2.1 "shared core" and `CLAUDE.md` |
-| "No `wrangler.toml`, no `_redirects`" | [`CLOUDFLARE.md`](../../CLOUDFLARE.md) "Why no `wrangler.toml`?" and "Why no `_redirects`?" |
+| "Why `wrangler.toml` exists, no `_redirects`" | [`CLOUDFLARE.md`](../../CLOUDFLARE.md) "Why `wrangler.toml`?" and "Why no `_redirects`?" |
 | "Bilingual by default (`es` + `en`); how to add a third language" | [`I18N.md`](I18N.md) |
 | "Zero mentions of disability / occupational therapy / minors in user-facing files" | [`SPEC.md`](SPEC.md) §4 and `scripts/check.js` §5 |
 

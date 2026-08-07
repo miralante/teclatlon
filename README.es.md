@@ -101,9 +101,10 @@ Es el único paso de "test" y se ejecuta en cada push y PR vía
 
 El despliegue lo controla el **conector Git de Cloudflare Workers** —
 ver [`CLOUDFLARE.md`](CLOUDFLARE.md) para el detalle completo
-(configuración de build, por qué no hay `wrangler.toml`, por qué no
-hay `_redirects`, por qué no hay `package.json`). El repo no incluye
-intencionadamente ficheros de configuración de despliegue.
+(configuración de build, por qué existe `wrangler.toml`, por qué no
+hay `_redirects`, por qué no hay `package.json`). El repo incluye un
+[`wrangler.toml`](wrangler.toml) mínimo (binding de static assets y
+gestión del 404) y ningún otro fichero de configuración de despliegue.
 
 ---
 

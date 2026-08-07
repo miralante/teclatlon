@@ -17,17 +17,21 @@ sibling docs describing it that way. In the Cloudflare dashboard it
 lives under "Workers & Pages" → Compute → Workers & Pages, alongside
 the sibling projects, and is driven by the same Git-connector
 auto-deploy as before: push to `master`, Cloudflare builds and
-deploys automatically. There is no custom GitHub Actions workflow and
-no `wrangler.toml` in the repo — the Cloudflare dashboard owns the
-build and deploy, and project configuration lives entirely there.
+deploys automatically. There is no custom GitHub Actions workflow that
+deploys; project configuration is split between a committed
+[`wrangler.toml`](wrangler.toml) (the static-assets binding and 404
+handling) and the Cloudflare dashboard (branch, environment
+variables). This mirrors the sibling `sinonimia` project's setup,
+which uses the same model.
 
 ## How it works
 
 The repo is connected to a Cloudflare Workers project (`teclatlon`).
-Pushes to `master` trigger a build in Cloudflare's infrastructure;
-pull requests get an automatic preview channel. The build is a no-op:
-no `build command`, no `output directory` other than `.`, so the
-static files are served as-is. Cache and security headers live in
+Pushes to `master` trigger a build in Cloudflare's infrastructure via
+Workers Builds, which reads [`wrangler.toml`](wrangler.toml) to know
+this is a static-assets Worker (no `main` script) and serves the repo
+root directly — no bundling, no build command. Pull requests get an
+automatic preview channel. Cache and security headers live in
 [`_headers`](_headers) at the repo root — Cloudflare's static-assets
 runtime honours the same `_headers`/`_redirects` file conventions
 Pages used, which is why those still work unchanged. The `validate.yml`
@@ -35,21 +39,21 @@ GitHub Action still runs on every push and PR to gate structural and
 i18n checks, but it does **not** deploy.
 
 The `<project-name>.<account-subdomain>.workers.dev` address is
-assigned by Cloudflare from the project name declared in the
-Cloudflare dashboard (here: `teclatlon.miralante.workers.dev`). The
-project name is **not** declared in the repo. No deploy-side
-configuration is committed: no `wrangler.toml`, no `_redirects`, no
-`functions/`, no `_routes.json`, no Cloudflare service-account keys.
-The dashboard is the source of truth for project settings; the repo
-holds the static assets and the CI that gates them.
+assigned by Cloudflare from the project name declared in
+`wrangler.toml`'s `name` field (here: `teclatlon.miralante.workers.dev`).
+No `_redirects`, `functions/`, `_routes.json` or Cloudflare
+service-account keys are committed — `wrangler.toml` only declares the
+static-assets binding and 404 handling; everything else (branch,
+environment variables) still lives in the dashboard.
 
 ## Dashboard configuration
 
 When the project is set up in the Cloudflare dashboard:
 
+- **Framework preset:** None
 - **Build command:** *(empty)*
-- **Build output directory:** `/` (leave the default — it is the
-  repo root)
+- **Deploy command:** *(default — Workers Builds runs `wrangler
+  deploy` using the committed `wrangler.toml`)*
 - **Root directory:** *(empty)*
 - **Environment variables:** none required
 - **Branch:** `master` (production)
@@ -85,26 +89,35 @@ Visiting `/` resolves to `/index.html` and visiting `/legal/`
 resolves to `/legal/index.html`, with no rewrite needed. The SPA
 catch-all was solving a problem this project does not have.
 
-## Why no `wrangler.toml`?
+## Why `wrangler.toml`?
 
-A `wrangler.toml` containing `name = "teclatlon"` and a build-output
-setting looks correct, but in practice the Cloudflare Git connector
-can mis-detect the project type when that file is present and falls
-back to `wrangler deploy` expecting a hand-authored Worker, which then
-fails with *"Missing entry-point to Worker script or to assets
-directory"* because the file declares neither a `main` entry-point
-nor an `[assets]` binding. Removing `wrangler.toml` and letting the
-dashboard drive the deploy (static-assets directory implicit = repo
-root) sidesteps the issue entirely — and keeps working now that the
-project is a dashboard-managed Worker rather than classic Pages. This
-is the same pattern the sibling `apptonomia` and `sinonimia` repos
-use and is what makes those projects' deploys succeed end-to-end.
+[`wrangler.toml`](wrangler.toml) declares `[assets] directory = "."`
+with no `main` script (a pure static-assets Worker) and
+`not_found_handling = "404-page"`. That last setting is the reason
+this file exists: without it, Cloudflare replies to any unmatched
+path with a bare, empty 404 instead of the repo's own `404.html` —
+confirmed in production (`curl` returned `Content-Length: 0` for a
+bad path) before this file was added. This mirrors the sibling
+`sinonimia` project's `wrangler.toml` exactly (same `[assets]` shape,
+same `not_found_handling`), which has served its own custom 404 page
+correctly in production the whole time.
 
-If the project ever needs a manual CLI deploy (for example, to
-attach preview channels during a local debugging session), Wrangler
-can be installed transiently via
-`npx wrangler deploy . --name teclatlon` without committing a
-`wrangler.toml` or a `wrangler` devDependency.
+This project previously shipped **no** `wrangler.toml` at all,
+because an earlier attempt at one (`name = "teclatlon"` plus a
+Pages-style `pages_build_output_dir` setting, no `[assets]` binding)
+made the Cloudflare Git connector mis-detect the project as a
+hand-authored Worker and fail with *"Missing entry-point to Worker
+script or to assets directory."* That failure mode is specific to a
+`wrangler.toml` that declares neither `main` nor `[assets]` — the
+current file avoids it by declaring `[assets]` explicitly, the same
+shape `sinonimia` has used successfully since it adopted the Workers
+(static assets) model. If a future edit to this file ever needs a
+`main` entry-point for real Worker code, re-read this section first.
+
+For a manual CLI deploy (for example, to attach preview channels
+during a local debugging session), install Wrangler transiently via
+`npx wrangler deploy` from the repo root — it picks up the committed
+`wrangler.toml` automatically.
 
 ## Why no `package.json`?
 

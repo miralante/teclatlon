@@ -46,7 +46,8 @@ La app se sirve como sitio estático en **Cloudflare Workers (static
 assets)** vía el conector de Git — accesible en
 `https://teclatlon.miralante.workers.dev`, no en Cloudflare Pages
 clásico — sin paso de build (la raíz del repo *es* la salida del
-build). El detalle de operación — por qué no hay `wrangler.toml`,
+build). El detalle de operación — por qué existe `wrangler.toml`
+(binding de static assets + gestión del 404) y sigue sin haber
 `_redirects`, `functions/` ni `package.json`; la configuración del
 dashboard; la nota sobre `sw.js` y la redirección del SW — vive en
 [`CLOUDFLARE.md`](../../CLOUDFLARE.md). Aquí basta con saber tres
@@ -463,8 +464,8 @@ Los otros cuatro:
 - **Okeymoney** (single-activity, dominio dinero/finanzas personales):
   el hermano más cercano a Teclatlon — ambos single-activity, ambos
   con `assets/js/` recortado, ambos comparten la misma forma de
-  Cloudflare Workers (static assets), aunque Okeymoney sí incluye
-  `wrangler.toml` en el repo y Teclatlon no (ver la tabla de abajo).
+  Cloudflare Workers (static assets) y ambos incluyen un
+  `wrangler.toml` con binding `[assets]` (ver la tabla de abajo).
 - **Sinonimia** (layout plano antiguo): PWA pre-patrón, usa
   `css/` / `js/` / `img/` planos en raíz en lugar de `assets/`, sin
   `sw.js` ni `manifest.json` (sin contrato PWA), un
@@ -499,8 +500,8 @@ Los otros cuatro:
 | `sw.js` (PWA network-first con caché de respaldo) | ✅ | ✅ | ✅ | ✅ | ❌ |
 | `manifest.json` (un único icono SVG) | ✅ | ✅ | ✅ (también tenía PNG) | ✅ (solo SVG) | ❌ |
 | `_headers` (CSP + Permissions-Policy + CORP + COOP + Upgrade-Insecure-Requests) | ✅ | ✅ | parcial (sin CSP) | ✅ | ✅ (con CSP) |
-| `404.html`, `robots.txt`, `sitemap.xml` | ✅ | ❌ (Okeymoney depende de `not_found_handling` en `wrangler.toml`) | ❌ (`quick-guide.md`) | ✅ | ❌ |
-| `wrangler.toml` | ❌ ausente — despliegue de Workers (static assets) gestionado por el dashboard, sin config comprometida (documentado en `CLOUDFLARE.md`) | ✅ (`[assets] directory = "."`, Workers + static assets, comprometido) | ❌ | ✅ | ✅ (presente a propósito, fija el nombre) |
+| `404.html`, `robots.txt`, `sitemap.xml` | ✅ (servido vía `not_found_handling` en `wrangler.toml`; sin él es un 404 vacío, verificado en producción) | ❌ (Okeymoney depende de `not_found_handling` en `wrangler.toml`) | ❌ (`quick-guide.md`) | ✅ | ❌ |
+| `wrangler.toml` | ✅ (`[assets] directory = "."`, `not_found_handling = "404-page"`, Workers + static assets, comprometido — añadido tras detectar el hueco del 404 al arreglar el CSP de `_headers`) | ✅ (`[assets] directory = "."`, Workers + static assets, comprometido) | ❌ | ✅ | ✅ (presente a propósito, fija el nombre) |
 | `_redirects` | ❌ ausente (documentado en `CLOUDFLARE.md` — Cloudflare rechaza el catch-all SPA como loop) | ❌ | ❌ | ❌ | ❌ |
 | `package.json` | ❌ ausente (deliberado: evita que `npm install` se pase del límite de 25 MiB) | ❌ | ❌ | ❌ | ❌ |
 
@@ -511,7 +512,7 @@ Los otros cuatro:
 | "Sin landing, sin routing por herramienta, sin `/settings/`" | Este archivo §2 y `CLAUDE.md` "Architecture" |
 | "`tools/<slug>/` por actividad se eliminó a propósito" | Este archivo §2 párrafo "Arquitectura" |
 | "`assets/js/` recortado a lo que esta única actividad usa" | Este archivo §2.1 "núcleo compartido" y `CLAUDE.md` |
-| "Sin `wrangler.toml`, sin `_redirects`" | [`CLOUDFLARE.md`](../../CLOUDFLARE.md) "Why no `wrangler.toml`?" y "Why no `_redirects`?" |
+| "Por qué existe `wrangler.toml`, sin `_redirects`" | [`CLOUDFLARE.md`](../../CLOUDFLARE.md) "Why `wrangler.toml`?" y "Why no `_redirects`?" |
 | "Bilingüe por defecto (`es` + `en`); cómo añadir un tercer idioma" | [`I18N.md`](I18N.md) |
 | "Cero menciones de discapacidad / terapia ocupacional / menores en archivos visibles al usuario" | [`SPEC.md`](SPEC.md) §4 y `scripts/check.js` §5 |
 

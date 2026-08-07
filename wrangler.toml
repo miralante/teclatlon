@@ -1,0 +1,28 @@
+# wrangler.toml — Cloudflare Workers (static assets) configuration for
+# Teclatlon.
+#
+# Teclatlon is a fully static site (plain HTML/CSS/JS, no build step, no
+# server-side code), so it's deployed as a Worker with no `main` script —
+# just a static-assets binding. This is Cloudflare's current recommended
+# path for static sites (the classic "Pages" product is being superseded by
+# Workers + static assets); it's also what the existing "teclatlon" resource
+# in the Cloudflare dashboard already is — a Worker with "Workers Builds"
+# connected to GitHub (https://teclatlon.miralante.workers.dev), not a
+# Pages project. Mirrors the sibling `sinonimia` project's wrangler.toml.
+#
+# Without `not_found_handling`, Cloudflare replies to any unmatched path
+# with a bare, empty 404 instead of the repo's own `404.html` — verified
+# in production before this file existed (`curl` returned
+# `Content-Length: 0`). See CLOUDFLARE.md for the full rationale.
+#
+# See: https://developers.cloudflare.com/workers/static-assets/
+
+name = "teclatlon"
+compatibility_date = "2026-08-07"
+
+[assets]
+directory = "."
+# Serve 404.html for any path that isn't a static asset, instead of
+# Cloudflare's default empty 404 — the app itself never needs server-side
+# routing (single-activity, no client-side router either).
+not_found_handling = "404-page"

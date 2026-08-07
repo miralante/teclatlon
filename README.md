@@ -94,8 +94,9 @@ It is the only "test" step and runs on every push and PR via
 
 Deployment is owned by the **Cloudflare Workers** Git connector — see
 [`CLOUDFLARE.md`](CLOUDFLARE.md) for the full rationale (build
-settings, why no `wrangler.toml`, why no `_redirects`, why no
-`package.json`). The repo intentionally ships no deploy-side
+settings, why `wrangler.toml` exists, why no `_redirects`, why no
+`package.json`). The repo ships a minimal [`wrangler.toml`](wrangler.toml)
+(static-assets binding and 404 handling) and no other deploy-side
 configuration files.
 
 ---
