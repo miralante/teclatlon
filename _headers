@@ -60,7 +60,7 @@
   #                                                no forms, but belt-and-braces)
   #   frame-ancestors 'self'                      \u2014 allow SAMEORIGIN embeds
   #                                                (matches X-Frame-Options)
-  Content-Security-Policy: default-src ''self''; script-src ''self''; style-src ''self'' ''unsafe-inline''; img-src ''self'' data:; font-src ''self''; connect-src ''self''; worker-src ''self''; manifest-src ''self''; object-src ''none''; base-uri ''self''; form-action ''self''; frame-ancestors ''self''
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'
 
 # ---------------------------------------------------------------------------
 # Cache policy per asset type.

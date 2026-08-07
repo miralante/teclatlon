@@ -155,8 +155,9 @@ in any of them.
   `_headers` file pins `max-age=0, must-revalidate` on the shell
   (`/index.html`, `/legal/*`, `/manifest.json`, `/sw.js`), so the
   next browser request always revalidates and picks up the new
-  bytes; fingerprinted assets use `immutable, max-age=31536000` and
-  are content-addressed, so they only change when the bytes change.
+  bytes; `*.js` and `*.css` use `max-age=300` (a short cache, not
+  immutable — see below) and `*.png`/`*.svg`/`*.woff2` use
+  `immutable, max-age=31536000`.
 - Verifying: `curl -sI https://<host>/sw.js` should show the new
   `ETag` after a push that touched `sw.js`, and
   `CF-Cache-Status: HIT` is expected (HIT means the edge is
@@ -169,9 +170,13 @@ in any of them.
     → `public, max-age=0, must-revalidate`. The browser always
     revalidates before reusing, so a redeploy is visible on the
     next page load.
-  - Fingerprinted assets (`*.js`, `*.css`, `*.png`, `*.svg`,
-    `*.woff2`) → `public, max-age=31536000, immutable`. Safe for a
-    year because they only change when the file bytes change.
+  - `*.js` and `*.css` → `public, max-age=300`. Kept short (not
+    `immutable`) because these files are **not** content-hashed —
+    a stale 1-year cache on `app.js`/`styles.css` previously pinned
+    Safari iOS to an old shell (see `fa5531d`).
+  - `*.png`, `*.svg`, `*.woff2` → `public, max-age=31536000,
+    immutable`. Safe for a year because these truly don't change
+    without a filename change.
 - We deliberately do **not** set `no-store`: the SW relies on being
   able to cache the response to provide the offline shell, and
   `no-store` would break that.
