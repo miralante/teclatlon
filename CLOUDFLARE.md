@@ -207,6 +207,22 @@ in any of them.
   is invisible to every client that already has the SW installed —
   the SW keeps serving the previous shell from cache because the
   network path is never reached for files the user already has.
+- **Also bump `VERSION` after any `_headers` change that affects
+  `sw.js`'s own response headers (CSP in particular).** A service
+  worker's execution context inherits its CSP from the response that
+  fetched `sw.js` at install time and does **not** re-read it later.
+  A broken CSP once shipped in `_headers` (`content-security-policy`
+  applies to `/*`, including `sw.js`) means every already-installed
+  client is running an SW instance permanently stuck with that broken
+  policy — its own `fetch()` calls inside the `fetch` handler start
+  throwing (blocked by the bad CSP), which lands in the `.catch()`
+  branch and serves the cached copy or the inline "Sin conexión" page,
+  no matter how healthy the server is now. Fixing `_headers` alone
+  does nothing for clients that already registered the SW: `sw.js`'s
+  bytes are unchanged, so the browser's update check finds no diff and
+  keeps the broken instance running. Only a `VERSION` bump changes the
+  script bytes, forcing a real reinstall that fetches `sw.js` fresh
+  under the corrected headers.
 
 ### What to do after a deploy that did not show up
 
