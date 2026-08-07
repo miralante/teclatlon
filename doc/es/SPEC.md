@@ -150,10 +150,11 @@ Ver `legal/index.html` para qué datos se guardan exactamente.
 ## 5. Gamificación (sin presión)
 
 - **Estrellas**: una por lección o modo completado por primera vez.
-- **Insignias**: 7 desbloqueables (primera lección, posición, palabras,
-  números, todas las teclas, escritura libre, precisión ≥ 90 %).
-  Se muestran como tarjetas en el menú. Al desbloquear una nueva,
-  aparece una bandera breve.
+- **Insignias**: retiradas. Existió una tabla de 7 insignias
+  planeadas, pero nunca se conectó a ninguna interfaz: la sección
+  "Insignias" del menú principal mostraba siempre el grid vacío y el
+  aviso "Aún no hay insignias", contradiciendo las ⭐ que sí
+  funcionan. No forma parte del producto.
 - **Avatares**: retirados. La selección de avatar no estaba
   implementada (el grid aparecía vacío) y no forma parte del
   producto.

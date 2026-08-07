@@ -202,8 +202,7 @@
    visible even if any other stylesheet (e.g. a future override) would
    try to hide it. */
 html[data-app-blocked="mobile"] .container,
-html[data-app-blocked="mobile"] .app-footer,
-html[data-app-blocked="mobile"] #app-badge-flag { display: none !important; }
+html[data-app-blocked="mobile"] .app-footer { display: none !important; }
 
 /* Footer: the legal notice and "Clear my progress" live here
    together. The button used to live inside #screenName, but it stayed

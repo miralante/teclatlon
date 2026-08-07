@@ -166,9 +166,9 @@ Interactions with the engine:
   initialised on every game start, updated by `gameKey` /
   `challengeKey`, and surfaced as live accuracy (%) and keys-per-minute
   when `state.options.metrics` is true.
-- `award(key)` unlocks a completion badge whose id becomes `true` in
-  `state.completed`. `DATA.badges` (not yet wired to any UI) declares
-  the badge table these ids could drive.
+- `award(key)` marks a mode as completed (an id that becomes `true`
+  in `state.completed`); this is what lights up that mode's ⭐ in the
+  menu.
 - `feedback.success(zone, pan)` accepts an optional stereo pan. The
   caller computes it from the column of the key
   (`App.utils.columnOf` + `App.utils.panOfColumn`, or `panOf` in
@@ -201,10 +201,6 @@ Interactions with the engine:
 - `DATA.placement` / `DATA.lessons` / `DATA.words` / `DATA.numpadSteps` /
   `DATA.templates`: per-locale practice content (`{ es: [...], en: [...] }`),
   read via `DATA.<field>[App.i18n.locale()]`.
-- `DATA.badges`: the badge table (not yet wired to any UI). Each entry
-  is `{ id, key, condition(state) => bool }`. `key` is the i18n key
-  (`badgeFirst`, etc.). `condition` is meant to be evaluated on every
-  progress change.
 - Finger display names live in `strings.<locale>.js` under
   `finger.<id>.hand` / `.name`, not in `data.js`.
 
@@ -265,7 +261,7 @@ separate `é` key — just `e` composed with the dead accent key, the
 same idea as a capital resolving to its base letter. Still avoid `¡`,
 `¿`, `!` and `?`: unlike accents, those have no physical key at all in
 `DATA.rows` and would silently swallow the keystroke. `id` must be
-unique and stable — it's reused as the badge/progress key
+unique and stable — it's reused as the completion/progress key
 (`'template_' + id`).
 
 ### 2.4 Meaningful-learning anchor: `transferMessage`

@@ -174,10 +174,9 @@ partida. Interacciones con el motor:
   reinicia en cada partida, lo actualizan `gameKey` / `challengeKey`,
   y se muestra como precisión (%) y teclas por minuto en vivo cuando
   `state.options.metrics` vale `true`.
-- `award(key)` desbloquea una insignia de finalización cuyo id pasa a
-  `true` en `state.completed`. `DATA.badges` (todavía sin conectar a
-  ninguna interfaz) declara la tabla de insignias que esos ids podrían
-  impulsar.
+- `award(key)` marca un modo como completado (id que pasa a `true`
+  en `state.completed`); es lo que enciende la ⭐ de ese modo en el
+  menú.
 - `feedback.success(zone, pan)` acepta un paneo estéreo opcional. Lo
   calcula el llamador desde la columna de la tecla
   (`App.utils.columnOf` + `App.utils.panOfColumn`, o `panOf` en
@@ -210,10 +209,6 @@ partida. Interacciones con el motor:
 - `DATA.placement` / `DATA.lessons` / `DATA.words` / `DATA.numpadSteps` /
   `DATA.templates`: contenido de práctica por idioma
   (`{ es: [...], en: [...] }`), leído con `DATA.<campo>[App.i18n.locale()]`.
-- `DATA.badges`: tabla de insignias (todavía sin conectar a ninguna
-  interfaz). Cada entrada es `{ id, key, condition(state) => bool }`.
-  `key` es la clave i18n (`badgeFirst`, etc.). `condition` está
-  pensada para evaluarse en cada cambio de progreso.
 - Los nombres de los dedos viven en `strings.<locale>.js` bajo
   `finger.<id>.hand` / `.name`, no en `data.js`.
 
@@ -279,7 +274,7 @@ muerta del acento, la misma idea que una mayúscula resolviendo a su
 letra base. Evita igualmente `¡`, `¿`, `!` y `?`: a diferencia de los
 acentos, esas no tienen ninguna tecla física en `DATA.rows` y se
 tragarían la pulsación sin avisar. `id` debe ser único y estable — se
-reutiliza como clave de insignia/progreso (`'template_' + id`).
+reutiliza como clave de finalización/progreso (`'template_' + id`).
 
 ### 2.4 Ancla de aprendizaje significativo: `transferMessage`
 

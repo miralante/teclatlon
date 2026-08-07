@@ -415,8 +415,8 @@ const DATA = {
      DATA.rows and would silently swallow the keystroke.
      TO EXTEND: add a new { id, title, lines } entry to BOTH the 'es'
      and 'en' arrays below (see doc/en/technical.md §2.3 "Extensible
-     templates"). 'id' must be unique and stable (used as the badge
-     key: 'template_' + id in app.js#playTemplate). */
+     templates"). 'id' must be unique and stable (used as the
+     completion key: 'template_' + id in app.js#playTemplate). */
   templates: {
     es: [
       { id: 'email', title: 'Correo a una amiga', lines: [
@@ -776,22 +776,4 @@ DATA.avatars = [
     '<circle cx="26" cy="30" r="2" fill="#1A1A2E"/><circle cx="38" cy="30" r="2" fill="#1A1A2E"/>' +
     '<path d="M27 40 Q32 47 37 40" stroke="#1A1A2E" stroke-width="2" fill="none" stroke-linecap="round"/>' +
     '</svg>' }
-];
-
-/* -------- Badges --------
-   id: internal key saved in state.completed (set).
-   key: i18n key for the visible name.
-   description: i18n key for the description (optional, currently
-   unused).
-   condition: function (state) => bool. Evaluated every time a reward
-   is granted. If it returns true and the badge wasn't already
-   unlocked, it unlocks. */
-DATA.badges = [
-  { id: 'first', key: 'badgeFirst', condition: function (s) { return Object.keys(s.completed).length >= 1; } },
-  { id: 'placement', key: 'badgePlacement', condition: function (s) { return !!s.completed.placement; } },
-  { id: 'words', key: 'badgeWords', condition: function (s) { return !!s.completed.words; } },
-  { id: 'numbers', key: 'badgeNumbers', condition: function (s) { return !!s.completed.numbers; } },
-  { id: 'allKeys', key: 'badgeAllKeys', condition: function (s) { return !!s.completed.allKeys; } },
-  { id: 'free', key: 'badgeFree', condition: function (s) { return (s.freeWritingCount || 0) >= 1; } },
-  { id: 'accuracy', key: 'badgeAccuracy', condition: function (s) { return s.bestAccuracy != null && s.bestAccuracy >= 90; } }
 ];

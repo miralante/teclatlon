@@ -141,9 +141,10 @@ See `legal/index.html` for the exact data items saved.
 ## 5. Gamification (no pressure)
 
 - **Stars**: one per lesson or mode completed for the first time.
-- **Badges**: 7 unlockables (first lesson, position, words, numbers,
-  all the keys, free writing, accuracy ≥ 90 %). Shown as cards in
-  the menu. A short banner appears when a new one is unlocked.
+- **Badges**: removed. A table of 7 planned badges existed but was
+  never wired to any UI: the "Badges" section on the main menu always
+  showed the empty grid and the "No badges yet" notice, contradicting
+  the ⭐ stars, which do work. Not part of the product.
 - **Avatars**: removed. The avatar picker was not implemented (the
   grid rendered empty) and is not part of the product.
 

@@ -189,6 +189,12 @@
         <button type="button" class="btn btn-secondary btn-compact" id="btnChangeName" data-i18n="btnMyName">✏️ Mi nombre</button>
       </div>
       <div class="grid-cards" id="gameMenu">
+        <button type="button" class="mode-card" data-mode="allKeys">
+          <span class="picto" aria-hidden="true">🌈</span>
+          <span class="name" data-i18n="modeAllKeysName">Todas las teclas</span>
+          <span class="detail" data-i18n="modeAllKeysDetail">Enciende todas las teclas.</span>
+          <span class="done"></span>
+        </button>
         <button type="button" class="mode-card" data-mode="placement">
           <span class="picto" aria-hidden="true">🖐️</span>
           <span class="name" data-i18n="modePlacementName">Coloca los dedos</span>
@@ -199,12 +205,6 @@
           <span class="picto" aria-hidden="true">🔤</span>
           <span class="name" data-i18n="modeLessonsName">Paso a paso</span>
           <span class="detail" data-i18n="modeLessonsDetail">Aprende las letras en orden.</span>
-          <span class="done"></span>
-        </button>
-        <button type="button" class="mode-card" data-mode="allKeys">
-          <span class="picto" aria-hidden="true">🌈</span>
-          <span class="name" data-i18n="modeAllKeysName">Todas las teclas</span>
-          <span class="detail" data-i18n="modeAllKeysDetail">Enciende todas las teclas.</span>
           <span class="done"></span>
         </button>
         <button type="button" class="mode-card" data-mode="words">
@@ -233,11 +233,6 @@
         </button>
       </div>
       <p class="instruction centered" id="summary" aria-live="polite"></p>
-      <div class="settings-panel stack" aria-labelledby="badgesTitle">
-        <h3 id="badgesTitle" data-i18n="badgesTitle">Insignias</h3>
-        <div class="grid-badges" id="badgesGrid"></div>
-        <p class="help-text" id="badgesEmpty" data-i18n="badgesEmpty">Aún no hay insignias. ¡Sigue practicando!</p>
-      </div>
     </section>
 
     <!-- Screen: lesson list -->
@@ -375,8 +370,6 @@
 
     <p class="help-text" data-i18n="settingsHelp">Estos ajustes se guardan en este dispositivo.</p>
   </aside>
-
-  <div id="app-badge-flag" class="badge-flag hidden" role="status" aria-live="polite"></div>
 
   <script src="assets/js/utils.js"></script>
   <script src="assets/js/i18n.js"></script>
