@@ -12,6 +12,11 @@
    4. manifest.json icons exist on disk.
    5. Mandatory rule: zero mentions of disability, occupational therapy
       or minors in user-facing files (see doc/<locale>/SPEC.md §4).
+   6. _headers: every quoted Content-Security-Policy source expression
+      (e.g. 'self') has exactly one leading and one trailing quote —
+      catches malformed quoting like ''self'' that browsers silently
+      drop, turning a directive into "block everything" (see CLOUDFLARE.md
+      "Also bump VERSION after any _headers change...").
    Output: list of failures with the exact file. Exit code 1 if there
    are any, "OK (N checks)" otherwise.
    ============================================================ */
@@ -227,6 +232,31 @@ userFacingTargets.forEach(function (file) {
     }
   });
 });
+
+/* --- 6. _headers: CSP source-expression quoting --- */
+checks += 1;
+var headersContent = fs.readFileSync(path.join(ROOT, '_headers'), 'utf8');
+var cspLine = headersContent.split('\n').filter(function (line) {
+  return /^\s*Content-Security-Policy:/i.test(line);
+});
+if (!cspLine.length) {
+  failures.push('_headers: no Content-Security-Policy line found');
+} else {
+  cspLine.forEach(function (line) {
+    var value = line.replace(/^\s*Content-Security-Policy:/i, '');
+    value.split(';').forEach(function (directive) {
+      directive.trim().split(/\s+/).filter(Boolean).forEach(function (token) {
+        var quoteCount = (token.match(/'/g) || []).length;
+        if (quoteCount === 0) return;
+        var wellFormed = quoteCount === 2 && token[0] === "'" && token[token.length - 1] === "'";
+        if (!wellFormed) {
+          failures.push('_headers: malformed CSP source expression "' + token +
+            '" — quotes should wrap the keyword exactly once (e.g. \'self\', not \'\'self\'\')');
+        }
+      });
+    });
+  });
+}
 
 /* --- Result --- */
 if (failures.length) {

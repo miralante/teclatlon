@@ -84,6 +84,8 @@ The check is dependency-free (Node stdlib only) and enforces:
   in `legal/`.
 - That every path in `sw.js` `ARCHIVOS` exists on disk.
 - That every icon in `manifest.json` exists.
+- That `_headers`' CSP source expressions are quoted correctly (e.g.
+  `'self'`, not `''self''`).
 
 It is the only "test" step and runs on every push and PR via
 [`.github/workflows/validate.yml`](.github/workflows/validate.yml).

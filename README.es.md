@@ -91,6 +91,8 @@ comprueba:
   y en `legal/`.
 - Que cada ruta en `ARCHIVOS` de `sw.js` existe en disco.
 - Que cada icono de `manifest.json` existe.
+- Que las expresiones de origen del CSP en `_headers` llevan las
+  comillas correctas (p. ej. `'self'`, no `''self''`).
 
 Es el único paso de "test" y se ejecuta en cada push y PR vía
 [`.github/workflows/validate.yml`](.github/workflows/validate.yml).
