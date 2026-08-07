@@ -21,15 +21,15 @@ propio dispositivo.
 
 ## 🚀 Demo en vivo
 
-La app está desplegada como sitio estático en **Cloudflare Pages**.
-El subdominio `<project-name>.pages.dev` lo asigna Cloudflare a
-partir del nombre del proyecto declarado en el dashboard — no está
+La app está desplegada como sitio estático en **Cloudflare Workers
+(static assets)**. La dirección
+`<project-name>.<account-subdomain>.workers.dev` la asigna Cloudflare
+a partir del nombre del proyecto declarado en el dashboard — no está
 comprometido en el repo. Ver [`CLOUDFLARE.md`](CLOUDFLARE.md) para
 el detalle.
 
-> URL por defecto tras el primer deploy: `https://teclatlon.pages.dev`
-> (sustituir por el subdominio real cuando el proyecto esté creado
-> en Cloudflare, o por el dominio personalizado si lo hay).
+> URL en vivo: <https://teclatlon.miralante.workers.dev>
+> (o el dominio personalizado, si lo hay).
 
 Es una Progressive Web App: en la primera visita, el navegador puede
 instalarla en la pantalla de inicio / dock y usarla sin conexión.
@@ -97,7 +97,7 @@ Es el único paso de "test" y se ejecuta en cada push y PR vía
 
 ### Desplegar
 
-El despliegue lo controla el **conector Git de Cloudflare Pages** —
+El despliegue lo controla el **conector Git de Cloudflare Workers** —
 ver [`CLOUDFLARE.md`](CLOUDFLARE.md) para el detalle completo
 (configuración de build, por qué no hay `wrangler.toml`, por qué no
 hay `_redirects`, por qué no hay `package.json`). El repo no incluye
@@ -112,7 +112,7 @@ intencionadamente ficheros de configuración de despliegue.
 | Producto, audiencia, reglas de accesibilidad | [`doc/es/SPEC.md`](doc/es/SPEC.md) |
 | Arquitectura y referencia técnica | [`doc/es/tecnico.md`](doc/es/tecnico.md) |
 | Flujo operativo para agentes de IA | [`CLAUDE.md`](CLAUDE.md) |
-| Notas de despliegue en Cloudflare Pages | [`CLOUDFLARE.md`](CLOUDFLARE.md) |
+| Notas de despliegue en Cloudflare Workers | [`CLOUDFLARE.md`](CLOUDFLARE.md) |
 
 El historial del proyecto vive en `git log`; no se mantiene una hoja de
 ruta externa.

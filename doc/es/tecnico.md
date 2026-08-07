@@ -19,7 +19,7 @@ Cada tema tiene una fuente canónica: producto en `SPEC.md`, cuestiones técnica
 
 - **HTML5 + CSS3 + JavaScript vanilla.** Sin frameworks, sin bundlers,
   sin paso de build, sin backend, sin dependencias npm. No hay
-  `package.json` en el repo, así que Cloudflare Pages no ejecuta
+  `package.json` en el repo, así que Cloudflare no ejecuta
   `npm install` durante el build y no hay nada que empaquetar.
 - **Scripts clásicos**, no módulos ES (compatibilidad con `file://` y
   navegadores antiguos). Todo el código compartido se expone en
@@ -42,17 +42,20 @@ Cada tema tiene una fuente canónica: producto en `SPEC.md`, cuestiones técnica
 
 ### 1.1 Alojamiento y despliegue
 
-La app se sirve como sitio estático en **Cloudflare Pages** vía el
-conector de Git, sin paso de build (la raíz del repo *es* la salida
-del build). El detalle de operación — por qué no hay `wrangler.toml`,
+La app se sirve como sitio estático en **Cloudflare Workers (static
+assets)** vía el conector de Git — accesible en
+`https://teclatlon.miralante.workers.dev`, no en Cloudflare Pages
+clásico — sin paso de build (la raíz del repo *es* la salida del
+build). El detalle de operación — por qué no hay `wrangler.toml`,
 `_redirects`, `functions/` ni `package.json`; la configuración del
 dashboard; la nota sobre `sw.js` y la redirección del SW — vive en
 [`CLOUDFLARE.md`](../../CLOUDFLARE.md). Aquí basta con saber tres
 cosas:
 
 - `_headers` en la raíz del repo controla la caché y los headers de
-  seguridad (HTML/SW/manifest con `must-revalidate`, assets
-  fingerprinted con caché inmutable de 1 año).
+  seguridad (HTML/SW/manifest con `must-revalidate`; `*.js`/`*.css`
+  con caché corta `max-age=300`; imágenes/fuentes con caché
+  inmutable de 1 año).
 - `manifest.json` y `sw.js` deben usar rutas relativas (empezar con
   `./`) para que la app funcione en cualquier host sin cambios.
 - `404.html`, `robots.txt` y `sitemap.xml` siguen el mismo patrón que
@@ -106,7 +109,7 @@ teclatlon/
 ├── CONTRIBUTING.md            # Traducción al inglés
 ├── SECURITY.es.md             # Política de seguridad (español, fuente de verdad)
 ├── SECURITY.md                # Traducción al inglés
-└── _headers                 # Cabeceras de caché y seguridad de Cloudflare Pages
+└── _headers                 # Cabeceras de caché y seguridad de Cloudflare
 ```
 
 A diferencia de Apptonomia (muchas actividades bajo `tools/<slug>/`, una
@@ -442,7 +445,7 @@ es una operación de red: pide confirmación antes de ejecutarlo.
 
 Teclatlon es una de las cinco PWA estáticas de la misma familia,
 todas con la misma filosofía de accesibilidad y sin backend, y el
-mismo despliegue en Cloudflare Pages. La guía canónica del grupo
+mismo despliegue en Cloudflare Workers (static assets). La guía canónica del grupo
 vive en el [`technical.md` de Apptonomia](https://github.com/thenkdframe/apptonomia/blob/master/doc/en/technical.md);
 esta sección es el delta específico del proyecto: la tabla de abajo
 recoge las **diferencias reales** entre este repo y los cuatro
@@ -460,7 +463,8 @@ Los otros cuatro:
 - **Okeymoney** (single-activity, dominio dinero/finanzas personales):
   el hermano más cercano a Teclatlon — ambos single-activity, ambos
   con `assets/js/` recortado, ambos comparten la misma forma de
-  Cloudflare Pages sin `wrangler.toml` ni `_redirects`.
+  Cloudflare Workers (static assets), aunque Okeymoney sí incluye
+  `wrangler.toml` en el repo y Teclatlon no (ver la tabla de abajo).
 - **Sinonimia** (layout plano antiguo): PWA pre-patrón, usa
   `css/` / `js/` / `img/` planos en raíz en lugar de `assets/`, sin
   `sw.js` ni `manifest.json` (sin contrato PWA), un
@@ -496,8 +500,8 @@ Los otros cuatro:
 | `manifest.json` (un único icono SVG) | ✅ | ✅ | ✅ (también tenía PNG) | ✅ (solo SVG) | ❌ |
 | `_headers` (CSP + Permissions-Policy + CORP + COOP + Upgrade-Insecure-Requests) | ✅ | ✅ | parcial (sin CSP) | ✅ | ✅ (con CSP) |
 | `404.html`, `robots.txt`, `sitemap.xml` | ✅ | ❌ (Okeymoney depende de `not_found_handling` en `wrangler.toml`) | ❌ (`quick-guide.md`) | ✅ | ❌ |
-| `wrangler.toml` | ❌ ausente (documentado en `CLOUDFLARE.md` — conector Git de Pages clásico) | ✅ (`[assets] directory = "."`, Workers + static assets) | ❌ | ✅ | ✅ (presente a propósito, fija el nombre) |
-| `_redirects` | ❌ ausente (documentado en `CLOUDFLARE.md` — Pages rechaza el catch-all SPA como loop) | ❌ | ❌ | ❌ | ❌ |
+| `wrangler.toml` | ❌ ausente — despliegue de Workers (static assets) gestionado por el dashboard, sin config comprometida (documentado en `CLOUDFLARE.md`) | ✅ (`[assets] directory = "."`, Workers + static assets, comprometido) | ❌ | ✅ | ✅ (presente a propósito, fija el nombre) |
+| `_redirects` | ❌ ausente (documentado en `CLOUDFLARE.md` — Cloudflare rechaza el catch-all SPA como loop) | ❌ | ❌ | ❌ | ❌ |
 | `package.json` | ❌ ausente (deliberado: evita que `npm install` se pase del límite de 25 MiB) | ❌ | ❌ | ❌ | ❌ |
 
 ### Dónde se documentan las diferencias

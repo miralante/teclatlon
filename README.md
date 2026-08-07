@@ -20,15 +20,14 @@ saved only in `localStorage`, on your own device.
 
 ## 🚀 Live demo
 
-The app is deployed as a static site on **Cloudflare Pages**. The
-`<project-name>.pages.dev` subdomain is assigned by Cloudflare from
-the project name declared in the Cloudflare dashboard — it is not
-committed to the repo. See [`CLOUDFLARE.md`](CLOUDFLARE.md) for the
-rationale.
+The app is deployed as a static site on **Cloudflare Workers (static
+assets)**. The `<project-name>.<account-subdomain>.workers.dev`
+address is assigned by Cloudflare from the project name declared in
+the Cloudflare dashboard — it is not committed to the repo. See
+[`CLOUDFLARE.md`](CLOUDFLARE.md) for the rationale.
 
-> Default URL after the first deploy: `https://teclatlon.pages.dev`
-> (replace with the real subdomain once the project is created in
-> Cloudflare, or with the custom domain if one is configured).
+> Live URL: <https://teclatlon.miralante.workers.dev>
+> (or the custom domain, if one is configured).
 
 The site is a Progressive Web App: on first visit, the browser can
 install it to the home screen / dock and use it offline.
@@ -91,7 +90,7 @@ It is the only "test" step and runs on every push and PR via
 
 ### Deploy
 
-Deployment is owned by the **Cloudflare Pages** Git connector — see
+Deployment is owned by the **Cloudflare Workers** Git connector — see
 [`CLOUDFLARE.md`](CLOUDFLARE.md) for the full rationale (build
 settings, why no `wrangler.toml`, why no `_redirects`, why no
 `package.json`). The repo intentionally ships no deploy-side
@@ -106,7 +105,7 @@ configuration files.
 | Product, audience, accessibility rules | [`doc/en/SPEC.md`](doc/en/SPEC.md) |
 | Architecture and technical reference | [`doc/en/technical.md`](doc/en/technical.md) |
 | AI agent operational workflow | [`CLAUDE.md`](CLAUDE.md) |
-| Cloudflare Pages deployment notes | [`CLOUDFLARE.md`](CLOUDFLARE.md) |
+| Cloudflare Workers deployment notes | [`CLOUDFLARE.md`](CLOUDFLARE.md) |
 
 Project history lives in `git log`; no external roadmap is maintained.
 

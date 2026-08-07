@@ -1,4 +1,4 @@
-# Cloudflare Pages — Teclatlon
+# Cloudflare Workers (static assets) — Teclatlon
 
 > **Production branch & automatic deploy.** Teclatlon deploys
 > **automatically on every push to `master`** via the **Cloudflare
@@ -7,36 +7,41 @@
 > `.github/workflows/validate.yml` runs `node scripts/check.js` on
 > every push and PR to gate content, but it does **not** deploy. The
 > Cloudflare dashboard is the source of truth for project settings.
+>
+> **Live URL:** <https://teclatlon.miralante.workers.dev>
 
-Teclatlon is deployed on **Cloudflare Pages** via its built-in
-GitHub integration. There is no custom GitHub Actions workflow and
+Teclatlon is deployed as a **Cloudflare Worker (static assets)**
+project, reachable at a `*.workers.dev` subdomain — **not** classic
+Cloudflare Pages (`*.pages.dev`), despite this file's history and the
+sibling docs describing it that way. In the Cloudflare dashboard it
+lives under "Workers & Pages" → Compute → Workers & Pages, alongside
+the sibling projects, and is driven by the same Git-connector
+auto-deploy as before: push to `master`, Cloudflare builds and
+deploys automatically. There is no custom GitHub Actions workflow and
 no `wrangler.toml` in the repo — the Cloudflare dashboard owns the
 build and deploy, and project configuration lives entirely there.
 
 ## How it works
 
-The repo is connected to a Cloudflare Pages project (e.g.
-`teclatlon`). Pushes to `master` trigger a Pages build in
-Cloudflare's infrastructure; pull requests get an automatic preview
-channel. The build is a no-op: no `build command`, no `output
-directory` other than `.`, so the static files are served as-is.
-Cache and security headers live in [`_headers`](_headers) at the
-repo root. The `validate.yml` GitHub Action still runs on every
-push and PR to gate structural and i18n checks, but it does **not**
-deploy.
+The repo is connected to a Cloudflare Workers project (`teclatlon`).
+Pushes to `master` trigger a build in Cloudflare's infrastructure;
+pull requests get an automatic preview channel. The build is a no-op:
+no `build command`, no `output directory` other than `.`, so the
+static files are served as-is. Cache and security headers live in
+[`_headers`](_headers) at the repo root — Cloudflare's static-assets
+runtime honours the same `_headers`/`_redirects` file conventions
+Pages used, which is why those still work unchanged. The `validate.yml`
+GitHub Action still runs on every push and PR to gate structural and
+i18n checks, but it does **not** deploy.
 
-The `<project-name>.pages.dev` subdomain is assigned by Cloudflare
-from the project name declared in the Cloudflare dashboard. The
-project name is **not** declared in the repo — that mirrors the
-working setup of the sibling `apptonomia` and `sinonimia` projects
-and avoids the "project type misdetected as Worker" failure mode
-that `wrangler.toml` introduces (see "Why no `wrangler.toml`?").
-
-No deploy-side configuration is committed: no `wrangler.toml`, no
-`_redirects`, no `functions/`, no `_routes.json`, no Cloudflare
-service-account keys. The dashboard is the source of truth for
-project settings; the repo holds the static assets and the CI that
-gates them.
+The `<project-name>.<account-subdomain>.workers.dev` address is
+assigned by Cloudflare from the project name declared in the
+Cloudflare dashboard (here: `teclatlon.miralante.workers.dev`). The
+project name is **not** declared in the repo. No deploy-side
+configuration is committed: no `wrangler.toml`, no `_redirects`, no
+`functions/`, no `_routes.json`, no Cloudflare service-account keys.
+The dashboard is the source of truth for project settings; the repo
+holds the static assets and the CI that gates them.
 
 ## Dashboard configuration
 
@@ -56,20 +61,20 @@ keeping the fingerprinted JS/CSS/font assets in long-lived cache.
 
 ## Why no `_redirects`?
 
-Cloudflare Pages rejected the deploy with:
+Cloudflare rejected the deploy with:
 
 > "Invalid _redirects configuration: ... Infinite loop detected in
 > this rule. ... [code: 100324]"
 
 when the sibling `apptonomia` project tried the Firebase-era SPA
-catch-all `/* /index.html 200`. Cloudflare Pages statically validates that the
+catch-all `/* /index.html 200`. Cloudflare statically validates that the
 destination of a catch-all rule cannot also match the rule itself:
 because `/index.html` is a real file in the repo root, `/*` matched
 it and the validator correctly flagged the loop.
 
 The fix follows the same pattern as the sibling `apptonomia` and
-`sinonimia` projects, which have no `_redirects` at all: Cloudflare
-Pages' implicit `index.html` lookup per directory already resolves
+`sinonimia` projects, which have no `_redirects` at all: Cloudflare's
+implicit `index.html` lookup per directory already resolves
 every deep link the site actually has. Teclatlon has only two HTML
 entry points, both with their own real `index.html`:
 
@@ -82,35 +87,35 @@ catch-all was solving a problem this project does not have.
 
 ## Why no `wrangler.toml`?
 
-A `wrangler.toml` containing `name = "teclatlon"` and
-`pages_build_output_dir = "."` looks correct, but in practice the
-Cloudflare Pages Git connector can mis-detect the project type when
-that file is present: it falls back to `wrangler deploy` (the
-**Worker** deploy command), which then fails with *"Missing
-entry-point to Worker script or to assets directory"* because the
-file declares neither a `main` entry-point nor an `[assets]`
-binding. Removing `wrangler.toml` and letting the dashboard drive
-the deploy with `pages_build_output_dir` implicit (= repo root)
-sidesteps the issue entirely. This is the same pattern the sibling
-`apptonomia` and `sinonimia` repos use and is what makes those
-projects' deploys succeed end-to-end.
+A `wrangler.toml` containing `name = "teclatlon"` and a build-output
+setting looks correct, but in practice the Cloudflare Git connector
+can mis-detect the project type when that file is present and falls
+back to `wrangler deploy` expecting a hand-authored Worker, which then
+fails with *"Missing entry-point to Worker script or to assets
+directory"* because the file declares neither a `main` entry-point
+nor an `[assets]` binding. Removing `wrangler.toml` and letting the
+dashboard drive the deploy (static-assets directory implicit = repo
+root) sidesteps the issue entirely — and keeps working now that the
+project is a dashboard-managed Worker rather than classic Pages. This
+is the same pattern the sibling `apptonomia` and `sinonimia` repos
+use and is what makes those projects' deploys succeed end-to-end.
 
 If the project ever needs a manual CLI deploy (for example, to
 attach preview channels during a local debugging session), Wrangler
 can be installed transiently via
-`npx wrangler pages deploy . --project-name teclatlon` without
-committing a `wrangler.toml` or a `wrangler` devDependency.
+`npx wrangler deploy . --name teclatlon` without committing a
+`wrangler.toml` or a `wrangler` devDependency.
 
 ## Why no `package.json`?
 
 The sibling `apptonomia` project hit a deploy failure where
-Cloudflare Pages ran `npm install` because the repo had a
-`package.json`, pulling in a Playwright workerd binary (~122 MiB)
-and overshooting the 25 MiB asset limit. Teclatlon therefore ships
-**no `package.json`** — the repo is pure static HTML/CSS/JS, the
-CI scripts (`scripts/check.js`) run with plain `node` and only use
-stdlib modules, and Cloudflare Pages serves the static root
-directly without ever invoking npm.
+Cloudflare ran `npm install` because the repo had a `package.json`,
+pulling in a Playwright workerd binary (~122 MiB) and overshooting
+the 25 MiB asset limit. Teclatlon therefore ships **no
+`package.json`** — the repo is pure static HTML/CSS/JS, the CI
+scripts (`scripts/check.js`) run with plain `node` and only use
+stdlib modules, and Cloudflare serves the static root directly
+without ever invoking npm.
 
 ## Service worker note
 
@@ -150,7 +155,7 @@ in any of them.
 ### 1. Cloudflare edge (CDN)
 
 - Serves the static files from the closest PoP. Honoured
-  automatically by Cloudflare Pages; no config in the repo.
+  automatically by Cloudflare; no config in the repo.
 - We do **not** purge the edge cache manually on every push. The
   `_headers` file pins `max-age=0, must-revalidate` on the shell
   (`/index.html`, `/legal/*`, `/manifest.json`, `/sw.js`), so the
