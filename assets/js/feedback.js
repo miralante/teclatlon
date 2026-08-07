@@ -7,9 +7,9 @@
 
    Audio:
    - Built with Web Audio (no audio files). Fails silently.
-   - Optional spatial audio: when state.opciones.espacial is true, each
-     tone is panned (StereoPannerNode) by the column of the key that
-     triggered it (-1 = left, +1 = right). Off by default so the
+   - Optional spatial audio: when state.options.spatialSound is true,
+     each tone is panned (StereoPannerNode) by the column of the key
+     that triggered it (-1 = left, +1 = right). Off by default so the
      experience stays calm.
    (Vibration was removed: navigator.vibrate() only works on touch
    devices, and Teclatlon is computer-only — see SPEC.md §2.)
@@ -27,8 +27,8 @@
   function readOption(key, fallback) {
     try {
       var data = window.App.storage && window.App.storage.get('keyboard');
-      if (data && data.opciones && typeof data.opciones[key] === 'boolean') {
-        return data.opciones[key];
+      if (data && data.options && typeof data.options[key] === 'boolean') {
+        return data.options[key];
       }
     } catch (e) { /* ignore */ }
     return fallback;
@@ -56,7 +56,7 @@
       gain.gain.setValueAtTime(0.12, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
       var destination = ctx.destination;
-      if (typeof pan === 'number' && readOption('espacial', false)) {
+      if (typeof pan === 'number' && readOption('spatialSound', false)) {
         var panner = ctx.createStereoPanner();
         panner.pan.value = Math.max(-1, Math.min(1, pan));
         osc.connect(gain);

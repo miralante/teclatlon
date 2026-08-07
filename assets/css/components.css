@@ -39,7 +39,7 @@
   border-color: var(--color-border);
 }
 
-.btn-acierto { background: var(--color-success); }
+.btn-success { background: var(--color-success); }
 
 /* Audio button */
 .btn-audio {
@@ -49,7 +49,7 @@
 }
 
 .btn-audio[aria-pressed="true"],
-.btn-audio.hablando {
+.btn-audio.speaking {
   border-color: var(--accent);
   background: var(--accent-soft);
 }
@@ -121,7 +121,7 @@
 }
 
 /* ---- Feedback zone (aria-live). Class names match assets/js/feedback.js
-   (success()/encourage()), not the "acierto"/"animo" Spanish names. ---- */
+   (success()/encourage()). ---- */
 .feedback {
   min-height: 36px;
   display: flex;
@@ -155,16 +155,16 @@
 
 .celebration .emoji {
   font-size: 96px;
-  animation: celebrar 0.6s ease;
+  animation: celebrate 0.6s ease;
 }
 
-.celebration .mensaje {
+.celebration .message {
   font-size: var(--text-title);
   font-weight: 700;
   color: var(--color-success);
 }
 
-@keyframes celebrar {
+@keyframes celebrate {
   0% { transform: scale(0.4); opacity: 0; }
   60% { transform: scale(1.15); }
   100% { transform: scale(1); opacity: 1; }
@@ -180,10 +180,10 @@
 }
 
 /* Row 1: title + data badges + settings button.
-   Row 2: keyboard-view selector (.opciones-teclado--header). Kept on
+   Row 2: keyboard-view selector (.keyboard-options--header). Kept on
    its own line so it stays readable on narrow screens and never
    pushes the title aside. */
-.tool-header-fila {
+.tool-header-row {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -201,11 +201,11 @@
    sits comfortably in the header on small screens and stops looking
    like a primary CTA. Visually a peer of the data badges (⚙️ / ⭐) but
    bigger, since it actually does something. */
-.opciones-teclado--header {
+.keyboard-options--header {
   flex-wrap: wrap;
   gap: 6px;
 }
-.opciones-teclado--header .btn {
+.keyboard-options--header .btn {
   padding: 4px 10px;
   font-size: 13px;
   min-height: 32px;
@@ -219,14 +219,14 @@
    comfortably above WCAG 2.5.5 (44px) on touch via the natural button
    padding, and keyboard focus is preserved (`:focus-visible` ring is
    still drawn at 3px). */
-.btn-compacto {
+.btn-compact {
   min-height: 36px;
   min-width: 36px;
   padding: 4px 12px;
   font-size: var(--text-small);
   border-width: 2px;
 }
-.btn-compacto.btn-audio { font-size: 16px; }
+.btn-compact.btn-audio { font-size: 16px; }
 
 /* ---- Responsive header ----
    The header has two rows (title row + keyboard-view chips). At desktop
@@ -240,29 +240,29 @@
 @media (max-width: 1024px) {
   .tool-header { gap: 4px; margin-bottom: 6px; }
   .tool-header h1 { font-size: 18px; }
-  .opciones-teclado--header .btn { padding: 3px 8px; font-size: 12px; min-height: 28px; }
+  .keyboard-options--header .btn { padding: 3px 8px; font-size: 12px; min-height: 28px; }
 }
 
 @media (max-width: 640px) {
   /* Title takes its own row, badges wrap below it on the same row,
      chips cluster underneath and are allowed to wrap freely. */
-  .tool-header-fila { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .tool-header-row { flex-direction: column; align-items: flex-start; gap: 4px; }
   .tool-header h1 { flex: none; font-size: 16px; }
-  .header-datos { gap: 6px; }
-  .header-datos .dato { padding: 3px 8px; font-size: 12px; }
-  .opciones-teclado--header { width: 100%; gap: 6px; }
-  .opciones-teclado--header .btn { padding: 4px 8px; font-size: 12px; }
+  .header-data { gap: 6px; }
+  .header-data .stat { padding: 3px 8px; font-size: 12px; }
+  .keyboard-options--header { width: 100%; gap: 6px; }
+  .keyboard-options--header .btn { padding: 4px 8px; font-size: 12px; }
 }
 
 /* ---- Grid of large cards (game menu) ---- */
-.grid-tarjetas {
+.grid-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: var(--space-large);
 }
 
 /* ---- Legal footer link (present on every page) ---- */
-.pie-app {
+.app-footer {
   display: flex;
   justify-content: center;
   padding: 4px 0 4px;
@@ -281,23 +281,23 @@
 }
 
 /* Utilities */
-.centrado { text-align: center; }
+.centered { text-align: center; }
 .hidden { display: none !important; }
 .stack { display: flex; flex-direction: column; gap: var(--space); }
-/* Game/lessons/plantillas/libre screens have many stacked blocks
+/* Game/lessons/templates/free screens have many stacked blocks
    (top bar + instruction + target + feedback + metrics + guide +
    keyboard). At the default --space (16px) the cumulative gap eats a
    big chunk of the viewport on a normal screen; tightening the gap
    inside these sections keeps the operative zone (target + keyboard)
    visible without scrolling. */
-#pantallaJuego.stack,
-#pantallaLibre.stack,
-#pantallaLecciones.stack,
-#pantallaPlantillas.stack { gap: 8px; }
+#screenGame.stack,
+#screenFree.stack,
+#screenLessons.stack,
+#screenTemplates.stack { gap: 8px; }
 .row { display: flex; align-items: center; gap: var(--space); flex-wrap: wrap; }
 
 /* ---- Settings panel (accessibility & game) ---- */
-.panel-ajustes {
+.settings-panel {
   background: var(--color-surface);
   border: 3px solid var(--color-border);
   border-radius: var(--radius);
@@ -305,18 +305,18 @@
   box-shadow: var(--shadow);
 }
 
-.panel-ajustes h3 {
+.settings-panel h3 {
   margin-bottom: 8px;
   font-size: var(--text-base);
 }
 
-.panel-ajustes .ayuda {
+.settings-panel .help-text {
   font-size: var(--text-small);
   color: var(--color-text-soft);
   margin-top: 8px;
 }
 
-.ajuste-row {
+.setting-row {
   display: block;
   flex-shrink: 0;
   min-height: var(--button-min);
@@ -324,16 +324,16 @@
   border-bottom: 1px solid var(--color-border);
 }
 
-.ajuste-etiqueta { display: block; margin-bottom: 8px; }
+.setting-label { display: block; margin-bottom: 8px; }
 
-.ajuste-row:last-child { border-bottom: 0; }
+.setting-row:last-child { border-bottom: 0; }
 
-.ajuste-etiqueta {
+.setting-label {
   font-weight: 700;
   font-size: var(--text-base);
 }
 
-.ajuste-valor {
+.setting-value {
   font-size: var(--text-small);
   color: var(--color-text-soft);
   font-weight: 700;
@@ -342,7 +342,7 @@
 }
 
 /* Compact icon button used inside settings rows */
-.btn-icono {
+.btn-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -359,20 +359,20 @@
   cursor: pointer;
 }
 
-.btn-icono[aria-pressed="true"] {
+.btn-icon[aria-pressed="true"] {
   background: var(--accent-soft);
   border-color: var(--accent);
   color: var(--accent);
 }
 
-.btn-icono:hover { border-color: var(--accent); }
+.btn-icon:hover { border-color: var(--accent); }
 
-.grupo-texto { display: flex; flex-wrap: wrap; gap: 4px; width: 100%; }
+.text-group { display: flex; flex-wrap: wrap; gap: 4px; width: 100%; }
 
 /* ---- Settings drawer ---- */
-.btn-abrir-ajustes { font-size: 18px; padding: 2px; min-height: 36px; min-width: 36px; }
+.btn-open-settings { font-size: 18px; padding: 2px; min-height: 36px; min-width: 36px; }
 
-.drawer-fondo {
+.drawer-backdrop {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.4);
@@ -381,10 +381,10 @@
   z-index: 90;
 }
 
-.drawer-fondo.visible { opacity: 1; }
-.drawer-fondo[hidden] { display: none; }
+.drawer-backdrop.visible { opacity: 1; }
+.drawer-backdrop[hidden] { display: none; }
 
-.drawer-ajustes {
+.settings-drawer {
   position: fixed;
   top: 0;
   right: 0;
@@ -399,25 +399,25 @@
   z-index: 91;
 }
 
-.drawer-ajustes.abierto { transform: translateX(0); }
-.drawer-ajustes[hidden] { display: none; }
+.settings-drawer.open { transform: translateX(0); }
+.settings-drawer[hidden] { display: none; }
 
-.drawer-cabecera { justify-content: space-between; }
-.drawer-cabecera h3 { margin: 0; }
+.drawer-header { justify-content: space-between; }
+.drawer-header h3 { margin: 0; }
 
 @media (prefers-reduced-motion: reduce) {
-  .drawer-fondo, .drawer-ajustes { transition: none; }
+  .drawer-backdrop, .settings-drawer { transition: none; }
 }
 
 /* ---- Header badges (streak + metrics summary) ---- */
-.header-datos {
+.header-data {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
 }
 
-.dato {
+.stat {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -430,17 +430,16 @@
   font-weight: 700;
 }
 
-.dato.racha { background: var(--color-encourage-suave); border-color: var(--color-encourage); color: var(--color-encourage); }
-.dato.metrica { background: var(--color-success-soft); border-color: var(--color-success); color: var(--color-success); }
+.stat.metric { background: var(--color-success-soft); border-color: var(--color-success); color: var(--color-success); }
 
-/* ---- Badges (insignias) ---- */
-.grid-insignias {
+/* ---- Badges ---- */
+.grid-badges {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: var(--space);
 }
 
-.tarjeta-insignia {
+.badge-card {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -456,16 +455,16 @@
   font-weight: 700;
 }
 
-.tarjeta-insignia.conseguida {
+.badge-card.earned {
   border-color: var(--color-success);
   background: var(--color-success-soft);
   color: var(--color-success);
 }
 
-.tarjeta-insignia .icono { font-size: 36px; }
+.badge-card .icon { font-size: 36px; }
 
 /* ---- Live metrics overlay (game screen) ---- */
-.metricas-vivas {
+.live-metrics {
   display: flex;
   gap: var(--space);
   justify-content: center;
@@ -474,7 +473,7 @@
   color: var(--color-text-soft);
 }
 
-.metricas-vivas .metrica-viva {
+.live-metrics .live-metric {
   background: var(--color-surface);
   border: 2px solid var(--color-border);
   border-radius: 12px;
@@ -513,7 +512,7 @@
 .avatar-btn svg { width: 56px; height: 56px; }
 
 /* ---- Avatar shown in the menu greeting ---- */
-.avatar-actual {
+.avatar-current {
   width: 64px;
   height: 64px;
   display: inline-flex;
@@ -521,10 +520,10 @@
   justify-content: center;
 }
 
-.avatar-actual svg { width: 100%; height: 100%; }
+.avatar-current svg { width: 100%; height: 100%; }
 
 /* ---- Banner for a newly unlocked badge ---- */
-.bandera-insignia {
+.badge-flag {
   position: fixed;
   top: 16px;
   left: 50%;
@@ -537,20 +536,20 @@
   font-weight: 700;
   box-shadow: var(--shadow);
   z-index: 110;
-  animation: entradaInsignia 0.3s ease;
+  animation: badgeEnter 0.3s ease;
 }
 
-.bandera-insignia.hidden { display: none; }
+.badge-flag.hidden { display: none; }
 
-@keyframes entradaInsignia {
+@keyframes badgeEnter {
   from { transform: translate(-50%, -100%); opacity: 0; }
   to   { transform: translate(-50%, 0); opacity: 1; }
 }
 
 /* Focus mode: dim the celebration background for less distraction */
-html.modo-foco .celebration {
+html.focus-mode .celebration {
   background: rgba(0, 0, 0, 0.85);
   color: #FFFFFF;
 }
 
-html.modo-foco .celebration .mensaje { color: #FFFFFF; }
+html.focus-mode .celebration .message { color: #FFFFFF; }

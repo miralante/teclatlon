@@ -57,7 +57,7 @@ configuration; the `sw.js` and SW-redirect note — live in
   the app works on any host without changes.
 - `404.html`, `robots.txt` and `sitemap.xml` follow the same pattern
   as the sibling `calculia` / `sinonimia` repos (they are added to the
-  `sw.js` `ARCHIVOS` list so they keep working offline).
+  `sw.js` `FILES` list so they keep working offline).
 - A deploy — even to a preview channel — is a network operation: ask
   before running one (see `CLAUDE.md` §"Agent workflow").
 
@@ -142,19 +142,19 @@ purpose, not missed.
 
 ### 2.2 `app.js` — single IIFE
 
-Holds the whole client app: screen switching (`PANTALLAS`), the
-sequence-game engine (`iniciarSecuencia`/`teclaJuego`/`pasoCompletado`)
+Holds the whole client app: screen switching (`SCREENS`), the
+sequence-game engine (`startSequence`/`gameKey`/`stepCompleted`)
 used by "place your fingers", lessons, words and the number pad, the
-"all keys" challenge (`jugarReto`/`teclaReto`), the hand-guide SVG, the
+"all keys" challenge (`playChallenge`/`challengeKey`), the hand-guide SVG, the
 visual keyboard renderer, and the physical `keydown`/`keyup` listeners
 that drive every game mode. There is no click-to-type path: the on-screen
-keyboard only ever *reflects* key presses (`flashTecla`), it never
+keyboard only ever *reflects* key presses (`flashKey`), it never
 originates them.
 
-The settings panel (`#drawerAjustes`, a lateral drawer opened from the
-`#btnAbrirAjustes` gear icon in the header — see SPEC.md §4.1) is read
-from `state.opciones` and applied by `aplicarOpciones()`, called at
-boot and after every toggle. `abrirAjustes()`/`cerrarAjustes()` handle
+The settings panel (`#settingsDrawer`, a lateral drawer opened from the
+`#btnOpenSettings` gear icon in the header — see SPEC.md §4.1) is read
+from `state.options` and applied by `applyOptions()`, called at
+boot and after every toggle. `openSettings()`/`closeSettings()` handle
 the open/close animation, backdrop click and focus management
 (focus moves to the drawer's close button on open, back to whatever
 triggered it on close); the drawer's `Tab`/`Escape` handling lives at
@@ -162,20 +162,18 @@ the top of the physical `keydown` listener (see below), ahead of the
 game-input handling, since the drawer can be opened mid-game.
 Interactions with the engine:
 
-- `state.metricas` (teclas / aciertos / fallos / inicioMs) is
-  initialised on every game start, updated by `teclaJuego` /
-  `teclaReto`, and surfaced as live accuracy (%) and PPM when
-  `state.opciones.metricas` is true.
-- `premiar()` increments the streak and the best streak, then calls
-  `verificarInsignias()` to unlock any badge whose condition becomes
-  true. New badges trigger a brief banner (`#app-bandera-insignia`).
-- `feedback.success(zona, pan)` accepts an optional stereo pan. The
+- `state.metrics` (keys / hits / misses / startMs) is
+  initialised on every game start, updated by `gameKey` /
+  `challengeKey`, and surfaced as live accuracy (%) and keys-per-minute
+  when `state.options.metrics` is true.
+- `award(key)` unlocks a completion badge whose id becomes `true` in
+  `state.completed`. `DATA.badges` (not yet wired to any UI) declares
+  the badge table these ids could drive.
+- `feedback.success(zone, pan)` accepts an optional stereo pan. The
   caller computes it from the column of the key
-  (`App.utils.columnaDe` + `App.utils.panDeColumna`); the audio
-  feedback only routes through `StereoPannerNode` when
-  `state.opciones.espacial` is true.
-- `feedback.success` / `encourage` also call `navigator.vibrate`
-  when `state.opciones.vibracion` is true.
+  (`App.utils.columnOf` + `App.utils.panOfColumn`, or `panOf` in
+  `app.js`); the audio feedback only routes through `StereoPannerNode`
+  when `state.options.spatialSound` is true.
 
 ### 2.3 `data.js` — keyboard layouts and practice content
 
@@ -187,90 +185,94 @@ Interactions with the engine:
   no `ch` (Tab, Shift, Enter, Backspace) — shapes the keyboard but is
   never a game target.
 - `DATA.layouts`: the selectable visual keyboards —
-  `simplificado` (letters plus both Shift keys — needed so the
+  `simple` (letters plus both Shift keys — needed so the
   capitals lesson has a Shift key to point at even in this
   stripped-down view), `normal` (full physical layout with decorative
-  keys), `extendido` (same as `normal`, plus the number pad shown
+  keys), `extended` (same as `normal`, plus the number pad shown
   alongside). All three are physical/decorative layouts; there is no
   touchable layout.
   The three buttons in the UI are labeled, in plain language for
   beginners, "Letters only" / "Letters and numbers" / "With numbers
-  on the side" (see `btnSimple`/`btnNormal`/`btnExtendido` in
+  on the side" (see `btnSimple`/`btnNormal`/`btnExtended` in
   `strings.<locale>.js`); under the selected button a one-line
   description (e.g. "You only see the letters. It is the simplest
-  view.") is shown via `.detalle-teclado` so each option explains
+  view.") is shown via `.keyboard-detail` so each option explains
   itself in everyday words.
 - `DATA.placement` / `DATA.lessons` / `DATA.words` / `DATA.numpadSteps` /
   `DATA.templates`: per-locale practice content (`{ es: [...], en: [...] }`),
   read via `DATA.<field>[App.i18n.locale()]`.
-- `DATA.insignias`: the badge table. Each entry is
-  `{ id, clave, condicion(state) => bool }`. `clave` is the i18n key
-  (`insigniaPrimera`, etc.). `condicion` is evaluated on every
-  progress change and after boot; new badges unlock the banner in
-  `app.js`.
+- `DATA.badges`: the badge table (not yet wired to any UI). Each entry
+  is `{ id, key, condition(state) => bool }`. `key` is the i18n key
+  (`badgeFirst`, etc.). `condition` is meant to be evaluated on every
+  progress change.
 - Finger display names live in `strings.<locale>.js` under
-  `dedo.<id>.mano` / `.nombre`, not in `data.js`.
+  `finger.<id>.hand` / `.name`, not in `data.js`.
 
 To extend: add a lesson or word to **both** `es` and `en` arrays.
 
 **Capital letters (Shift):** a lesson step's `seq` may contain an
 uppercase letter (e.g. `'A'`) to require Shift for that character —
-see the `l16`/"Mayúsculas"/"Capitals" lesson. There is no separate
-physical key for the capital; `teclaJuego(ch, mayus)` compares the
+see the `l16`/"Capitals" lesson. There is no separate
+physical key for the capital; `gameKey(ch, shiftHeld)` compares the
 normalized (lowercase) pressed key against `seq[pos].toLowerCase()`
-and additionally requires `mayus` (the keydown's `e.shiftKey`) only
+and additionally requires `shiftHeld` (the keydown's `e.shiftKey`) only
 when `seq[pos]` is itself uppercase — a lowercase step never checks
 Shift state, so accidentally holding it doesn't count as a mistake.
-`ladoMayusOpuesto(finger)` in `app.js` encodes the standard
+`oppositeShiftSide(finger)` in `app.js` encodes the standard
 touch-typing convention (hold Shift with the pinky on the side
-*opposite* the letter's hand); `manosSVG`/`pintarManos` highlight that
-second finger at reduced opacity (`.dedo.activo-mayus`) alongside the
-primary finger, and `guiaTexto` appends a sentence naming it.
+*opposite* the letter's hand); `handsSVG`/`renderHands` highlight that
+second finger at reduced opacity (`.finger.active-shift`) alongside the
+primary finger, and `#guideText` appends a sentence naming it.
 
 **Special keys (Home/End/Page Up/Page Down/Delete):** a lesson step
-can be `{ especial: 'inicio' }` instead of `{ seq: '...' }` — see the
-`l17`/"Teclas especiales"/"Special keys" lesson and
-`esPasoEspecial(p)` in `app.js`. These keys don't type a character, so
+can be `{ specialKey: 'home' }` instead of `{ seq: '...' }` — see the
+`l17`/"Special keys" lesson and
+`isSpecialStep(p)` in `app.js`. These keys don't type a character, so
 the step completes in one shot on the right keydown instead of walking
 a `seq` index, and — since no consistent finger convention exists for
 them — the hand-guide finger highlight is skipped entirely
-(`pintarManos(null, null)`); only the matching on-screen key gets the
-`.objetivo` highlight. Only `DATA.layouts.extendido` draws these keys
-(a `teclaEspecial(id)` row prepended in `data.js`); they carry a real
-`ch` (unlike other decorative keys) so `marcarObjetivo`/`flashTecla`
+(`renderHands(null, null)`); only the matching on-screen key gets the
+`.target` highlight. Only `DATA.layouts.extended` draws these keys
+(a `specialKeyDef(id)` row prepended in `data.js`); they carry a real
+`ch` (unlike other decorative keys) so `markTarget`/`flashKey`
 can target them, but `special: true` keeps them out of the "all keys"
-challenge (`clavesTipeables`/`actualizarReto` both skip `k.special`).
-`normalizarTecla`'s `TECLA_ESPECIAL_DOM` table is the only place that
+challenge (`typeableKeys`/`updateChallenge` both skip `k.special`).
+`normalizeKey`'s `SPECIAL_KEY_DOM` table is the only place that
 maps the raw `KeyboardEvent.key` values (`'Home'`, `'PageUp'`, …) to
-the internal ids used everywhere else (`data-ch`, `especial`,
-`teclaLabel.*`).
+the internal ids used everywhere else (`data-ch`, `specialKey`,
+`keyLabel.*`).
 
-**Extensible templates ("Textos reales"/"Real texts" mode):**
+**Extensible templates ("Real texts" mode):**
 `DATA.templates.<locale>` is an array of `{ id, title, lines }` — a
 full real-world writing task (an email, a letter…) instead of a single
 word or drill sentence. Unlike `DATA.lessons`, these are **not**
-gated behind a linear unlock chain (see `pintarPlantillas()` in
+gated behind a linear unlock chain (see `renderTemplates()` in
 `app.js`): every entry is always open, since they're independent
 practice texts, not a graded curriculum. `lines` is the text split
-into short lines; `jugarPlantilla(p)` turns each line into one
-sequence-engine step (`{ seq: linea }`), the same mechanism a lesson's
+into short lines; `playTemplate(p)` turns each line into one
+sequence-engine step (`{ seq: line }`), the same mechanism a lesson's
 plain-string step already uses — no new engine code was needed for
-this, only a new menu card, a new screen (`#pantallaPlantillas`,
-modeled on `#pantallaLecciones`) and this data table. **To add a new
+this, only a new menu card, a new screen (`#screenTemplates`,
+modeled on `#screenLessons`) and this data table. **To add a new
 template:** append `{ id, title, lines }` to *both* the `es` and `en`
 arrays in `data.js`; keep `lines` to characters the layout models
 (lowercase letters, `ñ`, the punctuation in `DATA.rows`: `,` `.` `-`,
-and uppercase letters via Shift — see lesson "Capitals"). Avoid
-`¡`, `¿`, `!`, `?` and accented vowels: those keys aren't modeled in
-`DATA.rows`, so they would silently swallow the keystroke. `id` must
-be unique and stable — it's reused as the badge/progress key
-(`'plantilla_' + id`).
+uppercase letters via Shift — see lesson "Capitals" — and Spanish
+accented vowels á/é/í/ó/ú, which are correct orthography and expected
+in real Spanish writing). `expectedBaseChar()` in `app.js` strips the
+accent before looking up the finger/on-screen key, since there's no
+separate `é` key — just `e` composed with the dead accent key, the
+same idea as a capital resolving to its base letter. Still avoid `¡`,
+`¿`, `!` and `?`: unlike accents, those have no physical key at all in
+`DATA.rows` and would silently swallow the keystroke. `id` must be
+unique and stable — it's reused as the badge/progress key
+(`'template_' + id`).
 
-### 2.4 Meaningful-learning anchor: `transferencia`
+### 2.4 Meaningful-learning anchor: `transferMessage`
 
 Every completion (a lesson, the words game, the number pad, or the "all
-keys" challenge) appends `App.i18n.t('transferencia')` to the closing
-celebration message (`celebrarConTransferencia()` in `app.js`) — a short
+keys" challenge) appends `App.i18n.t('transferMessage')` to the closing
+celebration message (`celebrateWithTransfer()` in `app.js`) — a short
 line connecting the exercise to writing real messages on a real
 computer. This activity has no separate "round complete" screen, so the
 line lives in the celebration overlay text itself, not in a dedicated
@@ -283,15 +285,15 @@ dependencies and synchronous, that runs **before the first paint** and
 does two things:
 
 1. **Picks the UI language** from `navigator.languages` (first 2-letter
-   prefix in `SOPORTADOS = ['es', 'en']`, fallback `es`) and applies it
+   prefix in `SUPPORTED = ['es', 'en']`, fallback `es`) and applies it
    to `document.documentElement.lang` so it matches the `<title>` that
    `App.i18n.apply()` will later fill in. The same logic lives in
-   `assets/js/i18n.js#detectar()` — if you add a supported locale,
+   `assets/js/i18n.js#detect()` — if you add a supported locale,
    update both spots.
 2. **Detects mobile/tablet** by combining UA
    (`mobile|tablet|android|…`), `pointer: coarse`, `maxTouchPoints` and
    `matchMedia('(max-width: 900px)')`. If it triggers, it sets
-   `data-app-bloqueada="movil"` on `<html>` and rewrites `<title>` to
+   `data-app-blocked="mobile"` on `<html>` and rewrites `<title>` to
    "Solo en el ordenador — Teclatlon" / "Computer only — Teclatlon" so
    the browser tab also warns. Desktop UAs
    (`windows nt|macintosh|x11|cros `) pass even with a touch screen —
@@ -301,23 +303,23 @@ does two things:
 The same script also reads `localStorage['teclatlon:keyboard']`
 directly (same key `assets/js/storage.js` writes, wrapped in the same
 try/catch pattern for private-mode safety) and applies
-`opciones.tema`/`.texto`/`.foco` to `<html>` before first
+`options.theme`/`.textSize`/`.focusMode` to `<html>` before first
 paint — otherwise the page would flash the default theme/text-size/
-font for a moment before `app.js#aplicarOpciones()` runs on
-`DOMContentLoaded`. Focus mode targets `html.modo-foco` (not
-`body.modo-foco`) specifically so this pre-paint script can set it
+font for a moment before `app.js#applyOptions()` runs on
+`DOMContentLoaded`. Focus mode targets `html.focus-mode` (not
+`body.focus-mode`) specifically so this pre-paint script can set it
 before `<body>` exists.
 
 The HTML carries a static overlay at the top of `<body>`
-(`#bloqueoMovil`) with `hidden`, the `data-i18n` keys
-(`soloOrdenador`, `soloOrdenadorMotivo`, `soloOrdenadorSugerencia`) and
+(`#mobileBlock`) with `hidden`, the `data-i18n` keys
+(`computerOnly`, `computerOnlyReason`, `computerOnlySuggestion`) and
 `role="alertdialog"`. The CSS rule
-`html[data-app-bloqueada="movil"] .container { display: none }` hides
+`html[data-app-blocked="mobile"] .container { display: none }` hides
 the app shell instantly; `app.js` removes the overlay's `hidden` in
-the "Arranque" block and, when blocked, `return`s before wiring up
+the "Boot" block and, when blocked, `return`s before wiring up
 listeners, audio contexts or the game engine (no point reserving
 resources on a device that won't use the app). The overlay styles
-(`bloqueo-movil*`) live at the bottom of `styles.css` with fallback
+(`mobile-block*`) live at the bottom of `styles.css` with fallback
 colors in case `tokens.css` hasn't loaded yet.
 
 ---
@@ -327,8 +329,8 @@ colors in case `tokens.css` hasn't loaded yet.
 Multilingual architecture shipped today with the **base pair**
 `es`/`en` (Spanish, default and source of truth, and English). The
 i18n runtime (`App.i18n`) is designed to support **N languages** — the
-shapes that would change (`SOPORTADOS`, the pre-paint detector,
-`lang()`, `scripts/check.js`, `sw.js#ARCHIVOS`, the language selector
+shapes that would change (`SUPPORTED`, the pre-paint detector,
+`lang()`, `scripts/check.js`, `sw.js#FILES`, the language selector
 buttons) and the full step-by-step recipe live in [`I18N.md`](I18N.md),
 which is the canonical reference for extending the app to additional
 languages. Read it together with `SPEC.md` §6 (language policy) and
@@ -347,21 +349,20 @@ redefine them in `strings.<locale>.js`): `back`, `understood`, `listen`,
 `listenInstructions`, `listenText`, `rest`, `dataProtection`.
 
 The active language still defaults to the browser-detected one
-(`i18n.js#detectar`, mirrored pre-paint in `index.html` — see §2.5), but
+(`i18n.js#detect`, mirrored pre-paint in `index.html` — see §2.5), but
 it can be overridden manually: the "Idioma" row in the settings panel
-(`#panelAjustes`, `.btn-idioma` buttons, wired in `app.js`) and the
-explicit selector in `legal/index.html` (`#btnIdiomaEs`/`#btnIdiomaEn`)
+(`#settingsDrawer`, `.btn-language` buttons, wired in `app.js`) and the
+explicit selector in `legal/index.html` (`#btnLangEs`/`#btnLangEn`)
 call `App.i18n.setLocale('es' | 'en')`. `setLocale` persists the choice
 to `localStorage` (`teclatlon:locale`, read by `i18n.js#locale()` ahead
 of detection) and reloads the page — there is no in-place re-render.
 
 To add a new language: see [`I18N.md` §5](I18N.md) for the full
-recipe. At a glance it means updating both `SOPORTADOS` arrays
+recipe. At a glance it means updating both `SUPPORTED` arrays
 (`i18n.js` and the `index.html` pre-paint script) plus the internal
-`lang()` map, `scripts/check.js#STRING_LOCALES`, `sw.js#ARCHIVOS` and
-`VERSION`, adding `strings.<locale>.js` and `legal/strings.<locale>.js`,
-adding the per-locale arrays in `data.js`, and adding a `.btn-idioma`
-button in `index.html`.
+`lang()` map, `sw.js#FILES` and `VERSION`, adding `strings.<locale>.js`
+and `legal/strings.<locale>.js`, adding the per-locale arrays in
+`data.js`, and adding a `.btn-language` button in `index.html`.
 
 ---
 
@@ -373,7 +374,7 @@ button in `index.html`.
   latest server version is authoritative whenever the device is
   online; the cache only kicks in when the network is unreachable.
 - Contract when touching files:
-  1. New file → add it to the `ARCHIVOS` list.
+  1. New file → add it to the `FILES` list.
   2. Any change to a cached file → bump `VERSION` (`teclatlon-vN`),
      otherwise users with the installed PWA won't receive the change.
      `VERSION` is the only knob that purges the old SW cache on next
@@ -398,7 +399,7 @@ node scripts/check.js
 
 `scripts/check.js` checks: every `.js` file parses, `strings.es.js` /
 `strings.en.js` have matching keys (root app and `legal/`), every path
-in `sw.js`'s `ARCHIVOS` exists on disk, and every `manifest.json`
+in `sw.js`'s `FILES` exists on disk, and every `manifest.json`
 icon exists. CI (`.github/workflows/validate.yml`) runs the same
 command on every push and pull request.
 

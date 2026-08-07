@@ -32,7 +32,7 @@ HTML/CSS/JS served as static files.
   node scripts/check.js
   ```
   It checks JS syntax, es/en key parity between `strings.es.js` and
-  `strings.en.js` (root app and `legal/`), that every `sw.js` `ARCHIVOS`
+  `strings.en.js` (root app and `legal/`), that every `sw.js` `FILES`
   path exists on disk, and that `manifest.json` icons exist. Read the
   script before changing the file layout — it encodes the invariants
   that layout relies on.
@@ -87,6 +87,15 @@ concrete need; they were cut deliberately, not by oversight.
   a third language): [`doc/en/I18N.md`](doc/en/I18N.md) ·
   [`doc/es/I18N.md`](doc/es/I18N.md).
 
+## graphify
+
+This project has a knowledge graph at `graphify-out/` with god nodes, community structure, and cross-file relationships.
+
+- For codebase questions, first run `graphify query "<question>"` when `graphify-out/graph.json` exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than `GRAPH_REPORT.md` or raw grep output.
+- If `graphify-out/wiki/index.md` exists, use it for broad navigation instead of raw source browsing.
+- Read `graphify-out/GRAPH_REPORT.md` only for broad architecture review or when `query`/`path`/`explain` do not surface enough context.
+- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+
 ## Agent workflow
 
 Read the affected source files before editing. Update the canonical doc
@@ -98,8 +107,8 @@ Before finishing:
 1. Run `node scripts/check.js`.
 2. If you touched `index.html`, `styles.css`, `sw.js`, `app.js`,
    `data.js`, the `strings.*.js` or `assets/js/*` files, or added
-   assets, bump `VERSION` in `sw.js` and add new files to `ARCHIVOS`.
-   Anything in `ARCHIVOS` is served **network-first with cache
+   assets, bump `VERSION` in `sw.js` and add new files to `FILES`.
+   Anything in `FILES` is served **network-first with cache
    fallback** by the SW (the SW always asks the network first and
    only uses the cache when the network is unreachable). The cache
    only becomes the source of truth if you fail to bump `VERSION`,

@@ -47,27 +47,27 @@
          UA (Windows / Mac / Linux X11 / ChromeOS) is allowed even
          with a touch screen (Surface, MacBook Touch Bar, Chromebook)
          so people with a physical keyboard can still play. */
-      function esMovil() {
+      function isMobile() {
         var ua = (navigator.userAgent || '').toLowerCase();
-        var uaMovil = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile|tablet/.test(ua);
-        var uaEscritorio = /windows nt|macintosh|x11|cros /.test(ua);
+        var mobileUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile|tablet/.test(ua);
+        var desktopUA = /windows nt|macintosh|x11|cros /.test(ua);
         var coarse = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
-        var tactil = (navigator.maxTouchPoints || 0) > 0;
-        var pequeno = window.matchMedia && window.matchMedia('(max-width: 900px)').matches;
+        var touch = (navigator.maxTouchPoints || 0) > 0;
+        var small = window.matchMedia && window.matchMedia('(max-width: 900px)').matches;
         /* Touch-screen desktop / Chromebook / convertible laptop with
            a physical keyboard -> allow. */
-        if (uaEscritorio && !uaMovil) return false;
-        if (uaMovil && (coarse || pequeno)) return true;
-        if (coarse && tactil) return true;
-        if (pequeno && tactil) return true;
+        if (desktopUA && !mobileUA) return false;
+        if (mobileUA && (coarse || small)) return true;
+        if (coarse && touch) return true;
+        if (small && touch) return true;
         return false;
       }
 
-      if (esMovil()) {
+      if (isMobile()) {
         /* Hide the app shell — every section has the .hidden class
            except this overlay; we also force-hide via inline style so
            it works even before styles.css loads. */
-        document.documentElement.setAttribute('data-app-bloqueada', 'movil');
+        document.documentElement.setAttribute('data-app-blocked', 'mobile');
         /* Override the <title> so the browser tab reads the gate too. */
         document.title = lang === 'en' ? 'Computer only — Teclatlon' : 'Solo en el ordenador — Teclatlon';
       }
@@ -75,30 +75,40 @@
       /* Apply saved accessibility settings before the first paint, the
          same way the language above is applied early: otherwise the
          page would flash the default theme/size/font for a moment
-         before app.js#aplicarOpciones() runs. Reads the same
-         localStorage key assets/js/storage.js writes to
-         ('teclatlon:keyboard'); kept in a try/catch since storage can
-         throw in private mode. */
+         before app.js#applyOptions() runs. Reads the same localStorage
+         key assets/js/storage.js writes to ('teclatlon:keyboard');
+         kept in a try/catch since storage can throw in private mode. */
       try {
-        var guardado = JSON.parse(localStorage.getItem('teclatlon:keyboard') || '{}');
-        var opciones = guardado.opciones || {};
+        var saved = JSON.parse(localStorage.getItem('teclatlon:keyboard') || '{}');
+        var rawOptions = saved.options || saved.opciones || {};
+        /* Read both the current (English) and legacy (Spanish) field
+           names: app.js migrates and re-saves the whole object on its
+           first run, but this script executes before app.js loads, so
+           on the very first paint after an update it may still find
+           the old shape (opciones.tema/.texto/.foco) on disk. Falling
+           back per-field avoids a one-time flash of the default theme/
+           text-size/focus-mode for returning users. */
+        var theme = rawOptions.theme || rawOptions.tema;
+        var textSize = rawOptions.textSize || rawOptions.texto;
+        var focusMode = rawOptions.focusMode || rawOptions.foco;
         var html = document.documentElement;
-        /* Default theme is "claro" (light). If the user has chosen
-           "auto" we still need a concrete data-tema before first paint
-           to avoid flashing dark on systems with prefers-color-scheme:
-           dark — auto resolves to "claro" for first paint and the real
-           OS theme is applied right after by app.js#aplicarOpciones()
-           when it swaps back to data-tema unset for "auto". If they
+        /* Default theme is "light". If the user has chosen "auto" we
+           still need a concrete data-theme before first paint to
+           avoid flashing dark on systems with prefers-color-scheme:
+           dark — auto resolves to "light" for first paint and the
+           real OS theme is applied right after by app.js#applyOptions()
+           when it swaps back to data-theme unset for "auto". If they
            picked an explicit theme we honour it as before. */
-        if (opciones.tema === 'oscuro' || opciones.tema === 'contraste') {
-          html.setAttribute('data-tema', opciones.tema);
-        } else if (opciones.tema === 'claro' || opciones.tema === 'auto') {
-          html.setAttribute('data-tema', 'claro');
+        if (theme === 'dark' || theme === 'oscuro' || theme === 'contrast' || theme === 'contraste') {
+          html.setAttribute('data-theme', theme === 'oscuro' ? 'dark' : (theme === 'contraste' ? 'contrast' : theme));
         } else {
-          html.setAttribute('data-tema', 'claro');
+          html.setAttribute('data-theme', 'light');
         }
-        if (opciones.texto && opciones.texto !== 'normal') html.setAttribute('data-texto', opciones.texto);
-        if (opciones.foco) html.classList.add('modo-foco');
+        if (textSize && textSize !== 'normal') {
+          var textSizeMap = { chico: 'small', grande: 'large', enorme: 'huge' };
+          html.setAttribute('data-text-size', textSizeMap[textSize] || textSize);
+        }
+        if (focusMode) html.classList.add('focus-mode');
       } catch (e) { /* ignore */ }
     })();
   </script>
@@ -111,265 +121,262 @@
        and is filled in by the same script that wires the rest of the
        app (App.i18n.apply on DOMContentLoaded), so it respects the
        detected language automatically. -->
-  <div id="bloqueoMovil" class="bloqueo-movil" role="alertdialog" aria-modal="true" aria-labelledby="bloqueoMovilTitulo" aria-describedby="bloqueoMovilMotivo" hidden>
-    <div class="bloqueo-movil-caja">
-      <div class="bloqueo-movil-picto" aria-hidden="true">🖥️</div>
-      <h2 class="bloqueo-movil-titulo" id="bloqueoMovilTitulo" data-i18n="soloOrdenador">Solo en el ordenador</h2>
-      <p class="bloqueo-movil-motivo" id="bloqueoMovilMotivo" data-i18n="soloOrdenadorMotivo">Teclatlon se usa con el teclado físico del ordenador. En un móvil o tablet el teclado que ves en pantalla es solo un dibujo: no se puede pulsar para escribir. Abre esta página desde un portátil o un PC.</p>
-      <p class="bloqueo-movil-sugerencia" data-i18n="soloOrdenadorSugerencia">Si tu móvil u ordenador tienen teclado físico, conecta uno por Bluetooth o USB y vuelve a intentarlo.</p>
+  <div id="mobileBlock" class="mobile-block" role="alertdialog" aria-modal="true" aria-labelledby="mobileBlockTitle" aria-describedby="mobileBlockReason" hidden>
+    <div class="mobile-block-box">
+      <div class="mobile-block-icon" aria-hidden="true">🖥️</div>
+      <h2 class="mobile-block-title" id="mobileBlockTitle" data-i18n="computerOnly">Solo en el ordenador</h2>
+      <p class="mobile-block-reason" id="mobileBlockReason" data-i18n="computerOnlyReason">Teclatlon se usa con el teclado físico del ordenador. En un móvil o tablet el teclado que ves en pantalla es solo un dibujo: no se puede pulsar para escribir. Abre esta página desde un portátil o un PC.</p>
+      <p class="mobile-block-suggestion" data-i18n="computerOnlySuggestion">Si tu móvil u ordenador tienen teclado físico, conecta uno por Bluetooth o USB y vuelve a intentarlo.</p>
     </div>
   </div>
   <div class="container">
     <header class="tool-header">
-      <div class="tool-header-fila">
+      <div class="tool-header-row">
         <h1 data-i18n="title">⌨️ Teclatlon</h1>
-        <div class="header-datos">
-          <span class="dato racha" id="racha" hidden>🔥 0</span>
+        <div class="header-data">
           <span class="stars" id="stars">⭐ 0</span>
-          <button type="button" class="btn-icono btn-abrir-ajustes" id="btnAbrirAjustes" aria-haspopup="dialog" aria-expanded="false" aria-controls="drawerAjustes" data-i18n-aria="abrirAjustesAria" aria-label="Ajustes">⚙️</button>
+          <button type="button" class="btn-icon btn-open-settings" id="btnOpenSettings" aria-haspopup="dialog" aria-expanded="false" aria-controls="settingsDrawer" data-i18n-aria="openSettingsAria" aria-label="Ajustes">⚙️</button>
         </div>
       </div>
       <!-- Single source of truth for the keyboard-view selector. Lived
-           inline inside pantallaNombre/pantallaJuego/pantallaLibre before
+           inline inside screenName/screenGame/screenFree before
            and was duplicated three times; hoisted into the header so
            it's always one click away (no scrolling mid-game) and so the
            per-section keyboard panels can shed that row to gain
-           vertical room on small screens. The .detalle-teclado and
-           .leyenda-teclado stay where they were (they read in the
+           vertical room on small screens. The .keyboard-detail and
+           .keyboard-legend stay where they were (they read in the
            context of the keyboard they describe) and are still scoped
-           per section by app.js (uses $$('.detalle-teclado') /
-           $$('.leyenda-teclado') so it fills every copy). -->
-      <div class="row opciones-teclado opciones-teclado--header" role="group" data-i18n-aria="tipoTecladoAria" aria-label="Vista del teclado">
-        <button type="button" class="btn btn-secondary btn-compacto btn-teclado" data-teclado="simplificado" data-i18n="btnSimple" aria-pressed="false">🔤 Solo letras</button>
-        <button type="button" class="btn btn-secondary btn-compacto btn-teclado" data-teclado="normal" data-i18n="btnNormal" aria-pressed="false">⌨️ Letras y números</button>
-        <button type="button" class="btn btn-secondary btn-compacto btn-teclado" data-teclado="extendido" data-i18n="btnExtendido" aria-pressed="false">🔢 Con números al lado</button>
-        <button type="button" class="btn btn-secondary btn-compacto btn-color" data-i18n="btnColoresManos" aria-pressed="false">🎨 Colores: manos</button>
+           per section by app.js (uses $$('.keyboard-detail') /
+           $$('.keyboard-legend') so it fills every copy). -->
+      <div class="row keyboard-options keyboard-options--header" role="group" data-i18n-aria="keyboardViewAria" aria-label="Vista del teclado">
+        <button type="button" class="btn btn-secondary btn-compact btn-keyboard" data-keyboard="simple" data-i18n="btnSimple" aria-pressed="false">🔤 Solo letras</button>
+        <button type="button" class="btn btn-secondary btn-compact btn-keyboard" data-keyboard="normal" data-i18n="btnNormal" aria-pressed="false">⌨️ Letras y números</button>
+        <button type="button" class="btn btn-secondary btn-compact btn-keyboard" data-keyboard="extended" data-i18n="btnExtended" aria-pressed="false">🔢 Con números al lado</button>
+        <button type="button" class="btn btn-secondary btn-compact btn-color" data-i18n="btnColorsHands" aria-pressed="false">🎨 Colores: manos</button>
       </div>
     </header>
 
-    <!-- Pantalla: tu nombre -->
-    <section id="pantallaNombre" class="hidden stack">
-      <div class="row centrado-row">
-        <p class="instruccion" id="textoNombre" data-i18n="textoNombre">¡Hola! ¿Cómo te llamas? Escribe tu nombre con el teclado.</p>
-        <button type="button" class="btn btn-audio" id="btnLeerNombre" data-i18n-aria="core.listenInstructions" aria-label="Escuchar las instrucciones">🔊</button>
+    <!-- Screen: your name -->
+    <section id="screenName" class="hidden stack">
+      <div class="row centered-row">
+        <p class="instruction" id="nameText" data-i18n="nameScreenText">¡Hola! ¿Cómo te llamas? Escribe tu nombre con el teclado.</p>
+        <button type="button" class="btn btn-audio" id="btnListenName" data-i18n-aria="core.listenInstructions" aria-label="Escuchar las instrucciones">🔊</button>
       </div>
-      <input id="inputNombre" class="input-nombre" type="text" maxlength="20" autocomplete="off" spellcheck="false" data-i18n-aria="inputNombreAria" aria-label="Escribe tu nombre">
-      <div class="row centrado-row">
-        <button type="button" class="btn" id="btnGuardarNombre" data-i18n="btnGuardarNombre">✅ Listo</button>
-        <button type="button" class="btn btn-secondary" id="btnSinNombre" data-i18n="btnSinNombre">Ahora no</button>
+      <input id="inputName" class="input-name" type="text" maxlength="20" autocomplete="off" spellcheck="false" data-i18n-aria="nameInputAria" aria-label="Escribe tu nombre">
+      <div class="row centered-row">
+        <button type="button" class="btn" id="btnSaveName" data-i18n="btnSaveName">✅ Listo</button>
+        <button type="button" class="btn btn-secondary" id="btnSkipName" data-i18n="btnSkipName">Ahora no</button>
       </div>
-      <p class="feedback" id="avisoNombre" aria-live="polite"></p>
-      <div class="teclado-panel stack">
-        <p class="detalle-teclado" aria-live="polite"></p>
-        <div class="row-vista-teclado">
-          <div class="teclado" aria-hidden="true"></div>
+      <p class="feedback" id="nameNotice" aria-live="polite"></p>
+      <div class="keyboard-panel stack">
+        <p class="keyboard-detail" aria-live="polite"></p>
+        <div class="row-keyboard-view">
+          <div class="keyboard" aria-hidden="true"></div>
           <div class="numpad-inline hidden" aria-hidden="true"></div>
         </div>
-        <p class="leyenda-teclado"></p>
-      </div>
-      <div class="row centrado-row">
-        <button type="button" class="btn btn-secondary btn-compacto" id="btnBorrarTodo" data-i18n="btnBorrarProgreso">🗑️ Borrar mi progreso</button>
+        <p class="keyboard-legend"></p>
       </div>
     </section>
 
     <!-- Screen: game menu -->
-    <section id="pantallaMenu" class="hidden stack">
-      <div class="row centrado-row">
-        <h2 id="saludo" data-i18n="saludoHola">¡Hola!</h2>
-        <button type="button" class="btn btn-audio" id="btnLeerSaludo" data-i18n-aria="core.listenText" aria-label="Escuchar el saludo">🔊</button>
+    <section id="screenMenu" class="hidden stack">
+      <div class="row centered-row">
+        <h2 id="greeting" data-i18n="greetingHello">¡Hola!</h2>
+        <button type="button" class="btn btn-audio" id="btnListenGreeting" data-i18n-aria="core.listenText" aria-label="Escuchar el saludo">🔊</button>
       </div>
-      <p class="instruccion centrado" data-i18n="eligeJuego">Elige un juego.</p>
-      <div class="row centrado-row">
-        <button type="button" class="btn btn-secondary btn-compacto" id="btnCambiarNombre" data-i18n="btnMiNombre">✏️ Mi nombre</button>
+      <p class="instruction centered" data-i18n="chooseGame">Elige un juego.</p>
+      <div class="row centered-row">
+        <button type="button" class="btn btn-secondary btn-compact" id="btnChangeName" data-i18n="btnMyName">✏️ Mi nombre</button>
       </div>
-      <div class="grid-tarjetas" id="menuJuegos">
-        <button type="button" class="tarjeta-modo" data-mode="posicion">
+      <div class="grid-cards" id="gameMenu">
+        <button type="button" class="mode-card" data-mode="placement">
           <span class="picto" aria-hidden="true">🖐️</span>
-          <span class="nombre" data-i18n="modoPosicionNombre">Coloca los dedos</span>
-          <span class="detalle" data-i18n="modoPosicionDetalle">Cada dedo tiene su tecla.</span>
-          <span class="hecho"></span>
+          <span class="name" data-i18n="modePlacementName">Coloca los dedos</span>
+          <span class="detail" data-i18n="modePlacementDetail">Cada dedo tiene su tecla.</span>
+          <span class="done"></span>
         </button>
-        <button type="button" class="tarjeta-modo" data-mode="lecciones">
+        <button type="button" class="mode-card" data-mode="lessons">
           <span class="picto" aria-hidden="true">🔤</span>
-          <span class="nombre" data-i18n="modoLeccionesNombre">Paso a paso</span>
-          <span class="detalle" data-i18n="modoLeccionesDetalle">Aprende las letras en orden.</span>
-          <span class="hecho"></span>
+          <span class="name" data-i18n="modeLessonsName">Paso a paso</span>
+          <span class="detail" data-i18n="modeLessonsDetail">Aprende las letras en orden.</span>
+          <span class="done"></span>
         </button>
-        <button type="button" class="tarjeta-modo" data-mode="palabras">
-          <span class="picto" aria-hidden="true">✏️</span>
-          <span class="nombre" data-i18n="modoPalabrasNombre">Palabras</span>
-          <span class="detalle" data-i18n="modoPalabrasDetalle">Escribe palabras y tu nombre.</span>
-          <span class="hecho"></span>
-        </button>
-        <button type="button" class="tarjeta-modo" data-mode="todas">
+        <button type="button" class="mode-card" data-mode="allKeys">
           <span class="picto" aria-hidden="true">🌈</span>
-          <span class="nombre" data-i18n="modoTodasNombre">Todas las teclas</span>
-          <span class="detalle" data-i18n="modoTodasDetalle">Enciende todas las teclas.</span>
-          <span class="hecho"></span>
+          <span class="name" data-i18n="modeAllKeysName">Todas las teclas</span>
+          <span class="detail" data-i18n="modeAllKeysDetail">Enciende todas las teclas.</span>
+          <span class="done"></span>
         </button>
-        <button type="button" class="tarjeta-modo" data-mode="numeros">
-          <span class="picto" aria-hidden="true">🔢</span>
-          <span class="nombre" data-i18n="modoNumerosNombre">Números</span>
-          <span class="detalle" data-i18n="modoNumerosDetalle">Usa el teclado de números.</span>
-          <span class="hecho"></span>
+        <button type="button" class="mode-card" data-mode="words">
+          <span class="picto" aria-hidden="true">✏️</span>
+          <span class="name" data-i18n="modeWordsName">Palabras</span>
+          <span class="detail" data-i18n="modeWordsDetail">Escribe palabras y tu nombre.</span>
+          <span class="done"></span>
         </button>
-        <button type="button" class="tarjeta-modo" data-mode="templates">
+        <button type="button" class="mode-card" data-mode="templates">
           <span class="picto" aria-hidden="true">📩</span>
-          <span class="nombre" data-i18n="modoPlantillasNombre">Textos reales</span>
-          <span class="detalle" data-i18n="modoPlantillasDetalle">Practica con un correo o una carta.</span>
-          <span class="hecho"></span>
+          <span class="name" data-i18n="modeTemplatesName">Textos reales</span>
+          <span class="detail" data-i18n="modeTemplatesDetail">Practica con un correo o una carta.</span>
+          <span class="done"></span>
         </button>
-        <button type="button" class="tarjeta-modo" data-mode="libre">
+        <button type="button" class="mode-card" data-mode="free">
           <span class="picto" aria-hidden="true">✍️</span>
-          <span class="nombre" data-i18n="modoLibreNombre">Escribe libre</span>
-          <span class="detalle" data-i18n="modoLibreDetalle">Escribe y escucha tu texto.</span>
-          <span class="hecho"></span>
+          <span class="name" data-i18n="modeFreeName">Escribe libre</span>
+          <span class="detail" data-i18n="modeFreeDetail">Escribe y escucha tu texto.</span>
+          <span class="done"></span>
+        </button>
+        <button type="button" class="mode-card" data-mode="numbers">
+          <span class="picto" aria-hidden="true">🔢</span>
+          <span class="name" data-i18n="modeNumbersName">Números</span>
+          <span class="detail" data-i18n="modeNumbersDetail">Usa el teclado de números.</span>
+          <span class="done"></span>
         </button>
       </div>
-      <p class="instruccion centrado" id="resumen" aria-live="polite"></p>
-      <div class="panel-ajustes stack" aria-labelledby="insigniasTitulo">
-        <h3 id="insigniasTitulo" data-i18n="insigniasTitulo">Insignias</h3>
-        <div class="grid-insignias" id="gridInsignias"></div>
-        <p class="ayuda" id="insigniasVacia" data-i18n="insigniasVacia">Aún no hay insignias. ¡Sigue practicando!</p>
+      <p class="instruction centered" id="summary" aria-live="polite"></p>
+      <div class="settings-panel stack" aria-labelledby="badgesTitle">
+        <h3 id="badgesTitle" data-i18n="badgesTitle">Insignias</h3>
+        <div class="grid-badges" id="badgesGrid"></div>
+        <p class="help-text" id="badgesEmpty" data-i18n="badgesEmpty">Aún no hay insignias. ¡Sigue practicando!</p>
       </div>
     </section>
 
-    <!-- Pantalla: lista de lecciones -->
-    <section id="pantallaLecciones" class="hidden stack">
-      <div class="row pantalla-juego-barra">
-        <button type="button" class="btn btn-secondary btn-compacto" id="btnVolverMenu" data-i18n="btnMenu">← Menú</button>
-        <h2 class="titulo-juego" data-i18n="modoLeccionesNombre">Paso a paso</h2>
+    <!-- Screen: lesson list -->
+    <section id="screenLessons" class="hidden stack">
+      <div class="row game-screen-bar">
+        <button type="button" class="btn btn-secondary btn-compact" id="btnBackToMenu" data-i18n="btnMenu">← Menú</button>
+        <h2 class="game-title" data-i18n="modeLessonsName">Paso a paso</h2>
       </div>
-      <p class="instruccion" data-i18n="leccionesInstruccion">Termina una lección para abrir la siguiente.</p>
-      <div class="grid-lecciones" id="listaLecciones"></div>
+      <p class="instruction" data-i18n="lessonsInstruction">Termina una lección para abrir la siguiente.</p>
+      <div class="grid-lessons" id="lessonsList"></div>
     </section>
 
-    <!-- Pantalla: lista de plantillas (textos reales: correo, carta...) -->
-    <section id="pantallaPlantillas" class="hidden stack">
-      <div class="row pantalla-juego-barra">
-        <button type="button" class="btn btn-secondary btn-compacto" id="btnVolverMenuPlantillas" data-i18n="btnMenu">← Menú</button>
-        <h2 class="titulo-juego" data-i18n="modoPlantillasNombre">Textos reales</h2>
+    <!-- Screen: template list (real texts: email, letter...) -->
+    <section id="screenTemplates" class="hidden stack">
+      <div class="row game-screen-bar">
+        <button type="button" class="btn btn-secondary btn-compact" id="btnBackToMenuTemplates" data-i18n="btnMenu">← Menú</button>
+        <h2 class="game-title" data-i18n="modeTemplatesName">Textos reales</h2>
       </div>
-      <p class="instruccion" data-i18n="plantillasInstruccion">Elige un texto para practicar.</p>
-      <div class="grid-lecciones" id="listaPlantillas"></div>
+      <p class="instruction" data-i18n="templatesInstruction">Elige un texto para practicar.</p>
+      <div class="grid-lessons" id="templatesList"></div>
     </section>
 
     <!-- Screen: game (position, lessons, words, challenge and numbers) -->
-    <section id="pantallaJuego" class="hidden stack">
-      <div class="row pantalla-juego-barra">
-        <button type="button" class="btn btn-secondary btn-compacto" id="btnSalirJuego" data-i18n="btnMenu">← Menú</button>
-        <h2 class="titulo-juego" id="tituloJuego" data-i18n="tituloJuegoDefault">Juego</h2>
-        <button type="button" class="btn btn-audio btn-compacto" id="btnLeerJuego" data-i18n-aria="core.listenInstructions" aria-label="Escuchar las instrucciones">🔊</button>
+    <section id="screenGame" class="hidden stack">
+      <div class="row game-screen-bar">
+        <button type="button" class="btn btn-secondary btn-compact" id="btnExitGame" data-i18n="btnMenu">← Menú</button>
+        <h2 class="game-title" id="gameTitle" data-i18n="gameTitleDefault">Juego</h2>
+        <button type="button" class="btn btn-audio btn-compact" id="btnListenGame" data-i18n-aria="core.listenInstructions" aria-label="Escuchar las instrucciones">🔊</button>
       </div>
-      <p class="instruccion centrado" id="instruccionJuego"></p>
-      <div class="card centrado">
-        <div id="zonaObjetivo" class="objetivo-zona"></div>
-        <div id="zonaReto" class="progress-bar hidden">
-          <div class="progress-fill" id="retoFill"></div>
-          <span class="progress-text" id="retoTexto">0 de 0</span>
+      <p class="instruction centered" id="gameInstruction"></p>
+      <div class="card centered">
+        <div id="targetZone" class="target-zone"></div>
+        <div id="challengeZone" class="progress-bar hidden">
+          <div class="progress-fill" id="challengeFill"></div>
+          <span class="progress-text" id="challengeText">0 de 0</span>
         </div>
       </div>
       <div class="feedback" id="feedback" aria-live="polite"></div>
-      <div class="metricas-vivas hidden" id="metricasVivas" aria-live="polite"></div>
-      <div class="row guia" id="guia">
-        <div class="manos" id="manosSvg" aria-hidden="true"></div>
-        <p class="guia-texto" id="guiaTexto"></p>
+      <div class="live-metrics hidden" id="liveMetrics" aria-live="polite"></div>
+      <div class="row guide" id="guide">
+        <div class="hands" id="handsSvg" aria-hidden="true"></div>
+        <p class="guide-text" id="guideText"></p>
       </div>
-      <div class="teclado-panel stack" id="panelTeclado">
-        <p class="detalle-teclado" aria-live="polite"></p>
-        <div class="row-vista-teclado">
-          <div class="teclado" aria-hidden="true"></div>
+      <div class="keyboard-panel stack" id="keyboardPanel">
+        <p class="keyboard-detail" aria-live="polite"></p>
+        <div class="row-keyboard-view">
+          <div class="keyboard" aria-hidden="true"></div>
           <div class="numpad-inline hidden" aria-hidden="true"></div>
         </div>
-        <p class="leyenda-teclado"></p>
+        <p class="keyboard-legend"></p>
       </div>
-      <div id="panelNumpad" class="stack hidden">
+      <div id="numpadPanel" class="stack hidden">
         <div class="numpad" id="numpad" aria-hidden="true"></div>
       </div>
     </section>
 
-    <!-- Pantalla: escritura libre -->
-    <section id="pantallaLibre" class="hidden stack">
-      <div class="row pantalla-juego-barra">
-        <button type="button" class="btn btn-secondary btn-compacto" id="btnSalirLibre" data-i18n="btnMenu">← Menú</button>
-        <h2 class="titulo-juego" data-i18n="modoLibreNombre">Escribe libre</h2>
-        <button type="button" class="btn btn-audio btn-compacto" id="btnLeerLibre" data-i18n="core.listen" data-i18n-aria="escucharTextoAria" aria-label="Escuchar mi texto">🔊 Escuchar</button>
-        <button type="button" class="btn btn-secondary btn-compacto" id="btnBorrarLibre" data-i18n-aria="borrarTextoAria" aria-label="Borrar el texto">🗑️</button>
+    <!-- Screen: free writing -->
+    <section id="screenFree" class="hidden stack">
+      <div class="row game-screen-bar">
+        <button type="button" class="btn btn-secondary btn-compact" id="btnExitFree" data-i18n="btnMenu">← Menú</button>
+        <h2 class="game-title" data-i18n="modeFreeName">Escribe libre</h2>
+        <button type="button" class="btn btn-audio btn-compact" id="btnListenFree" data-i18n="core.listen" data-i18n-aria="listenTextAria" aria-label="Escuchar mi texto">🔊 Escuchar</button>
+        <button type="button" class="btn btn-secondary btn-compact" id="btnClearFree" data-i18n-aria="clearTextAria" aria-label="Borrar el texto">🗑️</button>
       </div>
-      <textarea id="areaLibre" class="area-libre" rows="4" spellcheck="false" data-i18n-aria="areaLibreAria" aria-label="Escribe aquí lo que quieras" placeholder="Escribe aquí..."></textarea>
-      <div class="row guia">
-        <div class="manos" id="manosSvgLibre" aria-hidden="true"></div>
-        <p class="guia-texto" id="guiaTextoLibre"></p>
+      <textarea id="freeArea" class="free-area" rows="4" spellcheck="false" data-i18n-aria="freeAreaAria" aria-label="Escribe aquí lo que quieras" placeholder="Escribe aquí..."></textarea>
+      <div class="row guide">
+        <div class="hands" id="handsSvgFree" aria-hidden="true"></div>
+        <p class="guide-text" id="guideTextFree"></p>
       </div>
-      <div class="teclado-panel stack">
-        <p class="detalle-teclado" aria-live="polite"></p>
-        <div class="row-vista-teclado">
-          <div class="teclado" aria-hidden="true"></div>
+      <div class="keyboard-panel stack">
+        <p class="keyboard-detail" aria-live="polite"></p>
+        <div class="row-keyboard-view">
+          <div class="keyboard" aria-hidden="true"></div>
           <div class="numpad-inline hidden" aria-hidden="true"></div>
         </div>
-        <p class="leyenda-teclado"></p>
+        <p class="keyboard-legend"></p>
       </div>
     </section>
-    <footer class="pie-app">
+    <footer class="app-footer">
       <a href="legal/index.html" class="footer-link" data-i18n="core.dataProtection">Protección de datos</a>
+      <button type="button" class="btn btn-secondary btn-compact btn-clear-all" id="btnClearAll" data-i18n="btnClearProgress">🗑️ Borrar mi progreso</button>
     </footer>
   </div>
 
-  <div id="fondoAjustes" class="drawer-fondo" hidden></div>
-  <aside id="drawerAjustes" class="drawer-ajustes panel-ajustes stack" role="dialog" aria-modal="true" aria-labelledby="panelAjustesTitulo" hidden>
-    <div class="row drawer-cabecera">
-      <h3 id="panelAjustesTitulo" data-i18n="headerAjustes">Ajustes</h3>
-      <button type="button" class="btn-icono btn-cerrar-ajustes" id="btnCerrarAjustes" data-i18n-aria="cerrarAjustesAria" aria-label="Cerrar ajustes">✕</button>
+  <div id="settingsBackdrop" class="drawer-backdrop" hidden></div>
+  <aside id="settingsDrawer" class="settings-drawer settings-panel stack" role="dialog" aria-modal="true" aria-labelledby="settingsPanelTitle" hidden>
+    <div class="row drawer-header">
+      <h3 id="settingsPanelTitle" data-i18n="settingsHeader">Ajustes</h3>
+      <button type="button" class="btn-icon btn-close-settings" id="btnCloseSettings" data-i18n-aria="closeSettingsAria" aria-label="Cerrar ajustes">✕</button>
     </div>
-    <p class="instruccion" data-i18n="panelAjustes">Ajustes de accesibilidad y juego</p>
+    <p class="instruction" data-i18n="settingsPanel">Ajustes de accesibilidad y juego</p>
 
-    <div class="ajuste-row">
-      <span class="ajuste-etiqueta" data-i18n="etiquetaIdioma">🌐 Idioma</span>
-      <span class="grupo-texto" role="group" id="grupoIdioma" data-i18n-aria="etiquetaIdiomaAria" aria-label="Elegir idioma">
-        <button type="button" class="btn-icono btn-idioma" data-locale="es" aria-pressed="false">🇪🇸 Español</button>
-        <button type="button" class="btn-icono btn-idioma" data-locale="en" aria-pressed="false">🇬🇧 English</button>
+    <div class="setting-row">
+      <span class="setting-label" data-i18n="languageLabel">🌐 Idioma</span>
+      <span class="text-group" role="group" id="languageGroup" data-i18n-aria="languageLabelAria" aria-label="Elegir idioma">
+        <button type="button" class="btn-icon btn-language" data-locale="es" aria-pressed="false">🇪🇸 Español</button>
+        <button type="button" class="btn-icon btn-language" data-locale="en" aria-pressed="false">🇬🇧 English</button>
       </span>
     </div>
 
-    <div class="ajuste-row">
-      <span class="ajuste-etiqueta" data-i18n="etiquetaTextoAria">Tamaño del texto</span>
-      <span class="grupo-texto" role="group" data-i18n-aria="etiquetaTextoAAria" aria-label="Aumentar o reducir el tamaño del texto">
-        <button type="button" class="btn-icono btn-texto-tam" data-texto="chico" data-i18n="etiquetaTextoA">A−</button>
-        <button type="button" class="btn-icono btn-texto-tam" data-texto="normal">A</button>
-        <button type="button" class="btn-icono btn-texto-tam" data-texto="grande">A+</button>
-        <button type="button" class="btn-icono btn-texto-tam" data-texto="enorme">A++</button>
+    <div class="setting-row">
+      <span class="setting-label" data-i18n="textSizeAria">Tamaño del texto</span>
+      <span class="text-group" role="group" data-i18n-aria="textSizeAdjustAria" aria-label="Aumentar o reducir el tamaño del texto">
+        <button type="button" class="btn-icon btn-text-size" data-text-size="small" data-i18n="textSizeA">A−</button>
+        <button type="button" class="btn-icon btn-text-size" data-text-size="normal">A</button>
+        <button type="button" class="btn-icon btn-text-size" data-text-size="large">A+</button>
+        <button type="button" class="btn-icon btn-text-size" data-text-size="huge">A++</button>
       </span>
     </div>
 
-    <div class="ajuste-row">
-      <span class="ajuste-etiqueta" data-i18n="etiquetaTema">Tema</span>
-      <span class="grupo-texto" role="group" data-i18n-aria="etiquetaTemaAria" aria-label="Cambiar el tema claro, oscuro o alto contraste">
-        <button type="button" class="btn-icono btn-tema" data-tema="auto" data-i18n="etiquetaTemaAuto">Auto</button>
-        <button type="button" class="btn-icono btn-tema" data-tema="claro" data-i18n="etiquetaTemaClaro">Claro</button>
-        <button type="button" class="btn-icono btn-tema" data-tema="oscuro" data-i18n="etiquetaTemaOscuro">Oscuro</button>
-        <button type="button" class="btn-icono btn-tema" data-tema="contraste" data-i18n="etiquetaTemaContraste">Contraste</button>
+    <div class="setting-row">
+      <span class="setting-label" data-i18n="themeLabel">Tema</span>
+      <span class="text-group" role="group" data-i18n-aria="themeLabelAria" aria-label="Cambiar el tema claro, oscuro o alto contraste">
+        <button type="button" class="btn-icon btn-theme" data-theme="auto" data-i18n="themeLabelAuto">Auto</button>
+        <button type="button" class="btn-icon btn-theme" data-theme="light" data-i18n="themeLabelLight">Claro</button>
+        <button type="button" class="btn-icon btn-theme" data-theme="dark" data-i18n="themeLabelDark">Oscuro</button>
+        <button type="button" class="btn-icon btn-theme" data-theme="contrast" data-i18n="themeLabelContrast">Contraste</button>
       </span>
     </div>
 
-    <div class="ajuste-row">
-      <span class="ajuste-etiqueta" data-i18n="etiquetaModoFoco">Modo foco</span>
-      <button type="button" id="btnModoFoco" class="btn-icono" aria-pressed="false" data-i18n-aria="etiquetaModoFocoAria" aria-label="Activar o desactivar el modo foco">Modo foco: apagado</button>
+    <div class="setting-row">
+      <span class="setting-label" data-i18n="focusModeLabel">Modo foco</span>
+      <button type="button" id="btnFocusMode" class="btn-icon" aria-pressed="false" data-i18n-aria="focusModeLabelAria" aria-label="Activar o desactivar el modo foco">Modo foco: apagado</button>
     </div>
 
-    <div class="ajuste-row">
-      <span class="ajuste-etiqueta" data-i18n="etiquetaSonidoEspacial">Sonido espacial</span>
-      <button type="button" id="btnEspacial" class="btn-icono" aria-pressed="false" data-i18n-aria="etiquetaSonidoEspacialAria" aria-label="Activar o desactivar el sonido espacial">Sonido espacial: apagado</button>
+    <div class="setting-row">
+      <span class="setting-label" data-i18n="spatialSoundLabel">Sonido espacial</span>
+      <button type="button" id="btnSpatialSound" class="btn-icon" aria-pressed="false" data-i18n-aria="spatialSoundLabelAria" aria-label="Activar o desactivar el sonido espacial">Sonido espacial: apagado</button>
     </div>
 
-    <div class="ajuste-row">
-      <span class="ajuste-etiqueta" data-i18n="etiquetaMetricas">Métricas</span>
-      <button type="button" id="btnMetricas" class="btn-icono" aria-pressed="false" data-i18n-aria="etiquetaMetricasAria" aria-label="Activar o desactivar las métricas de precisión y velocidad">Métricas: apagadas</button>
+    <div class="setting-row">
+      <span class="setting-label" data-i18n="metricsLabel">Métricas</span>
+      <button type="button" id="btnMetrics" class="btn-icon" aria-pressed="false" data-i18n-aria="metricsLabelAria" aria-label="Activar o desactivar las métricas de precisión y velocidad">Métricas: apagadas</button>
     </div>
 
-    <p class="ayuda" data-i18n="ajustesAyuda">Estos ajustes se guardan en este dispositivo.</p>
+    <p class="help-text" data-i18n="settingsHelp">Estos ajustes se guardan en este dispositivo.</p>
   </aside>
 
-  <div id="app-bandera-insignia" class="bandera-insignia hidden" role="status" aria-live="polite"></div>
+  <div id="app-badge-flag" class="badge-flag hidden" role="status" aria-live="polite"></div>
 
   <script src="assets/js/utils.js"></script>
   <script src="assets/js/i18n.js"></script>

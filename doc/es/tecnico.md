@@ -61,7 +61,7 @@ cosas:
   `./`) para que la app funcione en cualquier host sin cambios.
 - `404.html`, `robots.txt` y `sitemap.xml` siguen el mismo patrón que
   los proyectos hermanos `calculia` / `sinonimia` (se añaden a la lista
-  `ARCHIVOS` del `sw.js` para que sigan funcionando offline).
+  `FILES` del `sw.js` para que sigan funcionando offline).
 - Un despliegue — incluso a un canal de previsualización — es una
   operación de red: pide confirmación antes de ejecutarlo (ver
   `CLAUDE.md` §"Agent workflow").
@@ -149,20 +149,20 @@ recortó a propósito, no por descuido.
 
 ### 2.2 `app.js` — IIFE único
 
-Contiene toda la app cliente: cambio de pantallas (`PANTALLAS`), el motor
-de secuencias (`iniciarSecuencia`/`teclaJuego`/`pasoCompletado`) usado
+Contiene toda la app cliente: cambio de pantallas (`SCREENS`), el motor
+de secuencias (`startSequence`/`gameKey`/`stepCompleted`) usado
 por "coloca los dedos", lecciones, palabras y el numérico, el reto de
-"todas las teclas" (`jugarReto`/`teclaReto`), el SVG de guía de manos, el
+"todas las teclas" (`playChallenge`/`challengeKey`), el SVG de guía de manos, el
 renderizador del teclado visual, y los listeners de `keydown`/`keyup`
 físicos que impulsan cada modo de juego. No hay ruta de pulsar-para-
 escribir: el teclado en pantalla solo *refleja* pulsaciones
-(`flashTecla`), nunca las origina.
+(`flashKey`), nunca las origina.
 
-El panel de ajustes (`#drawerAjustes`, un desplegable lateral que se
-abre con el icono de engranaje `#btnAbrirAjustes` de la cabecera — ver
-SPEC.md §4.1) se lee de `state.opciones` y se aplica con
-`aplicarOpciones()`, llamada al arrancar y tras cada cambio.
-`abrirAjustes()`/`cerrarAjustes()` gestionan la animación de
+El panel de ajustes (`#settingsDrawer`, un desplegable lateral que se
+abre con el icono de engranaje `#btnOpenSettings` de la cabecera — ver
+SPEC.md §4.1) se lee de `state.options` y se aplica con
+`applyOptions()`, llamada al arrancar y tras cada cambio.
+`openSettings()`/`closeSettings()` gestionan la animación de
 apertura/cierre, el clic en el fondo oscurecido y el foco (al abrir el
 foco pasa al botón de cerrar del desplegable; al cerrar, vuelve a
 quien lo abrió); el manejo de `Tab`/`Escape` del desplegable vive al
@@ -170,21 +170,19 @@ principio del listener `keydown` físico (ver más abajo), antes de la
 lógica de juego, porque el desplegable se puede abrir en mitad de una
 partida. Interacciones con el motor:
 
-- `state.metricas` (teclas / aciertos / fallos / inicioMs) se
-  reinicia en cada partida, lo actualizan `teclaJuego` / `teclaReto`,
-  y se muestra como precisión (%) y PPM en vivo cuando
-  `state.opciones.metricas` vale `true`.
-- `premiar()` incrementa la racha y la mejor racha, y luego llama a
-  `verificarInsignias()` para desbloquear cualquier insignia cuya
-  condición se cumpla. Las nuevas insignias lanzan una bandera breve
-  (`#app-bandera-insignia`).
-- `feedback.success(zona, pan)` acepta un paneo estéreo opcional. Lo
+- `state.metrics` (keys / hits / misses / startMs) se
+  reinicia en cada partida, lo actualizan `gameKey` / `challengeKey`,
+  y se muestra como precisión (%) y teclas por minuto en vivo cuando
+  `state.options.metrics` vale `true`.
+- `award(key)` desbloquea una insignia de finalización cuyo id pasa a
+  `true` en `state.completed`. `DATA.badges` (todavía sin conectar a
+  ninguna interfaz) declara la tabla de insignias que esos ids podrían
+  impulsar.
+- `feedback.success(zone, pan)` acepta un paneo estéreo opcional. Lo
   calcula el llamador desde la columna de la tecla
-  (`App.utils.columnaDe` + `App.utils.panDeColumna`); el audio solo
-  pasa por `StereoPannerNode` cuando `state.opciones.espacial` vale
-  `true`.
-- `feedback.success` / `encourage` también llaman a `navigator.vibrate`
-  cuando `state.opciones.vibracion` vale `true`.
+  (`App.utils.columnOf` + `App.utils.panOfColumn`, o `panOf` en
+  `app.js`); el audio solo pasa por `StereoPannerNode` cuando
+  `state.options.spatialSound` vale `true`.
 
 ### 2.3 `data.js` — distribuciones de teclado y contenido de práctica
 
@@ -196,94 +194,98 @@ partida. Interacciones con el motor:
   decorativa sin `ch` (Tab, Mayús, Intro, Borrar) — da forma al teclado
   pero nunca es objetivo de un ejercicio.
 - `DATA.layouts`: los teclados visuales seleccionables —
-  `simplificado` (letras y las dos teclas Mayús — necesarias para que
+  `simple` (letras y las dos teclas Mayús — necesarias para que
   la lección de mayúsculas tenga una tecla Mayús que señalar incluso en
   esta vista reducida), `normal` (distribución física completa con
-  teclas decorativas), `extendido` (igual que `normal`, con el numérico
+  teclas decorativas), `extended` (igual que `normal`, con el numérico
   mostrado aparte). Los tres son distribuciones físicas/decorativas; no
   hay ninguna distribución tocable.
   Los tres botones de la UI se etiquetan, en lenguaje claro para
   principiantes, como "Solo letras" / "Letras y números" /
-  "Con números al lado" (ver `btnSimple`/`btnNormal`/`btnExtendido` en
+  "Con números al lado" (ver `btnSimple`/`btnNormal`/`btnExtended` en
   `strings.<locale>.js`); bajo el botón seleccionado se muestra una
   frase de una línea (p. ej. "Solo se ven las letras. Es lo más
-  sencillo.") mediante `.detalle-teclado`, de modo que cada opción se
+  sencillo.") mediante `.keyboard-detail`, de modo que cada opción se
   explica con palabras cotidianas.
 - `DATA.placement` / `DATA.lessons` / `DATA.words` / `DATA.numpadSteps` /
   `DATA.templates`: contenido de práctica por idioma
   (`{ es: [...], en: [...] }`), leído con `DATA.<campo>[App.i18n.locale()]`.
-- `DATA.insignias`: tabla de insignias. Cada entrada es
-  `{ id, clave, condicion(state) => bool }`. `clave` es la clave i18n
-  (`insigniaPrimera`, etc.). `condicion` se evalúa en cada cambio de
-  progreso y al arrancar; las nuevas insignias desbloquean la bandera
-  en `app.js`.
+- `DATA.badges`: tabla de insignias (todavía sin conectar a ninguna
+  interfaz). Cada entrada es `{ id, key, condition(state) => bool }`.
+  `key` es la clave i18n (`badgeFirst`, etc.). `condition` está
+  pensada para evaluarse en cada cambio de progreso.
 - Los nombres de los dedos viven en `strings.<locale>.js` bajo
-  `dedo.<id>.mano` / `.nombre`, no en `data.js`.
+  `finger.<id>.hand` / `.name`, no en `data.js`.
 
 Para ampliar: añade una lección o palabra a los arrays de **ambos**
 idiomas (`es` y `en`).
 
 **Mayúsculas (Shift):** el `seq` de un paso de lección puede contener
 una letra en mayúscula (p. ej. `'A'`) para exigir Mayús en esa tecla —
-ver la lección `l16`/"Mayúsculas"/"Capitals". No existe una tecla
-física distinta para la mayúscula; `teclaJuego(ch, mayus)` compara la
+ver la lección `l16`/"Capitals". No existe una tecla
+física distinta para la mayúscula; `gameKey(ch, shiftHeld)` compara la
 tecla pulsada normalizada (en minúscula) contra `seq[pos].toLowerCase()`
-y además exige `mayus` (el `e.shiftKey` del keydown) solo cuando
+y además exige `shiftHeld` (el `e.shiftKey` del keydown) solo cuando
 `seq[pos]` es en sí mayúscula — un paso en minúscula nunca comprueba
 el estado de Mayús, así que mantenerla pulsada por accidente no cuenta
-como fallo. `ladoMayusOpuesto(finger)` en `app.js` codifica la
+como fallo. `oppositeShiftSide(finger)` en `app.js` codifica la
 convención estándar de mecanografía (pulsar Mayús con el meñique del
-lado *contrario* al de la mano de la letra); `manosSVG`/`pintarManos`
-resaltan ese segundo dedo con menor opacidad (`.dedo.activo-mayus`)
-junto al dedo principal, y `guiaTexto` añade una frase que lo nombra.
+lado *contrario* al de la mano de la letra); `handsSVG`/`renderHands`
+resaltan ese segundo dedo con menor opacidad (`.finger.active-shift`)
+junto al dedo principal, y `#guideText` añade una frase que lo nombra.
 
 **Teclas especiales (Inicio/Fin/Re Pág/Av Pág/Supr):** un paso de
-lección puede ser `{ especial: 'inicio' }` en vez de `{ seq: '...' }`
-— ver la lección `l17`/"Teclas especiales"/"Special keys" y
-`esPasoEspecial(p)` en `app.js`. Estas teclas no escriben un carácter,
+lección puede ser `{ specialKey: 'home' }` en vez de `{ seq: '...' }`
+— ver la lección `l17`/"Special keys" y
+`isSpecialStep(p)` en `app.js`. Estas teclas no escriben un carácter,
 así que el paso se completa de una vez con el keydown correcto en
 lugar de recorrer un índice de `seq` — y, como no existe una
 convención de dedo consistente para ellas, el resaltado de dedo de la
-guía se omite por completo (`pintarManos(null, null)`); solo la tecla
-correspondiente en pantalla recibe el resaltado `.objetivo`. Solo
-`DATA.layouts.extendido` dibuja estas teclas (una fila `teclaEspecial(id)`
+guía se omite por completo (`renderHands(null, null)`); solo la tecla
+correspondiente en pantalla recibe el resaltado `.target`. Solo
+`DATA.layouts.extended` dibuja estas teclas (una fila `specialKeyDef(id)`
 añadida al principio en `data.js`); llevan un `ch` real (a diferencia
-de otras teclas decorativas) para que `marcarObjetivo`/`flashTecla`
+de otras teclas decorativas) para que `markTarget`/`flashKey`
 puedan apuntarlas, pero `special: true` las mantiene fuera del reto de
-"todas las teclas" (`clavesTipeables`/`actualizarReto` omiten
-`k.special`). La tabla `TECLA_ESPECIAL_DOM` de `normalizarTecla` es el
+"todas las teclas" (`typeableKeys`/`updateChallenge` omiten
+`k.special`). La tabla `SPECIAL_KEY_DOM` de `normalizeKey` es el
 único lugar que traduce los valores en bruto de `KeyboardEvent.key`
 (`'Home'`, `'PageUp'`, …) a los ids internos usados en todo lo demás
-(`data-ch`, `especial`, `teclaLabel.*`).
+(`data-ch`, `specialKey`, `keyLabel.*`).
 
 **Plantillas extensibles (modo "Textos reales"):**
 `DATA.templates.<locale>` es un array de `{ id, title, lines }` — una
 tarea de escritura real y completa (un correo, una carta…) en vez de
 una sola palabra o frase de práctica. A diferencia de `DATA.lessons`,
 estas **no** están encadenadas en un desbloqueo lineal (ver
-`pintarPlantillas()` en `app.js`): cada entrada está siempre abierta,
+`renderTemplates()` en `app.js`): cada entrada está siempre abierta,
 porque son textos de práctica independientes, no un currículo
 graduado. `lines` es el texto dividido en líneas cortas;
-`jugarPlantilla(p)` convierte cada línea en un paso del motor de
-secuencias (`{ seq: linea }`), el mismo mecanismo que ya usa el paso
+`playTemplate(p)` convierte cada línea en un paso del motor de
+secuencias (`{ seq: line }`), el mismo mecanismo que ya usa el paso
 de texto plano de una lección — no hizo falta código nuevo en el
 motor, solo una tarjeta de menú nueva, una pantalla nueva
-(`#pantallaPlantillas`, calcada de `#pantallaLecciones`) y esta tabla
+(`#screenTemplates`, calcada de `#screenLessons`) y esta tabla
 de datos. **Para añadir una plantilla nueva:** añade
 `{ id, title, lines }` a los arrays de **ambos** idiomas (`es` y `en`)
 en `data.js`; mantén `lines` a caracteres que el teclado modela
-(letras minúsculas, `ñ`, la puntuación de `DATA.rows`: `,` `.` `-`, y
-mayúsculas con Shift — ver la lección "Mayúsculas"). Evita `¡`, `¿`,
-`!`, `?` y vocales acentuadas: esas teclas no están modeladas en
-`DATA.rows`, así que se tragarían la pulsación sin avisar. `id` debe
-ser único y estable — se reutiliza como clave de insignia/progreso
-(`'plantilla_' + id`).
+(letras minúsculas, `ñ`, la puntuación de `DATA.rows`: `,` `.` `-`,
+mayúsculas con Shift — ver la lección "Mayúsculas" — y vocales
+acentuadas del español á/é/í/ó/ú, que son ortografía correcta y se
+esperan en un texto real en español). `expectedBaseChar()` en
+`app.js` quita el acento antes de buscar el dedo/tecla en pantalla,
+ya que no hay una tecla `é` aparte — es la `e` compuesta con la tecla
+muerta del acento, la misma idea que una mayúscula resolviendo a su
+letra base. Evita igualmente `¡`, `¿`, `!` y `?`: a diferencia de los
+acentos, esas no tienen ninguna tecla física en `DATA.rows` y se
+tragarían la pulsación sin avisar. `id` debe ser único y estable — se
+reutiliza como clave de insignia/progreso (`'template_' + id`).
 
-### 2.4 Ancla de aprendizaje significativo: `transferencia`
+### 2.4 Ancla de aprendizaje significativo: `transferMessage`
 
 Cada finalización (una lección, el juego de palabras, el numérico o el
-reto de "todas las teclas") añade `App.i18n.t('transferencia')` al
-mensaje de celebración de cierre (`celebrarConTransferencia()` en
+reto de "todas las teclas") añade `App.i18n.t('transferMessage')` al
+mensaje de celebración de cierre (`celebrateWithTransfer()` en
 `app.js`) — una frase corta que conecta el ejercicio con escribir
 mensajes reales en un ordenador real. Esta actividad no tiene una
 pantalla separada de "ronda completada", así que la frase vive en el
@@ -297,14 +299,14 @@ dependencias y síncrono, que se ejecuta **antes del primer paint** y
 hace dos cosas:
 
 1. **Elige el idioma de la interfaz** desde `navigator.languages`
-   (primer prefijo de 2 letras que esté en `SOPORTADOS = ['es', 'en']`,
+   (primer prefijo de 2 letras que esté en `SUPPORTED = ['es', 'en']`,
    con `es` como fallback) y lo aplica a `document.documentElement.lang`
    para que coincida con el `<title>` que rellenará `App.i18n.apply()`.
-   La misma lógica vive en `assets/js/i18n.js#detectar()` — si añades un
+   La misma lógica vive en `assets/js/i18n.js#detect()` — si añades un
    idioma soportado, actualiza ambos sitios.
 2. **Detecta móvil/tablet** combinando UA (`mobile|tablet|android|…`),
    `pointer: coarse`, `maxTouchPoints` y `matchMedia('(max-width: 900px)')`.
-   Si dispara, pone `data-app-bloqueada="movil"` en `<html>` y cambia el
+   Si dispara, pone `data-app-blocked="mobile"` en `<html>` y cambia el
    `<title>` a "Solo en el ordenador — Teclatlon" (o "Computer only —
    Teclatlon" en inglés) para que la pestaña del navegador también avise.
    Las UA de escritorio (`windows nt|macintosh|x11|cros `) pasan
@@ -314,24 +316,24 @@ hace dos cosas:
 Este mismo script también lee `localStorage['teclatlon:keyboard']`
 directamente (la misma clave que escribe `assets/js/storage.js`,
 envuelta en el mismo patrón try/catch por si el modo privado falla) y
-aplica `opciones.tema`/`.texto`/`.foco` a `<html>` antes
+aplica `options.theme`/`.textSize`/`.focusMode` a `<html>` antes
 del primer paint — si no, la página parpadearía con el tema/tamaño de
 texto/tipografía por defecto un instante antes de que
-`app.js#aplicarOpciones()` se ejecute en `DOMContentLoaded`. El modo
-foco usa el selector `html.modo-foco` (no `body.modo-foco`)
+`app.js#applyOptions()` se ejecute en `DOMContentLoaded`. El modo
+foco usa el selector `html.focus-mode` (no `body.focus-mode`)
 precisamente para que este script pre-paint pueda activarlo antes de
 que exista el `<body>`.
 
 El HTML lleva al inicio del `<body>` un overlay estático
-(`#bloqueoMovil`) con `hidden`, los textos `data-i18n` (`soloOrdenador`,
-`soloOrdenadorMotivo`, `soloOrdenadorSugerencia`) y `role="alertdialog"`.
+(`#mobileBlock`) con `hidden`, los textos `data-i18n` (`computerOnly`,
+`computerOnlyReason`, `computerOnlySuggestion`) y `role="alertdialog"`.
 La regla CSS
-`html[data-app-bloqueada="movil"] .container { display: none }`
+`html[data-app-blocked="mobile"] .container { display: none }`
 oculta la app shell al instante; `app.js` quita el `hidden` del overlay
-en el bloque "Arranque" y, si está bloqueado, hace `return` antes de
+en el bloque "Boot" y, si está bloqueado, hace `return` antes de
 inicializar listeners, contextos de audio o el motor de juego (no
 queremos reservar recursos en un dispositivo que no va a usar la app).
-Los estilos del overlay (`bloqueo-movil*`) viven al final de `styles.css`
+Los estilos del overlay (`mobile-block*`) viven al final de `styles.css`
 y tienen colores de fallback por si `tokens.css` aún no ha cargado.
 
 ---
@@ -341,8 +343,8 @@ y tienen colores de fallback por si `tokens.css` aún no ha cargado.
 Arquitectura multilingüe que sale al mercado con el **par base**
 `es`/`en` (español, por defecto y fuente de la verdad, e inglés). El
 núcleo i18n (`App.i18n`) está diseñado para soportar **N idiomas** —
-los puntos que cambian (`SOPORTADOS`, el detector pre-paint, `lang()`,
-`scripts/check.js`, `sw.js#ARCHIVOS`, los botones del selector de idioma)
+los puntos que cambian (`SUPPORTED`, el detector pre-paint, `lang()`,
+`scripts/check.js`, `sw.js#FILES`, los botones del selector de idioma)
 y la receta paso a paso viven en [`I18N.md`](I18N.md), la referencia
 canónica para extender la app a idiomas adicionales. Léase junto a
 `SPEC.md` §6 (política de idioma) y esta sección.
@@ -360,22 +362,22 @@ redefinas en `strings.<locale>.js`): `back`, `understood`, `listen`,
 `listenInstructions`, `listenText`, `rest`, `dataProtection`.
 
 El idioma activo sigue eligiéndose por defecto según el navegador
-(`i18n.js#detectar`, reflejado antes del primer pintado en `index.html`
+(`i18n.js#detect`, reflejado antes del primer pintado en `index.html`
 — ver §2.5), pero se puede cambiar a mano: la fila "Idioma" del panel
-de ajustes (`#panelAjustes`, botones `.btn-idioma`, cableados en
+de ajustes (`#settingsDrawer`, botones `.btn-language`, cableados en
 `app.js`) y el selector explícito de `legal/index.html`
-(`#btnIdiomaEs`/`#btnIdiomaEn`) llaman a `App.i18n.setLocale('es' | 'en')`.
+(`#btnLangEs`/`#btnLangEn`) llaman a `App.i18n.setLocale('es' | 'en')`.
 `setLocale` guarda la elección en `localStorage` (`teclatlon:locale`,
 que `i18n.js#locale()` lee antes de detectar) y recarga la página — no
 hay re-render en caliente.
 
 Para añadir un idioma nuevo: ver la receta completa en
 [`I18N.md` §5](I18N.md). En resumen, hay que actualizar los dos arrays
-`SOPORTADOS` (`i18n.js` y el script de `index.html`) más el mapa
-interno de `lang()`, `scripts/check.js#STRING_LOCALES`, `sw.js#ARCHIVOS`
-y su `VERSION`, crear `strings.<locale>.js` y `legal/strings.<locale>.js`,
-añadir los arrays por idioma en `data.js`, y añadir un botón
-`.btn-idioma` en `index.html`.
+`SUPPORTED` (`i18n.js` y el script de `index.html`) más el mapa
+interno de `lang()`, `sw.js#FILES` y su `VERSION`, crear
+`strings.<locale>.js` y `legal/strings.<locale>.js`, añadir los arrays
+por idioma en `data.js`, y añadir un botón `.btn-language` en
+`index.html`.
 
 ---
 
@@ -388,7 +390,7 @@ añadir los arrays por idioma en `data.js`, y añadir un botón
   que el dispositivo tenga red; la caché solo entra cuando la red
   no responde.
 - Contrato al tocar archivos:
-  1. Archivo nuevo → añádelo a la lista `ARCHIVOS`.
+  1. Archivo nuevo → añádelo a la lista `FILES`.
   2. Cualquier cambio a un archivo cacheado → sube `VERSION`
      (`teclatlon-vN`), o quienes tengan la PWA instalada no recibirán el cambio.
      `VERSION` es el único mecanismo que purga la caché SW vieja la
@@ -414,7 +416,7 @@ node scripts/check.js
 
 `scripts/check.js` comprueba: que cada archivo `.js` sea válido, que
 `strings.es.js` y `strings.en.js` tengan las mismas claves (app raíz y
-`legal/`), que cada ruta de `ARCHIVOS` en `sw.js` exista en disco, y
+`legal/`), que cada ruta de `FILES` en `sw.js` exista en disco, y
 que cada icono de `manifest.json` exista. La CI
 (`.github/workflows/validate.yml`) ejecuta el mismo comando en cada
 push y pull request.

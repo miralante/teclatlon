@@ -53,6 +53,21 @@ qué el teclado en pantalla no se puede pulsar (ver
    y zonas de feedback, respeta `prefers-reduced-motion`.
 6. **Tecnología sobria** — HTML5 + CSS3 + JavaScript vanilla, sin
    frameworks, sin paso de build, sin dependencias npm, PWA offline-first.
+7. **Pericia con el teclado completo** — cada actividad practica con
+   el **teclado completo** del layout seleccionado (todas las letras,
+   los números cuando el layout los muestra, la barra espaciadora y
+   el teclado numérico cuando es visible). El objetivo es que quien
+   aprende alcance una habilidad real de mecanografía y mejore su
+   precisión y velocidad neuromotoras en todo el teclado, no solo en
+   la fila central o en las letras que introduce una lección
+   concreta. Las decisiones de diseño de cada actividad (posición,
+   paso a paso, palabras, números, todas las teclas, escritura libre)
+   deben sumar esa cobertura; una lección que solo ejercita las
+   letras nuevas que introduce está incompleta. Ver
+   [`tecnico.md` §"Motor del juego de secuencia"](tecnico.md) para
+   el gancho en tiempo de ejecución (`buildLessonReview` en `app.js`)
+   que añade un paso de repaso al final de cada lección para que la
+   cobertura acumulada se aplique al jugar.
 
 ## 4. Regla de obligado cumplimiento: cero menciones en el producto
 
@@ -100,12 +115,12 @@ quien usa la app.
 
 ## 5.1 Panel de accesibilidad y juego (no negociable)
 
-Toda la configuración de la app vive en `state.opciones` (localStorage)
-y se aplica en arranque (`aplicarOpciones()` en `app.js`). Por defecto
+Toda la configuración de la app vive en `state.options` (localStorage)
+y se aplica en arranque (`applyOptions()` en `app.js`). Por defecto
 todo está apagado: cada persona decide qué le ayuda.
 
-El panel es un desplegable lateral (`#drawerAjustes`), que se abre desde
-un icono de engranaje (`#btnAbrirAjustes`) en la cabecera — accesible
+El panel es un desplegable lateral (`#settingsDrawer`), que se abre desde
+un icono de engranaje (`#btnOpenSettings`) en la cabecera — accesible
 desde cualquier pantalla, no solo al arrancar por primera vez. Se cierra
 con su propio botón de cierre, al pulsar el fondo oscurecido o con
 <kbd>Escape</kbd>, y atrapa el foco de <kbd>Tab</kbd> mientras está
@@ -135,13 +150,10 @@ Ver `legal/index.html` para qué datos se guardan exactamente.
 ## 5. Gamificación (sin presión)
 
 - **Estrellas**: una por lección o modo completado por primera vez.
-- **Rachas**: se incrementan al completar; se reinician tras un error
-  (sin penalización, sin "game over"). Se muestra la racha actual y la
-  mejor racha en el menú.
-- **Insignias**: 9 desbloqueables (primera lección, posición, palabras,
-  números, todas las teclas, escritura libre, racha 5, racha 10,
-  precisión ≥ 90 %). Se muestran como tarjetas en el menú. Al
-  desbloquear una nueva, aparece una bandera breve.
+- **Insignias**: 7 desbloqueables (primera lección, posición, palabras,
+  números, todas las teclas, escritura libre, precisión ≥ 90 %).
+  Se muestran como tarjetas en el menú. Al desbloquear una nueva,
+  aparece una bandera breve.
 - **Avatares**: retirados. La selección de avatar no estaba
   implementada (el grid aparecía vacío) y no forma parte del
   producto.

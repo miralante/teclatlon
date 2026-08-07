@@ -89,7 +89,7 @@ comprueba:
 - Sintaxis de JS en toda la app y en el shell PWA.
 - Paridad de claves `es` ↔ `en` en `strings.es.js` / `strings.en.js`
   y en `legal/`.
-- Que cada ruta en `ARCHIVOS` de `sw.js` existe en disco.
+- Que cada ruta en `FILES` de `sw.js` existe en disco.
 - Que cada icono de `manifest.json` existe.
 - Que las expresiones de origen del CSP en `_headers` llevan las
   comillas correctas (p. ej. `'self'`, no `''self''`).

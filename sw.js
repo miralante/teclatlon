@@ -1,13 +1,13 @@
 /* ============================================================
    Teclatlon — Service Worker
    Network-first, cache-fallback strategy for the app shell
-   (works offline). When adding new files: add them to ARCHIVOS
+   (works offline). When adding new files: add them to FILES
    and bump VERSION so the activate step purges the old cache.
    See CLOUDFLARE.md §"Cache contract" for the full contract.
    ============================================================ */
-var VERSION = 'teclatlon-v22';
+var VERSION = 'teclatlon-v28';
 
-var ARCHIVOS = [
+var FILES = [
   './index.html',
   './404.html',
   './manifest.json',
@@ -44,22 +44,22 @@ self.addEventListener('install', function (event) {
          individually so a single missing/failing asset doesn't take
          the rest down. cache:'reload' skips the HTTP cache so the SW
          always sees the latest server version during install. */
-      var fallos = [];
-      return Promise.all(ARCHIVOS.map(function (a) {
+      var failures = [];
+      return Promise.all(FILES.map(function (a) {
         return fetch(new Request(a, { cache: 'reload' })).then(function (r) {
           if (r && r.ok) return cache.put(a, r);
-          fallos.push(a + ' -> ' + (r ? r.status : 'no-response'));
+          failures.push(a + ' -> ' + (r ? r.status : 'no-response'));
           return null;
         }).catch(function (err) {
-          fallos.push(a + ' -> ' + err);
+          failures.push(a + ' -> ' + err);
           return null;
         });
       })).then(function () {
-        if (fallos.length) {
+        if (failures.length) {
           /* Don't crash the install: log and move on. The fetch
              handler below falls back to the network for anything
              missing in the cache. */
-          console.warn('[sw] install: ' + fallos.length + ' files failed to cache', fallos);
+          console.warn('[sw] install: ' + failures.length + ' files failed to cache', failures);
         }
         return self.skipWaiting();
       });
@@ -69,9 +69,9 @@ self.addEventListener('install', function (event) {
 
 self.addEventListener('activate', function (event) {
   event.waitUntil(
-    caches.keys().then(function (claves) {
+    caches.keys().then(function (keys) {
       return Promise.all(
-        claves.filter(function (c) { return c !== VERSION; })
+        keys.filter(function (c) { return c !== VERSION; })
           .map(function (c) { return caches.delete(c); })
       );
     }).then(function () {
@@ -102,14 +102,14 @@ self.addEventListener('fetch', function (event) {
          Pages issues a 307 for `/index.html -> /`, so we never get
          a clean 200 to cache under that exact key otherwise. */
       if (r && r.status === 200 && event.request.url.startsWith(self.location.origin)) {
-        var copia = r.clone();
+        var copy = r.clone();
         var key = event.request;
         if (event.request.mode === 'navigate') {
           var u = new URL(event.request.url);
           if (u.pathname === '/') key = new Request(self.location.origin + '/index.html');
         }
         caches.open(VERSION).then(function (cache) {
-          cache.put(key, copia);
+          cache.put(key, copy);
         });
       }
       return r;
@@ -118,8 +118,8 @@ self.addEventListener('fetch', function (event) {
          original key and, for navigations, the index.html alias),
          otherwise reply with a tiny inline HTML that stays at the
          current URL. */
-      return caches.match(event.request).then(function (deCache) {
-        if (deCache) return deCache;
+      return caches.match(event.request).then(function (fromCache) {
+        if (fromCache) return fromCache;
         if (event.request.mode === 'navigate') {
           return caches.match('/index.html').then(function (alias) {
             if (alias) return alias;

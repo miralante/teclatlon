@@ -10,7 +10,7 @@
 - [ ] Si tocas `index.html`, `styles.css`, `app.js`, `data.js`,
       `sw.js` o `manifest.json`, has actualizado la documentación
       canónica correspondiente (`doc/es/`).
-- [ ] Si has añadido un archivo al shell, está en `ARCHIVOS` de
+- [ ] Si has añadido un archivo al shell, está en `FILES` de
       `sw.js` y has bumpeado `VERSION`.
 - [ ] Si has cambiado contenido de producto, `strings.es.js` y
       `strings.en.js` están en sincronía.

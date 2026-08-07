@@ -12,4 +12,4 @@
 
 .legal-header .lang-row { align-self: flex-end; }
 
-.legal main p, .legal main li { max-width: none; }
+.legal main p, .legal main li { max-width: none; overflow-wrap: anywhere; }

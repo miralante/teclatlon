@@ -49,6 +49,20 @@ needed and why the on-screen keyboard cannot be tapped (see
    zones, respects `prefers-reduced-motion`.
 6. **Sober technology** — HTML5 + CSS3 + vanilla JavaScript, no
    frameworks, no build step, no npm dependencies, offline-first PWA.
+7. **Full-keyboard proficiency** — every activity practices with the
+   *complete* keyboard of the currently selected layout (every letter,
+   every number when the layout shows them, the space bar, and the
+   numpad when it's visible). The goal is for the learner to reach
+   genuine touch-typing skill and improve their neuromotor accuracy
+   and speed across the whole keyboard, not just the home row or the
+   letters introduced in a single lesson. Per-activity design choices
+   (placement, step-by-step lessons, words, numbers, all-keys
+   challenge, free writing) must add up to that coverage; a lesson
+   that only ever drills the new letters it introduces is incomplete.
+   See [`technical.md` §"Sequence-game engine"](../technical.md) for
+   the runtime hook (`buildLessonReview` in `app.js`) that appends a
+   review step at the end of each lesson so the accumulated coverage
+   is enforced at play time.
 
 ## 4. Mandatory rule: zero mentions in the user-facing product
 
@@ -94,12 +108,12 @@ any of those terms show up in the files the end user sees.
 
 ## 5.1 Accessibility & game settings panel (mandatory)
 
-Every configuration lives in `state.opciones` (localStorage) and is
-applied at startup (`aplicarOpciones()` in `app.js`). Everything is off
+Every configuration lives in `state.options` (localStorage) and is
+applied at startup (`applyOptions()` in `app.js`). Everything is off
 by default: each person decides what helps them.
 
-The panel is a lateral drawer (`#drawerAjustes`), opened from a gear
-icon (`#btnAbrirAjustes`) in the header — reachable from every screen,
+The panel is a lateral drawer (`#settingsDrawer`), opened from a gear
+icon (`#btnOpenSettings`) in the header — reachable from every screen,
 not just at first run. It closes via its own close button, a click on
 the backdrop, or <kbd>Escape</kbd>, and traps <kbd>Tab</kbd> focus while
 open (see [`technical.md` §2.2](technical.md)).
@@ -127,13 +141,9 @@ See `legal/index.html` for the exact data items saved.
 ## 5. Gamification (no pressure)
 
 - **Stars**: one per lesson or mode completed for the first time.
-- **Streaks**: increment on completion; reset after a mistake (no
-  penalty, no "game over"). The current streak and the best streak are
-  shown in the menu.
-- **Badges**: 9 unlockables (first lesson, position, words, numbers,
-  all the keys, free writing, streak 5, streak 10, accuracy ≥ 90 %).
-  Shown as cards in the menu. A short banner appears when a new one
-  is unlocked.
+- **Badges**: 7 unlockables (first lesson, position, words, numbers,
+  all the keys, free writing, accuracy ≥ 90 %). Shown as cards in
+  the menu. A short banner appears when a new one is unlocked.
 - **Avatars**: removed. The avatar picker was not implemented (the
   grid rendered empty) and is not part of the product.
 

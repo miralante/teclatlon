@@ -82,7 +82,7 @@ The check is dependency-free (Node stdlib only) and enforces:
 - JS syntax across the app and the PWA shell.
 - `es` ↔ `en` key parity in `strings.es.js` / `strings.en.js` and
   in `legal/`.
-- That every path in `sw.js` `ARCHIVOS` exists on disk.
+- That every path in `sw.js` `FILES` exists on disk.
 - That every icon in `manifest.json` exists.
 - That `_headers`' CSP source expressions are quoted correctly (e.g.
   `'self'`, not `''self''`).

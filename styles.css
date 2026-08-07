@@ -1,29 +1,30 @@
 /* ==========================================================================
-   Teclatlon — Estilos específicos
-   El teclado en pantalla es solo visual: pointer-events none. La entrada
-   real es siempre el teclado físico del ordenador.
-   Colores leves por mano o por dedo con :where() (especificidad baja
-   para que los estados objetivo/pulsada/fallo/hecha los tapen).
+   Teclatlon — App-specific styles
+   The on-screen keyboard is visual only: pointer-events none. The real
+   input is always the computer's physical keyboard.
+   Light colors by hand or by finger with :where() (low specificity so
+   the target/pressed/miss/done states can override them).
    ========================================================================== */
 
-.centrado-row { justify-content: center; }
-/* Instrucciones ("Mira la tecla F...", "Elige un juego."): son
-   contenido informativo, no botones. Reducidas al tamaño base del texto
-   para no dominar el viewport y dejar sitio a la zona operativa. */
-.instruccion { font-weight: 700; font-size: var(--text-base); }
+.centered-row { justify-content: center; }
+/* Instructions ("Look at the F key...", "Choose a game."): they are
+   informative content, not buttons. Reduced to the base text size so
+   they don't dominate the viewport and leave room for the operative
+   zone. */
+.instruction { font-weight: 700; font-size: var(--text-base); }
 
-/* Title in the game top bar ("Coloca los dedos", "Paso a paso"...).
-   Es un encabezado de sección, no un botón -- se mantiene al tamaño
-   base del texto, hereda el peso de h2 vía base.css. */
-.titulo-juego { font-size: var(--text-base); }
+/* Title in the game top bar ("Place your fingers", "Step by step"...).
+   It's a section heading, not a button -- kept at the base text size,
+   inherits h2's weight via base.css. */
+.game-title { font-size: var(--text-base); }
 
-/* Top bar of every game / lessons / plantillas / libre screen --
-   the row that contains "← Menú" + title + audio button. Tight so the
+/* Top bar of every game / lessons / templates / free screen --
+   the row that contains "← Menu" + title + audio button. Tight so the
    operative zone (target + on-screen keyboard) keeps vertical room. */
-.pantalla-juego-barra { gap: 8px; margin-bottom: 4px; }
+.game-screen-bar { gap: 8px; margin-bottom: 4px; }
 
-/* ---- Nombre ---- */
-.input-nombre {
+/* ---- Name ---- */
+.input-name {
   display: block; width: 100%; max-width: 420px; margin: 0 auto;
   min-height: var(--button-min); padding: 6px 16px;
   font-family: inherit; font-size: 22px; font-weight: 700; text-align: center;
@@ -32,151 +33,151 @@
 }
 
 /* ---- Game menu ---- */
-.tarjeta-modo {
+.mode-card {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 8px; min-height: 150px; padding: var(--space);
   background: var(--color-surface); border: 3px solid var(--color-border);
   border-radius: var(--radius); box-shadow: var(--shadow);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
-.tarjeta-modo:hover { border-color: var(--accent); transform: translateY(-2px); }
-.tarjeta-modo .picto { font-size: 44px; }
-.tarjeta-modo .nombre { font-weight: 800; }
-.tarjeta-modo .detalle { font-size: var(--text-small); color: var(--color-text-soft); }
-.tarjeta-modo .hecho { min-height: 24px; font-size: var(--text-small); font-weight: 700; color: var(--color-star); }
+.mode-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.mode-card .picto { font-size: 44px; }
+.mode-card .name { font-weight: 800; }
+.mode-card .detail { font-size: var(--text-small); color: var(--color-text-soft); }
+.mode-card .done { min-height: 24px; font-size: var(--text-small); font-weight: 700; color: var(--color-star); }
 
-/* ---- Lecciones ---- */
-.grid-lecciones { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--space); }
-.btn-leccion {
+/* ---- Lessons ---- */
+.grid-lessons { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--space); }
+.btn-lesson {
   display: flex; align-items: center; gap: 10px;
   min-height: var(--button-min); padding: 12px;
   background: var(--color-surface); border: 3px solid var(--color-border);
   border-radius: var(--radius); font-family: inherit;
   font-size: var(--text-small); font-weight: 700; color: var(--color-text); text-align: left;
 }
-.btn-leccion .num {
+.btn-lesson .num {
   flex: none; width: 36px; height: 36px;
   display: flex; align-items: center; justify-content: center;
   background: var(--accent-soft); color: var(--accent); border-radius: 50%;
 }
-.btn-leccion .tit { flex: 1; }
-.btn-leccion.hecha { border-color: var(--color-success); }
-.btn-leccion.cerrada { opacity: 0.45; cursor: not-allowed; }
-.btn-leccion:not(.cerrada):hover { border-color: var(--accent); }
+.btn-lesson .title { flex: 1; }
+.btn-lesson.done { border-color: var(--color-success); }
+.btn-lesson.locked { opacity: 0.45; cursor: not-allowed; }
+.btn-lesson:not(.locked):hover { border-color: var(--accent); }
 
-/* ---- Zona de juego ---- */
-.titulo-juego { flex: 1; }
-.objetivo-zona { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; min-height: 70px; }
-.letra {
+/* ---- Game target zone ---- */
+.game-title { flex: 1; }
+.target-zone { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; min-height: 70px; }
+.letter {
   width: 44px; height: 52px; display: flex; align-items: center; justify-content: center;
   font-size: 26px; font-weight: 800;
   background: var(--color-bg); color: var(--color-text-soft);
   border: 3px solid var(--color-border); border-radius: 10px;
 }
-.letra.actual { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
-.letra.hecha { background: var(--color-success-soft); color: var(--color-success); border-color: var(--color-success); }
+.letter.current { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+.letter.done { background: var(--color-success-soft); color: var(--color-success); border-color: var(--color-success); }
 /* A special-key step (e.g. "Home") shows its full name, not a single
    uppercase character -- needs auto width and normal casing. */
-.letra.ancha { width: auto; min-width: 54px; padding: 0 20px; font-size: var(--text-large); text-transform: none; }
+.letter.wide { width: auto; min-width: 54px; padding: 0 20px; font-size: var(--text-large); text-transform: none; }
 
-/* "Real texts" (plantilla mode): sentences are much longer than a
+/* "Real texts" (template mode): sentences are much longer than a
    single letter/word target, so the boxes shrink to fit more of the
-   line before wrapping. .palabra groups a word's letter boxes into
-   one flex item so wrapping only ever happens between words, never
-   inside one -- see renderObjetivo() in app.js. */
-.objetivo-zona--compacta { gap: 6px; row-gap: 8px; }
-.objetivo-zona--compacta .palabra { display: flex; gap: 3px; }
-.objetivo-zona--compacta .letra { width: 28px; height: 36px; font-size: 17px; border-radius: 8px; }
+   line before wrapping. .word groups a word's letter boxes into one
+   flex item so wrapping only ever happens between words, never inside
+   one -- see renderTarget() in app.js. */
+.target-zone--compact { gap: 6px; row-gap: 8px; }
+.target-zone--compact .word { display: flex; gap: 3px; }
+.target-zone--compact .letter { width: 28px; height: 36px; font-size: 17px; border-radius: 8px; }
 
 /* ---- Hand guide ---- */
-.guia { justify-content: center; gap: 16px; }
-.manos { width: 200px; max-width: 45%; }
-.manos .palma { fill: #E7E1D7; stroke: var(--color-border); stroke-width: 2; }
-.manos .dedo { fill: #EDE5D8; stroke: var(--color-border); stroke-width: 2; }
-.manos .dedo.activo { fill: var(--accent); stroke: var(--accent); }
+.guide { justify-content: center; gap: 16px; }
+.hands { width: 200px; max-width: 45%; }
+.hands .palm { fill: #E7E1D7; stroke: var(--color-border); stroke-width: 2; }
+.hands .finger { fill: #EDE5D8; stroke: var(--color-border); stroke-width: 2; }
+.hands .finger.active { fill: var(--accent); stroke: var(--accent); }
 /* Secondary finger: the opposite-side pinky holding Shift for a
-   capital letter. Same hue as .activo (not the encourage/error color)
+   capital letter. Same hue as .active (not the encourage/error color)
    so it never reads as a mistake -- just fainter, to mark it as the
    supporting finger rather than the one pressing the target key. */
-.manos .dedo.activo-mayus { fill: var(--accent); stroke: var(--accent); opacity: 0.5; }
+.hands .finger.active-shift { fill: var(--accent); stroke: var(--accent); opacity: 0.5; }
 
-/* "Colores: dedos" mode: tint every finger with the same color used for
-   its keys on the on-screen keyboard (see .color-dedos rules below), so
-   the hand guide doubles as the color legend instead of needing a
-   separate one. The active finger keeps its own hue -- overriding it to
-   the accent color like the default hand guide does would hide exactly
-   the correspondence this mode exists to show -- and is marked with an
-   outline instead. */
-.manos.color-dedos .dedo.f-lp, .manos.color-dedos .dedo.f-rp { fill: var(--color-finger-pinky); stroke: var(--color-finger-pinky); }
-.manos.color-dedos .dedo.f-lr, .manos.color-dedos .dedo.f-rr { fill: var(--color-finger-ring); stroke: var(--color-finger-ring); }
-.manos.color-dedos .dedo.f-lm, .manos.color-dedos .dedo.f-rm { fill: var(--color-finger-middle); stroke: var(--color-finger-middle); }
-.manos.color-dedos .dedo.f-li, .manos.color-dedos .dedo.f-ri { fill: var(--color-hand-right); stroke: var(--color-hand-right); }
-.manos.color-dedos .dedo.f-th { fill: var(--accent); stroke: var(--accent); }
-.manos.color-dedos .dedo.activo { stroke: var(--color-text); stroke-width: 4; }
-.manos.color-dedos .dedo.activo-mayus { stroke: var(--color-text); stroke-width: 3; opacity: 0.7; }
-.manos text { fill: var(--color-text-soft); font-size: 17px; text-anchor: middle; font-family: inherit; }
-.guia-texto { font-weight: 700; max-width: 12em; }
+/* "Colors: fingers" mode: tint every finger with the same color used
+   for its keys on the on-screen keyboard (see .color-fingers rules
+   below), so the hand guide doubles as the color legend instead of
+   needing a separate one. The active finger keeps its own hue --
+   overriding it to the accent color like the default hand guide does
+   would hide exactly the correspondence this mode exists to show --
+   and is marked with an outline instead. */
+.hands.color-fingers .finger.f-lp, .hands.color-fingers .finger.f-rp { fill: var(--color-finger-pinky); stroke: var(--color-finger-pinky); }
+.hands.color-fingers .finger.f-lr, .hands.color-fingers .finger.f-rr { fill: var(--color-finger-ring); stroke: var(--color-finger-ring); }
+.hands.color-fingers .finger.f-lm, .hands.color-fingers .finger.f-rm { fill: var(--color-finger-middle); stroke: var(--color-finger-middle); }
+.hands.color-fingers .finger.f-li, .hands.color-fingers .finger.f-ri { fill: var(--color-hand-right); stroke: var(--color-hand-right); }
+.hands.color-fingers .finger.f-th { fill: var(--accent); stroke: var(--accent); }
+.hands.color-fingers .finger.active { stroke: var(--color-text); stroke-width: 4; }
+.hands.color-fingers .finger.active-shift { stroke: var(--color-text); stroke-width: 3; opacity: 0.7; }
+.hands text { fill: var(--color-text-soft); font-size: 17px; text-anchor: middle; font-family: inherit; }
+.guide-text { font-weight: 700; max-width: 12em; }
 
-/* ---- Teclado visual ---- */
-.row-vista-teclado { display: flex; gap: 12px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
-.row-vista-teclado .teclado { flex: 1 1 480px; max-width: 640px; }
-.row-vista-teclado .numpad-inline { flex: 0 1 220px; }
+/* ---- Visual keyboard ---- */
+.row-keyboard-view { display: flex; gap: 12px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
+.row-keyboard-view .keyboard { flex: 1 1 480px; max-width: 640px; }
+.row-keyboard-view .numpad-inline { flex: 0 1 220px; }
 
-.teclado, .numpad, .numpad-inline {
+.keyboard, .numpad, .numpad-inline {
   display: flex; flex-direction: column; gap: 6px; padding: 10px;
   background: var(--color-surface); border: 3px solid var(--color-border);
   border-radius: var(--radius);
   pointer-events: none; user-select: none;
 }
-.row-teclas { display: flex; gap: 6px; justify-content: center; }
-.tecla {
+.row-keys { display: flex; gap: 6px; justify-content: center; }
+.key {
   position: relative; flex: 1 1 0; min-width: 0; max-width: 76px; min-height: 48px;
   display: flex; align-items: center; justify-content: center;
   background: var(--color-bg); border: 2px solid var(--color-border); border-radius: 10px;
   font-size: 20px; font-weight: 700; text-transform: uppercase;
   transition: background 0.1s ease, transform 0.1s ease;
 }
-.tecla.ancha { flex: 7 1 0; max-width: none; font-size: var(--text-small); text-transform: none; }
-.tecla.media { flex: 2 1 0; max-width: none; font-size: var(--text-small); text-transform: none; }
-.tecla.decorativa { background: var(--color-bg); color: var(--color-text-soft); font-weight: 700; }
-.tecla .marca {
+.key.wide { flex: 7 1 0; max-width: none; font-size: var(--text-small); text-transform: none; }
+.key.medium { flex: 2 1 0; max-width: none; font-size: var(--text-small); text-transform: none; }
+.key.decorative { background: var(--color-bg); color: var(--color-text-soft); font-weight: 700; }
+.key .mark {
   position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%);
   width: 16px; height: 4px; border-radius: 2px; background: var(--color-text-soft);
 }
 
-/* Colores leves por mano o por dedo */
-.color-manos :where(.tecla.m-izq) { background: var(--accent-soft); }
-.color-manos :where(.tecla.m-der) { background: var(--color-hand-right-soft); }
-.color-dedos :where(.tecla.f-lp, .tecla.f-rp) { background: var(--color-finger-pinky-suave); }
-.color-dedos :where(.tecla.f-lr, .tecla.f-rr) { background: var(--color-finger-ring-soft); }
-.color-dedos :where(.tecla.f-lm, .tecla.f-rm) { background: var(--color-finger-middle-suave); }
-.color-dedos :where(.tecla.f-li, .tecla.f-ri) { background: var(--color-hand-right-soft); }
-.color-dedos :where(.tecla.f-th) { background: var(--accent-soft); }
+/* Light colors by hand or by finger */
+.color-hands :where(.key.h-left) { background: var(--accent-soft); }
+.color-hands :where(.key.h-right) { background: var(--color-hand-right-soft); }
+.color-fingers :where(.key.f-lp, .key.f-rp) { background: var(--color-finger-pinky-soft); }
+.color-fingers :where(.key.f-lr, .key.f-rr) { background: var(--color-finger-ring-soft); }
+.color-fingers :where(.key.f-lm, .key.f-rm) { background: var(--color-finger-middle-soft); }
+.color-fingers :where(.key.f-li, .key.f-ri) { background: var(--color-hand-right-soft); }
+.color-fingers :where(.key.f-th) { background: var(--accent-soft); }
 
-/* Estados (el orden importa: pulsada tapa a objetivo, hecha tapa a pulsada) */
-.tecla.objetivo {
+/* States (order matters: pressed covers target, done covers pressed) */
+.key.target {
   background: #FFFFFF; border: 4px solid var(--accent);
-  color: var(--accent); animation: latido 1s ease-in-out infinite;
+  color: var(--accent); animation: heartbeat 1s ease-in-out infinite;
 }
-@keyframes latido { 50% { transform: scale(1.07); } }
-.tecla.pulsada { background: var(--accent); border-color: var(--accent); color: #FFFFFF; transform: translateY(2px); }
-.tecla.pulsada .marca { background: #FFFFFF; }
-.tecla.fallo { background: var(--color-encourage-suave); border-color: var(--color-encourage); color: var(--color-encourage); }
-.tecla.hecha { background: var(--color-success-soft); border-color: var(--color-success); color: var(--color-success); }
+@keyframes heartbeat { 50% { transform: scale(1.07); } }
+.key.pressed { background: var(--accent); border-color: var(--accent); color: #FFFFFF; transform: translateY(2px); }
+.key.pressed .mark { background: #FFFFFF; }
+.key.miss { background: var(--color-encourage-soft); border-color: var(--color-encourage); color: var(--color-encourage); }
+.key.done { background: var(--color-success-soft); border-color: var(--color-success); color: var(--color-success); }
 
-.opciones-teclado { justify-content: center; }
-.detalle-teclado { margin: 0 auto; text-align: center; font-size: var(--text-base); color: var(--color-text); max-width: 56ch; }
-.leyenda-teclado { margin: 0 auto; text-align: center; font-size: var(--text-small); color: var(--color-text-soft); }
-.btn-teclado[aria-pressed="true"],
+.keyboard-options { justify-content: center; }
+.keyboard-detail { margin: 0 auto; text-align: center; font-size: var(--text-base); color: var(--color-text); max-width: 56ch; }
+.keyboard-legend { margin: 0 auto; text-align: center; font-size: var(--text-small); color: var(--color-text-soft); }
+.btn-keyboard[aria-pressed="true"],
 .btn-color[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
 
 /* ---- Number pad ---- */
 .numpad { width: 100%; max-width: 300px; margin: 0 auto; }
-.numpad .tecla, .numpad-inline .tecla { max-width: none; min-height: 64px; }
+.numpad .key, .numpad-inline .key { max-width: none; min-height: 64px; }
 .numpad-inline { width: 100%; max-width: 220px; }
 
-/* ---- Escritura libre ---- */
-.area-libre {
+/* ---- Free writing ---- */
+.free-area {
   width: 100%; min-height: 100px; padding: 12px;
   font-family: inherit; font-size: 18px; line-height: 1.4;
   color: var(--color-text); background: var(--color-surface);
@@ -185,26 +186,43 @@
 
 /* ---- Small screens ---- */
 @media (max-width: 640px) {
-  .teclado, .numpad, .numpad-inline, .row-teclas { gap: 5px; }
-  .row-vista-teclado .numpad-inline { max-width: none; }
-  .tecla { min-height: 64px; font-size: 17px; border-radius: 8px; }
-  .letra { width: 40px; height: 50px; font-size: 24px; }
-  .objetivo-zona--compacta .letra { width: 24px; height: 32px; font-size: 15px; border-radius: 6px; }
-  .manos { display: none; }
+  .keyboard, .numpad, .numpad-inline, .row-keys { gap: 5px; }
+  .row-keyboard-view .numpad-inline { max-width: none; }
+  .key { min-height: 64px; font-size: 17px; border-radius: 8px; }
+  .letter { width: 40px; height: 50px; font-size: 24px; }
+  .target-zone--compact .letter { width: 24px; height: 32px; font-size: 15px; border-radius: 6px; }
+  .hands { display: none; }
 }
 
 /* ---- Gate: computer-only overlay ---- */
-/* The <html data-app-bloqueada="movil"> attribute is set by the
+/* The <html data-app-blocked="mobile"> attribute is set by the
    pre-paint script in index.html on phones/tablets. When set, the
    app shell stays hidden and the overlay covers the viewport.
    Inline rules (in the rule below) win specificity so the overlay is
    visible even if any other stylesheet (e.g. a future override) would
    try to hide it. */
-html[data-app-bloqueada="movil"] .container,
-html[data-app-bloqueada="movil"] .pie-app,
-html[data-app-bloqueada="movil"] #app-bandera-insignia { display: none !important; }
+html[data-app-blocked="mobile"] .container,
+html[data-app-blocked="mobile"] .app-footer,
+html[data-app-blocked="mobile"] #app-badge-flag { display: none !important; }
 
-.bloqueo-movil {
+/* Footer: the legal notice and "Clear my progress" live here
+   together. The button used to live inside #screenName, but it stayed
+   buried between the keyboard and the next screen and was only
+   available at a single point in the flow. Now it's always in view,
+   separate from the data-protection link. */
+.app-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px 16px;
+  margin-top: 24px;
+  padding: 12px 8px;
+}
+.footer-link { color: inherit; }
+.btn-clear-all { margin: 0; }
+
+.mobile-block {
   position: fixed; inset: 0;
   display: flex; align-items: center; justify-content: center;
   padding: 24px; z-index: 9999;
@@ -212,8 +230,8 @@ html[data-app-bloqueada="movil"] #app-bandera-insignia { display: none !importan
   /* Fallback colour before assets/css/tokens.css loads. */
   background: #FAF7F2;
 }
-.bloqueo-movil[hidden] { display: none; }
-.bloqueo-movil-caja {
+.mobile-block[hidden] { display: none; }
+.mobile-block-box {
   max-width: 32rem; width: 100%;
   background: var(--color-surface, #FFFFFF);
   background: #FFFFFF;
@@ -226,18 +244,18 @@ html[data-app-bloqueada="movil"] #app-bandera-insignia { display: none !importan
   text-align: center;
   font-family: inherit;
 }
-.bloqueo-movil-picto { font-size: 64px; line-height: 1; margin-bottom: 12px; }
-.bloqueo-movil-titulo {
+.mobile-block-icon { font-size: 64px; line-height: 1; margin-bottom: 12px; }
+.mobile-block-title {
   margin: 0 0 12px;
   font-size: 28px; font-weight: 800;
   color: var(--color-text, #2A2A2A);
   color: #2A2A2A;
 }
-.bloqueo-movil-motivo,
-.bloqueo-movil-sugerencia {
+.mobile-block-reason,
+.mobile-block-suggestion {
   margin: 0 0 12px;
   font-size: 18px; line-height: 1.5;
   color: var(--color-text-soft, #555555);
   color: #555555;
 }
-.bloqueo-movil-sugerencia { font-size: 16px; }
+.mobile-block-suggestion { font-size: 16px; }

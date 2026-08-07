@@ -154,7 +154,7 @@ fallback**:
   not take the whole cache down. Failures are logged with
   `console.warn` and skipped.
 
-Bump `VERSION` in `sw.js` whenever you change `ARCHIVOS` to discard
+Bump `VERSION` in `sw.js` whenever you change `FILES` to discard
 the old cache. The agent-workflow checklist in [`CLAUDE.md`](CLAUDE.md)
 documents which files trigger a required `VERSION` bump.
 
@@ -203,7 +203,7 @@ in any of them.
 
 - Strategy: **network-first, cache fallback** (see comments in
   [`sw.js`](sw.js)).
-  - `install` caches every file in `ARCHIVOS` individually (never
+  - `install` caches every file in `FILES` individually (never
     `cache.addAll`, so one missing asset does not brick the cache).
   - `fetch` always tries the network first; on success it mirrors
     the response into the SW cache and returns the live response.
@@ -214,7 +214,7 @@ in any of them.
   is not the current `VERSION` is deleted, so bumping `VERSION` is
   the **only** mechanism that purges stale SW state on the client.
 - Rule (mirrors the checklist in [`CLAUDE.md`](CLAUDE.md)):
-  bump `VERSION` whenever you change any file in `ARCHIVOS`,
+  bump `VERSION` whenever you change any file in `FILES`,
   including `app.js`, `data.js`, the `strings.*.js` files, and
   anything under `assets/`. Forgetting the bump means the redeploy
   is invisible to every client that already has the SW installed —

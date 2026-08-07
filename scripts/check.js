@@ -8,7 +8,7 @@
       scripts/ parses (equivalent to `node --check`).
    2. strings.<locale>.js key parity across every supported locale
       (root app and legal/) — N-locales, not just es/en.
-   3. sw.js <-> disk parity: every ARCHIVOS path exists.
+   3. sw.js <-> disk parity: every FILES path exists.
    4. manifest.json icons exist on disk.
    5. Mandatory rule: zero mentions of disability, occupational therapy
       or minors in user-facing files (see doc/<locale>/SPEC.md §4).
@@ -142,16 +142,16 @@ compareLocales(path.join(ROOT, 'legal'), 'legal/');
 /* --- 3. sw.js <-> disk parity --- */
 checks += 1;
 var swContent = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
-var archivosMatch = swContent.match(/var ARCHIVOS = \[([\s\S]*?)\];/);
-if (!archivosMatch) {
-  failures.push('sw.js: ARCHIVOS array not found');
+var filesMatch = swContent.match(/var FILES = \[([\s\S]*?)\];/);
+if (!filesMatch) {
+  failures.push('sw.js: FILES array not found');
 } else {
   var re = /'([^']+)'/g;
   var m;
-  while ((m = re.exec(archivosMatch[1])) !== null) {
+  while ((m = re.exec(filesMatch[1])) !== null) {
     var full = path.join(ROOT, m[1].replace(/^\.\//, ''));
     if (!fs.existsSync(full)) {
-      failures.push('sw.js: ARCHIVOS lists ' + m[1] + ' but it does not exist on disk');
+      failures.push('sw.js: FILES lists ' + m[1] + ' but it does not exist on disk');
     }
   }
 }
@@ -167,17 +167,17 @@ var manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'manifest.json'), 'utf
 });
 
 /* --- 5. Mandatory rule: zero disability / occupational therapy / minors mentions ---
-   doc/es/SPEC.md §4: el usuario final nunca ve términos que nombren
-   discapacidad, terapia ocupacional o menores. Esta comprobación solo
-   cubre los archivos que el usuario visita; los docs internos
-   (SPEC.md, README.md, CONTRIBUTING.md, CLAUDE.md) están fuera de
-   alcance por diseño (explican el objetivo real del proyecto, que es
-   justo la razón de ser de esta regla).
+   doc/es/SPEC.md §4: the end user never sees terms naming disability,
+   occupational therapy or minors. This check only covers the files
+   the user actually visits; internal docs (SPEC.md, README.md,
+   CONTRIBUTING.md, CLAUDE.md) are out of scope by design (they
+   explain the project's real purpose, which is exactly why this rule
+   exists).
 
-   Cada entrada empareja un modo de coincidencia: substring para
-   frases en español y tallos inequívocos en inglés; word-boundary
-   para palabras en inglés que darían falsos positivos como
-   substring (p. ej. "minor" dentro de "minor annoyance"). */
+   Each entry pairs a term with a match mode: substring for Spanish
+   phrases and unambiguous English stems; word-boundary for English
+   words that would give false positives as a substring (e.g. "minor"
+   inside "minor annoyance"). */
 checks += 1;
 var FORBIDDEN_TERMS = [
   { term: 'discapacidad', match: 'substring' },
@@ -228,7 +228,7 @@ userFacingTargets.forEach(function (file) {
       hit = content.indexOf(term.toLowerCase()) !== -1;
     }
     if (hit) {
-      failures.push(rel(file) + ': contains "' + term + '" — ninguna página visible puede mencionar discapacidad, terapia ocupacional o menores (ver doc/es/SPEC.md §4)');
+      failures.push(rel(file) + ': contains "' + term + '" — no visible page may mention disability, occupational therapy or minors (see doc/es/SPEC.md §4)');
     }
   });
 });

@@ -21,15 +21,15 @@
   --color-finger-ring: #C05621;    /* orange — ring fingers */
   --color-finger-ring-soft: #F9EBE2;
   --color-finger-middle: #6B3FA0;     /* purple — middle fingers */
-  --color-finger-middle-suave: #EFE8F7;
+  --color-finger-middle-soft: #EFE8F7;
   --color-finger-pinky: #B3446C;   /* raspberry — little fingers */
-  --color-finger-pinky-suave: #F7E8EE;
+  --color-finger-pinky-soft: #F7E8EE;
 
   /* Feedback */
   --color-success: #2E7D32;
   --color-success-soft: #E6F2E6;
   --color-encourage: #C05621;        /* never an aggressive red for mistakes */
-  --color-encourage-suave: #F9EBE2;
+  --color-encourage-soft: #F9EBE2;
   --color-star: #B8860B;
 
   /* Typography */
@@ -49,7 +49,7 @@
   /* Visible focus */
   --color-focus: #1B6CA8;
 
-  /* Theme defaults — overridden by [data-tema="oscuro"] / [data-tema="contraste"] */
+  /* Theme defaults — overridden by [data-theme="dark"] / [data-theme="contrast"] */
   --color-bg: #FAF7F2;
   --color-surface: #FFFFFF;
   --color-text: #1A1A2E;
@@ -60,12 +60,12 @@
   --color-success: #2E7D32;
   --color-success-soft: #E6F2E6;
   --color-encourage: #C05621;
-  --color-encourage-suave: #F9EBE2;
+  --color-encourage-soft: #F9EBE2;
   --color-shadow: rgba(26, 26, 46, 0.12);
 }
 
 /* -------- Dark theme -------- */
-[data-tema="oscuro"] {
+[data-theme="dark"] {
   --color-bg: #14161E;
   --color-surface: #1E2230;
   --color-text: #F2F0EA;
@@ -76,7 +76,7 @@
   --color-success: #7BD389;
   --color-success-soft: #1E2A20;
   --color-encourage: #F2B07A;
-  --color-encourage-suave: #2E2418;
+  --color-encourage-soft: #2E2418;
   --color-shadow: rgba(0, 0, 0, 0.4);
   /* Hand/finger key backgrounds (keyboard color-coding) — must stay dark
      enough for the near-white --color-text of this theme to read on top.
@@ -87,12 +87,12 @@
      distinguishable in this theme. */
   --color-hand-right-soft: #194D22;
   --color-finger-ring-soft: #2E2418;
-  --color-finger-middle-suave: #241E38;
-  --color-finger-pinky-suave: #2E1E28;
+  --color-finger-middle-soft: #241E38;
+  --color-finger-pinky-soft: #2E1E28;
 }
 
 /* -------- High contrast (forced colors) -------- */
-[data-tema="contraste"] {
+[data-theme="contrast"] {
   --color-bg: #000000;
   --color-surface: #000000;
   --color-text: #FFFFFF;
@@ -103,22 +103,22 @@
   --color-success: #00FF66;
   --color-success-soft: #000000;
   --color-encourage: #FF8800;
-  --color-encourage-suave: #000000;
+  --color-encourage-soft: #000000;
   --color-shadow: rgba(255, 255, 255, 0.5);
   --color-focus: #FFFF00;
   /* Same hand/finger key backgrounds as above: must go black, otherwise
-     the white key symbols disappear against their light default suave
+     the white key symbols disappear against their light default soft
      colors (this was the actual bug — right-hand/finger-colored keys
      were unreadable in this theme). */
   --color-hand-right-soft: #000000;
   --color-finger-ring-soft: #000000;
-  --color-finger-middle-suave: #000000;
-  --color-finger-pinky-suave: #000000;
+  --color-finger-middle-soft: #000000;
+  --color-finger-pinky-soft: #000000;
 }
 
 
 
-/* -------- Distraction-free mode ("etiquetaModoFoco" -- previously
+/* -------- Distraction-free mode ("focusModeLabel" -- previously
    called "modo foco"/"focus mode", renamed for clarity: see
    strings.*.js): hides secondary text-based chrome (the keyboard-type
    legend/description and the inline numpad). The on-screen keyboard
@@ -130,14 +130,14 @@
    option, not by this one. The on-screen keyboard is never the input;
    it's an anchor (see SPEC.md §2 and the pointer-events:none rule in
    components.css). -------- */
-html.modo-foco .leyenda-teclado,
-html.modo-foco .detalle-teclado,
-html.modo-foco .panel-numpad-inline {
+html.focus-mode .keyboard-legend,
+html.focus-mode .keyboard-detail,
+html.focus-mode .panel-numpad-inline {
   display: none !important;
 }
 
 /* -------- Text size steps (controlled by --text-base) -------- */
 :root { --text-base: 20px; }
-[data-texto="chico"] { --text-base: 18px; }
-[data-texto="grande"] { --text-base: 24px; }
-[data-texto="enorme"] { --text-base: 30px; }
+[data-text-size="small"] { --text-base: 18px; }
+[data-text-size="large"] { --text-base: 24px; }
+[data-text-size="huge"] { --text-base: 30px; }

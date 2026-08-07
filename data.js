@@ -1,31 +1,33 @@
 /* ==========================================================================
-   Teclatlon — Datos
-   Formato:
-   - DATA.numberRow / DATA.rows: teclas del teclado español (estructura física,
-     igual en todos los idiomas). Cada tecla: { ch, finger, wide?, bump?, label?, decor? }
-     finger: primera letra = mano (l izquierda, r derecha) +
-     p meñique, r anular, m medio, i índice. 'th' = pulgar (los dos).
-     bump: la tecla tiene marca táctil (F, J y el 5 del numérico).
-     wide: true = muy ancha (espacio), 'media' = ancha (Tab, Intro...).
-     decor: tecla decorativa (Tab, Mayús, Intro, Borrar). No tiene "ch":
-     solo da forma real al teclado, nunca es objetivo de un ejercicio.
-     'label' es un id ('espacio'|'tab'|'mayus'|'intro'|'borrar'): el texto
-     visible se busca en strings.js con App.i18n.t('teclaLabel.' + label).
-   - Los nombres de los dedos (mano, nombre) NO están aquí: son texto y
-     viven en strings.js bajo 'dedo.<id>.mano' / '.nombre' (ver DATA con
-     los ids lp/lr/lm/li/ri/rm/rr/rp/th usados en 'finger').
-   - DATA.numpad / DATA.numpadFingers: teclado numérico (mano derecha).
-   - Contenido de práctica por idioma (textos de instrucción y palabras):
-     DATA.placement, DATA.lessons, DATA.words, DATA.numpadSteps son
-     objetos { es: [...], en: [...] }. app.js los usa con
+   Teclatlon — Data
+   Shape:
+   - DATA.numberRow / DATA.rows: keys of the Spanish physical keyboard
+     (physical layout, same in every language). Each key: { ch, finger,
+     wide?, bump?, label?, decor? }
+     finger: first letter = hand (l left, r right) +
+     p pinky, r ring, m middle, i index. 'th' = thumb (both).
+     bump: the key has a tactile bump (F, J and the numpad 5).
+     wide: true = very wide (space), 'media' = wide (Tab, Enter...).
+     decor: decorative key (Tab, Shift, Enter, Backspace). Has no "ch":
+     it only gives the keyboard its real shape, never a lesson target.
+     'label' is an id ('space'|'tab'|'shift'|'enter'|'backspace'): the
+     visible text is looked up in strings.js with
+     App.i18n.t('keyLabel.' + label).
+   - Finger names (hand, name) are NOT here: they are text and live in
+     strings.js under 'finger.<id>.hand' / '.name' (see the ids
+     lp/lr/lm/li/ri/rm/rr/rp/th used in 'finger').
+   - DATA.numpad / DATA.numpadFingers: number pad (right hand).
+   - Per-language practice content (instruction text and words):
+     DATA.placement, DATA.lessons, DATA.words, DATA.numpadSteps are
+     objects { es: [...], en: [...] }. app.js reads them with
      DATA.placement[App.i18n.locale()], etc.
-   - DATA.layouts: los teclados visuales que se pueden elegir
-     (simplificado / normal / extendido). Son SIEMPRE decorativos
-     (pointer-events: none en CSS): la entrada real es el teclado físico
-     del ordenador. "extendido" añade el teclado numérico aparte (ver
-     DATA.numpad); eso se dibuja en app.js.
-   Para ampliar: añadir una lección o palabra nueva a AMBOS idiomas
-   (es y en) en el array correspondiente.
+   - DATA.layouts: the selectable visual keyboards (simple / normal /
+     extended). Always decorative (pointer-events: none in CSS): the
+     real input is the computer's physical keyboard. "extended" adds
+     the number pad separately (see DATA.numpad); that is drawn in
+     app.js.
+   To extend: add a new lesson or word to BOTH languages (es and en)
+   in the matching array.
    ========================================================================== */
 
 const DATA = {
@@ -61,7 +63,7 @@ const DATA = {
       { ch: '.', finger: 'rr' }, { ch: '-', finger: 'rp' }
     ],
     [
-      { ch: ' ', finger: 'th', wide: true, label: 'espacio' }
+      { ch: ' ', finger: 'th', wide: true, label: 'space' }
     ]
   ],
 
@@ -101,85 +103,251 @@ const DATA = {
   lessons: {
     es: [
       { id: 'l1', title: 'F y J', intro: 'Pon el índice izquierdo en la F. Pon el índice derecho en la J. Las dos teclas tienen una marca.',
+        keys: ['f', 'j'],
         steps: ['f', 'j', 'fj', 'ffjj', 'fjfj'] },
       { id: 'l2', title: 'D y K', intro: 'La D va con el dedo medio izquierdo. La K va con el dedo medio derecho.',
+        keys: ['d', 'k'],
         steps: ['d', 'k', 'dk', 'ddkk', 'fdjk'] },
       { id: 'l3', title: 'S y L', intro: 'La S va con el dedo anular izquierdo. La L va con el dedo anular derecho.',
+        keys: ['s', 'l'],
         steps: ['s', 'l', 'sl', 'ssll', 'slfj'] },
       { id: 'l4', title: 'A y Ñ', intro: 'La A va con el meñique izquierdo. La Ñ va con el meñique derecho.',
+        keys: ['a', 'ñ'],
         steps: ['a', 'ñ', 'añ', 'asdf', 'jklñ'] },
       { id: 'l5', title: 'El espacio', intro: 'El espacio es la tecla larga de abajo. Se pulsa con el pulgar.',
+        keys: [' '],
         steps: ['f j', 'a s', 'ja ja', 'fa la'] },
       { id: 'l6', title: 'G y H', intro: 'Estira el dedo índice hacia el centro. Después vuelve a su tecla.',
+        keys: ['g', 'h'],
         steps: ['fgf', 'jhj', 'gh', 'gafas', 'hada'] },
       { id: 'l7', title: 'E e I', intro: 'Sube el dedo medio a la fila de arriba. Después vuelve a su tecla.',
+        keys: ['e', 'i'],
         steps: ['ded', 'kik', 'ei', 'seda', 'silla'] },
       { id: 'l8', title: 'R y U', intro: 'Sube el dedo índice a la fila de arriba. Después vuelve a su tecla.',
+        keys: ['r', 'u'],
         steps: ['frf', 'juj', 'ru', 'risa', 'jugar'] },
       { id: 'l9', title: 'T e Y', intro: 'Estira el dedo índice hacia arriba. Después vuelve a su tecla.',
+        keys: ['t', 'y'],
         steps: ['ftf', 'jyj', 'ty', 'tarta', 'yate'] },
       { id: 'l10', title: 'O y P', intro: 'Sube el anular y el meñique de la mano derecha.',
+        keys: ['o', 'p'],
         steps: ['lol', 'ñpñ', 'op', 'sopa', 'pelota'] },
       { id: 'l11', title: 'Q y W', intro: 'Sube el meñique y el anular de la mano izquierda.',
+        keys: ['q', 'w'],
         steps: ['aqa', 'sws', 'qw', 'queso', 'quiero'] },
       { id: 'l12', title: 'N y M', intro: 'Baja el dedo índice derecho a la fila de abajo. Después vuelve.',
+        keys: ['n', 'm'],
         steps: ['jnj', 'jmj', 'nm', 'mano', 'luna'] },
       { id: 'l13', title: 'C, V y B', intro: 'Baja los dedos de la mano izquierda a la fila de abajo. Después vuelve.',
+        keys: ['c', 'v', 'b', ',', '.', '-'],
         steps: ['dcd', 'fvf', 'fbf', 'vaca', 'boca'] },
       { id: 'l14', title: 'Z y X', intro: 'Baja el meñique y el anular de la mano izquierda. Después vuelve.',
+        keys: ['z', 'x'],
         steps: ['aza', 'sxs', 'zx', 'zumo', 'taxi'] },
       { id: 'l15', title: 'Frases cortas', intro: 'Ya conoces todas las letras. Escribe frases cortas.',
+        keys: [],
         steps: ['hola', 'me gusta', 'buenos dias', 'hola amigo'] },
       { id: 'l16', title: 'Mayúsculas', intro: 'Para escribir una mayúscula, mantén pulsada la tecla Mayús con el meñique del lado contrario y pulsa la letra con la otra mano.',
         steps: ['A', 'J', 'Sa', 'Hola', 'Buenos dias'] },
       { id: 'l17', title: 'Teclas especiales', intro: 'Estas teclas no tienen un dedo fijo: usa la mano que te resulte más cómoda. Cambia a la vista de teclado "Con números al lado" para verlas dibujadas.',
-        steps: [{ especial: 'inicio' }, { especial: 'fin' }, { especial: 'pagArriba' }, { especial: 'pagAbajo' }, { especial: 'suprimir' }] }
+        steps: [{ specialKey: 'home' }, { specialKey: 'end' }, { specialKey: 'pageUp' }, { specialKey: 'pageDown' }, { specialKey: 'delete' }] }
     ],
     en: [
       { id: 'l1', title: 'F and J', intro: 'Put your left index finger on F. Put your right index finger on J. Both keys have a bump.',
+        keys: ['f', 'j'],
         steps: ['f', 'j', 'fj', 'ffjj', 'fjfj'] },
       { id: 'l2', title: 'D and K', intro: 'D goes with your left middle finger. K goes with your right middle finger.',
+        keys: ['d', 'k'],
         steps: ['d', 'k', 'dk', 'ddkk', 'fdjk'] },
       { id: 'l3', title: 'S and L', intro: 'S goes with your left ring finger. L goes with your right ring finger.',
+        keys: ['s', 'l'],
         steps: ['s', 'l', 'sl', 'ssll', 'slfj'] },
       { id: 'l4', title: 'A and Ñ', intro: 'A goes with your left little finger. Ñ goes with your right little finger.',
+        keys: ['a', 'ñ'],
         steps: ['a', 'ñ', 'añ', 'asdf', 'jklñ'] },
       { id: 'l5', title: 'The space bar', intro: 'The space bar is the long key at the bottom. Press it with your thumb.',
+        keys: [' '],
         steps: ['f j', 'a s', 'ja ja', 'fa la'] },
       { id: 'l6', title: 'G and H', intro: 'Stretch your index finger to the middle. Then go back to your key.',
+        keys: ['g', 'h'],
         steps: ['fgf', 'jhj', 'gh', 'gag', 'had'] },
       { id: 'l7', title: 'E and I', intro: 'Move your middle finger up a row. Then go back to your key.',
+        keys: ['e', 'i'],
         steps: ['ded', 'kik', 'ei', 'seed', 'kite'] },
       { id: 'l8', title: 'R and U', intro: 'Move your index finger up a row. Then go back to your key.',
+        keys: ['r', 'u'],
         steps: ['frf', 'juj', 'ru', 'rug', 'jug'] },
       { id: 'l9', title: 'T and Y', intro: 'Stretch your index finger up. Then go back to your key.',
+        keys: ['t', 'y'],
         steps: ['ftf', 'jyj', 'ty', 'tidy', 'tray'] },
       { id: 'l10', title: 'O and P', intro: 'Move up the ring and little fingers of your right hand.',
+        keys: ['o', 'p'],
         steps: ['lol', 'ñpñ', 'op', 'stop', 'pool'] },
       { id: 'l11', title: 'Q and W', intro: 'Move up the little and ring fingers of your left hand.',
+        keys: ['q', 'w'],
         steps: ['aqa', 'sws', 'qw', 'quiet', 'water'] },
       { id: 'l12', title: 'N and M', intro: 'Move your right index finger down a row. Then go back.',
+        keys: ['n', 'm'],
         steps: ['jnj', 'jmj', 'nm', 'moon', 'name'] },
       { id: 'l13', title: 'C, V and B', intro: 'Move your left hand fingers down a row. Then go back.',
+        keys: ['c', 'v', 'b', ',', '.', '-'],
         steps: ['dcd', 'fvf', 'fbf', 'cave', 'boat'] },
       { id: 'l14', title: 'Z and X', intro: 'Move down the little and ring fingers of your left hand.',
+        keys: ['z', 'x'],
         steps: ['aza', 'sxs', 'zx', 'zoo', 'taxi'] },
       { id: 'l15', title: 'Short sentences', intro: 'You know all the letters now. Type short sentences.',
+        keys: [],
         steps: ['hi there', 'i like it', 'good morning', 'hi my friend'] },
       { id: 'l16', title: 'Capitals', intro: 'To type a capital letter, hold the Shift key with the pinky on the opposite side and press the letter with your other hand.',
         steps: ['A', 'J', 'Sa', 'Hello', 'Good morning'] },
       { id: 'l17', title: 'Special keys', intro: 'These keys don\'t have a fixed finger: use whichever hand is comfortable. Switch to the "With numbers on the side" keyboard view to see them drawn.',
-        steps: [{ especial: 'inicio' }, { especial: 'fin' }, { especial: 'pagArriba' }, { especial: 'pagAbajo' }, { especial: 'suprimir' }] }
+        steps: [{ specialKey: 'home' }, { specialKey: 'end' }, { specialKey: 'pageUp' }, { specialKey: 'pageDown' }, { specialKey: 'delete' }] }
     ]
   },
 
+  /* Word bank for the "Words" activity. The engine (playWords in
+     app.js) does not pick 4 at random like it used to: it makes a
+     greedy selection that guarantees every key of the selected layout
+     gets pressed at least 5 times across the chosen word set
+     (SPEC principle 7: mastery of the full keyboard). That is why the
+     bank has to be rich and cover every letter (including q, w, x, y,
+     z, j, k, ñ) and the punctuation symbols that appear on the
+     keyboard (, . -). Sentences with commas/periods/dashes are
+     needed because single words barely use them. Any extension of the
+     bank must keep coverage of every letter and of the three symbols.
+
+     Bank constraints:
+     - No accents or diacritics: every word is typed with real
+       physical keys on the computer keyboard. "adiós" becomes "adios"
+       because the ´ + a key is not a single key but a composition,
+       and it would confuse the per-key press count.
+     - Every word/sentence must be made up only of characters on the
+       alphanumeric keyboard: letters a-z, ñ, space, comma, period,
+       dash. The algorithm in playWords filters out candidates whose
+       `seq` contains keys outside the selected layout (e.g. a
+       sentence with "1" does not enter the set if the active layout
+       is "simple").
+     - Ñ counts as one more key on the Spanish keyboard and must be
+       exercised just like the others.
+     - The bank contains words grouped by topic and, at the end,
+       blocks dedicated to low-frequency letters (q,w,x,y,z,j,k,ñ) and
+       to the symbols (, . -) to guarantee the greedy algorithm has
+       enough material to reach the minimum of 5 presses per key
+       without going over the cap. */
   words: {
-    es: ['hola', 'casa', 'gato', 'perro', 'sol', 'luna', 'agua', 'pan',
-      'mesa', 'silla', 'mano', 'flor', 'boca', 'queso', 'pelota',
-      'amigo', 'verde', 'azul', 'leche', 'libro'],
-    en: ['hello', 'house', 'cat', 'dog', 'sun', 'moon', 'water', 'bread',
-      'table', 'chair', 'hand', 'flower', 'mouth', 'cheese', 'ball',
-      'friend', 'green', 'blue', 'milk', 'book']
+    es: [
+      // Saludos, animales, naturaleza
+      'hola', 'adios', 'casa', 'gato', 'perro', 'pajaro', 'pez',
+      'sol', 'luna', 'estrella', 'agua', 'fuego', 'tierra', 'aire',
+      'arana', 'avispa', 'abeja', 'jabali', 'jirafa',
+      // Comida
+      'pan', 'queso', 'leche', 'arroz', 'sopa', 'fruta',
+      'tortilla', 'aceite', 'ajo', 'jamon',
+      // Objetos del día a día
+      'mesa', 'silla', 'puerta', 'ventana', 'cama', 'libro', 'lapiz',
+      'cuaderno', 'regla', 'mochila', 'mochila', 'bolso',
+      'zapato', 'camisa', 'pantalon', 'sombrero',
+      // Cuerpo
+      'mano', 'pie', 'cabeza', 'boca', 'ojo', 'nariz', 'oreja',
+      // Naturaleza y lugares
+      'flor', 'arbol', 'bosque', 'rio', 'mar', 'montana',
+      'parque', 'jardin', 'pueblo',
+      // Transporte y juguetes
+      'pelota', 'coche', 'tren', 'avion', 'barco',
+      'quiosco', 'yoyo',
+      // Personas y relaciones
+      'amigo', 'familia', 'abuelo', 'abuela',
+      'hermano', 'primo', 'prima',
+      // Colores
+      'verde', 'azul', 'rojo', 'blanco', 'negro', 'rosa', 'amarillo',
+      'naranja', 'marron',
+      // Bloque Q
+      'queso', 'quinto', 'quitar', 'quepo', 'aqui', 'mapa', 'bosque',
+      'porque', 'aunque', 'quien', 'queda', 'quedo', 'paquete',
+      // Bloque W
+      'water', 'wifi', 'web', 'whisky',
+      // Bloque X
+      'xilofono', 'xenon', 'examen', 'exito', 'boxeo', 'oxido',
+      // Bloque Y
+      'yate', 'yogur', 'yerno', 'yuca', 'playa', 'mayo', 'muy',
+      // Bloque Z
+      'zoo', 'zumo', 'zona', 'lazo', 'pizza', 'noche',
+      'zorro', 'zurdo', 'paz', 'luz', 'voz', 'arco', 'brazo',
+      // Bloque J
+      'juego', 'fiesta', 'baile', 'jabon', 'jirafa', 'joven',
+      'viaje', 'mejilla', 'reloj', 'pajaro',
+      // Bloque K
+      'kilo', 'kiosko', 'kiwi', 'kayak', 'koala',
+      // Bloque Ñ (con la tecla ñ explícita; cada palabra contiene al
+      // menos una ñ para que el algoritmo pueda cubrirla)
+      'niño', 'niña', 'mañana', 'montaña', 'campaña', 'araña',
+      'dueño', 'enseñanza', 'español', 'senos', 'piña', 'caña',
+      'leña', 'paño', 'sueño', 'otoño', 'diseño', 'baño',
+      'niños', 'niñas', 'años', 'daño', 'extraño', 'pequeño',
+      // Frases con símbolos de puntuación
+      'si, claro', 'no, gracias', 'bien, vale', 'hola, amigo',
+      'buenos, dias', 'voy, vengo', 'si, si', 'no, no',
+      'a, b, c', 'e, o, u', 'el, la, lo',
+      'punto final.', 'ok.', 'si.', 'fin.', 'punto.', 'listo.',
+      'uno-dos', 'dos-tres', 'a-b-c', 'x-y-z', 'uno y dos',
+      'punto y coma', 'punto y aparte', 'guion medio'
+    ],
+    en: [
+      // Greetings, animals, nature
+      'hello', 'goodbye', 'house', 'cat', 'dog', 'bird', 'fish',
+      'sun', 'moon', 'star', 'water', 'fire', 'earth', 'air',
+      'spider', 'wasp', 'bee', 'fox', 'frog',
+      // Food
+      'bread', 'cheese', 'milk', 'rice', 'soup', 'fruit',
+      'egg', 'butter', 'honey', 'juice',
+      // Everyday objects
+      'table', 'chair', 'door', 'window', 'bed', 'book', 'pen',
+      'notebook', 'ruler', 'bag', 'backpack', 'watch',
+      'shoe', 'shirt', 'pants', 'hat',
+      // Body
+      'hand', 'foot', 'head', 'mouth', 'eye', 'nose', 'ear',
+      // Nature and places
+      'flower', 'tree', 'forest', 'river', 'sea', 'mountain',
+      'park', 'garden', 'town',
+      // Transport and toys
+      'ball', 'car', 'train', 'plane', 'boat',
+      'kite', 'yo-yo',
+      // People and relations
+      'friend', 'family', 'boy', 'girl', 'grandpa', 'grandma',
+      'brother', 'cousin',
+      // Colors
+      'green', 'blue', 'red', 'white', 'black', 'pink', 'yellow',
+      'orange', 'brown',
+      // Low-frequency letters (q,w,x,y,z,j,k)
+      // Block Q
+      'queen', 'quick', 'quiet', 'quiz', 'square', 'equal',
+      'question', 'request', 'square',
+      // Block W
+      'water', 'winter', 'window', 'whale', 'wheat', 'wheel',
+      'whisper', 'what', 'welcome', 'walk', 'work',
+      // Block X
+      'xylophone', 'x-ray', 'box', 'fox', 'six', 'next', 'text',
+      // Block Y
+      'yellow', 'yes', 'you', 'young', 'yogurt', 'yacht', 'yesterday',
+      'play', 'may', 'by',
+      // Block Z
+      'zoo', 'zero', 'zebra', 'zip', 'pizza', 'buzz', 'jazz', 'frozen',
+      // Block J
+      'jump', 'jar', 'jelly', 'jewel', 'jungle', 'jog', 'joy', 'join',
+      'adjust', 'enjoy',
+      // Block K
+      'kite', 'kitchen', 'king', 'key', 'kid', 'keep', 'knee',
+      // Block V (boost)
+      'van', 'voice', 'vase', 'very', 'vine', 'view', 'vest',
+      'video', 'visit', 'vivid', 'river', 'over', 'seven',
+      'have', 'love', 'above', 'leave', 'save', 'give',
+      // Sentences with punctuation
+      'yes, please', 'no, thanks', 'ok, fine', 'hi, friend',
+      'well, yes', 'no, no', 'oh, really',
+      'the end.', 'ok.', 'done.', 'ready.', 'all good.', 'see you.',
+      'one-two', 'two-three', 'a-b-c', 'x-y-z', 'one and two',
+      'comma here', 'period end', 'dash-like', 'a-b-c-d-e'
+    ]
   },
 
   numpadSteps: {
@@ -223,266 +391,271 @@ const DATA = {
     ]
   },
 
-  /* "Real texts" mode ("Textos reales"/plantillas): full, real-world
-     writing tasks (an email, a letter...) instead of single words or
-     short drill sentences -- the transfer-to-real-life step the rest
-     of the app builds up to. Unlike DATA.lessons, these are NOT
-     gated behind a linear unlock chain: they're independent practice
-     texts a player can pick in any order (see pintarPlantillas() in
-     app.js), so completing one doesn't unlock another.
+  /* "Real texts" mode (templates): full, real-world writing tasks (an
+     email, a letter...) instead of single words or short drill
+     sentences -- the transfer-to-real-life step the rest of the app
+     builds up to. Unlike DATA.lessons, these are NOT gated behind a
+     linear unlock chain: they're independent practice texts a player
+     can pick in any order (see renderTemplates() in app.js), so
+     completing one doesn't unlock another.
      Shape: { id, title, lines: [...] }. 'lines' is the text split
      into short lines/sentences -- each becomes one step of the
-     sequence engine (jugarPlantilla() in app.js), same mechanism as
-     a lesson step's plain-string 'seq'. Keep lines to characters the
+     sequence engine (playTemplate() in app.js), same mechanism as a
+     lesson step's plain-string 'seq'. Keep lines to characters the
      physical layout models (lowercase letters, ñ, the punctuation in
-     DATA.rows: ',' '.' '-', and uppercase letters via Shift -- see
-     lesson "Mayúsculas"/"Capitals") so every character has a real
-     key and a finger to guide it. Avoid '¡', '¿', '!', '?' and
-     accented vowels: those keys aren't modeled in DATA.rows, so they
-     would silently swallow the keystroke.
+     DATA.rows: ',' '.' '-', uppercase letters via Shift -- see lesson
+     "Capitals" -- and Spanish accented vowels á/é/í/ó/ú, which are
+     correct orthography and expected in real Spanish writing) so
+     every character has a real key and a finger to guide it.
+     expectedBaseChar() in app.js strips the accent before looking up
+     the finger/on-screen key, since there's no separate 'é' key --
+     just 'e' composed with the dead accent key, the same idea as a
+     capital resolving to its base letter. Still avoid '¡', '¿', '!'
+     and '?': unlike accents, those have no physical key at all in
+     DATA.rows and would silently swallow the keystroke.
      TO EXTEND: add a new { id, title, lines } entry to BOTH the 'es'
      and 'en' arrays below (see doc/en/technical.md §2.3 "Extensible
      templates"). 'id' must be unique and stable (used as the badge
-     key: 'plantilla_' + id in app.js#jugarPlantilla). */
+     key: 'template_' + id in app.js#playTemplate). */
   templates: {
     es: [
-      { id: 'correo', title: 'Correo a una amiga', lines: [
+      { id: 'email', title: 'Correo a una amiga', lines: [
         'Hola Marta,',
         'Espero que estes bien.',
-        'Hoy aprendi a escribir con el teclado.',
+        'Hoy aprendí a escribir con el teclado.',
         'Un abrazo.'
       ] },
-      { id: 'carta', title: 'Carta a la familia', lines: [
+      { id: 'letter', title: 'Carta a la familia', lines: [
         'Querida familia,',
         'Os escribo esta carta a mano.',
-        'Estoy aprendiendo a escribir rapido - poco a poco.',
+        'Estoy aprendiendo a escribir rápido - poco a poco.',
         'Os quiero mucho.'
       ] },
-      { id: 'mensaje', title: 'Mensaje a un amigo', lines: [
+      { id: 'message', title: 'Mensaje a un amigo', lines: [
         'Hola Pablo,',
-        'Quedamos manana a las cinco.',
+        'Quedamos mañana a las cinco.',
         'Te espero en la plaza del pueblo.',
         'Hasta luego.'
       ] },
-      { id: 'invitacion', title: 'Invitacion de cumpleanos', lines: [
+      { id: 'invitation', title: 'Invitación de cumpleaños', lines: [
         'Querida Lucia,',
-        'El sabado es mi cumple.',
+        'El sábado es mi cumple.',
         'Te invito a merendar a casa.',
         'Espero que vengas.'
       ] },
-      { id: 'nota', title: 'Nota en la nevera', lines: [
-        'Hola mama,',
+      { id: 'note', title: 'Nota en la nevera', lines: [
+        'Hola mamá,',
         'Salgo a dar un paseo.',
         'Vuelvo antes de la cena.',
         'Un beso.'
       ] },
-      { id: 'agradecimiento', title: 'Carta de agradecimiento', lines: [
+      { id: 'thanks', title: 'Carta de agradecimiento', lines: [
         'Hola Ana,',
         'Gracias por tu regalo.',
         'Me ha encantado el libro.',
         'Eres muy amable.'
       ] },
-      { id: 'felicidades', title: 'Mensaje de felicitacion', lines: [
+      { id: 'congrats', title: 'Mensaje de felicitación', lines: [
         'Hola Luis,',
         'Felicidades por tu nuevo trabajo.',
         'Te lo mereces mucho.',
         'Un abrazo grande.'
       ] },
-      { id: 'disculpa', title: 'Carta de disculpa', lines: [
+      { id: 'apology', title: 'Carta de disculpa', lines: [
         'Querido Pedro,',
         'Perdona por el retraso.',
-        'No volvera a pasar.',
+        'No volverá a pasar.',
         'Un saludo cordial.'
       ] },
-      { id: 'profesor', title: 'Correo al profesor', lines: [
+      { id: 'teacher', title: 'Correo al profesor', lines: [
         'Estimado profesor,',
-        'No podre ir a clase manana.',
-        'Tengo cita en el medico.',
+        'No podré ir a clase mañana.',
+        'Tengo cita en el médico.',
         'Gracias por su ayuda.'
       ] },
-      { id: 'vecino', title: 'Nota al vecino', lines: [
-        'Hola senor Garcia,',
-        'Su gato esta en mi jardin.',
-        'No se preocupe, esta bien.',
+      { id: 'neighbor', title: 'Nota al vecino', lines: [
+        'Hola señor García,',
+        'Su gato está en mi jardín.',
+        'No se preocupe, está bien.',
         'Un saludo.'
       ] },
-      { id: 'medico', title: 'Mensaje al medico', lines: [
+      { id: 'doctor', title: 'Mensaje al médico', lines: [
         'Estimado doctor,',
         'Confirmo la cita del jueves.',
-        'Llegare a las cuatro.',
+        'Llegaré a las cuatro.',
         'Muchas gracias.'
       ] },
-      { id: 'biblioteca', title: 'Correo a la biblioteca', lines: [
+      { id: 'library', title: 'Correo a la biblioteca', lines: [
         'Hola,',
         'Quiero devolver un libro.',
-        'Lo llevare el viernes por la tarde.',
+        'Lo llevaré el viernes por la tarde.',
         'Gracias.'
       ] },
-      { id: 'receta', title: 'Receta de cocina', lines: [
+      { id: 'recipe', title: 'Receta de cocina', lines: [
         'Tarta de manzana.',
-        'Mezclar harina, huevos y azucar.',
-        'Anadir las manzanas troceadas.',
+        'Mezclar harina, huevos y azúcar.',
+        'Añadir las manzanas troceadas.',
         'Hornear durante una hora.'
       ] },
-      { id: 'lista', title: 'Lista de la compra', lines: [
+      { id: 'groceries', title: 'Lista de la compra', lines: [
         'Lunes - lista de la compra.',
         'Pan, leche y huevos.',
         'Manzanas, peras y naranjas.',
         'No olvidar el aceite.'
       ] },
-      { id: 'diario', title: 'Entrada de diario', lines: [
-        'Hoy fue un dia bonito.',
-        'Pasee por el parque con mi perro.',
-        'Hice los deberes de matematicas.',
-        'Me senti muy feliz.'
+      { id: 'diary', title: 'Entrada de diario', lines: [
+        'Hoy fue un día bonito.',
+        'Paseé por el parque con mi perro.',
+        'Hice los deberes de matemáticas.',
+        'Me sentí muy feliz.'
       ] },
-      { id: 'cuento', title: 'Cuento corto', lines: [
-        'Habia una vez un gato azul.',
-        'Vivía en un pequeno pueblo.',
+      { id: 'story', title: 'Cuento corto', lines: [
+        'Había una vez un gato azul.',
+        'Vivía en un pequeño pueblo.',
         'Le gustaba dormir al sol.',
-        'Y correr por el jardin.'
+        'Y correr por el jardín.'
       ] },
-      { id: 'postal', title: 'Postal de vacaciones', lines: [
+      { id: 'postcard', title: 'Postal de vacaciones', lines: [
         'Hola desde la playa.',
         'El mar es muy bonito.',
-        'Hace sol todo el dia.',
-        'Os envio un abrazo.'
+        'Hace sol todo el día.',
+        'Os envío un abrazo.'
       ] },
-      { id: 'plan', title: 'Plan para el fin de semana', lines: [
-        'Sabado por la manana:',
+      { id: 'weekendPlan', title: 'Plan para el fin de semana', lines: [
+        'Sábado por la mañana:',
         'Ir al mercado a comprar fruta.',
-        'Sabado por la tarde:',
+        'Sábado por la tarde:',
         'Pasear por el centro.'
       ] },
-      { id: 'regalo', title: 'Nota para un regalo', lines: [
+      { id: 'gift', title: 'Nota para un regalo', lines: [
         'Querido abuelo,',
-        'Te envio este regalo por tu cumple.',
+        'Te envío este regalo por tu cumple.',
         'Es un jersey de lana.',
         'Espero que te guste.'
       ] },
-      { id: 'despedida', title: 'Mensaje de despedida', lines: [
+      { id: 'farewell', title: 'Mensaje de despedida', lines: [
         'Hola a todos,',
         'Me voy de viaje una semana.',
-        'Vuelvo el domingo proximo.',
+        'Vuelvo el domingo próximo.',
         'Nos vemos pronto.'
       ] }
     ],
     en: [
-      { id: 'correo', title: 'Email to a friend', lines: [
+      { id: 'email', title: 'Email to a friend', lines: [
         'Hi Sam,',
         'I hope you are well.',
         'Today I learned to type on the keyboard.',
         'Take care.'
       ] },
-      { id: 'carta', title: 'Letter to family', lines: [
+      { id: 'letter', title: 'Letter to family', lines: [
         'Dear family,',
         'I am writing this letter by hand.',
         'I am learning to type fast - step by step.',
         'I love you all.'
       ] },
-      { id: 'mensaje', title: 'Message to a friend', lines: [
+      { id: 'message', title: 'Message to a friend', lines: [
         'Hi Tom,',
         'See you tomorrow at five.',
         'I will wait for you at the park.',
         'See you later.'
       ] },
-      { id: 'invitacion', title: 'Birthday invitation', lines: [
+      { id: 'invitation', title: 'Birthday invitation', lines: [
         'Dear Lucy,',
         'Saturday is my birthday.',
         'Please come to my house for cake.',
         'I hope you can come.'
       ] },
-      { id: 'nota', title: 'Note on the fridge', lines: [
+      { id: 'note', title: 'Note on the fridge', lines: [
         'Hi mom,',
         'I am going for a walk.',
         'I will be back before dinner.',
         'Love you.'
       ] },
-      { id: 'agradecimiento', title: 'Thank-you letter', lines: [
+      { id: 'thanks', title: 'Thank-you letter', lines: [
         'Hi Anna,',
         'Thank you for your gift.',
         'I really like the book.',
         'You are very kind.'
       ] },
-      { id: 'felicidades', title: 'Congratulations note', lines: [
+      { id: 'congrats', title: 'Congratulations note', lines: [
         'Hi Lou,',
         'Congrats on your new job.',
         'You deserve it a lot.',
         'Big hug.'
       ] },
-      { id: 'disculpa', title: 'Apology letter', lines: [
+      { id: 'apology', title: 'Apology letter', lines: [
         'Dear Pat,',
         'Sorry for the delay.',
         'It will not happen again.',
         'Best regards.'
       ] },
-      { id: 'profesor', title: 'Email to the teacher', lines: [
+      { id: 'teacher', title: 'Email to the teacher', lines: [
         'Dear teacher,',
         'I cannot come to class tomorrow.',
         'I have a doctor appointment.',
         'Thank you for your help.'
       ] },
-      { id: 'vecino', title: 'Note to the neighbor', lines: [
+      { id: 'neighbor', title: 'Note to the neighbor', lines: [
         'Hi Mr. Hall,',
         'Your cat is in my garden.',
         'Do not worry, it is fine.',
         'Best regards.'
       ] },
-      { id: 'medico', title: 'Message to the doctor', lines: [
+      { id: 'doctor', title: 'Message to the doctor', lines: [
         'Dear doctor,',
         'I confirm the visit on Thursday.',
         'I will arrive at four.',
         'Thank you very much.'
       ] },
-      { id: 'biblioteca', title: 'Email to the library', lines: [
+      { id: 'library', title: 'Email to the library', lines: [
         'Hello,',
         'I want to return a book.',
         'I will bring it on Friday afternoon.',
         'Thank you.'
       ] },
-      { id: 'receta', title: 'Cooking recipe', lines: [
+      { id: 'recipe', title: 'Cooking recipe', lines: [
         'Apple pie.',
         'Mix flour, eggs and sugar.',
         'Add the chopped apples.',
         'Bake for one hour.'
       ] },
-      { id: 'lista', title: 'Shopping list', lines: [
+      { id: 'groceries', title: 'Shopping list', lines: [
         'Monday - shopping list.',
         'Bread, milk and eggs.',
         'Apples, pears and oranges.',
         'Do not forget the oil.'
       ] },
-      { id: 'diario', title: 'Diary entry', lines: [
+      { id: 'diary', title: 'Diary entry', lines: [
         'Today was a nice day.',
         'I walked in the park with my dog.',
         'I did my math homework.',
         'I felt very happy.'
       ] },
-      { id: 'cuento', title: 'Short story', lines: [
+      { id: 'story', title: 'Short story', lines: [
         'Once upon a time there was a blue cat.',
         'It lived in a small town.',
         'It liked to nap in the sun.',
         'And run in the garden.'
       ] },
-      { id: 'postal', title: 'Holiday postcard', lines: [
+      { id: 'postcard', title: 'Holiday postcard', lines: [
         'Hi from the beach.',
         'The sea is very pretty.',
         'It is sunny every day.',
         'Sending you a big hug.'
       ] },
-      { id: 'plan', title: 'Weekend plan', lines: [
+      { id: 'weekendPlan', title: 'Weekend plan', lines: [
         'Saturday morning:',
         'Go to the market to buy fruit.',
         'Saturday afternoon:',
         'Walk around the city center.'
       ] },
-      { id: 'regalo', title: 'Note for a gift', lines: [
+      { id: 'gift', title: 'Note for a gift', lines: [
         'Dear grandpa,',
         'I send you this gift for your birthday.',
         'It is a wool sweater.',
         'I hope you like it.'
       ] },
-      { id: 'despedida', title: 'Farewell message', lines: [
+      { id: 'farewell', title: 'Farewell message', lines: [
         'Hi everyone,',
         'I am going on a trip for a week.',
         'I will be back next Sunday.',
@@ -492,61 +665,61 @@ const DATA = {
   }
 };
 
-/* Tecla decorativa: da forma real al teclado pero no se puede pulsar
-   en un ejercicio (no tiene "ch"). 'label' es un id: el texto visible
-   se busca en strings.js con App.i18n.t('teclaLabel.' + label). */
-function teclaDecorativa(finger, wide, label) {
+/* Decorative key: gives the keyboard its real shape but cannot be
+   pressed in an exercise (no "ch"). 'label' is an id: the visible
+   text is looked up in strings.js with App.i18n.t('keyLabel.' + label). */
+function decorativeKey(finger, wide, label) {
   return { ch: null, finger: finger, wide: wide, decor: true, label: label };
 }
 
 /* Same shape as a decorative key, but with a real 'ch' -- the internal
-   id normalizarTecla() (app.js) maps the physical key to -- so it CAN
-   be a lesson target. Used only by the "less frequent keys" lesson
-   (Home/End/PageUp/PageDown/Delete: see DATA.lessons "Teclas
-   especiales"/"Special keys"). 'special: true' keeps these out of the
-   "all keys" challenge, which is only about the core alphanumeric
-   layout. No fixed finger convention exists for them (varies too much
-   by keyboard/user), so 'finger' here is purely cosmetic -- which side
-   of the on-screen keyboard they're tinted, not a practice target. */
-function teclaEspecial(id) {
+   id normalizeKey() (app.js) maps the physical key to -- so it CAN be
+   a lesson target. Used only by the "less frequent keys" lesson
+   (Home/End/PageUp/PageDown/Delete: see DATA.lessons "Special keys").
+   'special: true' keeps these out of the "all keys" challenge, which
+   is only about the core alphanumeric layout. No fixed finger
+   convention exists for them (varies too much by keyboard/user), so
+   'finger' here is purely cosmetic -- which side of the on-screen
+   keyboard they're tinted, not a practice target. */
+function specialKeyDef(id) {
   return { ch: id, finger: 'rp', decor: true, special: true, label: id, wide: 'media' };
 }
 
 DATA.layouts = {
   /* Letters only, plus both Shift keys: the classic touch-typing
      method needs Shift visible for the capitals lesson (see
-     DATA.lessons "Mayúsculas"/"Capitals"), even in this stripped-down
-     view. No Tab/Enter/Backspace here on purpose -- those aren't
-     practiced yet. */
-  simplificado: [
+     DATA.lessons "Capitals"), even in this stripped-down view. No
+     Tab/Enter/Backspace here on purpose -- those aren't practiced
+     yet. */
+  simple: [
     DATA.rows[0],
     DATA.rows[1],
-    [teclaDecorativa('lp', 'media', 'mayus')].concat(DATA.rows[2]).concat([teclaDecorativa('rp', 'media', 'mayus')]),
+    [decorativeKey('lp', 'media', 'shift')].concat(DATA.rows[2]).concat([decorativeKey('rp', 'media', 'shift')]),
     DATA.rows[3]
   ],
 
-  /* Full computer keyboard: numbers on top and function keys
-     around it (Tab, Shift, Enter, Backspace), like a real one. */
+  /* Full computer keyboard: numbers on top and function keys around
+     it (Tab, Shift, Enter, Backspace), like a real one. */
   normal: [
-    DATA.numberRow.concat([teclaDecorativa('rp', 'media', 'borrar')]),
-    [teclaDecorativa('lp', 'media', 'tab')].concat(DATA.rows[0]),
-    [teclaDecorativa('lp', 'media', 'mayus')].concat(DATA.rows[1]).concat([teclaDecorativa('rp', 'media', 'intro')]),
-    [teclaDecorativa('lp', 'media', 'mayus')].concat(DATA.rows[2]).concat([teclaDecorativa('rp', 'media', 'mayus')]),
+    DATA.numberRow.concat([decorativeKey('rp', 'media', 'backspace')]),
+    [decorativeKey('lp', 'media', 'tab')].concat(DATA.rows[0]),
+    [decorativeKey('lp', 'media', 'shift')].concat(DATA.rows[1]).concat([decorativeKey('rp', 'media', 'enter')]),
+    [decorativeKey('lp', 'media', 'shift')].concat(DATA.rows[2]).concat([decorativeKey('rp', 'media', 'shift')]),
     DATA.rows[3]
   ]
 };
 
-/* Extendido: el teclado normal, con una fila extra arriba para las
-   teclas menos frecuentes (Inicio/Fin/Re Pág/Av Pág/Supr — ver la
-   lección "Teclas especiales"/"Special keys"), y aparte se ve el
-   teclado numérico (DATA.numpad) para practicar los tres juntos. */
-DATA.layouts.extendido = [
-  ['inicio', 'fin', 'pagArriba', 'pagAbajo', 'suprimir'].map(teclaEspecial)
+/* Extended: the normal keyboard, with an extra row on top for the
+   less frequent keys (Home/End/Page Up/Page Down/Delete — see the
+   "Special keys" lesson), and the number pad (DATA.numpad) shown
+   separately so the three can be practiced together. */
+DATA.layouts.extended = [
+  ['home', 'end', 'pageUp', 'pageDown', 'delete'].map(specialKeyDef)
 ].concat(DATA.layouts.normal);
-/* -------- Avatares (SVGs inline, sin recursos externos) --------
-   8 avatares simples en 2 colores de pelo × 2 expresiones × 2 tonos
-   de piel. Identificador string + viewBox unificado (0 0 64 64).  */
-DATA.avatares = [
+/* -------- Avatars (inline SVGs, no external assets) --------
+   8 simple avatars in 2 hair colors × 2 expressions × 2 skin tones.
+   String id + unified viewBox (0 0 64 64). */
+DATA.avatars = [
   { id: 'a1', svg: '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
     '<circle cx="32" cy="32" r="30" fill="#FFD9B5"/>' +
     '<circle cx="32" cy="28" r="16" fill="#FFE3C2"/>' +
@@ -605,21 +778,20 @@ DATA.avatares = [
     '</svg>' }
 ];
 
-/* -------- Insignias (badges) --------
-   id: clave interna que se guarda en state.insignias (set).
-   clave: clave i18n para el nombre visible.
-   descripcion: clave i18n para la descripción (opcional).
-   condicion: función (state) => bool. Se evalúa cada vez que se
-   concede una recompensa. Si devuelve true y la insignia no estaba,
-   se desbloquea. */
-DATA.insignias = [
-  { id: 'primera', clave: 'insigniaPrimera', condicion: function (s) { return Object.keys(s.completado).length >= 1; } },
-  { id: 'posicion', clave: 'insigniaPosicion', condicion: function (s) { return !!s.completado.posicion; } },
-  { id: 'palabras', clave: 'insigniaPalabras', condicion: function (s) { return !!s.completado.palabras; } },
-  { id: 'numeros', clave: 'insigniaNumeros', condicion: function (s) { return !!s.completado.numeros; } },
-  { id: 'todas', clave: 'insigniaTodas', condicion: function (s) { return !!s.completado.todas; } },
-  { id: 'libre', clave: 'insigniaLibre', condicion: function (s) { return (s.vecesLibre || 0) >= 1; } },
-  { id: 'racha5', clave: 'insigniaRacha5', condicion: function (s) { return (s.rachaMejor || 0) >= 5; } },
-  { id: 'racha10', clave: 'insigniaRacha10', condicion: function (s) { return (s.rachaMejor || 0) >= 10; } },
-  { id: 'precision', clave: 'insigniaPrecision', condicion: function (s) { return s.precisionMejor != null && s.precisionMejor >= 90; } }
+/* -------- Badges --------
+   id: internal key saved in state.completed (set).
+   key: i18n key for the visible name.
+   description: i18n key for the description (optional, currently
+   unused).
+   condition: function (state) => bool. Evaluated every time a reward
+   is granted. If it returns true and the badge wasn't already
+   unlocked, it unlocks. */
+DATA.badges = [
+  { id: 'first', key: 'badgeFirst', condition: function (s) { return Object.keys(s.completed).length >= 1; } },
+  { id: 'placement', key: 'badgePlacement', condition: function (s) { return !!s.completed.placement; } },
+  { id: 'words', key: 'badgeWords', condition: function (s) { return !!s.completed.words; } },
+  { id: 'numbers', key: 'badgeNumbers', condition: function (s) { return !!s.completed.numbers; } },
+  { id: 'allKeys', key: 'badgeAllKeys', condition: function (s) { return !!s.completed.allKeys; } },
+  { id: 'free', key: 'badgeFree', condition: function (s) { return (s.freeWritingCount || 0) >= 1; } },
+  { id: 'accuracy', key: 'badgeAccuracy', condition: function (s) { return s.bestAccuracy != null && s.bestAccuracy >= 90; } }
 ];
