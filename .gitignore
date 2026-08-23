@@ -7,8 +7,7 @@ node_modules/
 # Local editor / IDE / AI assistant metadata — local to the dev machine,
 # not part of the public repo.
 .vscode/
-.idea/
-.github/copilot-instructions.md
+.idea/.claude/.github/copilot-instructions.md
 
 **/graphify-out/
 .graphify*
