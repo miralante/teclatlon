@@ -124,7 +124,8 @@
     "settingsPanel": "Ajustes de accesibilidad y juego",
     "settingsHelp": "Estos ajustes se guardan en este dispositivo.",
     "computerOnly": "Solo en el ordenador",
-    "computerOnlyReason": "Teclatlon se usa con el teclado físico del ordenador. En un móvil o tablet el teclado que ves en pantalla es solo un dibujo: no se puede pulsar para escribir. Abre esta página desde un portátil o un PC.",
-    "computerOnlySuggestion": "Si tu móvil u ordenador tienen teclado físico, conecta uno por Bluetooth o USB y vuelve a intentarlo."
+    "computerOnlyWhy": "Teclatlon es para practicar mecanografía con el teclado del ordenador.",
+    "computerOnlyReason": "Necesitamos el teclado físico para escribir a máquina. El teclado que ves dibujado en pantalla no se puede pulsar. En un móvil o tablet no hay teclas de verdad para practicar.",
+    "computerOnlySuggestion": "Abre esta página desde un portátil o un PC. Si tu móvil tiene un teclado físico, conéctalo por Bluetooth o USB."
   }, 'es');
 })();

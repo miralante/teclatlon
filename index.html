@@ -98,12 +98,13 @@
        and is filled in by the same script that wires the rest of the
        app (App.i18n.apply on DOMContentLoaded), so it respects the
        detected language automatically. -->
-  <div id="mobileBlock" class="mobile-block" role="alertdialog" aria-modal="true" aria-labelledby="mobileBlockTitle" aria-describedby="mobileBlockReason" hidden>
+  <div id="mobileBlock" class="mobile-block" role="alertdialog" aria-modal="true" aria-labelledby="mobileBlockTitle" aria-describedby="mobileBlockWhy" hidden>
     <div class="mobile-block-box">
       <div class="mobile-block-icon" aria-hidden="true">🖥️</div>
       <h2 class="mobile-block-title" id="mobileBlockTitle" data-i18n="computerOnly">Solo en el ordenador</h2>
-      <p class="mobile-block-reason" id="mobileBlockReason" data-i18n="computerOnlyReason">Teclatlon se usa con el teclado físico del ordenador. En un móvil o tablet el teclado que ves en pantalla es solo un dibujo: no se puede pulsar para escribir. Abre esta página desde un portátil o un PC.</p>
-      <p class="mobile-block-suggestion" data-i18n="computerOnlySuggestion">Si tu móvil u ordenador tienen teclado físico, conecta uno por Bluetooth o USB y vuelve a intentarlo.</p>
+      <p class="mobile-block-why" id="mobileBlockWhy" data-i18n="computerOnlyWhy">Teclatlon es para practicar mecanografía con el teclado del ordenador.</p>
+      <p class="mobile-block-reason" data-i18n="computerOnlyReason">Necesitamos el teclado físico para escribir a máquina. El teclado que ves dibujado en pantalla no se puede pulsar. En un móvil o tablet no hay teclas de verdad para practicar.</p>
+      <p class="mobile-block-suggestion" data-i18n="computerOnlySuggestion">Abre esta página desde un portátil o un PC. Si tu móvil tiene un teclado físico, conéctalo por Bluetooth o USB.</p>
     </div>
   </div>
   <div class="container">

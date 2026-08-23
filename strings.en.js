@@ -124,7 +124,8 @@
     "settingsPanel": "Accessibility and game settings",
     "settingsHelp": "These settings are saved on this device.",
     "computerOnly": "Computer only",
-    "computerOnlyReason": "Teclatlon is meant to be used with the physical keyboard of a computer. On a phone or tablet the keyboard shown on screen is just a picture: you cannot tap it to type. Please open this page on a laptop or a PC.",
-    "computerOnlySuggestion": "If your phone or computer has a physical keyboard, pair one over Bluetooth or USB and try again."
+    "computerOnlyWhy": "Teclatlon is for practising typing on a computer keyboard.",
+    "computerOnlyReason": "We need the physical keyboard to type. The keyboard drawn on screen cannot be tapped. On a phone or tablet there are no real keys to practise with.",
+    "computerOnlySuggestion": "Open this page on a laptop or a PC. If your phone has a physical keyboard, pair it over Bluetooth or USB."
   }, 'en');
 })();

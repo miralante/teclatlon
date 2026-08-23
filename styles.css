@@ -194,6 +194,19 @@
   .hands { display: none; }
 }
 
+/* ---- Wide desktop (>= 1024px) ----
+   On a 1080p+ monitor the on-screen keyboard scales up comfortably with
+   flex/grid and the .container doesn't need to grow (the keyboard IS
+   the main content). We mainly make the key glyphs a touch larger and
+   give the free-area more breathing room so it doesn't feel lost on
+   a 1920px-wide window. Phones/tablets stay gated by the
+   data-app-blocked="mobile" overlay above. */
+@media (min-width: 1024px) {
+  .key { min-height: 76px; }
+  .letter { font-size: 26px; }
+  .free-area { font-size: 19px; padding: 16px; }
+}
+
 /* ---- Gate: computer-only overlay ---- */
 /* The <html data-app-blocked="mobile"> attribute is set by the
    pre-paint script in index.html on phones/tablets. When set, the
@@ -247,6 +260,12 @@ html[data-app-blocked="mobile"] .app-footer { display: none !important; }
 .mobile-block-title {
   margin: 0 0 12px;
   font-size: 28px; font-weight: 800;
+  color: var(--color-text, #2A2A2A);
+  color: #2A2A2A;
+}
+.mobile-block-why {
+  margin: 0 0 16px;
+  font-size: 20px; line-height: 1.5; font-weight: 700;
   color: var(--color-text, #2A2A2A);
   color: #2A2A2A;
 }
