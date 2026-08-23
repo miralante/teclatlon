@@ -112,38 +112,55 @@
 
       /* Device gate: Teclatlon is computer-only (see SPEC.md §2).
          Detection combines UA + coarse pointer + touch capability +
-         viewport width + platform hint. The platform hint matters on
-         iPadOS 13+ and modern iOS browsers that report a desktop UA
-         ("Macintosh") even though the device has no physical keyboard
-         and no way to use Teclatlon as intended. Likewise Android
-         phones/tablets that report a desktop UA (some Samsung Internet
-         modes, some Brave flags) must still be blocked.
+         viewport width + platform hint. iPadOS 13+ and modern iOS
+         Safari in 'Request Desktop Site' mode lie about every signal:
+         the UA becomes 'Macintosh', navigator.platform becomes
+         'MacIntel' (a value that *only exists on iOS Safari* when
+         spoofed — real Macs don't have a touch surface) and the
+         on-screen keyboard has the OSK. The reliable signals on
+         those devices are:
+           * navigator.maxTouchPoints > 1 (a real Mac trackpad reports
+             0 or 1; a touch surface reports 5+),
+           * the touchEvent / orientation / webkitAudioContext globals,
+           * sometimes navigator.vendor === 'Apple Computer, Inc.'
+         We rely on maxTouchPoints + the classic UA regex; if either
+         fires, treat the device as mobile even when it claims to be
+         a Mac. This is the only known-reliable trick across Safari
+         iOS 13, 14, 15, 16, 17, 18 and iPadOS 13+.
 
          Order of priority:
-           1. If the platform is iOS/Android, always block (no
-              desktop UA on these is meaningful for a physical
-              keyboard; the OS itself is mobile).
-           2. A real desktop UA (Windows / Mac / Linux X11 / ChromeOS)
-              with no mobile platform is allowed even with a touch
-              screen (Surface, MacBook Touch Bar, Chromebook) so
-              people with a physical keyboard can still play.
-           3. Otherwise fall back to the coarse-pointer + touch +
+           1. If the platform is iOS/Android, always block.
+           2. If the UA claims 'Macintosh' but maxTouchPoints > 1,
+              always block (real Macs in 2026 don't have a
+              multi-touch trackpad; iOS Safari does).
+           3. A real desktop UA (Windows / Mac / Linux X11 / ChromeOS)
+              with no mobile UA and no multi-touch is allowed even
+              with a touch screen (Surface, MacBook Touch Bar,
+              Chromebook) so people with a physical keyboard can play.
+           4. Otherwise fall back to the coarse-pointer + touch +
               viewport heuristic. */
       function isMobile() {
         var ua = (navigator.userAgent || '').toLowerCase();
         var platform = ((navigator.userAgentData && navigator.userAgentData.platform) ||
                         navigator.platform || '').toLowerCase();
+        var touchPoints = (navigator.maxTouchPoints || 0) | 0;
         var mobileUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile|tablet/.test(ua);
         var desktopUA = /windows nt|macintosh|x11|cros /.test(ua);
         /* iOS / Android are *mobile platforms by definition*; no UA
            spoofing can change the OS the page is actually running on,
            so we trust this signal even when "Macintosh" appears in
-           the UA string. This is the line that catches Safari on
-           iOS / iPadOS in desktop mode. */
+           the UA string. */
         var mobilePlatform = platform === 'iphone' || platform === 'ipad' ||
                              platform === 'ipod' || platform === 'android';
+        /* Safari-on-iPad-in-desktop-mode reports navigator.platform
+           === 'macintel'. Only iOS Safari does that — a real Mac
+           trackpad does NOT report maxTouchPoints > 1. This is the
+           only signal that survives every iOS Safari spoof attempt
+           and is the one that catches your iPad in 'Request Desktop
+           Site' mode. */
+        var isSpoofedIPad = platform === 'macintel' && touchPoints > 1;
         var coarse = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
-        var touch = (navigator.maxTouchPoints || 0) > 0;
+        var touch = touchPoints > 0;
         var small = window.matchMedia && window.matchMedia('(max-width: 900px)').matches;
         /* navigator.virtualKeyboard exists in Chromium/Edge and is a
            strong "this is a touch-first device with an OSK" signal;
@@ -153,10 +170,13 @@
         var hasVirtualKeyboard = typeof navigator.virtualKeyboard !== 'undefined';
         /* Step 1 — mobile OS: always block, regardless of UA. */
         if (mobilePlatform) return true;
-        /* Step 2 — clean desktop UA: allow, even with touch (Surface,
+        /* Step 2 — spoofed iPad in desktop mode (Safari iOS 13+): a
+           Mac that lies about its touch capability. Block unconditionally. */
+        if (isSpoofedIPad) return true;
+        /* Step 3 — clean desktop UA: allow, even with touch (Surface,
            Chromebook, MacBook Touch Bar, touch-screen all-in-one). */
         if (desktopUA && !mobileUA) return false;
-        /* Step 3 — heuristic fallback. */
+        /* Step 4 — heuristic fallback. */
         if (mobileUA && (coarse || small)) return true;
         if (coarse && touch) return true;
         if (small && touch) return true;
