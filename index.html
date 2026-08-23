@@ -115,27 +115,31 @@
          viewport width + platform hint. iPadOS 13+ and modern iOS
          Safari in 'Request Desktop Site' mode lie about every signal:
          the UA becomes 'Macintosh', navigator.platform becomes
-         'MacIntel' (a value that *only exists on iOS Safari* when
-         spoofed — real Macs don't have a touch surface) and the
-         on-screen keyboard has the OSK. The reliable signals on
-         those devices are:
-           * navigator.maxTouchPoints > 1 (a real Mac trackpad reports
-             0 or 1; a touch surface reports 5+),
-           * the touchEvent / orientation / webkitAudioContext globals,
-           * sometimes navigator.vendor === 'Apple Computer, Inc.'
-         We rely on maxTouchPoints + the classic UA regex; if either
-         fires, treat the device as mobile even when it claims to be
-         a Mac. This is the only known-reliable trick across Safari
-         iOS 13, 14, 15, 16, 17, 18 and iPadOS 13+.
+         'MacIntel' and the on-screen keyboard has the OSK.
+
+         The reliable iOS-spoof signals across Safari iOS 13..18:
+           * navigator.maxTouchPoints > 1 catches iPad (5+) — a real
+             Mac trackpad reports 0 or 1.
+           * window.orientation / window.orientationchange exist on
+             iOS but NOT on macOS — this is the canonical iPhone
+             Safari signal even when the rest lies.
+           * navigator.standalone (Safari iOS only — true when the
+             page is launched as a home-screen PWA on iOS).
+           * typeof window.TouchEvent !== 'undefined' is true on every
+             Safari iOS but also on touch-screen Mac browsers, so we
+             only trust it as a secondary hint.
+           * navigator.vendor === 'Apple Computer, Inc.' is true on
+             Safari iOS/macOS; combined with 'Macintosh' UA + a
+             touch screen it's an extra vote for spoofed-iOS.
 
          Order of priority:
            1. If the platform is iOS/Android, always block.
-           2. If the UA claims 'Macintosh' but maxTouchPoints > 1,
-              always block (real Macs in 2026 don't have a
-              multi-touch trackpad; iOS Safari does).
+           2. If the device claims 'Macintosh' but has any iOS-only
+              signal (orientation, maxTouchPoints > 1, standalone
+              PWA), block.
            3. A real desktop UA (Windows / Mac / Linux X11 / ChromeOS)
-              with no mobile UA and no multi-touch is allowed even
-              with a touch screen (Surface, MacBook Touch Bar,
+              with no mobile UA and no iOS-only signals is allowed
+              even with a touch screen (Surface, MacBook Touch Bar,
               Chromebook) so people with a physical keyboard can play.
            4. Otherwise fall back to the coarse-pointer + touch +
               viewport heuristic. */
@@ -152,13 +156,17 @@
            the UA string. */
         var mobilePlatform = platform === 'iphone' || platform === 'ipad' ||
                              platform === 'ipod' || platform === 'android';
-        /* Safari-on-iPad-in-desktop-mode reports navigator.platform
-           === 'macintel'. Only iOS Safari does that — a real Mac
-           trackpad does NOT report maxTouchPoints > 1. This is the
-           only signal that survives every iOS Safari spoof attempt
-           and is the one that catches your iPad in 'Request Desktop
-           Site' mode. */
+        /* iOS-only signals: each of these is true on a real iPhone /
+           iPad (in either regular or 'Request Desktop Site' mode) and
+           false on a real macOS Safari. Any one is enough to confirm
+           a spoofed-Mac. */
+        var hasOrientation = typeof window.orientation !== 'undefined' &&
+                             typeof window.onorientationchange !== 'undefined';
         var isSpoofedIPad = platform === 'macintel' && touchPoints > 1;
+        var isIOSStandalonePWA = typeof navigator.standalone === 'boolean' && navigator.standalone === true;
+        var claimsMacUA = /macintosh/.test(ua);
+        var spoofedMacWithIOSSignals = claimsMacUA && !mobilePlatform &&
+                                        (hasOrientation || isSpoofedIPad || isIOSStandalonePWA);
         var coarse = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
         var touch = touchPoints > 0;
         var small = window.matchMedia && window.matchMedia('(max-width: 900px)').matches;
@@ -170,9 +178,9 @@
         var hasVirtualKeyboard = typeof navigator.virtualKeyboard !== 'undefined';
         /* Step 1 — mobile OS: always block, regardless of UA. */
         if (mobilePlatform) return true;
-        /* Step 2 — spoofed iPad in desktop mode (Safari iOS 13+): a
-           Mac that lies about its touch capability. Block unconditionally. */
-        if (isSpoofedIPad) return true;
+        /* Step 2 — spoofed iOS (Safari iOS 13+ in 'Request Desktop
+           Site'): a Mac that has iOS-only signals. Block unconditionally. */
+        if (spoofedMacWithIOSSignals) return true;
         /* Step 3 — clean desktop UA: allow, even with touch (Surface,
            Chromebook, MacBook Touch Bar, touch-screen all-in-one). */
         if (desktopUA && !mobileUA) return false;
