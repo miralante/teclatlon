@@ -38,6 +38,12 @@ qué el teclado en pantalla no se puede pulsar (ver
 
 ## 3. Principios no negociables
 
+La accesibilidad cognitiva es un principio rector: todo el contenido
+sigue las pautas de **lectura fácil** y la norma **UNE 153101:2018 EX**
+(estándar español de lectura fácil), alineada con las pautas europeas
+de Inclusion Europe. La comprensión prevalece sobre la precisión
+técnica expresada con dificultad.
+
 1. **Autonomía** — usable sin que un profesional o familiar esté presente.
 2. **Sin presión** — sin temporizadores, sin puntuación negativa, sin
    "game over". Los errores reciben un mensaje de ánimo y reintentos
@@ -67,8 +73,44 @@ qué el teclado en pantalla no se puede pulsar (ver
    [`tecnico.md` §"Motor del juego de secuencia"](tecnico.md) para
    el gancho en tiempo de ejecución (`buildLessonReview` en `app.js`)
    que añade un paso de repaso al final de cada lección para que la
-   cobertura acumulada se aplique al jugar.
+   cobertura acumulada se aplique al jugar.8. **Comunicación persuasiva al servicio del aprendizaje** (lista cerrada
+   en §3.7 más abajo) — Teclatlon es una herramienta de práctica, no
+   un producto de consumo. La motivación para practicar debe ser
+   **intrínseca** (la satisfacción de mejorar la propia mecanografía),
+   nunca **extrínseca** ni basada en presión. Los patrones de mercado
+   que dependen de escasez, comparación o miedo a perder **no pueden**
+   aparecer en ningún punto de la app. Esta regla es suite-wide y se
+   comparte con Apptonomia, Calculia, Okeymoney, Sinonimia, Memofun y
+   Routime; la lista concreta es la misma en los siete proyectos.
+### 3.7 La lista cerrada de patrones prohibidos
 
+Los siguientes patrones forman parte de la "presión" que Teclatlon
+destierra y **no pueden** aparecer en ningún punto de la app:
+
+- **Escasez**: "¡Solo te queda 1!", "Última oportunidad", "Date
+  prisa", cuentas atrás, lecciones o palabras que desaparecen.
+- **Falsa urgencia**: cronómetros, carreras, "termina pronto",
+  castigar la lentitud. Conecta con el principio 2 de §3 ("Sin
+  presión") y con §5.
+- **Prueba social convertida en presión**: rankings, posiciones,
+  "otros ya han escrito esto" como presión social, contadores
+  globales del estilo "1.234 personas han completado esta lección".
+- **Coste irrecuperable / FOMO**: "perderás tu progreso si paras",
+  "no pierdas tu racha", mensajes forzados de retención,
+  notificaciones de tipo "te echamos de menos".
+- **Reciprocidad manipuladora / dark patterns**: registros forzados,
+  casillas premarcadas, costes ocultos, alertas falsas,
+  confirmaciones tramposas (por ejemplo, un botón de "no" que en
+  realidad cierra la sesión o borra el progreso).
+- **Aversión a la pérdida explotadora**: "tenías 5 ⭐, has perdido
+  2". Las estrellas y el progreso **solo suman**, nunca restan como
+  castigo (ver principio 2 de §3 "Sin presión").
+
+El tono por defecto en Teclatlon es **calmo y predecible**: la
+persona practica porque la actividad es atractiva, no porque la
+estemos empujando. Cuando un patrón de esta lista aparece en una
+propuesta de producto o de UI, se rechaza por defecto; cualquier
+excepción se discute en una PR con motivo explícito.
 ## 4. Regla de obligado cumplimiento: cero menciones en el producto
 
 **Ningún texto que vea quien usa la app puede mencionar, directa ni
@@ -96,11 +138,58 @@ Esta regla se comprueba automáticamente: `node scripts/check.js`
 falla si cualquiera de esos términos aparece en los archivos que ve
 quien usa la app.
 
+### 4.1 Eufemismo público: "usuario/a tipo"
+
+Cuando se presenta Teclatlon de cara al **público general** (prensa,
+charlas, READMEs públicos que cualquiera pueda leer, el portal
+`apptonomia.uk`, notas en redes sociales, marketing), el término
+"discapacidad intelectual" **no debe usarse** para describir la
+audiencia de la app, ni siquiera cuando el texto que lo rodea sería
+público. El eufemismo aceptado en esas superficies para referirse a la
+audiencia es **"usuario/a tipo"** (plural "usuarios/as tipo"),
+entendido como marcador genérico de perfil, no como etiqueta para
+ninguna persona real.
+
+Dónde se aplica y dónde no:
+
+- **Se aplica** a cualquier texto que cualquier persona ajena al
+  proyecto pueda leer sin autenticarse: `README.es.md`, `README.md`,
+  el portal en `apptonomia.uk`, charlas públicas, copy en redes, notas
+  de prensa, material de marketing. En estas superficies se habla de
+  la audiencia como "el/la usuario/a tipo" o "los/las usuarios/as
+  tipo" de la app.
+- **No se aplica** a la documentación interna de este repositorio
+  (`CLAUDE.md`, `doc/es/SPEC.md`, `doc/en/SPEC.md`, `tecnico.md`,
+  [`roles.md`](roles.md), `CONTRIBUTING.es.md`, `CONTRIBUTING.md`) —
+  esos archivos los lee quien mantiene o contribuye al proyecto, y
+  "discapacidad intelectual" sigue siendo allí el término canónico,
+  porque el proyecto necesita explicar sin ambigüedad su objetivo real
+  a quien lo mantiene.
+- **No se aplica** al contenido del proyecto que nombra un concepto
+  clínico por su nombre real (p. ej. una lección que menciona un
+  trámite administrativo real relacionado con discapacidad): eso es
+  contenido, no etiquetado de la audiencia.
+- **No se aplica** a la UI de la propia app: la regla de §4 sigue
+  prohibiendo **cualquier** mención, incluida "usuario/a tipo", en
+  `index.html`, `app.js`, `data.js`, `styles.css`,
+  `strings.<locale>.js`, `legal/` y cualquier otra superficie
+  visible. El eufemismo es para el exterior, no para lo que lee
+  quien visita la app.
+
+Razón: presentar el objetivo real del proyecto en documentación interna
+es útil y necesario; presentarlo en superficies de marketing o landing
+no es necesario ni respetuoso con la audiencia — "usuario/a tipo"
+permite describir en público para qué sirve la app (qué perfil tiene
+quien la usa) sin nombrar públicamente un grupo clínico.
+
 ## 5. Reglas de accesibilidad (obligatorias en cualquier cambio de UI)
 
 1. Lectura fácil: frases cortas, una idea por frase.
 2. Botones ≥ 64×64 px, espaciado ≥ 16 px.
-3. Alto contraste (mínimo AA de WCAG).
+3. Alto contraste (WCAG AA mínimo, AAA cuando sea posible) — ver
+   `CLAUDE.md` §"WCAG AAA baseline (suite-wide)" para los criterios
+   AAA que este proyecto honra y por qué la conformidad AAA completa
+   no es viable para una aplicación web.
 4. Audio solo cuando el diseño de la actividad lo requiere (botón 🔊 +
    `App.tts.speak()`), no como regla general para cada texto.
 5. Sin presión: sin temporizadores, puntuación negativa ni "game over".

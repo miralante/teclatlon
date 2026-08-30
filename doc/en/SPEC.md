@@ -36,6 +36,12 @@ needed and why the on-screen keyboard cannot be tapped (see
 
 ## 3. Non-negotiable principles
 
+Cognitive accessibility is a guiding principle: every piece of content
+follows **easy-read** guidelines and the **UNE 153101:2018 EX**
+(Spanish easy-read standard), aligned with Inclusion Europe's European
+guidelines. Comprehension outweighs technical accuracy expressed with
+difficulty.
+
 1. **Autonomy** — usable without a professional or family member present.
 2. **No pressure** — no timers, no negative scoring, no "game over".
    Mistakes get an encouraging message and unlimited retries.
@@ -59,10 +65,49 @@ needed and why the on-screen keyboard cannot be tapped (see
    (placement, step-by-step lessons, words, numbers, all-keys
    challenge, free writing) must add up to that coverage; a lesson
    that only ever drills the new letters it introduces is incomplete.
-   See [`technical.md` §"Sequence-game engine"](../technical.md) for
+   See [`technical.md` §"Sequence-game engine"](technical.md) for
    the runtime hook (`buildLessonReview` in `app.js`) that appends a
    review step at the end of each lesson so the accumulated coverage
    is enforced at play time.
+8. **Persuasive communication in service of learning** (closed list
+   in §3.7 below) — Teclatlon is a practice tool, not a consumer
+   product. The motivation to practice must be **intrinsic** (the
+   satisfaction of getting better at typing), never **extrinsic** or
+   based on pressure. The market patterns that rely on scarcity,
+   comparison or fear of losing **must not** appear anywhere in the
+   app. This rule is suite-wide and shared with Apptonomia, Calculia,
+   Okeymoney, Sinonimia, Memofun and Routime; the concrete list is
+   the same across the seven projects.
+
+### 3.7 The closed list of forbidden patterns
+
+The following patterns are part of the "pressure" Teclatlon disowns
+and **must not** appear anywhere in the app:
+
+- **Scarcity**: "Only 1 left!", "Last chance", "Hurry", countdown
+  timers, lessons or words that disappear.
+- **False urgency**: timers, races, "finish quickly", punishing
+  slowness. Connects to principle 2 of §3 ("No pressure") and to §5
+  below.
+- **Social proof turned into pressure**: leaderboards, ranks,
+  "others have already typed this" as social pressure, global
+  counters like "1,234 people have completed this lesson".
+- **Sunk-cost / FOMO**: "you'll lose your progress if you stop",
+  "don't lose your streak", forced retention messages, "we miss
+  you" notifications.
+- **Manipulative reciprocity / dark patterns**: forced signups,
+  pre-checked boxes, hidden costs, fake alerts, deceptive
+  confirmations (a "no" button that actually logs the user out or
+  wipes their progress).
+- **Exploitative loss aversion**: "you had 5 ⭐, you lost 2". Stars
+  and progress **only grow**, never shrink as punishment (see
+  principle 2 of §3 "No pressure").
+
+The default tone in Teclatlon is **calm and predictable**: the
+person practices because the activity is engaging, not because we
+are pushing them. When a pattern from this list shows up in a
+product or UI proposal, it is rejected by default; any exception is
+discussed in a PR with an explicit rationale.
 
 ## 4. Mandatory rule: zero mentions in the user-facing product
 
@@ -89,11 +134,58 @@ Where it applies and where it doesn't:
 This rule is checked automatically: `node scripts/check.js` fails if
 any of those terms show up in the files the end user sees.
 
+### 4.1 Public-facing wording: "usuario/a tipo" euphemism
+
+When presenting Teclatlon to **the general public** (press, talks,
+public READMEs that anyone can read, the metaproject landing at
+`apptonomia.uk`, social media copy, marketing material), the term
+**"intellectual disability" / "discapacidad intelectual"** must not be
+used as a way to describe the audience of the app — even when the
+surrounding text would otherwise be public. The accepted euphemism for
+that audience in those surfaces is **"usuario/a tipo"** (plural
+"usuarios/as tipo"), used as a generic profile marker, not as a label
+for any real person.
+
+Where the euphemism applies and where it doesn't:
+
+- **Applies** to any text that anyone outside the project can read
+  without authentication: `README.md`, `README.es.md`, the portal at
+  `apptonomia.uk`, public talks, social media copy, press notes,
+  marketing material. In these surfaces, refer to the audience as
+  "el/la usuario/a tipo" or "usuarios/as tipo" of the app.
+- **Does NOT apply** to this repo's internal documentation
+  (`CLAUDE.md`, `doc/en/SPEC.md`, `doc/es/SPEC.md`, `technical.md`,
+  [`roles.md`](roles.md), `CONTRIBUTING.md`, `CONTRIBUTING.es.md`) —
+  those files are read by maintainers and contributors, and
+  "intellectual disability" / "discapacidad intelectual" remains the
+  canonical term there, because the project needs an explicit,
+  unambiguous explanation of its real objective for whoever maintains
+  it.
+- **Does NOT apply** to project content that names a clinical concept
+  by its real-world name (e.g. a lesson that references a real
+  bureaucratic procedure related to disability): that is content, not
+  labelling of an audience.
+- **Does NOT apply** to the UI of the app itself: §4 above continues
+  to forbid **any** mention, including "usuario/a tipo", in
+  `index.html`, `app.js`, `data.js`, `styles.css`,
+  `strings.<locale>.js`, `legal/`, and any other user-facing surface.
+  The euphemism is for the outside world, not for what the visitor
+  reads on the site.
+
+Rationale: presenting the project's real objective in maintainer docs
+is useful and necessary; presenting it in marketing or landing
+surfaces is neither necessary nor respectful of the audience —
+"usuario/a tipo" lets public material describe what the app is for
+(who the typical profile is) without publicly naming a clinical group.
+
 ## 5. Accessibility rules (mandatory for any UI change)
 
 1. Easy Reading: short sentences, one idea per sentence.
 2. Buttons ≥ 64×64 px, spacing ≥ 16 px.
-3. High contrast (WCAG AA minimum).
+3. High contrast (WCAG AA minimum, AAA whenever possible) — see
+   `CLAUDE.md` §"WCAG AAA baseline (suite-wide)" for the AAA criteria
+   this project honours and why full AAA conformance is not feasible
+   for a web app.
 4. Audio only where the activity design calls for it (🔊 button +
    `App.tts.speak()`), not a blanket rule for every text.
 5. No pressure: no timers, negative scoring, or "game over".

@@ -22,6 +22,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Full history: scripts/check-version-bump.js diffs against the
+          # previous commit / PR base to catch a cached file changing
+          # without VERSION being bumped in sw.js.
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -30,3 +35,8 @@ jobs:
 
       - name: Run structural and i18n checks
         run: node scripts/check.js
+
+      - name: Check sw.js VERSION bump
+        env:
+          DIFF_BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+        run: node scripts/check-version-bump.js

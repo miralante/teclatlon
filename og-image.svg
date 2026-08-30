@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  PLACEHOLDER — REPLACE BEFORE PUBLIC DEPLOY.
+  Open Graph / Twitter cards require PNG/JPEG (1200×630). This SVG is
+  here so the meta tags resolve to a real file while a designer drafts
+  the final og-image.png. Browsers that follow the OG spec will NOT
+  display this SVG in previews (WhatsApp, LinkedIn, Twitter, Discord all
+  ignore SVG og:image). See scripts/build-head.js for the warning.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <rect width="1200" height="630" fill="#A6432C"/>
+  <text x="80" y="280" font-family="Atkinson Hyperlegible, Nunito, sans-serif"
+        font-size="96" font-weight="700" fill="#FFFFFF">Teclatlon</text>
+  <text x="80" y="380" font-family="Atkinson Hyperlegible, Nunito, sans-serif"
+        font-size="48" font-weight="400" fill="#FFFFFF" opacity="0.92">Mecanografía con el teclado del PC</text>
+  <text x="80" y="560" font-family="Atkinson Hyperlegible, Nunito, sans-serif"
+        font-size="32" font-weight="400" fill="#FFFFFF" opacity="0.7">teclatlon.apptonomia.uk</text>
+</svg>

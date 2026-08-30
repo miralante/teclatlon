@@ -30,6 +30,19 @@ Each subject has one canonical source: product in `SPEC.md`, technical matters i
   cache fallback for the app shell). The full cache contract — what
   each layer caches, when to bump `VERSION`, how to verify — lives in
   [`CLOUDFLARE.md` §"Cache contract"](../../CLOUDFLARE.md#cache-contract).
+- **En línea el usuario ve la versión nueva automáticamente al recargar.
+  No necesitas bumpear `VERSION` para que la actualización llegue.**
+  Solo importa bumpearlo para que el usuario offline vea la versión
+  actualizada cuando no tenga red.
+- **Bump `VERSION` on every committed change to a cached file.**
+  Same rule as Calculia and Apptonomia for homogeneity, even though
+  Teclatlon's network-first SW makes the impact offline-only. We keep
+  the rule uniform across all three projects so the directive is
+  one-line and the agent never has to reason about SW strategy per
+  project. Cost of bumping: one integer. Cost of skipping it: an
+  offline user is stuck on the old version forever, because the
+  `activate` handler only purges caches with a name different from
+  `VERSION`. Bump liberally.
 - **Code style**: ES5-style JS (`var`, classic functions, IIFE with
   `'use strict'`); identifiers, comments and commit messages always in
   English. UI text (`strings.es.js` / `strings.en.js`, lesson/word

@@ -280,6 +280,12 @@
   color: var(--color-text);
 }
 
+.ancla-hermana:hover,
+.ancla-hermana:focus-visible {
+  border-color: var(--accent);
+  color: var(--color-text);
+}
+
 /* Utilities */
 .centered { text-align: center; }
 .hidden { display: none !important; }

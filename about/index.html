@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es" data-i18n-title="pageTitle">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teclatlon — Presentación del proyecto</title>
+  <!-- Hidden route: not linked from the main menu and should not be indexed.
+       Aimed at anyone who wants to know what Teclatlon is: families,
+       professionals, journalists, funders or new contributors. -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Teclatlon: una aplicación de mecanografía con el teclado físico para que las personas con discapacidad intelectual aprendan a escribir por sí mismas.">
+  <meta name="theme-color" content="#FAF7F2">
+  <link rel="stylesheet" href="../assets/css/tokens.css">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container about">
+    <header class="cabecera-about">
+      <div class="idioma-selector" role="group" aria-label="Elegir idioma">
+        <button type="button" class="btn-idioma" id="btnIdiomaEs" data-locale="es" aria-pressed="false">🇪🇸 Español</button>
+        <button type="button" class="btn-idioma" id="btnIdiomaEn" data-locale="en" aria-pressed="false">🇬🇧 English</button>
+      </div>
+      <p class="aviso-ruta" data-i18n="routeNotice">Esta página no se enlaza desde la aplicación. Solo se llega
+        escribiendo la dirección.</p>
+      <img src="../assets/img/icono.svg" alt="" width="80" height="80" class="logo-about">
+      <h1>Teclatlon</h1>
+      <p class="lema" data-i18n="tagline">Una aplicación para la autonomía.</p>
+      <p class="entradilla"><span data-i18n="lead1">Teclatlon es una </span><strong data-i18n="leadStrong">aplicación web de mecanografía con teclado físico</strong><span data-i18n="lead2"> pensada para que las personas con discapacidad intelectual aprendan a escribir
+        con los diez dedos, sin presión y con respeto a su privacidad.</span></p>
+
+      <nav class="indice" aria-label="Índice de la presentación">
+        <a href="#origen" data-i18n="navOrigin">El origen</a>
+        <a href="#principios" data-i18n="navPrinciples">Los principios</a>
+        <a href="#tecnologia" data-i18n="navTech">Cómo está hecha</a>
+        <a href="#areas" data-i18n="navAreas">Las áreas de trabajo</a>
+        <a href="#hermanos" data-i18n="navSiblings">Proyectos hermanos</a>
+        <a href="#autoria" data-i18n="navAuthorship">Quiénes la hacen</a>
+        <a href="#colaborar" data-i18n="navCollaborate">Cómo ayudar</a>
+      </nav>
+    </header>
+
+    <main class="pila">
+
+      <section id="origen" class="card">
+        <h2 data-i18n="originTitle">El origen</h2>
+        <p><span data-i18n="originP1a">Teclatlon nace de una pregunta que se repite al final de cada sesión de
+          terapia ocupacional: </span><em data-i18n="originP1em">¿qué pasa entre una sesión y la siguiente?</em></p>
+        <p data-i18n="originP2">La persona con discapacidad intelectual practica con su terapeuta en consulta, pero
+          después está sola en casa, en el colegio o en su tiempo libre. Queríamos una
+          herramienta que respetase esa autonomía, que diese seguridad a las familias y que
+          sirviese a la terapeuta como complemento entre sesiones, no como sustituto.</p>
+        <p data-i18n="originP3">Esta aplicación es el resultado: una sola herramienta de mecanografía, con
+          varios modos de teclado y por colores por dedo, en Lectura Fácil y accesible,
+          pensada para que la persona usuaria pueda practicar a su propio ritmo.</p>
+      </section>
+
+      <section id="principios" class="pila">
+        <h2 data-i18n="principlesTitle">Los principios que no negociamos</h2>
+        <p data-i18n="principlesIntro">Estas ideas están escritas primero en el código y después en los textos. Si una
+          decisión las rompe, esa decisión está mal.</p>
+
+        <div class="principios-grid">
+          <article class="card principio" style="--acento: var(--accent);">
+            <h3 data-i18n="principleAutonomyTitle">🤲 Autonomía real</h3>
+            <p data-i18n="principleAutonomyText">La persona usuaria puede usar la aplicación sin un profesional al lado. Si
+              necesita ayuda constante, algo no está bien resuelto.</p>
+          </article>
+
+          <article class="card principio" style="--acento: var(--color-encourage);">
+            <h3 data-i18n="principleNoPressureTitle">🚫 Sin presión</h3>
+            <p data-i18n="principleNoPressureText">Nada de cronómetros, ni "game over", ni puntuaciones negativas. El error se
+              responde con ánimo y se puede reintentar sin límite.</p>
+          </article>
+
+          <article class="card principio" style="--acento: var(--color-finger-pinky);">
+            <h3 data-i18n="principlePrivacyTitle">🔒 Privacidad por defecto</h3>
+            <p data-i18n="principlePrivacyText">Sin registro, sin cookies, sin analítica, sin cuentas. Todo el progreso se
+              guarda únicamente en el dispositivo de la persona.</p>
+          </article>
+
+          <article class="card principio" style="--acento: var(--color-finger-middle);">
+            <h3 data-i18n="principleEasyReadTitle">📖 Lectura Fácil</h3>
+            <p data-i18n="principleEasyReadText">Frases cortas, una idea por frase, vocabulario cotidiano. Cero tecnicismos en
+              la interfaz que ve la persona usuaria.</p>
+          </article>
+
+          <article class="card principio" style="--acento: var(--color-success);">
+            <h3 data-i18n="principleAccessibilityTitle">♿ Accesibilidad universal</h3>
+            <p data-i18n="principleAccessibilityText">Teclado físico de gran tamaño con teclas de color por dedo, alto contraste,
+              audio solo cuando la gamificación o el diseño de la actividad lo requiera
+              (p. ej. escuchar la letra a escribir), navegación completa por teclado,
+              y respeto al modo de pocas animaciones del sistema.</p>
+          </article>
+
+          <article class="card principio" style="--acento: var(--color-hand-right);">
+            <h3 data-i18n="principleSoberTechTitle">🧱 Tecnología sobria</h3>
+            <p data-i18n="principleSoberTechText">HTML, CSS y JavaScript sin frameworks. Funciona sin internet y se puede
+              instalar como aplicación. Código abierto, en un repositorio público.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="tecnologia" class="card">
+        <h2 data-i18n="techTitle">Cómo está hecha</h2>
+        <p><span data-i18n="techIntro1">Teclatlon es una aplicación web instalable (PWA) compuesta por más de
+          </span><strong data-i18n="techIntroStrong">5 páginas HTML estáticas</strong><span data-i18n="techIntro2">: la landing, el teclado virtual y rutas
+          ocultas para familias, profesionales y mantenimiento.</span></p>
+        <ul>
+          <li><strong data-i18n="techItem1Label">Sin servidor propio</strong>: <span data-i18n="techItem1Text">es un conjunto de archivos servidos por
+            un hosting estático. No hay backend, ni bases de datos, ni API propia.</span></li>
+          <li><strong data-i18n="techItem2Label">Funciona sin conexión</strong>: <span data-i18n="techItem2Text">una vez instalada, abre aunque no haya
+            internet gracias al service worker y al caché local.</span></li>
+          <li><strong><span data-i18n="techItem3Label">Persistencia solo en</span> <code>localStorage</code></strong>: <span data-i18n="techItem3Text">el progreso
+            (estrellas, letras practicadas, modo de teclado elegido) vive en el navegador
+            del dispositivo. Nunca se envía a ningún sitio.</span></li>
+          <li><strong data-i18n="techItem4Label">Sin frameworks ni build step</strong>: <span data-i18n="techItem4Text1">JavaScript clásico compatible
+            con navegadores antiguos y con el protocolo</span> <code>file://</code><span data-i18n="techItem4Text2">. Pensado para
+            que un técnico novel pueda leer y modificar una lección sin sorpresas.</span></li>
+          <li><strong data-i18n="techItem5Label">Código abierto (licencia MIT)</strong>: <span data-i18n="techItem5Text">cualquiera puede leerlo,
+            auditarlo y proponer mejoras. Las decisiones de producto están escritas en
+            este repositorio, no en presentaciones cerradas.</span></li>
+          <li><strong data-i18n="techItem6Label">Internacionalización desde el inicio</strong>: <span data-i18n="techItem6Text">cada texto vive en un
+            archivo por idioma. Hoy Teclatlon está disponible en español de España e inglés.</span></li>
+          <li><strong data-i18n="techItem7Label">Dependencias externas: ninguna</strong><span data-i18n="techItem7Text">, excepto la descarga de las
+            fuentes tipográficas Atkinson Hyperlegible y Nunito (usadas por su alta
+            legibilidad).</span></li>
+        </ul>
+      </section>
+
+      <section id="areas" class="card">
+        <h2 data-i18n="areasTitle">Las áreas de trabajo</h2>
+        <p><span data-i18n="areasIntro1">Una sola herramienta, pero la mecanografía se organiza en </span><strong data-i18n="areasIntroStrong">seis bloques por mano y dedo</strong><span data-i18n="areasIntro2">, cada
+          uno con su color identificativo en el teclado virtual. Cada lección trabaja un
+          bloque, y la persona avanza a su ritmo: puede empezar por el índice y subir
+          hasta escribir con los diez dedos.</span></p>
+
+        <div class="areas-grid">
+          <article class="area" style="--acento: var(--accent);">
+            <h3 data-i18n="areaLeftHandTitle">✋ Mano izquierda</h3>
+            <p data-i18n="areaLeftHandText">Las cinco teclas que se escriben con la mano izquierda (y los pulgares para el espacio).</p>
+            <p class="area-cifra" data-i18n="areaLeftHandCount">5 teclas</p>
+          </article>
+
+          <article class="area" style="--acento: var(--color-hand-right);">
+            <h3 data-i18n="areaRightHandTitle">🤚 Mano derecha</h3>
+            <p data-i18n="areaRightHandText">Las cinco teclas que se escriben con la mano derecha.</p>
+            <p class="area-cifra" data-i18n="areaRightHandCount">5 teclas</p>
+          </article>
+
+          <article class="area" style="--acento: var(--color-finger-ring);">
+            <h3 data-i18n="areaRingFingerTitle">💍 Dedo anular</h3>
+            <p data-i18n="areaRingFingerText">Las teclas que pulsan los dedos anulares (uno en cada mano).</p>
+            <p class="area-cifra" data-i18n="areaRingFingerCount">2 teclas</p>
+          </article>
+
+          <article class="area" style="--acento: var(--color-finger-middle);">
+            <h3 data-i18n="areaMiddleFingerTitle">🖕 Dedo corazón</h3>
+            <p data-i18n="areaMiddleFingerText">Las teclas que pulsan los dedos corazón (uno en cada mano).</p>
+            <p class="area-cifra" data-i18n="areaMiddleFingerCount">2 teclas</p>
+          </article>
+
+          <article class="area" style="--acento: var(--color-finger-pinky);">
+            <h3 data-i18n="areaPinkyTitle">🤞 Meñique</h3>
+            <p data-i18n="areaPinkyText">Las teclas que pulsan los meñiques (uno en cada mano).</p>
+            <p class="area-cifra" data-i18n="areaPinkyCount">2 teclas</p>
+          </article>
+
+          <article class="area" style="--acento: var(--color-encourage);">
+            <h3 data-i18n="areaModesTitle">🎹 Modos de teclado</h3>
+            <p data-i18n="areaModesText">Teclado simple, normal, extendido y con colores por dedo.</p>
+            <p class="area-cifra" data-i18n="areaModesCount">4 modos</p>
+          </article>
+        </div>
+
+        <p class="nota-cifras"><span data-i18n="areasNote1">Total: </span><strong data-i18n="areasNoteStrong">1 herramienta, varias lecciones</strong><span data-i18n="areasNote2">, organizadas para que la persona elija por
+          interés, no por obligación. El orden del menú no es un itinerario: cada persona
+          hace su propio camino.</span></p>
+      </section>
+
+      <section id="hermanos" class="card">
+        <h2 data-i18n="siblingsTitle">Proyectos hermanos</h2>
+        <p data-i18n="siblingsIntro">Teclatlon es uno más de un pequeño grupo de proyectos hermanos: mismo equipo,
+          misma filosofía de accesibilidad y sin servidor propio. Cada uno es un servicio
+          independiente, con su propio dominio, al que se puede llegar desde aquí.</p>
+        <div class="siblings-grid">
+          <a class="sibling" href="https://routime.miralante.workers.dev" target="_blank" rel="noopener noreferrer">
+            <span class="picto" aria-hidden="true">🌿</span>
+            <span class="sibling-texto">
+              <span class="nombre" data-i18n="siblingRoutimeName">Routime</span>
+              <span class="detalle" data-i18n="siblingRoutimeText">Rutinas y autonomía del día a día.</span>
+            </span>
+            <span class="flecha-externa" aria-hidden="true">↗</span>
+            <span class="sr-only" data-i18n="siblingLinkHint">Se abre en una pestaña nueva.</span>
+          </a>
+          <a class="sibling" href="https://calculia.miralante.workers.dev" target="_blank" rel="noopener noreferrer">
+            <span class="picto" aria-hidden="true">🔢</span>
+            <span class="sibling-texto">
+              <span class="nombre" data-i18n="siblingCalculiaName">Calculia</span>
+              <span class="detalle" data-i18n="siblingCalculiaText">Cálculo y razonamiento lógico.</span>
+            </span>
+            <span class="flecha-externa" aria-hidden="true">↗</span>
+            <span class="sr-only" data-i18n="siblingLinkHint">Se abre en una pestaña nueva.</span>
+          </a>
+          <a class="sibling" href="https://memofun.miralante.workers.dev" target="_blank" rel="noopener noreferrer">
+            <span class="picto" aria-hidden="true">🧠</span>
+            <span class="sibling-texto">
+              <span class="nombre" data-i18n="siblingMemofunName">Memofun</span>
+              <span class="detalle" data-i18n="siblingMemofunText">Memoria y atención.</span>
+            </span>
+            <span class="flecha-externa" aria-hidden="true">↗</span>
+            <span class="sr-only" data-i18n="siblingLinkHint">Se abre en una pestaña nueva.</span>
+          </a>
+          <a class="sibling" href="https://okeymoney.miralante.workers.dev" target="_blank" rel="noopener noreferrer">
+            <span class="picto" aria-hidden="true">💶</span>
+            <span class="sibling-texto">
+              <span class="nombre" data-i18n="siblingOkeymoneyName">Okeymoney</span>
+              <span class="detalle" data-i18n="siblingOkeymoneyText">Finanzas personales y autonomía cotidiana.</span>
+            </span>
+            <span class="flecha-externa" aria-hidden="true">↗</span>
+            <span class="sr-only" data-i18n="siblingLinkHint">Se abre en una pestaña nueva.</span>
+          </a>
+          <a class="sibling" href="https://sinonimia.miralante.workers.dev" target="_blank" rel="noopener noreferrer">
+            <span class="picto" aria-hidden="true">📖</span>
+            <span class="sibling-texto">
+              <span class="nombre" data-i18n="siblingSinonimiaName">Sinonimia</span>
+              <span class="detalle" data-i18n="siblingSinonimiaText">Diccionario en lectura fácil.</span>
+            </span>
+            <span class="flecha-externa" aria-hidden="true">↗</span>
+            <span class="sr-only" data-i18n="siblingLinkHint">Se abre en una pestaña nueva.</span>
+          </a>
+        </div>
+      </section>
+
+      <section id="autoria" class="card">
+        <h2 data-i18n="authorshipTitle">Quiénes la hacen</h2>
+        <p><span data-i18n="authorshipP1a">Teclatlon es una iniciativa de </span><strong>The Naked Frame</strong><span data-i18n="authorshipP1b">, un estudio
+          independiente que trabaja en proyectos abiertos con impacto social y educativo.</span></p>
+        <p data-i18n="authorshipP2">La aplicación se construye con la participación de personas con discapacidad
+          intelectual, familias, terapeutas ocupacionales y profesorado, que prueban cada
+          cambio y revisan el contenido antes de que llegue a producción.</p>
+        <p data-i18n="authorshipP3">El código, el texto y las decisiones se publican en abierto para que cualquier
+          persona o equipo pueda auditarlos, aprender de ellos y adaptarlos a otros
+          contextos.</p>
+      </section>
+
+      <section id="colaborar" class="card">
+        <h2 data-i18n="collaborateTitle">Cómo ayudar</h2>
+        <p data-i18n="collaborateIntro">Teclatlon es un proyecto abierto. Hay formas de colaborar que no requieren
+          programar:</p>
+        <ul>
+          <li><strong data-i18n="collaborateItem1Label">Probar y compartir feedback</strong>: <span data-i18n="collaborateItem1Text">las familias, terapeutas y
+            personas usuarias que prueban la aplicación y cuentan qué funciona y qué no,
+            son la pieza clave del proyecto. Los errores de Lectura Fácil, los tonos poco
+            amables y las lecciones que cuesta entender se detectan usándolas.</span></li>
+          <li><strong data-i18n="collaborateItem2Label">Proponer lecciones</strong>: <span data-i18n="collaborateItem2Text">si una habilidad de mecanografía no
+            está cubierta o se trabaja de una forma mejorable, se puede proponer una
+            lección nueva. La descripción didáctica la valida un profesional antes de
+            pasar a código.</span></li>
+          <li><strong data-i18n="collaborateItem3Label">Revisar contenido</strong>: <span data-i18n="collaborateItem3Text">traducciones, ejemplos culturalmente
+            adecuados, explicaciones accesibles. La interfaz que ve la persona usuaria es
+            en Lectura Fácil y se beneficia especialmente de ojos ajenos.</span></li>
+          <li><strong data-i18n="collaborateItem4Label">Contribuir código</strong>: <span data-i18n="collaborateItem4Text">el repositorio es público. Cambios
+            pequeños (un icono, una traducción, una corrección de estilo) y grandes
+            (lecciones nuevas, accesibilidad, soporte para más idiomas) se aceptan
+            siempre que respeten los principios del proyecto.</span></li>
+          <li><strong data-i18n="collaborateItem5Label">Difundir</strong>: <span data-i18n="collaborateItem5Text">contar que existe. Muchas familias, profesionales
+            y centros no saben que hay herramientas como esta hasta que alguien se la
+            enseña.</span></li>
+        </ul>
+        <p><span data-i18n="collaborateOutro1">Toda la documentación necesaria para empezar está en los archivos</span>
+          <code>CONTRIBUTING.md</code> <span data-i18n="collaborateOutro3">y</span> <code>doc/</code>
+          <span data-i18n="collaborateOutro4">del repositorio.</span></p>
+      </section>
+
+    </main>
+
+    <footer class="pie-about">
+      <a class="btn btn-secundario" href="../index.html" data-i18n="footerActivities">Ir a la aplicación</a>
+      <a class="btn btn-secundario" href="../legal/index.html" data-i18n="core.dataProtection">Protección de datos</a>
+    </footer>
+  </div>
+
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/i18n.js"></script>
+  <script src="strings.es.js"></script>
+  <script src="strings.en.js"></script>
+  <script>
+    (function () {
+      'use strict';
+      function paintLanguageSelector() {
+        var active = App.i18n.locale();
+        document.getElementById('btnIdiomaEs').setAttribute('aria-pressed', String(active === 'es'));
+        document.getElementById('btnIdiomaEn').setAttribute('aria-pressed', String(active === 'en'));
+      }
+      document.getElementById('btnIdiomaEs').addEventListener('click', function () { App.i18n.setLocale('es'); });
+      document.getElementById('btnIdiomaEn').addEventListener('click', function () { App.i18n.setLocale('en'); });
+      paintLanguageSelector();
+    })();
+  </script>
+  <script>
+    /* Register the SW from this entry point so it is active for any later
+       navigation, matching what the index page already does. */
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('../sw.js').catch(function () {});
+    }
+  </script>
+</body>
+</html>

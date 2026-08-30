@@ -31,6 +31,19 @@ Cada tema tiene una fuente canónica: producto en `SPEC.md`, cuestiones técnica
   caché de respaldo para la app shell). El contrato completo de
   caché — qué cachea cada capa, cuándo bumpear `VERSION`, cómo
   verificar — vive en [`CLOUDFLARE.md` §"Contrato de caché"](../../CLOUDFLARE.md#contrato-de-caché).
+- **En línea el usuario ve la versión nueva automáticamente al recargar.
+  No necesitas bumpear `VERSION` para que la actualización llegue.**
+  Solo importa bumpearlo para que el usuario offline vea la versión
+  actualizada cuando no tenga red.
+- **Sube `VERSION` en cada commit que toque un archivo cacheado.**
+  Misma regla que Calculia y Apptonomia, por homogeneidad, aunque
+  en Teclatlon (network-first) el impacto es solo offline. Mantenemos
+  la regla uniforme en los tres proyectos para que la directriz sea
+  de una línea y el agente nunca tenga que razonar caso por caso
+  sobre la estrategia del SW. Coste de subir: un entero. Coste de no
+  subirlo: el usuario offline queda atrapado en la versión vieja para
+  siempre, porque el handler `activate` solo purga cachés con nombre
+  distinto de `VERSION`. Sube liberalmente.
 - **Estilo de código**: JS estilo ES5 (`var`, funciones clásicas, IIFE
   con `'use strict'`); identificadores, comentarios y mensajes de commit
   siempre en inglés. El texto de interfaz (`strings.es.js` /

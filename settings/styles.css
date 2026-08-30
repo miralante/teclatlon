@@ -1,0 +1,114 @@
+/* Teclatlon — Settings page styles.
+   Reuses tokens from ../assets/css/tokens.css and base
+   classes from ../assets/css/components.css. This file
+   only adds the bits specific to the settings route. */
+.settings {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 4rem;
+}
+
+.cabecera-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.idioma-selector {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-idioma {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--borde, #d0d0d0);
+  border-radius: 6px;
+  background: var(--fondo-tarjeta, #fff);
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.btn-idioma[aria-pressed="true"] {
+  background: var(--acento, #5a8fbe);
+  color: #fff;
+  border-color: var(--acento, #5a8fbe);
+}
+
+.aviso-ruta {
+  font-size: 0.85rem;
+  color: var(--texto-secundario, #555);
+  font-style: italic;
+  margin: 0;
+}
+
+.entradilla {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.pila {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.card.guia {
+  border-left: 4px solid var(--acento, #5a8fbe);
+}
+
+.btn-peligro {
+  background: var(--error, #b03a3a);
+  color: #fff;
+  border: 0;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.btn-peligro:hover,
+.btn-peligro:focus {
+  filter: brightness(1.1);
+}
+
+.btn-secundario {
+  background: var(--fondo-tarjeta, #fff);
+  color: var(--texto, #222);
+  border: 1px solid var(--borde, #d0d0d0);
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.feedback {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  min-height: 1.2em;
+}
+
+.feedback.acierto {
+  color: var(--ok, #1e7a3a);
+}
+
+.feedback.animo {
+  color: var(--texto-secundario, #555);
+}
+
+.pie {
+  font-size: 0.85rem;
+  color: var(--texto-secundario, #555);
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+#listaEstado {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+#listaEstado li {
+  margin: 0.25rem 0;
+}

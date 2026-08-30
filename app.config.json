@@ -1,0 +1,21 @@
+{
+  "name": "Teclatlon",
+  "domain": "teclatlon.apptonomia.uk",
+  "title": "Teclatlon — Mecanografía con el teclado del ordenador, a tu ritmo",
+  "description": "Teclatlon es una aplicación web gratuita y sin registro para aprender mecanografía con el teclado del ordenador: colocación de dedos, lecciones por letra, palabras, números y escritura libre. Pensada para usarlo desde un PC o portátil. Parte de la suite Apptonomia.",
+  "keywords": "teclatlon, apptonomia, mecanografía, typing, teclado, touch typing, colocación de dedos, escribir a máquina, easy read, lectura fácil, accesibilidad cognitiva, aplicaciones gratuitas sin registro, ordenador, pc",
+  "author": "Apptonomia",
+  "ogSiteName": "Apptonomia",
+  "ogDescription": "Aprende mecanografía con el teclado del ordenador: dedos, letras, palabras, números y escritura libre. Gratis y sin registro.",
+  "twitterDescription": "Aprende mecanografía con el teclado del ordenador. Gratis y sin registro.",
+  "ogImageAlt": "Teclatlon: mecanografía con el teclado del ordenador",
+  "ogAccent": "#A6432C",
+  "ogAccentInk": "#FFFFFF",
+  "ogTagline": "Mecanografía con el teclado del PC",
+  "themeColor": "#FAF7F2",
+  "colorScheme": "light",
+  "ogImageAsset": "og-image.svg",
+  "iconAsset": "assets/img/icono.svg",
+  "manifest": "manifest.json",
+  "hasItemList": false
+}

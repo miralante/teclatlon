@@ -37,7 +37,12 @@
         listenText: 'Escuchar el texto',
         rest: '¡Llevas un buen rato! Puedes descansar si quieres.',
         loading: 'Cargando…',
-        dataProtection: 'Teclatlon no recolecta datos'
+        dataProtection: 'Teclatlon no recolecta datos',
+        otraAppLinkHint: 'Se abre en otra aplicación, en una pestaña nueva.',
+        apptonomiaNombre: 'Apptonomia',
+        calculiaNombre: 'Calculia',
+        okeymoneyNombre: 'Okeymoney',
+        sinonimiaNombre: 'Sinonimia'
       },
       feedback: {
         success: ['¡Muy bien!', '¡Genial!', '¡Lo has conseguido!', '¡Estupendo!', '¡Sigue así!'],
@@ -57,7 +62,12 @@
         listenText: 'Listen to the text',
         rest: 'You have been playing a while! You can rest if you want.',
         loading: 'Loading…',
-        dataProtection: 'Teclatlon does not collect data'
+        dataProtection: 'Teclatlon does not collect data',
+        otraAppLinkHint: 'Opens another app, in a new tab.',
+        apptonomiaNombre: 'Apptonomia',
+        calculiaNombre: 'Calculia',
+        okeymoneyNombre: 'Okeymoney',
+        sinonimiaNombre: 'Sinonimia'
       },
       feedback: {
         success: ['Well done!', 'Great!', 'You got it!', 'Fantastic!', 'Keep it up!'],

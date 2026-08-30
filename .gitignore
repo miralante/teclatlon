@@ -7,11 +7,15 @@ node_modules/
 # Local editor / IDE / AI assistant metadata — local to the dev machine,
 # not part of the public repo.
 .vscode/
-.idea/.claude/.github/copilot-instructions.md
+.idea/
+.claude/
+.github/copilot-instructions.md
 
 **/graphify-out/
 .graphify*
 .graphifyignore
+# redirected output of scripts/check.js (logs of previous runs)
+/scripts/check.out
 
 # Secrets and credentials — never commit
 .env
