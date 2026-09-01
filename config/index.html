@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es" data-i18n-title="title">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ajustes | Teclatlon</title>
+  <!-- Hidden route: not linked from the main menu and should not be indexed.
+       Aimed at families, teachers or therapists managing the device. -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#FAF7F2">
+  <link rel="stylesheet" href="../assets/css/tokens.css">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container settings">
+    <header class="cabecera-settings">
+      <div class="idioma-selector" role="group" aria-label="Elegir idioma">
+        <button type="button" class="btn-idioma" id="btnIdiomaEs" data-locale="es" aria-pressed="false">🇪🇸 Español</button>
+        <button type="button" class="btn-idioma" id="btnIdiomaEn" data-locale="en" aria-pressed="false">🇬🇧 English</button>
+      </div>
+      <p class="aviso-ruta" data-i18n="routeNotice">Página de ajustes. No aparece en el menú de la aplicación:
+        solo se llega escribiendo esta dirección.</p>
+      <h1 data-i18n="title">⚙️ Teclatlon — Ajustes</h1>
+      <p class="entradilla" data-i18n="intro">Aquí se puede borrar lo guardado en este navegador. Pensada para
+        quien gestiona el dispositivo (familia, profesorado), no para la persona usuaria.</p>
+    </header>
+
+    <main class="pila">
+
+      <section id="estado" class="card">
+        <h2 data-i18n="stateTitle">Estado actual de este navegador</h2>
+        <ul id="listaEstado">
+          <li data-i18n="core.loading">Cargando…</li>
+        </ul>
+      </section>
+
+      <section id="datos-persona" class="card guia">
+        <h2 data-i18n="personalDataTitle">Borrar los datos de la persona</h2>
+        <p data-i18n="personalDataIntro">Borra el nombre guardado, el tamaño del texto, el tema visual y el modo foco.
+          <strong data-i18n="personalDataKeeps">Se conservan</strong> las estrellas y las lecciones completadas.</p>
+        <button type="button" id="btnBorrarPersona" class="btn btn-secundario" data-i18n="btnResetPersonal">Borrar mis datos personales</button>
+        <p id="feedbackPersona" class="feedback" aria-live="polite"></p>
+      </section>
+
+      <section id="borrar-todo" class="card guia">
+        <h2 data-i18n="wipeTitle">Borrar todo</h2>
+        <p data-i18n="wipeIntro">Borra <strong>todas</strong> las claves bajo <code>teclatlon:</code>:
+          nombre, estrellas, lecciones completadas, preferencias, idioma. Equivale a abrir la app por primera vez.</p>
+        <button type="button" id="btnBorrarTodo" class="btn btn-peligro" data-i18n="btnResetAll">Borrar todo lo guardado</button>
+        <p id="feedbackTodo" class="feedback" aria-live="polite"></p>
+      </section>
+
+      <p class="pie" data-i18n="footer">Nada sale de este navegador. No hay cuenta, ni servidor, ni copia de seguridad en la nube.</p>
+
+    </main>
+  </div>
+
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/i18n.js"></script>
+  <script src="strings.es.js"></script>
+  <script src="strings.en.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -17,6 +17,14 @@ node_modules/
 # redirected output of scripts/check.js (logs of previous runs)
 /scripts/check.out
 
+# Transient scratch files from local development sessions (not part of
+# the published repo). The 'CLAUDE.md.orig.bak' file is a one-off
+# backup of CLAUDE.md before a rewrite; '_*.txt' / '_*.log' are
+# redirected stdout from ad-hoc terminal commands.
+/CLAUDE.md.orig.bak
+/_*.txt
+/_*.log
+
 # Secrets and credentials — never commit
 .env
 .env.*
