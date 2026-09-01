@@ -1,0 +1,231 @@
+﻿/* ==========================================================================
+   Teclatlon — Subpages (/legal and /about) stylesheet
+   Consolidated from the previous standalone legal/styles.css and
+   about/styles.css after the SPA merge on 2026-09. Rules are scoped
+   by the .sp-legal / .sp-about ancestor selectors so they don't
+   collide with the main app's selectors (which used the same class
+   names by accident — .cabecera-* was reused on the landing page).
+
+   Tokens come from assets/css/tokens.css. Adding new rules: prefer
+   the existing token palette; do not introduce hardcoded colours.
+   ========================================================================== */
+
+
+/* ----- legal ----------------------------------------------------------- */
+
+.sp-legal { max-width: 880px; }
+
+.sp-legal .cabecera { padding: var(--space-large) 0 var(--space-large); text-align: center; }
+.sp-legal .cabecera h1 {
+  font-size: var(--text-title);
+  margin: 8px 0 0;
+  letter-spacing: -0.02em;
+}
+.sp-legal .lema {
+  font-size: var(--text-large);
+  font-weight: 700;
+  color: var(--color-text-soft);
+  margin: 8px 0 0;
+}
+.sp-legal .entradilla {
+  font-size: var(--text-base);
+  max-width: 640px;
+  margin: var(--space) auto 0;
+  color: var(--color-text);
+}
+.sp-legal .logo { margin-top: 8px; }
+
+.sp-legal .indice {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  justify-content: center; margin-top: var(--space);
+}
+.sp-legal .indice a {
+  padding: 10px var(--space); border-radius: var(--radius);
+  background: var(--color-surface); border: 2px solid var(--color-border);
+  color: var(--color-text); text-decoration: none;
+  font-size: var(--text-small); font-weight: 700;
+}
+.sp-legal .indice a:hover,
+.sp-legal .indice a:focus { border-color: var(--color-focus); }
+
+.sp-legal section { padding: var(--space-large); }
+.sp-legal section h2 { margin-bottom: 12px; }
+.sp-legal section ul { padding-left: var(--space-large); }
+.sp-legal section li { margin-bottom: 8px; }
+.sp-legal section code {
+  background: var(--color-bg); padding: 2px 6px; border-radius: 6px;
+  font-size: 0.95em; border: 1px solid var(--color-border);
+  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+}
+
+.sp-legal .pie {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space);
+  padding: var(--space-large) 0 40px;
+}
+
+@media (max-width: 640px) {
+  .sp-legal .cabecera h1 { font-size: 2em; }
+  .sp-legal .lema { font-size: 1.2em; }
+  .sp-legal section { padding: var(--space); }
+}
+
+
+/* ----- about ----------------------------------------------------------- */
+
+.sp-about { max-width: 880px; }
+
+.sp-about .cabecera { padding: var(--space-large) 0 var(--space-large); text-align: center; }
+.sp-about .cabecera h1 {
+  font-size: var(--text-title);
+  margin: 8px 0 0;
+  letter-spacing: -0.02em;
+}
+.sp-about .lema {
+  font-size: var(--text-large);
+  font-weight: 700;
+  color: var(--color-text-soft);
+  margin: 8px 0 0;
+}
+.sp-about .entradilla {
+  font-size: var(--text-base);
+  max-width: 640px;
+  margin: var(--space) auto 0;
+  color: var(--color-text);
+}
+.sp-about .logo { margin-top: 8px; }
+
+.sp-about .aviso-ruta {
+  display: inline-block; padding: 8px var(--space);
+  background: var(--accent-soft); color: var(--color-text);
+  border: 2px solid var(--accent); border-radius: var(--radius);
+  font-size: var(--text-small); font-weight: 700;
+  margin-bottom: var(--space);
+}
+
+.sp-about .indice {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  justify-content: center; margin-top: var(--space);
+}
+.sp-about .indice a {
+  padding: 10px var(--space); border-radius: var(--radius);
+  background: var(--color-surface); border: 2px solid var(--color-border);
+  color: var(--color-text); text-decoration: none;
+  font-size: var(--text-small); font-weight: 700;
+}
+.sp-about .indice a:hover,
+.sp-about .indice a:focus { border-color: var(--color-focus); }
+
+.sp-about section { padding: var(--space-large); }
+.sp-about section h2 { margin-bottom: 12px; }
+.sp-about section ul { padding-left: var(--space-large); }
+.sp-about section li { margin-bottom: 8px; }
+.sp-about section em { color: var(--color-text-soft); }
+.sp-about section code {
+  background: var(--color-bg); padding: 2px 6px; border-radius: 6px;
+  font-size: 0.95em; border: 1px solid var(--color-border);
+  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+}
+
+.sp-about .principios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space);
+}
+.sp-about .principio {
+  border-left: 8px solid var(--acento, var(--accent));
+  padding: var(--space-large);
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  border-top: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+.sp-about .principio h3 { color: var(--acento, var(--accent)); margin-bottom: 8px; }
+.sp-about .principio p { color: var(--color-text); }
+
+.sp-about .areas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space);
+  margin-top: var(--space);
+}
+.sp-about .area {
+  padding: var(--space-large);
+  border-left: 8px solid var(--acento, var(--accent));
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  border-top: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+.sp-about .area h3 { color: var(--acento, var(--accent)); margin-bottom: 6px; font-size: 1.1em; }
+.sp-about .area p { color: var(--color-text); margin-bottom: 4px; }
+.sp-about .area-cifra {
+  margin-top: 12px;
+  font-weight: 700;
+  color: var(--color-text-soft);
+}
+.sp-about .nota-cifras {
+  margin-top: var(--space);
+  text-align: center;
+  color: var(--color-text-soft);
+  font-size: var(--text-small);
+}
+
+.sp-about .siblings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space);
+  margin-top: var(--space);
+}
+.sp-about .sibling {
+  display: flex;
+  align-items: center;
+  gap: var(--space);
+  padding: var(--space);
+  background: var(--color-surface);
+  border: 3px solid var(--color-border);
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: var(--color-text);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.sp-about .sibling:hover,
+.sp-about .sibling:focus-visible {
+  border-color: var(--accent);
+  transform: scale(1.02);
+}
+.sp-about .sibling .picto { font-size: 36px; flex-shrink: 0; }
+.sp-about .sibling-texto { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.sp-about .sibling .nombre { font-weight: 800; color: var(--accent); }
+.sp-about .sibling .detalle { font-size: var(--text-small); color: var(--color-text-soft); }
+.sp-about .sibling .flecha-externa { font-size: 1.2em; color: var(--color-text-soft); flex-shrink: 0; }
+
+.sp-about .pie {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space);
+  padding: var(--space-large) 0 40px;
+}
+
+@media (max-width: 640px) {
+  .sp-about .cabecera h1 { font-size: 2em; }
+  .sp-about .lema { font-size: 1.2em; }
+  .sp-about section { padding: var(--space); }
+  .sp-about .principios-grid,
+  .sp-about .areas-grid { grid-template-columns: 1fr; }
+}
+
+
+/* ----- Shared across both subpages ------------------------------------ */
+
+.sp-idioma { display: flex; flex-wrap: wrap; gap: var(--space); justify-content: center; margin-bottom: var(--space); }
+.sp-idioma .btn-idioma {
+  min-height: var(--button-min); min-width: 64px; padding: 0 var(--space);
+  font-family: var(--font); font-size: var(--text-base); font-weight: 700;
+  color: var(--color-text); background: var(--color-surface);
+  border: 3px solid var(--color-border); border-radius: var(--radius);
+  cursor: pointer;
+}
+.sp-idioma .btn-idioma:hover { border-color: var(--color-focus); }
+.sp-idioma .btn-idioma[aria-pressed="true"] {
+  border-color: var(--color-focus); background: var(--accent-soft);
+}

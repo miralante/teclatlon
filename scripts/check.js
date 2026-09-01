@@ -139,6 +139,11 @@ function flattenKeys(obj, prefix) {
 }
 
 function compareLocales(dir, label) {
+  /* Tolerant of absent directories: a folder may not exist if the
+     project has merged its strings into the root dict (e.g. Teclatlon
+     dropped legal/ and about/ after the 2026-09 SPA merge). In that
+     case there is nothing to compare, and we skip silently. */
+  if (!fs.existsSync(dir)) return;
   var entries = fs.readdirSync(dir)
     .filter(function (name) { return /^strings\.[a-zA-Z0-9-]+\.js$/.test(name); });
   if (entries.length < 2) return;

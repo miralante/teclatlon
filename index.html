@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es" data-i18n-title="title">
 <head>
   <!-- build:head:start -->
@@ -79,6 +79,12 @@
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/components.css">
   <link rel="stylesheet" href="styles.css">
+  <!-- Subpages (formerly legal/ and about/, merged into the SPA on
+       2026-09). Loaded after styles.css so its rules can override
+       the main app's, but the selector specificity inside
+       assets/css/subpages.css keeps everything scoped to .sp-legal
+       and .sp-about so they don't affect the rest of the app. -->
+  <link rel="stylesheet" href="assets/css/subpages.css">
   <!-- Pre-paint bootstrap (device gate + locale + saved accessibility
        settings). External file so the CSP can keep `script-src 'self'`
        without 'unsafe-inline'. The whole file is one synchronous IIFE
@@ -288,6 +294,7 @@
       </div>
     </section>
     <footer class="app-footer">
+      <a href="config/" class="footer-link" data-i18n="core.config">Configuración</a>
       <a href="legal/index.html" class="footer-link" data-i18n="core.dataProtection">Protección de datos</a>
       <button type="button" class="btn btn-secondary btn-compact btn-clear-all" id="btnClearAll" data-i18n="btnClearProgress">🗑️ Borrar mi progreso</button>
     </footer>
@@ -346,6 +353,259 @@
 
     <p class="help-text" data-i18n="settingsHelp">Estos ajustes se guardan en este dispositivo.</p>
   </aside>
+
+  <!-- ============================================================
+       SPA-merged subpages (formerly legal/ and about/).
+       Hidden by default; shown by app.js when the user navigates
+       to the in-page route (see showScreen in app.js). The
+       <h1 data-i18n>...</h1> blocks also drive the document
+       <title> rewrite done in app.js (one i18n key per view).
+       ============================================================ -->
+  <section id="view-legal" class="sp-legal" hidden>
+    <div class="container">
+      <header class="cabecera">
+        <div class="sp-idioma" role="group" aria-label="Elegir idioma">
+          <button type="button" class="btn-idioma" data-locale="es" aria-pressed="false">🇪🇸 Español</button>
+          <button type="button" class="btn-idioma" data-locale="en" aria-pressed="false">🇬🇧 English</button>
+        </div>
+        <img src="assets/img/icono.svg" alt="" width="72" height="72" class="logo">
+        <h1 data-i18n="legal.pageTitle">Protección de datos</h1>
+        <p class="lema" data-i18n="legal.tagline">Sin registro. Sin cookies. Sin analítica.</p>
+        <p class="entradilla" data-i18n="legal.lead">Teclatlon no pide tus datos personales...</p>
+        <nav class="indice" aria-label="Índice de esta página">
+          <a href="#responsable" data-i18n="legal.navResponsible">Quién trata tus datos</a>
+          <a href="#datos" data-i18n="legal.navData">Qué guardamos</a>
+          <a href="#derechos" data-i18n="legal.navRights">Tus derechos</a>
+          <a href="#menores" data-i18n="legal.navMinors">Todas las edades</a>
+          <a href="#contacto" data-i18n="legal.navContact">Cambios y contacto</a>
+        </nav>
+      </header>
+      <main class="pila">
+        <section id="responsable" class="card">
+          <h2 data-i18n="legal.responsibleTitle">Quién trata tus datos</h2>
+          <p><span data-i18n="legal.responsibleP1a">Teclatlon es una iniciativa de </span><strong>The Naked Frame</strong><span data-i18n="legal.responsibleP1b">...</span></p>
+          <p><span data-i18n="legal.responsibleP2a">El código fuente completo es público y auditable en el </span><a href="https://github.com/thenkdframe/teclatlon" data-i18n="legal.responsibleP2Link">repositorio de GitHub</a><span data-i18n="legal.responsibleP2b">...</span></p>
+        </section>
+        <section id="datos" class="card">
+          <h2 data-i18n="legal.dataTitle">Qué guardamos y por qué</h2>
+          <p data-i18n="legal.dataP1">Teclatlon funciona sin cuentas...</p>
+          <p data-i18n="legal.dataP2">Lo único que se guarda vive en el <code>localStorage</code>...</p>
+          <ul>
+            <li><strong data-i18n="legal.dataItem1Label">Progreso del juego</strong>: <span data-i18n="legal.dataItem1Text">...</span></li>
+            <li><strong data-i18n="legal.dataItem2Label">Idioma elegido</strong>: <span data-i18n="legal.dataItem2Text">...</span></li>
+            <li><strong data-i18n="legal.dataItem3Label">Ajustes de accesibilidad y juego</strong>: <span data-i18n="legal.dataItem3Text">...</span></li>
+          </ul>
+          <p data-i18n="legal.dataP3">Nunca guardamos: nombre, contraseñas...</p>
+          <p data-i18n="legal.dataP4">Esta información se guarda mientras no se borre...</p>
+        </section>
+        <section id="derechos" class="card">
+          <h2 data-i18n="legal.rightsTitle">Tus derechos y cómo ejercerlos</h2>
+          <p data-i18n="legal.rightsP1">Como todo lo guardado está en tu dispositivo...</p>
+          <p data-i18n="legal.rightsP2">Para borrarlo, usa el botón...</p>
+          <p><a class="btn btn-secundario" href="./" data-route="screenMenu" data-i18n="legal.rightsLinkApp">Ir a Teclatlon</a></p>
+        </section>
+        <section id="menores" class="card">
+          <h2 data-i18n="legal.minorsTitle">Todas las edades y capacidades</h2>
+          <p data-i18n="legal.minorsP1">Teclatlon está pensada para que la use...</p>
+          <p data-i18n="legal.minorsP2">Como la aplicación no recoge datos...</p>
+        </section>
+        <section id="contacto" class="card">
+          <h2 data-i18n="legal.contactTitle">Cambios y contacto</h2>
+          <p data-i18n="legal.contactP1">Esta página puede actualizarse...</p>
+          <p data-i18n="legal.contactP2">Última actualización: 30 de agosto de 2026.</p>
+          <p><span data-i18n="legal.contactP3a">Para preguntas sobre esta página, abre un issue en el </span><a href="https://github.com/thenkdframe/teclatlon" data-i18n="legal.contactP3Link">repositorio de GitHub</a><span data-i18n="legal.contactP3b">.</span></p>
+        </section>
+      </main>
+      <footer class="pie">
+        <a class="btn btn-secundario" href="./" data-route="screenMenu" data-i18n="legal.footerActivities">Ir a la aplicación</a>
+      </footer>
+    </div>
+  </section>
+
+  <section id="view-about" class="sp-about" hidden>
+    <div class="container">
+      <header class="cabecera">
+        <div class="sp-idioma" role="group" aria-label="Elegir idioma">
+          <button type="button" class="btn-idioma" data-locale="es" aria-pressed="false">🇪🇸 Español</button>
+          <button type="button" class="btn-idioma" data-locale="en" aria-pressed="false">🇬🇧 English</button>
+        </div>
+        <p class="aviso-ruta" data-i18n="about.routeNotice">Esta página no se enlaza desde la aplicación...</p>
+        <img src="assets/img/icono.svg" alt="" width="80" height="80" class="logo">
+        <h1>Teclatlon</h1>
+        <p class="lema" data-i18n="about.tagline">Una aplicación para la autonomía.</p>
+        <p class="entradilla"><span data-i18n="about.lead1">Teclatlon es una </span><strong data-i18n="about.leadStrong">aplicación web de mecanografía con teclado físico</strong><span data-i18n="about.lead2">...</span></p>
+        <nav class="indice" aria-label="Índice de la presentación">
+          <a href="#origen" data-i18n="about.navOrigin">El origen</a>
+          <a href="#principios" data-i18n="about.navPrinciples">Los principios</a>
+          <a href="#tecnologia" data-i18n="about.navTech">Cómo está hecha</a>
+          <a href="#areas" data-i18n="about.navAreas">Las áreas de trabajo</a>
+          <a href="#hermanos" data-i18n="about.navSiblings">Proyectos hermanos</a>
+          <a href="#autoria" data-i18n="about.navAuthorship">Quiénes la hacen</a>
+          <a href="#colaborar" data-i18n="about.navCollaborate">Cómo ayudar</a>
+        </nav>
+      </header>
+      <main class="pila">
+        <section id="origen" class="card">
+          <h2 data-i18n="about.originTitle">El origen</h2>
+          <p><span data-i18n="about.originP1a">Teclatlon nace de una pregunta...</span> <em data-i18n="about.originP1em">¿qué pasa entre una sesión y la siguiente?</em></p>
+          <p data-i18n="about.originP2">...</p>
+          <p data-i18n="about.originP3">Esta aplicación es el resultado...</p>
+        </section>
+        <section id="principios" class="pila">
+          <h2 data-i18n="about.principlesTitle">Los principios que no negociamos</h2>
+          <p data-i18n="about.principlesIntro">Estas ideas están escritas primero en el código...</p>
+          <div class="principios-grid">
+            <article class="card principio" style="--acento: var(--accent);">
+              <h3 data-i18n="about.principleAutonomyTitle">🤲 Autonomía real</h3>
+              <p data-i18n="about.principleAutonomyText">...</p>
+            </article>
+            <article class="card principio" style="--acento: var(--color-encourage);">
+              <h3 data-i18n="about.principleNoPressureTitle">🚫 Sin presión</h3>
+              <p data-i18n="about.principleNoPressureText">...</p>
+            </article>
+            <article class="card principio" style="--acento: var(--color-finger-pinky);">
+              <h3 data-i18n="about.principlePrivacyTitle">🔒 Privacidad por defecto</h3>
+              <p data-i18n="about.principlePrivacyText">...</p>
+            </article>
+            <article class="card principio" style="--acento: var(--color-finger-middle);">
+              <h3 data-i18n="about.principleEasyReadTitle">📖 Lectura Fácil</h3>
+              <p data-i18n="about.principleEasyReadText">...</p>
+            </article>
+            <article class="card principio" style="--acento: var(--color-success);">
+              <h3 data-i18n="about.principleAccessibilityTitle">♿ Accesibilidad universal</h3>
+              <p data-i18n="about.principleAccessibilityText">...</p>
+            </article>
+            <article class="card principio" style="--acento: var(--color-hand-right);">
+              <h3 data-i18n="about.principleSoberTechTitle">🧱 Tecnología sobria</h3>
+              <p data-i18n="about.principleSoberTechText">...</p>
+            </article>
+          </div>
+        </section>
+        <section id="tecnologia" class="card">
+          <h2 data-i18n="about.techTitle">Cómo está hecha</h2>
+          <p><span data-i18n="about.techIntro1">Teclatlon es una aplicación web instalable (PWA)...</span> <strong data-i18n="about.techIntroStrong">5 páginas HTML estáticas</strong><span data-i18n="about.techIntro2">...</span></p>
+          <ul>
+            <li><strong data-i18n="about.techItem1Label">Sin servidor propio</strong>: <span data-i18n="about.techItem1Text">...</span></li>
+            <li><strong data-i18n="about.techItem2Label">Funciona sin conexión</strong>: <span data-i18n="about.techItem2Text">...</span></li>
+            <li><strong><span data-i18n="about.techItem3Label">Persistencia solo en</span> <code>localStorage</code></strong>: <span data-i18n="about.techItem3Text">...</span></li>
+            <li><strong data-i18n="about.techItem4Label">Sin frameworks ni build step</strong>: <span data-i18n="about.techItem4Text1">...</span> <code>file://</code><span data-i18n="about.techItem4Text2">...</span></li>
+            <li><strong data-i18n="about.techItem5Label">Código abierto (licencia MIT)</strong>: <span data-i18n="about.techItem5Text">...</span></li>
+            <li><strong data-i18n="about.techItem6Label">Internacionalización desde el inicio</strong>: <span data-i18n="about.techItem6Text">...</span></li>
+            <li><strong data-i18n="about.techItem7Label">Dependencias externas: ninguna</strong><span data-i18n="about.techItem7Text">...</span></li>
+          </ul>
+        </section>
+        <section id="areas" class="card">
+          <h2 data-i18n="about.areasTitle">Las áreas de trabajo</h2>
+          <p><span data-i18n="about.areasIntro1">Una sola herramienta...</span> <strong data-i18n="about.areasIntroStrong">seis bloques por mano y dedo</strong><span data-i18n="about.areasIntro2">...</span></p>
+          <div class="areas-grid">
+            <article class="area" style="--acento: var(--accent);">
+              <h3 data-i18n="about.areaLeftHandTitle">✋ Mano izquierda</h3>
+              <p data-i18n="about.areaLeftHandText">...</p>
+              <p class="area-cifra" data-i18n="about.areaLeftHandCount">5 teclas</p>
+            </article>
+            <article class="area" style="--acento: var(--color-hand-right);">
+              <h3 data-i18n="about.areaRightHandTitle">🤚 Mano derecha</h3>
+              <p data-i18n="about.areaRightHandText">...</p>
+              <p class="area-cifra" data-i18n="about.areaRightHandCount">5 teclas</p>
+            </article>
+            <article class="area" style="--acento: var(--color-finger-ring);">
+              <h3 data-i18n="about.areaRingFingerTitle">💍 Dedo anular</h3>
+              <p data-i18n="about.areaRingFingerText">...</p>
+              <p class="area-cifra" data-i18n="about.areaRingFingerCount">2 teclas</p>
+            </article>
+            <article class="area" style="--acento: var(--color-finger-middle);">
+              <h3 data-i18n="about.areaMiddleFingerTitle">🖕 Dedo corazón</h3>
+              <p data-i18n="about.areaMiddleFingerText">...</p>
+              <p class="area-cifra" data-i18n="about.areaMiddleFingerCount">2 teclas</p>
+            </article>
+            <article class="area" style="--acento: var(--color-finger-pinky);">
+              <h3 data-i18n="about.areaPinkyTitle">🤞 Meñique</h3>
+              <p data-i18n="about.areaPinkyText">...</p>
+              <p class="area-cifra" data-i18n="about.areaPinkyCount">2 teclas</p>
+            </article>
+            <article class="area" style="--acento: var(--color-encourage);">
+              <h3 data-i18n="about.areaModesTitle">🎹 Modos de teclado</h3>
+              <p data-i18n="about.areaModesText">...</p>
+              <p class="area-cifra" data-i18n="about.areaModesCount">4 modos</p>
+            </article>
+          </div>
+          <p class="nota-cifras"><span data-i18n="about.areasNote1">Total: </span><strong data-i18n="about.areasNoteStrong">1 herramienta, varias lecciones</strong><span data-i18n="about.areasNote2">...</span></p>
+        </section>
+        <section id="hermanos" class="card">
+          <h2 data-i18n="about.siblingsTitle">Proyectos hermanos</h2>
+          <p data-i18n="about.siblingsIntro">Teclatlon es uno más de un pequeño grupo...</p>
+          <div class="siblings-grid">
+            <a class="sibling" href="https://routime.miralante.workers.dev" target="_blank" rel="noopener noreferrer">
+              <span class="picto" aria-hidden="true">🌿</span>
+              <span class="sibling-texto">
+                <span class="nombre" data-i18n="about.siblingRoutimeName">Routime</span>
+                <span class="detalle" data-i18n="about.siblingRoutimeText">Rutinas y autonomía del día a día.</span>
+              </span>
+              <span class="flecha-externa" aria-hidden="true">↗</span>
+              <span class="sr-only" data-i18n="about.siblingLinkHint">Se abre en una pestaña nueva.</span>
+            </a>
+            <a class="sibling" href="https://calculia.miralante.workers.dev" target="_blank" rel="noopener noreferrer">
+              <span class="picto" aria-hidden="true">🔢</span>
+              <span class="sibling-texto">
+                <span class="nombre" data-i18n="about.siblingCalculiaName">Calculia</span>
+                <span class="detalle" data-i18n="about.siblingCalculiaText">Cálculo y razonamiento lógico.</span>
+              </span>
+              <span class="flecha-externa" aria-hidden="true">↗</span>
+              <span class="sr-only" data-i18n="about.siblingLinkHint">Se abre en una pestaña nueva.</span>
+            </a>
+            <a class="sibling" href="https://memofun.miralante.workers.dev" target="_blank" rel="noopener noreferrer">
+              <span class="picto" aria-hidden="true">🧠</span>
+              <span class="sibling-texto">
+                <span class="nombre" data-i18n="about.siblingMemofunName">Memofun</span>
+                <span class="detalle" data-i18n="about.siblingMemofunText">Memoria y atención.</span>
+              </span>
+              <span class="flecha-externa" aria-hidden="true">↗</span>
+              <span class="sr-only" data-i18n="about.siblingLinkHint">Se abre en una pestaña nueva.</span>
+            </a>
+            <a class="sibling" href="https://okeymoney.miralante.workers.dev" target="_blank" rel="noopener noreferrer">
+              <span class="picto" aria-hidden="true">💶</span>
+              <span class="sibling-texto">
+                <span class="nombre" data-i18n="about.siblingOkeymoneyName">Okeymoney</span>
+                <span class="detalle" data-i18n="about.siblingOkeymoneyText">Finanzas personales y autonomía cotidiana.</span>
+              </span>
+              <span class="flecha-externa" aria-hidden="true">↗</span>
+              <span class="sr-only" data-i18n="about.siblingLinkHint">Se abre en una pestaña nueva.</span>
+            </a>
+            <a class="sibling" href="https://sinonimia.miralante.workers.dev" target="_blank" rel="noopener noreferrer">
+              <span class="picto" aria-hidden="true">📖</span>
+              <span class="sibling-texto">
+                <span class="nombre" data-i18n="about.siblingSinonimiaName">Sinonimia</span>
+                <span class="detalle" data-i18n="about.siblingSinonimiaText">Diccionario en lectura fácil.</span>
+              </span>
+              <span class="flecha-externa" aria-hidden="true">↗</span>
+              <span class="sr-only" data-i18n="about.siblingLinkHint">Se abre en una pestaña nueva.</span>
+            </a>
+          </div>
+        </section>
+        <section id="autoria" class="card">
+          <h2 data-i18n="about.authorshipTitle">Quiénes la hacen</h2>
+          <p><span data-i18n="about.authorshipP1a">Teclatlon es una iniciativa de </span><strong>The Naked Frame</strong><span data-i18n="about.authorshipP1b">...</span></p>
+          <p data-i18n="about.authorshipP2">La aplicación se construye con la participación...</p>
+          <p data-i18n="about.authorshipP3">El código, el texto y las decisiones...</p>
+        </section>
+        <section id="colaborar" class="card">
+          <h2 data-i18n="about.collaborateTitle">Cómo ayudar</h2>
+          <p data-i18n="about.collaborateIntro">Teclatlon es un proyecto abierto...</p>
+          <ul>
+            <li><strong data-i18n="about.collaborateItem1Label">Probar y compartir feedback</strong>: <span data-i18n="about.collaborateItem1Text">...</span></li>
+            <li><strong data-i18n="about.collaborateItem2Label">Proponer lecciones</strong>: <span data-i18n="about.collaborateItem2Text">...</span></li>
+            <li><strong data-i18n="about.collaborateItem3Label">Revisar contenido</strong>: <span data-i18n="about.collaborateItem3Text">...</span></li>
+            <li><strong data-i18n="about.collaborateItem4Label">Contribuir código</strong>: <span data-i18n="about.collaborateItem4Text">...</span></li>
+            <li><strong data-i18n="about.collaborateItem5Label">Difundir</strong>: <span data-i18n="about.collaborateItem5Text">...</span></li>
+          </ul>
+          <p><span data-i18n="about.collaborateOutro1">Toda la documentación...</span> <code>CONTRIBUTING.md</code> <span data-i18n="about.collaborateOutro3">y</span> <code>doc/</code> <span data-i18n="about.collaborateOutro4">del repositorio.</span></p>
+        </section>
+      </main>
+      <footer class="pie">
+        <a class="btn btn-secundario" href="./" data-route="screenMenu" data-i18n="about.footerActivities">Ir a la aplicación</a>
+      </footer>
+    </div>
+  </section>
 
   <script src="assets/js/utils.js"></script>
   <script src="assets/js/i18n.js"></script>

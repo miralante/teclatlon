@@ -1,11 +1,11 @@
-/* ============================================================
+﻿/* ============================================================
    Teclatlon — Service Worker
    Network-first, cache-fallback strategy for the app shell
    (works offline). When adding new files: add them to FILES
    and bump VERSION so the activate step purges the old cache.
    See CLOUDFLARE.md §"Cache contract" for the full contract.
    ============================================================ */
-var VERSION = 'teclatlon-v38';
+var VERSION = 'teclatlon-v39';
 
 var FILES = [
   './index.html',
@@ -16,19 +16,16 @@ var FILES = [
   './strings.es.js',
   './strings.en.js',
   './styles.css',
-  './legal/index.html',
-  './legal/styles.css',
-  './legal/strings.es.js',
-  './legal/strings.en.js',
+  './assets/css/subpages.css',
   './config/index.html',
   './config/app.js',
   './config/styles.css',
   './config/strings.es.js',
   './config/strings.en.js',
-  './about/index.html',
-  './about/styles.css',
-  './about/strings.es.js',
-  './about/strings.en.js',
+  /* legal/ and about/ were merged into the SPA on 2026-09. Their
+     content now lives in <section id="view-legal"> and <section
+     id="view-about"> inside index.html, served by the same network-
+     first cache entry above. No standalone cache files needed. */
   './assets/css/tokens.css',
   './assets/css/base.css',
   './assets/css/components.css',
