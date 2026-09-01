@@ -36,5 +36,5 @@
     feedbackResetAllDone: 'Hecho. Se ha borrado todo lo guardado en este navegador.',
 
     footer: 'Nada sale de este navegador. No hay cuenta, ni servidor, ni copia de seguridad en la nube.'
-  });
+  }, 'es');
 })();

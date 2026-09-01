@@ -35,5 +35,5 @@
     feedbackResetAllDone: 'Done. Everything saved in this browser has been cleared.',
 
     footer: 'Nothing leaves this browser. There is no account, no server, no cloud backup.'
-  });
+  }, 'en');
 })();

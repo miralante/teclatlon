@@ -170,6 +170,16 @@ function compareLocales(dir, label) {
 
 compareLocales(ROOT, 'strings.<locale>.js');
 compareLocales(path.join(ROOT, 'legal'), 'legal/');
+/* Teclatlon additionally ships hidden routes config/ and about/ with
+   their own strings.<locale>.js pairs. Until 2026-09 those were not
+   covered here, leaving a coverage gap that hid missing translations
+   (for example config/index.html references data-i18n="core.loading"
+   which is not registered in any config/strings.<locale>.js file).
+   The function returns silently if the directory has fewer than two
+   strings.<locale>.js files, so legacy paths without i18n are still
+   safe. */
+compareLocales(path.join(ROOT, 'config'), 'config/');
+compareLocales(path.join(ROOT, 'about'), 'about/');
 
 /* --- 3. sw.js <-> disk parity --- */
 checks += 1;
