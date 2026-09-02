@@ -1,35 +1,39 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-i18n-title="pageTitle">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Teclatlon — Privacidad y datos</title>
+  <!-- Hidden route: not linked from the main menu and should not be indexed.
+       Aimed at anyone who wants to know what Teclatlon does with their data:
+       families, professionals, journalists, auditors. -->
   <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Teclatlon: qué datos guarda, dónde y por qué. Sin registro, sin cookies, sin analítica.">
+  <meta name="theme-color" content="#FAF7F2">
   <link rel="stylesheet" href="../assets/css/tokens.css">
   <link rel="stylesheet" href="../assets/css/base.css">
   <link rel="stylesheet" href="../assets/css/components.css">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<section id="legal-page" class="legal-page">
-    <div class="container">
-      <header class="cabecera">
-        <div class="idioma-selector" role="group" aria-label="Elegir idioma">
-          <button type="button" class="btn-idioma" data-locale="es" aria-pressed="false">🇪🇸 Español</button>
-          <button type="button" class="btn-idioma" data-locale="en" aria-pressed="false">🇬🇧 English</button>
-        </div>
-        <img src="../assets/img/icono.svg" alt="" width="72" height="72" class="logo">
-        <h1 data-i18n="pageTitle">Protección de datos</h1>
-        <p class="lema" data-i18n="tagline">Sin registro. Sin cookies. Sin analítica.</p>
-        <p class="entradilla" data-i18n="lead">Teclatlon no pide tus datos personales...</p>
-        <nav class="indice" aria-label="Índice de esta página">
-          <a href="#responsable" data-i18n="navResponsible">Quién trata tus datos</a>
-          <a href="#datos" data-i18n="navData">Qué guardamos</a>
-          <a href="#derechos" data-i18n="navRights">Tus derechos</a>
-          <a href="#menores" data-i18n="navMinors">Todas las edades</a>
-          <a href="#contacto" data-i18n="navContact">Cambios y contacto</a>
-        </nav>
-      </header>
+  <div class="container legal">
+    <header class="cabecera-legal">
+      <div class="idioma-selector" role="group" aria-label="Elegir idioma">
+        <button type="button" class="btn-idioma" id="btnIdiomaEs" data-locale="es" aria-pressed="false">🇪🇸 Español</button>
+        <button type="button" class="btn-idioma" id="btnIdiomaEn" data-locale="en" aria-pressed="false">🇬🇧 English</button>
+      </div>
+      <img src="../assets/img/icono.svg" alt="" width="72" height="72" class="logo-legal">
+      <h1 data-i18n="pageTitle">Protección de datos</h1>
+      <p class="lema" data-i18n="tagline">Sin registro. Sin cookies. Sin analítica.</p>
+      <p class="entradilla" data-i18n="lead">Teclatlon no pide tus datos personales. Todo lo que guarda vive únicamente en este dispositivo. Aquí explicamos, en detalle, qué guardamos y por qué.</p>
+      <nav class="indice" aria-label="Índice de esta página">
+        <a href="#responsable" data-i18n="navResponsible">Quién trata tus datos</a>
+        <a href="#datos" data-i18n="navData">Qué guardamos</a>
+        <a href="#derechos" data-i18n="navRights">Tus derechos</a>
+        <a href="#menores" data-i18n="navMinors">Todas las edades</a>
+        <a href="#contacto" data-i18n="navContact">Cambios y contacto</a>
+      </nav>
+    </header>
       <main class="pila">
         <section id="responsable" class="card">
           <h2 data-i18n="responsibleTitle">Quién trata tus datos</h2>
@@ -66,31 +70,39 @@
           <p><span data-i18n="contactP3a">Para preguntas sobre esta página, abre un issue en el </span><a href="https://github.com/thenkdframe/teclatlon" data-i18n="contactP3Link">repositorio de GitHub</a><span data-i18n="contactP3b">.</span></p>
         </section>
       </main>
-      <footer class="pie">
-        <a class="btn btn-secundario" href="../" data-i18n="footerActivities">Ir a la aplicación</a>
-      </footer>
-    </div>
-  </section>
+
+    <footer class="pie-legal">
+      <a class="btn btn-secundario" href="../" data-i18n="footerActivities">Ir a la aplicación</a>
+      <a class="btn btn-secundario" href="../about/" data-i18n="footerAbout">Sobre este proyecto</a>
+      <a class="btn btn-secundario" href="../team/" data-i18n="footerTeamGuide">Quiénes la hacen</a>
+      <a class="btn btn-secundario" href="../config/" data-i18n="footerSettings">Ajustes</a>
+    </footer>
+  </div>
+
   <script src="../assets/js/utils.js"></script>
   <script src="../assets/js/i18n.js"></script>
   <script src="strings.es.js"></script>
   <script src="strings.en.js"></script>
   <script>
     (function () {
-      var supported = ['es', 'en'];
-      var stored = null;
-      try { stored = localStorage.getItem('teclatlon:locale'); } catch (e) { stored = null; }
-      var browser = (navigator.language || navigator.userLanguage || 'es').slice(0, 2);
-      var locale = supported.indexOf(stored) !== -1 ? stored
-        : (supported.indexOf(browser) !== -1 ? browser : 'es');
-      App.i18n.setLocale(locale);
-      App.i18n.apply();
-      var btns = document.querySelectorAll(".btn-idioma");
-      btns.forEach(function (b) {
-        b.setAttribute('aria-pressed', String(b.getAttribute('data-locale') === locale));
-        b.addEventListener('click', function () { App.i18n.setLocale(b.getAttribute('data-locale')); });
-      });
+      'use strict';
+      function paintLanguageSelector() {
+        var active = App.i18n.locale();
+        document.getElementById('btnIdiomaEs').setAttribute('aria-pressed', String(active === 'es'));
+        document.getElementById('btnIdiomaEn').setAttribute('aria-pressed', String(active === 'en'));
+      }
+      document.getElementById('btnIdiomaEs').addEventListener('click', function () { App.i18n.setLocale('es'); });
+      document.getElementById('btnIdiomaEn').addEventListener('click', function () { App.i18n.setLocale('en'); });
+      paintLanguageSelector();
     })();
+  </script>
+  <script>
+    /* Register the SW from this entry point so it is active for any later
+       navigation, matching what the main index.html and the sibling
+       standalone pages (about/, team/, config/) already do. */
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('../sw.js').catch(function () {});
+    }
   </script>
 </body>
 </html>

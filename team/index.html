@@ -1,68 +1,83 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-i18n-title="pageTitle">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Teclatlon — Quiénes la hacen</title>
+  <!-- Hidden route: not linked from the main menu and should not be indexed.
+       Aimed at anyone who wants to know who maintains Teclatlon and how
+       to contribute: families, professionals, contributors, funders. -->
   <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Teclatlon: quiénes mantienen la aplicación y cómo contribuir al proyecto.">
+  <meta name="theme-color" content="#FAF7F2">
   <link rel="stylesheet" href="../assets/css/tokens.css">
   <link rel="stylesheet" href="../assets/css/base.css">
   <link rel="stylesheet" href="../assets/css/components.css">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container team">
+  <div class="container about">
     <header class="cabecera-about">
       <div class="idioma-selector" role="group" aria-label="Elegir idioma">
-        <button type="button" class="btn-idioma" data-locale="es" aria-pressed="false">🇪🇸 Español</button>
-        <button type="button" class="btn-idioma" data-locale="en" aria-pressed="false">🇬🇧 English</button>
+        <button type="button" class="btn-idioma" id="btnIdiomaEs" data-locale="es" aria-pressed="false">🇪🇸 Español</button>
+        <button type="button" class="btn-idioma" id="btnIdiomaEn" data-locale="en" aria-pressed="false">🇬🇧 English</button>
       </div>
+      <p class="aviso-ruta" data-i18n="routeNotice">Esta página no se enlaza desde la aplicación. Solo se llega escribiendo la dirección.</p>
       <img src="../assets/img/icono.svg" alt="" width="80" height="80" class="logo-about">
       <h1 data-i18n="pageTitle">Teclatlon — Quiénes la hacen</h1>
-      <p class="lema" data-i18n="tagline">Teclatlon es software libre (MIT)...</p>
+      <p class="lema" data-i18n="tagline">Teclatlon es software libre (MIT), mantenido por la comunidad Apptonomia. Aquí explicamos quién hay detrás del proyecto y cómo ayudar.</p>
     </header>
     <main class="pila">
       <section class="card">
         <h2 data-i18n="techTeamTitle">Equipo técnico</h2>
-        <p data-i18n="techTeamText">Mantiene el código...</p>
+        <p data-i18n="techTeamText">Mantiene el código, el despliegue, la accesibilidad técnica y la integración continua. Suele trabajar vía pull requests y revisión en GitHub.</p>
       </section>
       <section class="card">
         <h2 data-i18n="clinicTeamTitle">Equipo clínico y educativo</h2>
-        <p data-i18n="clinicTeamText">Terapeutas ocupacionales...</p>
+        <p data-i18n="clinicTeamText">Terapeutas ocupacionales, maestros de educación especial, psicopedagogos y logopedas que prueban las actividades con su población y aportan criterios sobre cómo encaja en una sesión, una clase o un plan de apoyo.</p>
       </section>
       <section class="card">
         <h2 data-i18n="outreachTeamTitle">Equipo de divulgación y sostenibilidad</h2>
-        <p data-i18n="outreachTeamText">Comunicación...</p>
+        <p data-i18n="outreachTeamText">Comunicación, fundaciones y administraciones públicas que difunden el proyecto, financian su mantenimiento o coordinan forks comunitarios.</p>
       </section>
       <section class="card">
         <h2 data-i18n="howHelpTitle">Cómo ayudar</h2>
-        <p data-i18n="howHelpText">Pull requests...</p>
+        <p data-i18n="howHelpText">Pull requests a los repositorios abiertos, traducción de la interfaz a más idiomas, prueba con población real y reporte de incidencias, o difusión entre centros, profesionales y familias. Cualquier forma de ayuda cuenta.</p>
       </section>
     </main>
-    <footer class="pie">
-      <a class="btn btn-secundario" href="../" data-i18n="footer">Volver a Teclatlon</a>
+
+    <footer class="pie-about">
+      <a class="btn btn-secundario" href="../" data-i18n="footerActivities">Ir a la aplicación</a>
+      <a class="btn btn-secundario" href="../legal/" data-i18n="footerDataProtection">Protección de datos</a>
+      <a class="btn btn-secundario" href="../about/" data-i18n="footerAbout">Sobre este proyecto</a>
+      <a class="btn btn-secundario" href="../config/" data-i18n="footerSettings">Ajustes</a>
     </footer>
   </div>
+
   <script src="../assets/js/utils.js"></script>
   <script src="../assets/js/i18n.js"></script>
   <script src="strings.es.js"></script>
   <script src="strings.en.js"></script>
   <script>
     (function () {
-      var supported = ['es', 'en'];
-      var stored = null;
-      try { stored = localStorage.getItem('teclatlon:locale'); } catch (e) { stored = null; }
-      var browser = (navigator.language || navigator.userLanguage || 'es').slice(0, 2);
-      var locale = supported.indexOf(stored) !== -1 ? stored
-        : (supported.indexOf(browser) !== -1 ? browser : 'es');
-      App.i18n.setLocale(locale);
-      App.i18n.apply();
-      var btns = document.querySelectorAll(".btn-idioma");
-      btns.forEach(function (b) {
-        b.setAttribute('aria-pressed', String(b.getAttribute('data-locale') === locale));
-        b.addEventListener('click', function () { App.i18n.setLocale(b.getAttribute('data-locale')); });
-      });
+      'use strict';
+      function paintLanguageSelector() {
+        var active = App.i18n.locale();
+        document.getElementById('btnIdiomaEs').setAttribute('aria-pressed', String(active === 'es'));
+        document.getElementById('btnIdiomaEn').setAttribute('aria-pressed', String(active === 'en'));
+      }
+      document.getElementById('btnIdiomaEs').addEventListener('click', function () { App.i18n.setLocale('es'); });
+      document.getElementById('btnIdiomaEn').addEventListener('click', function () { App.i18n.setLocale('en'); });
+      paintLanguageSelector();
     })();
+  </script>
+  <script>
+    /* Register the SW from this entry point so it is active for any later
+       navigation, matching what the main index.html and the sibling
+       standalone pages (legal/, about/, config/) already do. */
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('../sw.js').catch(function () {});
+    }
   </script>
 </body>
 </html>

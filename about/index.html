@@ -1,38 +1,42 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-i18n-title="pageTitle">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Teclatlon — Sobre este proyecto</title>
+  <!-- Hidden route: not linked from the main menu and should not be indexed.
+       Aimed at anyone who wants to know what Teclatlon is: families,
+       professionals, journalists, funders, or new contributors. -->
   <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Teclatlon: una aplicación web de mecanografía con el teclado físico del ordenador, sin presión y con respeto a la privacidad.">
+  <meta name="theme-color" content="#FAF7F2">
   <link rel="stylesheet" href="../assets/css/tokens.css">
   <link rel="stylesheet" href="../assets/css/base.css">
   <link rel="stylesheet" href="../assets/css/components.css">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<section id="about-page" class="about-page">
-    <div class="container">
-      <header class="cabecera">
-        <div class="idioma-selector" role="group" aria-label="Elegir idioma">
-          <button type="button" class="btn-idioma" data-locale="es" aria-pressed="false">🇪🇸 Español</button>
-          <button type="button" class="btn-idioma" data-locale="en" aria-pressed="false">🇬🇧 English</button>
-        </div>
-        <p class="aviso-ruta" data-i18n="routeNotice">Esta página no se enlaza desde la aplicación...</p>
-        <img src="../assets/img/icono.svg" alt="" width="80" height="80" class="logo">
-        <h1>Teclatlon</h1>
-        <p class="lema" data-i18n="tagline">Una aplicación para la autonomía.</p>
-        <p class="entradilla"><span data-i18n="lead1">Teclatlon es una </span><strong data-i18n="leadStrong">aplicación web de mecanografía con teclado físico</strong><span data-i18n="lead2">...</span></p>
-        <nav class="indice" aria-label="Índice de la presentación">
-          <a href="#origen" data-i18n="navOrigin">El origen</a>
-          <a href="#principios" data-i18n="navPrinciples">Los principios</a>
-          <a href="#tecnologia" data-i18n="navTech">Cómo está hecha</a>
-          <a href="#areas" data-i18n="navAreas">Las áreas de trabajo</a>
-          <a href="#hermanos" data-i18n="navSiblings">Proyectos hermanos</a>
-          <a href="#autoria" data-i18n="navAuthorship">Quiénes la hacen</a>
-          <a href="#colaborar" data-i18n="navCollaborate">Cómo ayudar</a>
-        </nav>
-      </header>
+  <div class="container about">
+    <header class="cabecera-about">
+      <div class="idioma-selector" role="group" aria-label="Elegir idioma">
+        <button type="button" class="btn-idioma" id="btnIdiomaEs" data-locale="es" aria-pressed="false">🇪🇸 Español</button>
+        <button type="button" class="btn-idioma" id="btnIdiomaEn" data-locale="en" aria-pressed="false">🇬🇧 English</button>
+      </div>
+      <p class="aviso-ruta" data-i18n="routeNotice">Esta página no se enlaza desde la aplicación. Solo se llega escribiendo la dirección.</p>
+      <img src="../assets/img/icono.svg" alt="" width="80" height="80" class="logo-about">
+      <h1>Teclatlon</h1>
+      <p class="lema" data-i18n="tagline">Una aplicación para la autonomía.</p>
+      <p class="entradilla"><span data-i18n="lead1">Teclatlon es una </span><strong data-i18n="leadStrong">aplicación web de mecanografía con teclado físico</strong><span data-i18n="lead2"> pensada para que cualquier persona pueda practicar a su propio ritmo, sin presión y con respeto a su privacidad.</span></p>
+      <nav class="indice" aria-label="Índice de la presentación">
+        <a href="#origen" data-i18n="navOrigin">El origen</a>
+        <a href="#principios" data-i18n="navPrinciples">Los principios</a>
+        <a href="#tecnologia" data-i18n="navTech">Cómo está hecha</a>
+        <a href="#areas" data-i18n="navAreas">Las áreas de trabajo</a>
+        <a href="#hermanos" data-i18n="navSiblings">Proyectos hermanos</a>
+        <a href="#autoria" data-i18n="navAuthorship">Quiénes la hacen</a>
+        <a href="#colaborar" data-i18n="navCollaborate">Cómo ayudar</a>
+      </nav>
+    </header>
       <main class="pila">
         <section id="origen" class="card">
           <h2 data-i18n="originTitle">El origen</h2>
@@ -190,31 +194,39 @@
           <p><span data-i18n="collaborateOutro1">Toda la documentación...</span> <code>CONTRIBUTING.md</code> <span data-i18n="collaborateOutro3">y</span> <code>doc/</code> <span data-i18n="collaborateOutro4">del repositorio.</span></p>
         </section>
       </main>
-      <footer class="pie">
-        <a class="btn btn-secundario" href="../" data-i18n="footerActivities">Ir a la aplicación</a>
-      </footer>
-    </div>
-  </section>
+
+    <footer class="pie-about">
+      <a class="btn btn-secundario" href="../" data-i18n="footerActivities">Ir a la aplicación</a>
+      <a class="btn btn-secundario" href="../legal/" data-i18n="footerDataProtection">Protección de datos</a>
+      <a class="btn btn-secundario" href="../team/" data-i18n="footerTeamGuide">Quiénes la hacen</a>
+      <a class="btn btn-secundario" href="../config/" data-i18n="footerSettings">Ajustes</a>
+    </footer>
+  </div>
+
   <script src="../assets/js/utils.js"></script>
   <script src="../assets/js/i18n.js"></script>
   <script src="strings.es.js"></script>
   <script src="strings.en.js"></script>
   <script>
     (function () {
-      var supported = ['es', 'en'];
-      var stored = null;
-      try { stored = localStorage.getItem('teclatlon:locale'); } catch (e) { stored = null; }
-      var browser = (navigator.language || navigator.userLanguage || 'es').slice(0, 2);
-      var locale = supported.indexOf(stored) !== -1 ? stored
-        : (supported.indexOf(browser) !== -1 ? browser : 'es');
-      App.i18n.setLocale(locale);
-      App.i18n.apply();
-      var btns = document.querySelectorAll(".btn-idioma");
-      btns.forEach(function (b) {
-        b.setAttribute('aria-pressed', String(b.getAttribute('data-locale') === locale));
-        b.addEventListener('click', function () { App.i18n.setLocale(b.getAttribute('data-locale')); });
-      });
+      'use strict';
+      function paintLanguageSelector() {
+        var active = App.i18n.locale();
+        document.getElementById('btnIdiomaEs').setAttribute('aria-pressed', String(active === 'es'));
+        document.getElementById('btnIdiomaEn').setAttribute('aria-pressed', String(active === 'en'));
+      }
+      document.getElementById('btnIdiomaEs').addEventListener('click', function () { App.i18n.setLocale('es'); });
+      document.getElementById('btnIdiomaEn').addEventListener('click', function () { App.i18n.setLocale('en'); });
+      paintLanguageSelector();
     })();
+  </script>
+  <script>
+    /* Register the SW from this entry point so it is active for any later
+       navigation, matching what the main index.html and the sibling
+       standalone pages (legal/, team/, config/) already do. */
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('../sw.js').catch(function () {});
+    }
   </script>
 </body>
 </html>
