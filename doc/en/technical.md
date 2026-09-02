@@ -69,8 +69,8 @@ configuration; the `sw.js` and SW-redirect note — live in
 - `manifest.json` and `sw.js` must use relative paths (start `./`) so
   the app works on any host without changes.
 - `404.html`, `robots.txt` and `sitemap.xml` follow the same pattern
-  as the sibling `calculia` / `sinonimia` repos (they are added to the
-  `sw.js` `FILES` list so they keep working offline).
+  as the other apps of the suite (Calculia / Sinonimia) (they are added
+  to the `sw.js` `FILES` list so they keep working offline).
 - A deploy — even to a preview channel — is a network operation: ask
   before running one (see `CLAUDE.md` §"Agent workflow").
 
@@ -433,18 +433,19 @@ a network operation: ask before running one.
 
 ---
 
-## 7. Sibling projects: real differences
+## 7. Other apps of the suite: real differences
 
-Teclatlon is one of five static PWAs in the same family, all sharing
+Teclatlon is one of the apps of the Miralante suite (alongside
+Apptonomia, Calculia, Okeymoney, Sinonimia and Memofun), all sharing
 the accessibility-first / no-backend philosophy and the same Cloudflare
 Workers (static assets) deploy. The canonical guide for the group lives in
 [Apptonomia's `technical.md`](https://github.com/thenkdframe/apptonomia/blob/master/doc/en/technical.md);
 this section is the project-specific delta — the table below records
-the **real** differences between this repo and the four siblings so
-you know what is shared, what is trimmed, and what is intentionally
-different.
+the **real** differences between this repo and the other apps of the
+suite so you know what is shared, what is trimmed, and what is
+intentionally different.
 
-The other four:
+The other apps of the suite:
 
 - **Apptonomia** (the reference, hub-and-spoke): `tools/<slug>/` per
   activity (~60), `site/` landing, `settings/`, `about/`, `team/`,
@@ -452,8 +453,8 @@ The other four:
 - **Calculia** (hub-and-spoke, single domain): the closest in shape to
   Apptonomia, just narrowed to 12 math/logic activities in two
   sections.
-- **Okeymoney** (single-activity, money/personal-finance domain):
-  the closest sibling to Teclatlon — both single-activity, both
+- **Okeymoney*app of the suite to Teclatlon — both single-activity,
+  both the closest app of the suite to Teclatlon — both single-activity, both
   trimmed `assets/js/`, both share the same Cloudflare Workers
   (static assets) shape, both commit a `wrangler.toml` with an
   `[assets]` binding (see the file-layout table below).

@@ -12,7 +12,7 @@ ordered from easiest to hardest.
 > canonical cross-suite guide:
 > [`routime/doc/en/quick-guide.md`](https://github.com/thenkdframe/routime/blob/main/doc/en/quick-guide.md).
 > The **opening flow, PWA install, language switcher and
-> troubleshooting are identical** across the Apptonomia-sibling
+> troubleshooting are identical** across the apps of the Miralante
 > projects. This document only lists what's specific to Teclatlon
 > (mostly: computer keyboard only, no mobile).
 

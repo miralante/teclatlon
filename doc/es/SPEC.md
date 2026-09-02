@@ -138,7 +138,7 @@ Esta regla se comprueba automáticamente: `node scripts/check.js`
 falla si cualquiera de esos términos aparece en los archivos que ve
 quien usa la app.
 
-### 4.1 Eufemismo público: "usuario/a tipo"
+### 4.1 Eufemismo público: "persona tipo"
 
 Cuando se presenta Teclatlon de cara al **público general** (prensa,
 charlas, READMEs públicos que cualquiera pueda leer, el portal
@@ -146,7 +146,7 @@ charlas, READMEs públicos que cualquiera pueda leer, el portal
 "discapacidad intelectual" **no debe usarse** para describir la
 audiencia de la app, ni siquiera cuando el texto que lo rodea sería
 público. El eufemismo aceptado en esas superficies para referirse a la
-audiencia es **"usuario/a tipo"** (plural "usuarios/as tipo"),
+audiencia es **"persona tipo"** (plural "personas tipo"),
 entendido como marcador genérico de perfil, no como etiqueta para
 ninguna persona real.
 
@@ -156,8 +156,8 @@ Dónde se aplica y dónde no:
   proyecto pueda leer sin autenticarse: `README.es.md`, `README.md`,
   el portal en `apptonomia.uk`, charlas públicas, copy en redes, notas
   de prensa, material de marketing. En estas superficies se habla de
-  la audiencia como "el/la usuario/a tipo" o "los/las usuarios/as
-  tipo" de la app.
+  la audiencia como "la persona tipo" o "las personas tipo"
+  de la app.
 - **No se aplica** a la documentación interna de este repositorio
   (`CLAUDE.md`, `doc/es/SPEC.md`, `doc/en/SPEC.md`, `tecnico.md`,
   [`roles.md`](roles.md), `CONTRIBUTING.es.md`, `CONTRIBUTING.md`) —
@@ -170,7 +170,7 @@ Dónde se aplica y dónde no:
   trámite administrativo real relacionado con discapacidad): eso es
   contenido, no etiquetado de la audiencia.
 - **No se aplica** a la UI de la propia app: la regla de §4 sigue
-  prohibiendo **cualquier** mención, incluida "usuario/a tipo", en
+  prohibiendo **cualquier** mención, incluida "persona tipo", en
   `index.html`, `app.js`, `data.js`, `styles.css`,
   `strings.<locale>.js`, `legal/` y cualquier otra superficie
   visible. El eufemismo es para el exterior, no para lo que lee
@@ -178,7 +178,7 @@ Dónde se aplica y dónde no:
 
 Razón: presentar el objetivo real del proyecto en documentación interna
 es útil y necesario; presentarlo en superficies de marketing o landing
-no es necesario ni respetuoso con la audiencia — "usuario/a tipo"
+no es necesario ni respetuoso con la audiencia — "persona tipo"
 permite describir en público para qué sirve la app (qué perfil tiene
 quien la usa) sin nombrar públicamente un grupo clínico.
 
@@ -236,7 +236,7 @@ abierto (ver [`tecnico.md` §2.2](tecnico.md)).
 
 Ver `legal/index.html` para qué datos se guardan exactamente.
 
-## 5. Gamificación (sin presión)
+## 6. Gamificación (sin presión)
 
 - **Estrellas**: una por lección o modo completado por primera vez.
 - **Insignias**: retiradas. Existió una tabla de 7 insignias
@@ -248,7 +248,7 @@ Ver `legal/index.html` para qué datos se guardan exactamente.
   implementada (el grid aparecía vacío) y no forma parte del
   producto.
 
-## 6. Política de idioma
+## 7. Política de idioma
 
 La interfaz es **multilingüe**: por defecto la app se publica en español
 e inglés (`es`/`en`), que forman el **par base** y entre los que se

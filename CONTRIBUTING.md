@@ -10,6 +10,14 @@ vistazo a:
 - [`CLAUDE.md`](CLAUDE.md) — flujo de trabajo que seguimos al
   modificar el repo.
 
+> **Sobre la suite Miralante** — Teclatlon es una de las **seis apps**
+> de la [suite Miralante](https://apptonomia.uk) (Calculia, Memofun,
+> Okeymoney, Routime, Sinonimia, Teclatlon). El repo
+> [Apptonomia](https://github.com/miralante/apptonomia) aloja
+> **únicamente el portal de la suite** — no es una app en tiempo de
+> ejecución. La tabla completa de la suite vive en la sección
+> ["La suite Miralante — proyectos del grupo" del `README.es.md`](README.es.md#-la-suite-miralante--proyectos-del-grupo).
+
 ## Cómo contribuir
 
 - **Bugs y peticiones de producto**: usa las

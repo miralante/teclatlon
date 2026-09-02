@@ -17,7 +17,7 @@
 ## 1. La guía pedagógica canónica
 
 Las técnicas didácticas, de gamificación, de persuasión y de
-neuromarketing completas que comparten todos los proyectos hermanos
+neuromarketing completas que comparten todas las apps de la suite
 de Apptonomia viven en el repositorio de **Routime** en
 [`guia-crear-actividades.md`](https://github.com/thenkdframe/routime/blob/main/doc/es/guia-crear-actividades.md).
 

@@ -10,6 +10,14 @@ have a look at:
 - [`CLAUDE.md`](CLAUDE.md) — the workflow we follow when editing
   the repo.
 
+> **About the Miralante suite** — Teclatlon is one of **six apps** in
+> the [Miralante](https://apptonomia.uk) suite (Calculia, Memofun,
+> Okeymoney, Routime, Sinonimia, Teclatlon). The
+> [Apptonomia](https://github.com/miralante/apptonomia) repo hosts the
+> suite's **landing portal only** — it is not a runtime app. The full
+> table of the suite lives in this repo's
+> [`README.md` § "The Miralante suite — projects in the suite"](README.md#-the-miralante-suite--projects-in-the-suite).
+
 ## How to contribute
 
 - **Bugs and feature requests**: use the

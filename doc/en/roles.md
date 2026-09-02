@@ -1,7 +1,8 @@
 # Project roles
 
 Teclatlon has **three differentiated roles**, same as the rest of the
-sibling family (Apptonomia, Calculia, Memofun, Okeymoney, Sinonimia):
+apps of the Miralante suite (Apptonomia, Calculia, Memofun, Okeymoney,
+Sinonimia):
 
 | Role | Who they are | How they participate | Where they look first |
 |---|---|---|---|

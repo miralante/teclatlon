@@ -9,19 +9,27 @@
 > Cloudflare dashboard is the source of truth for project settings.
 >
 > **Live URL:** <https://teclatlon.miralante.workers.dev>
+>
+> **Part of the Miralante suite.** Teclatlon is one of **six apps**
+> (Calculia, Memofun, Okeymoney, Routime, Sinonimia, Teclatlon) that
+> share the same author, the same accessibility-first / no-backend
+> philosophy and the same Cloudflare deploy story. **Apptonomia is
+> the landing portal of the suite, not a runtime app.** The
+> canonical group-wide guide lives in
+> [Apptonomia's `CLOUDFLARE.md`](https://github.com/miralante/apptonomia/blob/master/CLOUDFLARE.md).
 
 Teclatlon is deployed as a **Cloudflare Worker (static assets)**
 project, reachable at a `*.workers.dev` subdomain — **not** classic
 Cloudflare Pages (`*.pages.dev`), despite this file's history and the
-sibling docs describing it that way. In the Cloudflare dashboard it
-lives under "Workers & Pages" → Compute → Workers & Pages, alongside
-the sibling projects, and is driven by the same Git-connector
+other suite docs describing it that way. In the Cloudflare dashboard
+it lives under "Workers & Pages" → Compute → Workers & Pages, alongside
+the other apps of the suite, and is driven by the same Git-connector
 auto-deploy as before: push to `master`, Cloudflare builds and
 deploys automatically. There is no custom GitHub Actions workflow that
 deploys; project configuration is split between a committed
 [`wrangler.toml`](wrangler.toml) (the static-assets binding and 404
 handling) and the Cloudflare dashboard (branch, environment
-variables). This mirrors the sibling `sinonimia` project's setup,
+variables). This mirrors the Sinonimia app of the suite's setup,
 which uses the same model.
 
 ## How it works
@@ -70,14 +78,14 @@ Cloudflare rejected the deploy with:
 > "Invalid _redirects configuration: ... Infinite loop detected in
 > this rule. ... [code: 100324]"
 
-when the sibling `apptonomia` project tried the Firebase-era SPA
-catch-all `/* /index.html 200`. Cloudflare statically validates that the
-destination of a catch-all rule cannot also match the rule itself:
+when the Apptonomia portal of the suite tried the Firebase-era SPA
+catch-all `/* /index.html 200`. Cloudflare statically validates that
+the destination of a catch-all rule cannot also match the rule itself:
 because `/index.html` is a real file in the repo root, `/*` matched
 it and the validator correctly flagged the loop.
 
-The fix follows the same pattern as the sibling `apptonomia` and
-`sinonimia` projects, which have no `_redirects` at all: Cloudflare's
+The fix follows the same pattern as the Apptonomia portal and the
+Sinonimia app of the suite, which have no `_redirects` at all: Cloudflare's
 implicit `index.html` lookup per directory already resolves
 every deep link the site actually has. Teclatlon has only two HTML
 entry points, both with their own real `index.html`:
@@ -97,9 +105,9 @@ with no `main` script (a pure static-assets Worker) and
 this file exists: without it, Cloudflare replies to any unmatched
 path with a bare, empty 404 instead of the repo's own `404.html` —
 confirmed in production (`curl` returned `Content-Length: 0` for a
-bad path) before this file was added. This mirrors the sibling
-`sinonimia` project's `wrangler.toml` exactly (same `[assets]` shape,
-same `not_found_handling`), which has served its own custom 404 page
+bad path) before this file was added. This mirrors the Sinonimia app
+of the suite's `wrangler.toml` exactly (same `[assets]` shape, same
+`not_found_handling`), which has served its own custom 404 page
 correctly in production the whole time.
 
 This project previously shipped **no** `wrangler.toml` at all,
@@ -121,7 +129,7 @@ during a local debugging session), install Wrangler transiently via
 
 ## Why no `package.json`?
 
-The sibling `apptonomia` project hit a deploy failure where
+The Apptonomia portal of the suite hit a deploy failure where
 Cloudflare ran `npm install` because the repo had a `package.json`,
 pulling in a Playwright workerd binary (~122 MiB) and overshooting
 the 25 MiB asset limit. Teclatlon therefore ships **no

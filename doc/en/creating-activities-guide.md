@@ -17,7 +17,7 @@
 ## 1. The canonical pedagogical guide
 
 The full didactic, gamification, persuasion and neuromarketing
-techniques that all Apptonomia-sibling projects share live in the
+techniques that all the apps of the Miralante suite share live in the
 **Routime** repository under
 [`creating-activities-guide.md`](https://github.com/thenkdframe/routime/blob/main/doc/en/creating-activities-guide.md).
 

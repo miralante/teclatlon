@@ -73,8 +73,8 @@ cosas:
 - `manifest.json` y `sw.js` deben usar rutas relativas (empezar con
   `./`) para que la app funcione en cualquier host sin cambios.
 - `404.html`, `robots.txt` y `sitemap.xml` siguen el mismo patrón que
-  los proyectos hermanos `calculia` / `sinonimia` (se añaden a la lista
-  `FILES` del `sw.js` para que sigan funcionando offline).
+  las otras apps de la suite (Calculia / Sinonimia) (se añaden a la
+  lista `FILES` del `sw.js` para que sigan funcionando offline).
 - Un despliegue — incluso a un canal de previsualización — es una
   operación de red: pide confirmación antes de ejecutarlo (ver
   `CLAUDE.md` §"Agent workflow").
@@ -452,29 +452,30 @@ es una operación de red: pide confirmación antes de ejecutarlo.
 
 ---
 
-## 7. Proyectos hermanos: diferencias reales
+## 7. Otras apps de la suite: diferencias reales
 
-Teclatlon es una de las cinco PWA estáticas de la misma familia,
-todas con la misma filosofía de accesibilidad y sin backend, y el
-mismo despliegue en Cloudflare Workers (static assets). La guía canónica del grupo
-vive en el [`technical.md` de Apptonomia](https://github.com/thenkdframe/apptonomia/blob/master/doc/en/technical.md);
+Teclatlon es una de las apps de la suite Miralante (junto a Apptonomia,
+Calculia, Okeymoney, Sinonimia y Memofun), todas con la misma filosofía
+de accesibilidad y sin backend, y el mismo despliegue en Cloudflare
+Workers (static assets). La guía canónica del grupo vive en el
+[`technical.md` de Apptonomia](https://github.com/thenkdframe/apptonomia/blob/master/doc/en/technical.md);
 esta sección es el delta específico del proyecto: la tabla de abajo
-recoge las **diferencias reales** entre este repo y los cuatro
-hermanos, para saber qué se comparte, qué se recorta y qué se hace
+recoge las **diferencias reales** entre este repo y las otras apps de
+la suite, para saber qué se comparte, qué se recorta y qué se hace
 intencionadamente distinto.
 
-Los otros cuatro:
+Las otras apps de la suite:
 
-- **Apptonomia** (la referencia, hub-and-spoke): `tools/<slug>/` por
-  actividad (~60), landing en `site/`, `settings/`, `about/`, `team/`,
-  `content/`, `legal/` compartido.
+- **Apptonomia** (la referencia, hub-and-spoke, y además portal de la
+  suite): `tools/<slug>/` por actividad (~60), landing en `site/`,
+  `settings/`, `about/`, `team/`, `content/`, `legal/` compartido.
 - **Calculia** (hub-and-spoke, un solo dominio): el más cercano en
   forma a Apptonomia, reducido a 12 actividades de cálculo / lógica
   en dos bloques.
 - **Okeymoney** (single-activity, dominio dinero/finanzas personales):
-  el hermano más cercano a Teclatlon — ambos single-activity, ambos
-  con `assets/js/` recortado, ambos comparten la misma forma de
-  Cloudflare Workers (static assets) y ambos incluyen un
+  la app de la suite más cercana a Teclatlon — ambas single-activity,
+  ambas con `assets/js/` recortado, ambas comparten la misma forma de
+  Cloudflare Workers (static assets) y ambas incluyen un
   `wrangler.toml` con binding `[assets]` (ver la tabla de abajo).
 - **Sinonimia** (layout plano antiguo): PWA pre-patrón, usa
   `css/` / `js/` / `img/` planos en raíz en lugar de `assets/`, sin
