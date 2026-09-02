@@ -5,7 +5,7 @@
    and bump VERSION so the activate step purges the old cache.
    See CLOUDFLARE.md §"Cache contract" for the full contract.
    ============================================================ */
-var VERSION = 'teclatlon-v39';
+var VERSION = 'teclatlon-v40';
 
 var FILES = [
   './index.html',
@@ -16,16 +16,31 @@ var FILES = [
   './strings.es.js',
   './strings.en.js',
   './styles.css',
-  './assets/css/subpages.css',
   './config/index.html',
   './config/app.js',
   './config/styles.css',
   './config/strings.es.js',
   './config/strings.en.js',
-  /* legal/ and about/ were merged into the SPA on 2026-09. Their
-     content now lives in <section id="view-legal"> and <section
-     id="view-about"> inside index.html, served by the same network-
-     first cache entry above. No standalone cache files needed. */
+  /* legal/, about/ and team/ are standalone PWA pages. Each one is
+     a real HTML route (not a SPA fragment); they share the app
+     tokens / base / components CSS and the i18n + utils helpers,
+     and each ships its own strings pair. The page-specific rules
+     for these three live next to them, in legal/styles.css,
+     about/styles.css and team/styles.css (see the comment at the
+     top of those files for how they used to be merged into a
+     single assets/css/subpages.css under the SPA model). */
+  './legal/index.html',
+  './legal/styles.css',
+  './legal/strings.es.js',
+  './legal/strings.en.js',
+  './about/index.html',
+  './about/styles.css',
+  './about/strings.es.js',
+  './about/strings.en.js',
+  './team/index.html',
+  './team/styles.css',
+  './team/strings.es.js',
+  './team/strings.en.js',
   './assets/css/tokens.css',
   './assets/css/base.css',
   './assets/css/components.css',

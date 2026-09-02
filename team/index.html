@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teclatlon — Quiénes la hacen</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="../assets/css/tokens.css">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container team">
+    <header class="cabecera-about">
+      <div class="idioma-selector" role="group" aria-label="Elegir idioma">
+        <button type="button" class="btn-idioma" data-locale="es" aria-pressed="false">🇪🇸 Español</button>
+        <button type="button" class="btn-idioma" data-locale="en" aria-pressed="false">🇬🇧 English</button>
+      </div>
+      <img src="../assets/img/icono.svg" alt="" width="80" height="80" class="logo-about">
+      <h1 data-i18n="pageTitle">Teclatlon — Quiénes la hacen</h1>
+      <p class="lema" data-i18n="tagline">Teclatlon es software libre (MIT)...</p>
+    </header>
+    <main class="pila">
+      <section class="card">
+        <h2 data-i18n="techTeamTitle">Equipo técnico</h2>
+        <p data-i18n="techTeamText">Mantiene el código...</p>
+      </section>
+      <section class="card">
+        <h2 data-i18n="clinicTeamTitle">Equipo clínico y educativo</h2>
+        <p data-i18n="clinicTeamText">Terapeutas ocupacionales...</p>
+      </section>
+      <section class="card">
+        <h2 data-i18n="outreachTeamTitle">Equipo de divulgación y sostenibilidad</h2>
+        <p data-i18n="outreachTeamText">Comunicación...</p>
+      </section>
+      <section class="card">
+        <h2 data-i18n="howHelpTitle">Cómo ayudar</h2>
+        <p data-i18n="howHelpText">Pull requests...</p>
+      </section>
+    </main>
+    <footer class="pie">
+      <a class="btn btn-secundario" href="../" data-i18n="footer">Volver a Teclatlon</a>
+    </footer>
+  </div>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/i18n.js"></script>
+  <script src="strings.es.js"></script>
+  <script src="strings.en.js"></script>
+  <script>
+    (function () {
+      var supported = ['es', 'en'];
+      var stored = null;
+      try { stored = localStorage.getItem('teclatlon:locale'); } catch (e) { stored = null; }
+      var browser = (navigator.language || navigator.userLanguage || 'es').slice(0, 2);
+      var locale = supported.indexOf(stored) !== -1 ? stored
+        : (supported.indexOf(browser) !== -1 ? browser : 'es');
+      App.i18n.setLocale(locale);
+      App.i18n.apply();
+      var btns = document.querySelectorAll(".btn-idioma");
+      btns.forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b.getAttribute('data-locale') === locale));
+        b.addEventListener('click', function () { App.i18n.setLocale(b.getAttribute('data-locale')); });
+      });
+    })();
+  </script>
+</body>
+</html>

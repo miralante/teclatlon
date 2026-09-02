@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teclatlon — Privacidad y datos</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="../assets/css/tokens.css">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<section id="legal-page" class="legal-page">
+    <div class="container">
+      <header class="cabecera">
+        <div class="idioma-selector" role="group" aria-label="Elegir idioma">
+          <button type="button" class="btn-idioma" data-locale="es" aria-pressed="false">🇪🇸 Español</button>
+          <button type="button" class="btn-idioma" data-locale="en" aria-pressed="false">🇬🇧 English</button>
+        </div>
+        <img src="../assets/img/icono.svg" alt="" width="72" height="72" class="logo">
+        <h1 data-i18n="pageTitle">Protección de datos</h1>
+        <p class="lema" data-i18n="tagline">Sin registro. Sin cookies. Sin analítica.</p>
+        <p class="entradilla" data-i18n="lead">Teclatlon no pide tus datos personales...</p>
+        <nav class="indice" aria-label="Índice de esta página">
+          <a href="#responsable" data-i18n="navResponsible">Quién trata tus datos</a>
+          <a href="#datos" data-i18n="navData">Qué guardamos</a>
+          <a href="#derechos" data-i18n="navRights">Tus derechos</a>
+          <a href="#menores" data-i18n="navMinors">Todas las edades</a>
+          <a href="#contacto" data-i18n="navContact">Cambios y contacto</a>
+        </nav>
+      </header>
+      <main class="pila">
+        <section id="responsable" class="card">
+          <h2 data-i18n="responsibleTitle">Quién trata tus datos</h2>
+          <p><span data-i18n="responsibleP1a">Teclatlon es una iniciativa de </span><strong>The Naked Frame</strong><span data-i18n="responsibleP1b">...</span></p>
+          <p><span data-i18n="responsibleP2a">El código fuente completo es público y auditable en el </span><a href="https://github.com/thenkdframe/teclatlon" data-i18n="responsibleP2Link">repositorio de GitHub</a><span data-i18n="responsibleP2b">...</span></p>
+        </section>
+        <section id="datos" class="card">
+          <h2 data-i18n="dataTitle">Qué guardamos y por qué</h2>
+          <p data-i18n="dataP1">Teclatlon funciona sin cuentas...</p>
+          <p data-i18n="dataP2">Lo único que se guarda vive en el <code>localStorage</code>...</p>
+          <ul>
+            <li><strong data-i18n="dataItem1Label">Progreso del juego</strong>: <span data-i18n="dataItem1Text">...</span></li>
+            <li><strong data-i18n="dataItem2Label">Idioma elegido</strong>: <span data-i18n="dataItem2Text">...</span></li>
+            <li><strong data-i18n="dataItem3Label">Ajustes de accesibilidad y juego</strong>: <span data-i18n="dataItem3Text">...</span></li>
+          </ul>
+          <p data-i18n="dataP3">Nunca guardamos: nombre, contraseñas...</p>
+          <p data-i18n="dataP4">Esta información se guarda mientras no se borre...</p>
+        </section>
+        <section id="derechos" class="card">
+          <h2 data-i18n="rightsTitle">Tus derechos y cómo ejercerlos</h2>
+          <p data-i18n="rightsP1">Como todo lo guardado está en tu dispositivo...</p>
+          <p data-i18n="rightsP2">Para borrarlo, usa el botón...</p>
+          <p><a class="btn btn-secundario" href="../" data-i18n="rightsLinkApp">Ir a Teclatlon</a></p>
+        </section>
+        <section id="menores" class="card">
+          <h2 data-i18n="minorsTitle">Todas las edades y capacidades</h2>
+          <p data-i18n="minorsP1">Teclatlon está pensada para que la use...</p>
+          <p data-i18n="minorsP2">Como la aplicación no recoge datos...</p>
+        </section>
+        <section id="contacto" class="card">
+          <h2 data-i18n="contactTitle">Cambios y contacto</h2>
+          <p data-i18n="contactP1">Esta página puede actualizarse...</p>
+          <p data-i18n="contactP2">Última actualización: 30 de agosto de 2026.</p>
+          <p><span data-i18n="contactP3a">Para preguntas sobre esta página, abre un issue en el </span><a href="https://github.com/thenkdframe/teclatlon" data-i18n="contactP3Link">repositorio de GitHub</a><span data-i18n="contactP3b">.</span></p>
+        </section>
+      </main>
+      <footer class="pie">
+        <a class="btn btn-secundario" href="../" data-i18n="footerActivities">Ir a la aplicación</a>
+      </footer>
+    </div>
+  </section>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/i18n.js"></script>
+  <script src="strings.es.js"></script>
+  <script src="strings.en.js"></script>
+  <script>
+    (function () {
+      var supported = ['es', 'en'];
+      var stored = null;
+      try { stored = localStorage.getItem('teclatlon:locale'); } catch (e) { stored = null; }
+      var browser = (navigator.language || navigator.userLanguage || 'es').slice(0, 2);
+      var locale = supported.indexOf(stored) !== -1 ? stored
+        : (supported.indexOf(browser) !== -1 ? browser : 'es');
+      App.i18n.setLocale(locale);
+      App.i18n.apply();
+      var btns = document.querySelectorAll(".btn-idioma");
+      btns.forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b.getAttribute('data-locale') === locale));
+        b.addEventListener('click', function () { App.i18n.setLocale(b.getAttribute('data-locale')); });
+      });
+    })();
+  </script>
+</body>
+</html>

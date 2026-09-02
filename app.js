@@ -12,7 +12,7 @@
   var $ = App.utils.$;
   var $$ = App.utils.$$;
   var SLUG = 'keyboard';
-  var SCREENS = ['screenName', 'screenMenu', 'screenLessons', 'screenTemplates', 'screenGame', 'screenFree', 'view-legal', 'view-about'];
+  var SCREENS = ['screenName', 'screenMenu', 'screenLessons', 'screenTemplates', 'screenGame', 'screenFree'];
   /* Screens that render an on-screen keyboard and therefore need the
      keyboard-view selector (.keyboard-options--header) visible. The
      menu, lessons and templates lists don't show a keyboard, so the
@@ -438,95 +438,6 @@
   }
 
   /* ---------- Screens ---------- */
-  /* Per-view <head> overrides for the SPA-merged subpages (formerly
-     standalone legal/index.html and about/index.html). When the user
-     navigates into view-legal or view-about we rewrite <title>,
-     <meta name="description"> and <link rel="canonical"> so the
-     visible URL in the tab and the SEO/social preview are coherent
-     with the visible content. The defaults below match the keys
-     registered in strings.es.js / strings.en.js under the `legal.*`
-     and `about.*` prefixes.
-
-     `pushState` is used (not hash routing) because Teclatlon is
-     served from a single static path; the browser's back/forward
-     works naturally, and Cloudflare Pages does not need any
-     redirect rules to serve /legal/ or /about/ — those legacy
-     URLs become the new index.html, and the SPA detects them via
-     the routeFromUrl() check on boot. */
-  var SUBPAGE_META = {
-    'view-legal': {
-      titleKey: 'legal.pageTitle',
-      description: {
-        es: 'Teclatlon: qué datos guarda, dónde y por qué. Sin registro, sin cookies, sin analítica.',
-        en: 'Teclatlon: what data we save, where and why. No registration, no cookies, no analytics.'
-      },
-      canonical: 'https://teclatlon.apptonomia.uk/legal/',
-      pathEs: '/legal/',
-      pathEn: '/legal/?lang=en'
-    },
-    'view-about': {
-      titleKey: 'about.pageTitle',
-      description: {
-        es: 'Teclatlon: una aplicación de mecanografía con el teclado físico para que las personas con discapacidad intelectual aprendan a escribir por sí mismas.',
-        en: 'Teclatlon: a touch-typing web app with a physical keyboard built so people with intellectual disabilities can learn to type with all ten fingers.'
-      },
-      canonical: 'https://teclatlon.apptonomia.uk/about/',
-      pathEs: '/about/',
-      pathEn: '/about/?lang=en'
-    }
-  };
-
-  /* Apply the right <title>/description/canonical for the current
-     view. No-op for screens that aren't in SUBPAGE_META (the game
-     and the menu keep their root-page metadata). Called from
-     showScreen() and also from the language-switch buttons inside
-     each subpage, so changing language updates the canonical URL. */
-  function applySubpageMeta(id) {
-    var meta = SUBPAGE_META[id];
-    if (!meta) return;
-    var loc = App.i18n.locale();
-    var title = App.i18n.t(meta.titleKey);
-    document.title = (loc === 'en' ? title + ' | Teclatlon' : title + ' | Teclatlon');
-    var desc = document.querySelector('meta[name="description"]');
-    if (desc) desc.setAttribute('content', meta.description[loc] || meta.description.es);
-    var canonical = document.querySelector('link[rel="canonical"]');
-    if (canonical) canonical.setAttribute('href', meta.canonical + (loc === 'en' ? '?lang=en' : ''));
-    var alternates = document.querySelectorAll('link[rel="alternate"][hreflang]');
-    alternates.forEach(function (a) {
-      var lang = a.getAttribute('hreflang');
-      if (lang === 'es') a.setAttribute('href', 'https://teclatlon.apptonomia.uk' + meta.pathEs);
-      else if (lang === 'en') a.setAttribute('href', 'https://teclatlon.apptonomia.uk' + meta.pathEn);
-      else if (lang === 'x-default') a.setAttribute('href', 'https://teclatlon.apptonomia.uk' + meta.pathEs);
-    });
-    /* Subpages get the data-text-size / data-theme from state.options
-       already (the storage IIFE in assets/js/storage.js applies them
-       on boot). For #/about we want search engines to skip the page;
-       the canonical link is already correct, and the meta robots
-       below prevents accidental indexation. */
-    var robots = document.querySelector('meta[name="robots"]');
-    if (id === 'view-about' && !robots) {
-      robots = document.createElement('meta');
-      robots.setAttribute('name', 'robots');
-      document.head.appendChild(robots);
-    }
-    if (robots) robots.setAttribute('content', id === 'view-about' ? 'noindex,nofollow' : 'index,follow');
-  }
-
-  /* Sync the browser URL to the visible view, so back/forward works
-     and the URL is shareable. Uses history.pushState for legal/about
-     (new entries) and history.replaceState for the root so a refresh
-     of / keeps the same URL. */
-  function syncUrlForScreen(id) {
-    var meta = SUBPAGE_META[id];
-    if (meta) {
-      var path = App.i18n.locale() === 'en' ? meta.pathEn : meta.pathEs;
-      try { history.pushState({ view: id }, '', path); } catch (e) { /* file:// */ }
-    } else if (id === 'screenMenu' || id === 'screenName' || id === 'screenLessons' ||
-               id === 'screenTemplates' || id === 'screenGame' || id === 'screenFree') {
-      try { history.replaceState({ view: id }, '', location.pathname); } catch (e) { /* */ }
-    }
-  }
-
   function showScreen(id) {
     SCREENS.forEach(function (p) {
       var el = document.getElementById(p);
@@ -538,27 +449,7 @@
     $$('.keyboard-options--header').forEach(function (row) {
       row.classList.toggle('hidden', !withKb);
     });
-    applySubpageMeta(id);
-    syncUrlForScreen(id);
   }
-
-  /* Map a URL pathname to the matching view id. Used on boot so a
-     direct visit to /legal/ or /about/ opens the right SPA view
-     instead of showing the menu by default. Returns null when the
-     pathname does not match any known subpage. */
-  function routeFromUrl() {
-    var path = (location.pathname || '').toLowerCase();
-    if (path.indexOf('/legal') === 0) return 'view-legal';
-    if (path.indexOf('/about') === 0) return 'view-about';
-    return null;
-  }
-
-  /* Public entry point: go to /legal or /about. Called by the
-     interceptors wired in boot() (footer links and in-page data-route
-     attributes). */
-  window.App = window.App || {};
-  App.goLegal = function () { showScreen('view-legal'); };
-  App.goAbout = function () { showScreen('view-about'); };
 
   function goMenu() {
     renderMenu();
@@ -1417,97 +1308,12 @@
   applyOptions();
   updateStars();
 
-  /* ---- SPA-merged subpages (legal/ + about/) wire-up ----
-     The old standalone pages (/legal/index.html, /about/index.html)
-     are gone. Their content now lives in two <section id="view-legal">
-     and <section id="view-about"> blocks inside this index.html.
-     The footer of the main app and the in-app "Volver" links use
-     [data-route] or [data-view] attributes to ask the SPA to switch
-     screens; we intercept the click here so it never reloads the
-     page. Also wire up the language-switch buttons inside each
-     subpage so App.i18n.setLocale() reloads the strings without
-     leaving the view. */
-  function wireSubpageLanguageSwitchers() {
-    $$('.sp-idioma .btn-idioma').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var loc = btn.getAttribute('data-locale');
-        if (loc) App.i18n.setLocale(loc);
-      });
-    });
-  }
-  function paintSubpageLanguageSwitchers() {
-    var loc = App.i18n.locale();
-    $$('.sp-idioma .btn-idioma').forEach(function (btn) {
-      btn.setAttribute('aria-pressed', String(btn.getAttribute('data-locale') === loc));
-    });
-  }
-  function wireInPageRoutes() {
-    /* [data-route] is an in-page SPA navigation. On click, switch to
-       the named screen without reloading. Anything that should
-       still reload (real external URLs, /config/, /legal/, /about/
-       entered by typing them) keeps the browser default. */
-    document.body.addEventListener('click', function (e) {
-      var a = e.target.closest && e.target.closest('a[data-route]');
-      if (!a) return;
-      var route = a.getAttribute('data-route');
-      if (route === 'screenMenu') { e.preventDefault(); goMenu(); }
-      else if (route === 'view-legal') { e.preventDefault(); App.goLegal(); }
-      else if (route === 'view-about') { e.preventDefault(); App.goAbout(); }
-    });
-    /* Same idea for anchors that point to the legacy /legal/ or
-       /about/ URLs but live inside the app's footer / drawer
-       (href="../legal/index.html" or href="legal/" etc.). Catch any
-       link that explicitly references those paths and route them
-       through the SPA instead. This is what lets the original
-       footer links — written before the SPA existed — keep
-       working without us having to rewrite every <a>. */
-    document.body.addEventListener('click', function (e) {
-      var a = e.target.closest && e.target.closest('a[href]');
-      if (!a || a.hasAttribute('data-route')) return;
-      var href = a.getAttribute('href') || '';
-      if (/\/legal(\/|\.html)?$/i.test(href) || /\/legal\/index\.html?$/i.test(href)) {
-        e.preventDefault(); App.goLegal();
-      } else if (/\/about(\/|\.html)?$/i.test(href) || /\/about\/index\.html?$/i.test(href)) {
-        e.preventDefault(); App.goAbout();
-      }
-    });
-  }
-  wireSubpageLanguageSwitchers();
-  paintSubpageLanguageSwitchers();
-  wireInPageRoutes();
-
-  /* Re-paint the subpage language switcher whenever the locale
-     changes (e.g. from the main settings drawer or the language
-     toggle on the landing). i18n.setLocale() reloads the page, so
-     this only fires in the rare case of an in-app locale change
-     without a reload (currently none — but cheap and forward-
-     compatible). */
-  document.addEventListener('i18n:localechange', paintSubpageLanguageSwitchers);
-
-  /* Honour direct visits to /legal/ or /about/ (the SPA's own
-     pushState URLs, and any external link that already pointed to
-     them). On the first paint we check the URL and show the right
-     view; otherwise the game starts at the menu or the name screen. */
-  var initialView = routeFromUrl();
-  if (initialView) {
-    App.goLegal && initialView === 'view-legal' && App.goLegal();
-    App.goAbout && initialView === 'view-about' && App.goAbout();
-  } else if (state.name) {
+  /* Boot: pick the right first screen. On a fresh install the
+     user types their name; if they've been here before, the
+     menu opens directly. */
+  if (state.name) {
     goMenu();
   } else {
     goName();
   }
-
-  /* Back/forward: when the user clicks the browser back button we
-     listen for popstate and re-show the matching view. We don't
-     push state for game screens (only for legal/about), so a back
-     from a subpage lands on the menu directly. */
-  window.addEventListener('popstate', function () {
-    var v = routeFromUrl();
-    if (v) {
-      showScreen(v);
-    } else {
-      showScreen('screenMenu');
-    }
-  });
 })();
