@@ -29,7 +29,7 @@ primero.
 > [`tecnico.md`](tecnico.md).
 > **Fuente de verdad del patrón transversal de la suite** (cómo
 > se construye cada app de Miralante, qué está prohibido):
-> [`patron-suite.md`](patron-suite.md).
+> [`tecnico.md` §8](tecnico.md#8-patrón-de-la-suite-cómo-se-construye-cada-app-de-miralante).
 > Este documento **no** redefine reglas; indexa el contenido que
 > esas reglas producen.
 
@@ -126,5 +126,4 @@ app.
   nivel.
 - [`guia-rapida.md`](guia-rapida.md) — orientación de una página.
 - [`equipo.md`](equipo.md) — cobertura y guía terapéutica.
-- [`patron-suite.md`](patron-suite.md) — el patrón transversal de la
-  suite (cada app de Miralante, qué está prohibido).
+- [`tecnico.md` §8](tecnico.md#8-patrón-de-la-suite-cómo-se-construye-cada-app-de-miralante) — el patrón transversal de la suite (cada app de Miralante, qué está prohibido).

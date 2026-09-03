@@ -25,7 +25,8 @@ this is the document to read first.
 > PWA/service-worker contract**:
 > [`technical.md`](technical.md).
 > **Source of truth for the cross-repo suite pattern** (how every
-> app of Miralante is built, what is forbidden): [`suite-pattern.md`](suite-pattern.md).
+> app of Miralante is built, what is forbidden): [`technical.md`
+> §8](technical.md#8-suite-pattern-how-every-app-of-miralante-is-built).
 > This document does **not** redefine rules; it indexes the content
 > that those rules produce.
 
@@ -113,5 +114,4 @@ mirrored across the locales the app ships.
 - [`index.md`](index.md) — top-level doc index.
 - [`quick-guide.md`](quick-guide.md) — one-page orientation.
 - [`team.md`](team.md) — coverage and therapeutic guidance.
-- [`suite-pattern.md`](suite-pattern.md) — the cross-repo suite
-  pattern (every app of Miralante, what is forbidden).
+- [`technical.md` §8](technical.md#8-suite-pattern-how-every-app-of-miralante-is-built) — the cross-repo suite pattern (every app of Miralante, what is forbidden).
