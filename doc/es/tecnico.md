@@ -513,7 +513,7 @@ Las otras apps de la suite:
 | `_headers` (CSP + Permissions-Policy + CORP + COOP + Upgrade-Insecure-Requests) | ✅ | ✅ | parcial (sin CSP) | ✅ | ✅ (con CSP) |
 | `404.html`, `robots.txt`, `sitemap.xml` | ✅ (servido vía `not_found_handling` en `wrangler.toml`; sin él es un 404 vacío, verificado en producción) | ❌ (Okeymoney depende de `not_found_handling` en `wrangler.toml`) | ❌ (`quick-guide.md`) | ✅ | ❌ |
 | `wrangler.toml` | ✅ (`[assets] directory = "."`, `not_found_handling = "404-page"`, Workers + static assets, comprometido — añadido tras detectar el hueco del 404 al arreglar el CSP de `_headers`) | ✅ (`[assets] directory = "."`, Workers + static assets, comprometido) | ❌ | ✅ | ✅ (presente a propósito, fija el nombre) |
-| `_redirects` | ❌ ausente (documentado en `CLOUDFLARE.md` — Cloudflare rechaza el catch-all SPA como loop) | ❌ | ❌ | ❌ | ❌ |
+| `_redirects` | ❌ ausente (no hay SPA en la suite — cada página es su propia URL; ver [`patron-suite.md`](patron-suite.md) §5) | ❌ | ❌ | ❌ | ❌ |
 | `package.json` | ❌ ausente (deliberado: evita que `npm install` se pase del límite de 25 MiB) | ❌ | ❌ | ❌ | ❌ |
 
 ### Dónde se documentan las diferencias
@@ -526,6 +526,8 @@ Las otras apps de la suite:
 | "Por qué existe `wrangler.toml`, sin `_redirects`" | [`CLOUDFLARE.md`](../../CLOUDFLARE.md) "Why `wrangler.toml`?" y "Why no `_redirects`?" |
 | "Bilingüe por defecto (`es` + `en`); cómo añadir un tercer idioma" | [`I18N.md`](I18N.md) |
 | "Cero menciones de discapacidad / terapia ocupacional / menores en archivos visibles al usuario" | [`SPEC.md`](SPEC.md) §4 y `scripts/check.js` §5 |
+| "Patrón transversal de la suite, qué está prohibido en todas las apps" | [`patron-suite.md`](patron-suite.md) |
+| "Cómo migrar un residuo raro de la fusión SPA si aparece" | [`patron-suite.md`](patron-suite.md) §5 |
 
 Si alguno de los elementos "recortado" o "ausente" de arriba te
 parece un bug, consulta la fuente citada antes de reintroducirlo: la

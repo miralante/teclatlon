@@ -28,6 +28,7 @@ doc/
     ├── SPEC.md
     ├── technical.md
     ├── I18N.md
+    ├── suite-pattern.md         ← Cross-repo suite pattern
     ├── activities.md            ← Lessons and modes catalogue
     ├── team.md                  ← Guide for families / teachers
     ├── creating-activities-guide.md
@@ -54,3 +55,4 @@ license…) live in the root [`README.md`](../../README.md) and
 | Support an end user (family/teacher) | [`team.md`](team.md) |
 | Add a language | [`I18N.md`](I18N.md) |
 | Understand project roles and how decisions are made | [`roles.md`](roles.md) |
+| Understand the cross-repo suite pattern (how every app of Miralante is built, what is forbidden) | [`suite-pattern.md`](suite-pattern.md) |

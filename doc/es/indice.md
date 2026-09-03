@@ -19,6 +19,7 @@ doc/
 │   ├── SPEC.md
 │   ├── tecnico.md
 │   ├── I18N.md
+│   ├── patron-suite.md          ← Patrón transversal de la suite
 │   ├── actividades.md           ← Catálogo de lecciones y modos
 │   ├── equipo.md                ← Guía para familias / docentes
 │   ├── guia-crear-actividades.md
@@ -29,6 +30,7 @@ doc/
     ├── SPEC.md
     ├── technical.md
     ├── I18N.md
+    ├── suite-pattern.md         ← Cross-repo suite pattern (EN)
     ├── activities.md
     ├── team.md
     ├── creating-activities-guide.md
@@ -55,3 +57,4 @@ la raíz y en [`CONTRIBUTING.md`](../../CONTRIBUTING.md).
 | Apoyar a una persona usuaria (familia/docente) | [`equipo.md`](equipo.md) |
 | Añadir un idioma | [`I18N.md`](I18N.md) |
 | Entender los roles del proyecto y cómo se decide | [`roles.md`](roles.md) |
+| Entender el patrón transversal de la suite (cómo se construye cada app de Miralante, qué está prohibido) | [`patron-suite.md`](patron-suite.md) |

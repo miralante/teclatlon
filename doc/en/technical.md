@@ -494,7 +494,7 @@ The other apps of the suite:
 | `_headers` (CSP + Permissions-Policy + CORP + COOP + Upgrade-Insecure-Requests) | ✅ | ✅ | partial (no CSP) | ✅ | ✅ (with CSP) |
 | `404.html`, `robots.txt`, `sitemap.xml` | ✅ (served via `wrangler.toml`'s `not_found_handling`; a bare 404 with no `wrangler.toml`, verified in prod) | ❌ (Okeymoney depends on `wrangler.toml`'s `not_found_handling`) | ❌ (`quick-guide.md`) | ✅ | ❌ |
 | `wrangler.toml` | ✅ (`[assets] directory = "."`, `not_found_handling = "404-page"`, Workers + static assets, committed — added after `_headers`' CSP fix surfaced the missing-404 gap) | ✅ (`[assets] directory = "."`, Workers + static assets, committed) | ❌ | ✅ | ✅ (kept on purpose, Pinned name) |
-| `_redirects` | ❌ absent (documented in `CLOUDFLARE.md` — Cloudflare rejects the SPA catch-all as a loop) | ❌ | ❌ | ❌ | ❌ |
+| `_redirects` | ❌ absent (no SPA in the suite — every page is its own URL; see [`suite-pattern.md`](suite-pattern.md) §5) | ❌ | ❌ | ❌ | ❌ |
 | `package.json` | ❌ absent (deliberate: avoids `npm install` overshooting the 25 MiB asset limit) | ❌ | ❌ | ❌ | ❌ |
 
 ### Where the differences are documented
@@ -505,6 +505,8 @@ The other apps of the suite:
 | "`tools/<slug>/` per activity was deliberately dropped" | This file §2 "Architecture" paragraph |
 | "`assets/js/` trimmed to what this single activity actually uses" | This file §2.1 "shared core" and `CLAUDE.md` |
 | "Why `wrangler.toml` exists, no `_redirects`" | [`CLOUDFLARE.md`](../../CLOUDFLARE.md) "Why `wrangler.toml`?" and "Why no `_redirects`?" |
+| "Cross-repo suite pattern, what is forbidden across all apps" | [`suite-pattern.md`](suite-pattern.md) |
+| "How to migrate the rare SPA-merge leftover if it shows up" | [`suite-pattern.md`](suite-pattern.md) §5 |
 | "Bilingual by default (`es` + `en`); how to add a third language" | [`I18N.md`](I18N.md) |
 | "Zero mentions of disability / occupational therapy / minors in user-facing files" | [`SPEC.md`](SPEC.md) §4 and `scripts/check.js` §5 |
 
