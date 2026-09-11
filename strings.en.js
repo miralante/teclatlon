@@ -106,10 +106,10 @@
     /* Spatial sound: the success tone plays from the side (left or
        right) of the key that was pressed, reinforcing hand position
        without relying on sight. */
-    "spatialSoundLabel": "🎧 Spatial sound",
-    "spatialSoundLabelAria": "Turn spatial sound on or off",
-    "spatialSoundLabelOn": "✅ Spatial sound: on",
-    "spatialSoundLabelOff": "⬜ Spatial sound: off",
+    "keySoundLabel": "⌨️ Key sounds",
+    "keySoundLabelAria": "Turn key sounds on or off",
+    "keySoundLabelOn": "✅ Key sounds: on",
+    "keySoundLabelOff": "⬜ Key sounds: off",
 
     "accuracy": "Accuracy: {n}%",
     "accuracyShort": "Acc. {n}%",

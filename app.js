@@ -36,7 +36,7 @@
       var o = raw.opciones;
       raw.options = {
         keyboard: o.teclado, color: o.color, theme: o.tema, textSize: o.texto,
-        focusMode: o.foco, spatialSound: o.espacial, metrics: o.metricas
+        focusMode: o.foco, keySound: o.espacial, metrics: o.metricas
       };
     }
     delete raw.nombre; delete raw.estrellas; delete raw.completado; delete raw.opciones;
@@ -55,7 +55,7 @@
   if (['auto', 'light', 'dark', 'contrast'].indexOf(state.options.theme) === -1) state.options.theme = 'light';
   if (['small', 'normal', 'large', 'huge'].indexOf(state.options.textSize) === -1) state.options.textSize = 'normal';
   state.options.focusMode = !!state.options.focusMode;
-  state.options.spatialSound = !!state.options.spatialSound;
+  state.options.keySound = state.options.keySound === undefined ? true : !!state.options.keySound;
   state.options.metrics = !!state.options.metrics;
 
   function save() { App.storage.set(SLUG, state); }
@@ -269,7 +269,7 @@
       b.setAttribute('aria-pressed', String(b.dataset.theme === state.options.theme));
     });
     updateSettingsButton('#btnFocusMode', 'focusModeLabel', state.options.focusMode);
-    updateSettingsButton('#btnSpatialSound', 'spatialSoundLabel', state.options.spatialSound);
+    updateSettingsButton('#btnKeySound', 'keySoundLabel', state.options.keySound);
     updateSettingsButton('#btnMetrics', 'metricsLabel', state.options.metrics);
     updateLiveMetrics();
   }
@@ -341,7 +341,7 @@
     if (bTheme) { state.options.theme = bTheme.dataset.theme; save(); applyOptions(); return; }
 
     if (e.target.closest('#btnFocusMode')) { state.options.focusMode = !state.options.focusMode; save(); applyOptions(); return; }
-    if (e.target.closest('#btnSpatialSound')) { state.options.spatialSound = !state.options.spatialSound; save(); applyOptions(); return; }
+    if (e.target.closest('#btnKeySound')) { state.options.keySound = !state.options.keySound; save(); applyOptions(); return; }
     if (e.target.closest('#btnMetrics')) { state.options.metrics = !state.options.metrics; save(); applyOptions(); return; }
   });
 
@@ -681,6 +681,7 @@
          it's done as soon as the right key is detected. */
       if (ch === p.specialKey) {
         state.metrics.hits += 1;
+        App.feedback.successSound(panOf(ch));
         updateLiveMetrics();
         stepCompleted(ch);
       } else {
@@ -700,6 +701,7 @@
        not penalising things the exercise didn't ask about. */
     if (ch === expected.toLowerCase() && (!needsShift || shiftHeld)) {
       state.metrics.hits += 1;
+      App.feedback.successSound(panOf(ch));
       game.pos += 1;
       renderTarget();
       updateLiveMetrics();
@@ -1199,7 +1201,7 @@
       name: '', stars: 0, completed: {},
       options: {
         keyboard: 'simple', color: 'hands', theme: 'auto', textSize: 'normal',
-        focusMode: false, spatialSound: false, metrics: false
+        focusMode: false, keySound: true, metrics: false
       }
     };
     save();

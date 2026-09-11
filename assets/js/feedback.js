@@ -7,7 +7,7 @@
 
    Audio:
    - Built with Web Audio (no audio files). Fails silently.
-   - Optional spatial audio: when state.options.spatialSound is true,
+   - Optional key audio: when state.options.keySound is true,
      each tone is panned (StereoPannerNode) by the column of the key
      that triggered it (-1 = left, +1 = right). Off by default so the
      experience stays calm.
@@ -56,7 +56,7 @@
       gain.gain.setValueAtTime(0.12, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
       var destination = ctx.destination;
-      if (typeof pan === 'number' && readOption('spatialSound', false)) {
+      if (typeof pan === 'number' && readOption('keySound', true)) {
         var panner = ctx.createStereoPanner();
         panner.pan.value = Math.max(-1, Math.min(1, pan));
         osc.connect(gain);
@@ -76,13 +76,15 @@
      (e.g. the all-keys challenge, which fires one tone per key and
      mustn't spam the live region) can play it directly. */
   function successSound(pan) {
+    if (!readOption('keySound', true)) return;
     tone(523.25, 0.15, 'sine', pan);          /* C */
-    setTimeout(function () { tone(659.25, 0.2, 'sine', pan); }, 120); /* E */
+    setTimeout(function () {
+      if (readOption('keySound', true)) tone(659.25, 0.2, 'sine', pan);
+    }, 120); /* E */
   }
 
   function cheerSound() {
-    /* Soft and neutral, never harsh */
-    tone(392, 0.2, 'sine');
+    /* Mistakes stay silent: audio is reserved for correctly pressed keys. */
   }
 
   /**
@@ -98,7 +100,6 @@
       zone.classList.remove('encourage');
       zone.classList.add('success');
     }
-    successSound(pan);
     return msg;
   }
 
@@ -147,8 +148,6 @@
     }
     layer.querySelector('.message').textContent = message;
     layer.classList.remove('hidden');
-    successSound();
-
     var duration = (window.App.utils && window.App.utils.reducedMotion()) ? 1200 : 2000;
     setTimeout(function () {
       layer.classList.add('hidden');

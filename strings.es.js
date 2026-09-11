@@ -106,10 +106,10 @@
     /* Sonido espacial: el tono de acierto suena por el lado (izquierda
        o derecha) de la tecla pulsada, para reforzar la posición de la
        mano sin depender de la vista. */
-    "spatialSoundLabel": "🎧 Sonido espacial",
-    "spatialSoundLabelAria": "Activar o desactivar el sonido espacial",
-    "spatialSoundLabelOn": "✅ Sonido espacial: encendido",
-    "spatialSoundLabelOff": "⬜ Sonido espacial: apagado",
+    "keySoundLabel": "⌨️ Sonido de teclas",
+    "keySoundLabelAria": "Activar o desactivar el sonido de teclas",
+    "keySoundLabelOn": "✅ Sonido de teclas: encendido",
+    "keySoundLabelOff": "⬜ Sonido de teclas: apagado",
 
     "accuracy": "Precisión: {n}%",
     "accuracyShort": "Prec. {n}%",

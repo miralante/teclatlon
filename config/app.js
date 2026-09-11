@@ -3,7 +3,7 @@
    View/reset what's saved in localStorage. Two actions:
    - "Reset the person's data": clears the saved name and
      the visual preferences (textSize, theme, focusMode,
-     spatialSound, color, keyboard layout). Stars and
+     keySound, color, keyboard layout). Stars and
      completed lessons are kept.
    - "Reset the whole app": clears every key under the
      'teclatlon:' prefix (equivalent to opening the app
@@ -29,7 +29,7 @@
         theme: 'light',
         textSize: 'normal',
         focusMode: false,
-        spatialSound: false,
+        keySound: true,
         metrics: false
       }
     };
