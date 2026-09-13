@@ -17,5 +17,55 @@
   "ogImageAsset": "og-image.svg",
   "iconAsset": "assets/img/icono.svg",
   "manifest": "manifest.json",
-  "hasItemList": false
+  "hasItemList": false,
+  "dcCreator": "Teclatlon (parte de la suite Apptonomia)",
+  "dcSubject": "Aplicación web gratuita para aprender mecanografía con el teclado del ordenador: colocación de dedos, lecciones por letra, palabras, números y escritura libre.",
+  "dcRights": "MIT (código). Las lecciones, palabras y textos de práctica son contenido propio bajo CC BY 4.0.",
+  "dcType": "InteractiveResource",
+  "faq": [
+    {
+      "question": "¿Qué es Teclatlon?",
+      "answer": "Teclatlon es una aplicación web gratuita y sin registro para aprender mecanografía con el teclado del ordenador: colocación de dedos, lecciones por letra, palabras, números y escritura libre."
+    },
+    {
+      "question": "¿Teclatlon funciona en el móvil o la tablet?",
+      "answer": "No. Teclatlon está pensada para el teclado físico de un ordenador (PC o portátil). El teclado táctil del móvil no entrena la colocación de los dedos que se busca practicar."
+    },
+    {
+      "question": "¿Teclatlon necesita conexión a internet?",
+      "answer": "Solo para la primera visita. Después puede instalarse como aplicación web progresiva y seguir funcionando sin conexión, con el service worker sirviendo los archivos en caché."
+    },
+    {
+      "question": "¿Cómo se guarda mi progreso?",
+      "answer": "En el almacenamiento local del navegador. No se envía a ningún servidor. Puedes borrarlo desde el botón 'Borrar mi progreso' en la propia aplicación."
+    },
+    {
+      "question": "¿Teclatlon es gratis?",
+      "answer": "Sí. Es gratuita, sin anuncios, sin cuentas, sin correo electrónico y sin cookies de seguimiento."
+    }
+  ],
+  "llmsTitle": "Teclatlon — Mecanografía con el teclado del ordenador",
+  "llmsSummary": "Aplicación web gratuita y sin registro para aprender mecanografía con el teclado del ordenador: colocación de dedos, lecciones por letra, palabras, números y escritura libre.",
+  "llmsWhatItIs": [
+    "Una aplicación para aprender mecanografía dedo a dedo, en un orden fijo de lecciones, con un teclado decorativo en pantalla que no se toca.",
+    "Incluye un juego de palabras, un juego del teclado numérico, un reto 'todas las teclas' y un modo de escritura libre que lee lo escrito.",
+    "Gratuita, sin registro y con el progreso guardado en el navegador.",
+    "Diseñada con lectura fácil y contraste alto para que las instrucciones se entiendan a la primera."
+  ],
+  "llmsWhatItIsNot": [
+    "No funciona en móvil ni en tablet: necesita el teclado físico de un PC o portátil.",
+    "No usa IA generativa en tiempo de ejecución: ninguna página llama a una API externa.",
+    "No envía datos a un servidor: todo el progreso vive en el navegador de quien lo usa.",
+    "No sustituye a una clase de mecanografía: es un complemento para practicar entre sesiones."
+  ],
+  "llmsResources": [
+    { "name": "Portal Apptonomia", "url": "https://apptonomia.uk/", "description": "Página de inicio de la suite." },
+    { "name": "Calculia", "url": "https://calculia.apptonomia.uk/", "description": "Cálculo y razonamiento lógico." },
+    { "name": "Routime", "url": "https://routime.apptonomia.uk/", "description": "Actividades cotidianas." },
+    { "name": "Okeymoney", "url": "https://okeymoney.apptonomia.uk/", "description": "Dinero del día a día." },
+    { "name": "Sinonimia", "url": "https://sinonimia.apptonomia.uk/", "description": "Diccionario en lectura fácil." },
+    { "name": "Memofun", "url": "https://memofun.apptonomia.uk/", "description": "Tarjetas de estudio." },
+    { "name": "Teclatlon", "url": "https://teclatlon.apptonomia.uk/", "description": "Esta aplicación." }
+  ],
+  "llmsLicense": "MIT (código). Las lecciones, palabras y textos de práctica son contenido propio bajo CC BY 4.0."
 }

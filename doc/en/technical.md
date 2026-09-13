@@ -4,10 +4,10 @@
 
 | Document | What it contains | When to read it |
 |---|---|---|
-| [`doc/en/SPEC.md`](SPEC.md) | Product scope, audience and non-negotiable rules | When changing what the app does or for whom |
+| [`doc/en/spec.md`](SPEC.md) | Product scope, audience and non-negotiable rules | When changing what the app does or for whom |
 | [`doc/en/technical.md`](technical.md) (this) | Architecture, shared core, contracts and development recipes | When modifying the codebase |
-| [`doc/en/I18N.md`](I18N.md) | How to add a new supported language | When adding a translation |
-| [`doc/en/SPEC.md` §2](SPEC.md) | "Computer only" rule, mobile-blocker gate | When touching the on-screen keyboard or the gate |
+| [`doc/en/i18n.md`](I18N.md) | How to add a new supported language | When adding a translation |
+| [`doc/en/spec.md` §2](SPEC.md) | "Computer only" rule, mobile-blocker gate | When touching the on-screen keyboard or the gate |
 | `CLAUDE.md` at the repo root | Operational workflow for AI agents | Only when an AI agent performs a change |
 | `git log` | Project history | When asking "why" about a past decision |
 
@@ -998,3 +998,13 @@ in one repo, mirror it across the others in the same PR.
 ## 9. License
 
 MIT. See [`LICENSE`](../../LICENSE).
+
+## Compact application header
+
+The main header follows Memofun: a 44px app icon (32px below 650px),
+a Nunito brand title at 28px (22px on mobile), suite attribution and aligned
+utility controls. It uses an 8px vertical inset and a 6px row gap. Supporting
+copy uses regular weight; any star counter stays compact. Header language buttons, where present,
+show full names on desktop and ES/EN on mobile, with full accessible names.
+Teclatlon keeps its keyboard controls and settings; Enroca keeps its navigation
+and settings. These header styles do not change activity controls.

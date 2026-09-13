@@ -3,7 +3,7 @@
 Thanks for your interest! Before opening an issue or a PR, please
 have a look at:
 
-- [`doc/en/SPEC.md`](doc/en/SPEC.md) — non-negotiable product and
+- [`doc/en/spec.md`](doc/en/spec.md) — non-negotiable product and
   accessibility rules.
 - [`doc/en/technical.md`](doc/en/technical.md) — architecture and
   technical constraints.

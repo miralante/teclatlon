@@ -90,7 +90,7 @@ in Teclatlon:
 ## 6. How to add a new lesson
 
 This is the support / build role's task. The full workflow lives in
-[`creating-activities-guide.md`](creating-activities-guide.md). The
+[`creating-elements-guide.md`](creating-elements-guide.md). The
 short version:
 
 1. **Edit `data.js`** to extend `LESSON_ORDER` (letters mode) or
@@ -114,4 +114,4 @@ and the constraints.
 - Architecture: [`technical.md`](technical.md).
 - Languages: [`I18N.md`](I18N.md).
 - How to create new lessons:
-  [`creating-activities-guide.md`](creating-activities-guide.md).
+  [`creating-elements-guide.md`](creating-elements-guide.md).

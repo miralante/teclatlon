@@ -159,7 +159,7 @@ Dónde se aplica y dónde no:
   la audiencia como "la persona tipo" o "las personas tipo"
   de la app.
 - **No se aplica** a la documentación interna de este repositorio
-  (`CLAUDE.md`, `doc/es/SPEC.md`, `doc/en/SPEC.md`, `tecnico.md`,
+  (`CLAUDE.md`, `doc/es/spec.md`, `doc/en/spec.md`, `tecnico.md`,
   [`roles.md`](roles.md), `CONTRIBUTING.es.md`, `CONTRIBUTING.md`) —
   esos archivos los lee quien mantiene o contribuye al proyecto, y
   "discapacidad intelectual" sigue siendo allí el término canónico,

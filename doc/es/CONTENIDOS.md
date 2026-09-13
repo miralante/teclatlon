@@ -4,7 +4,7 @@
 
 Este documento es el **índice didáctico detallado de Teclatlon**.
 Amplía [`actividades.md`](actividades.md) y
-[`guia-crear-actividades.md`](guia-crear-actividades.md) listando
+[`guia-crear-elementos.md`](guia-crear-elementos.md) listando
 cada lección, juego y concepto pedagógico que incluye la app, y
 remitiendo al documento canónico correspondiente.
 
@@ -23,7 +23,7 @@ primero.
 > **Fuente de verdad de las reglas de producto**:
 > [`SPEC.md`](SPEC.md).
 > **Fuente de verdad de la pedagogía**:
-> [`guia-crear-actividades.md`](guia-crear-actividades.md).
+> [`guia-crear-elementos.md`](guia-crear-elementos.md).
 > **Fuente de verdad del layout del teclado, colores por
 > dedo/mano y del contrato PWA/service-worker**:
 > [`tecnico.md`](tecnico.md).
@@ -64,7 +64,7 @@ Esta sección es el **hueco para el inventario por lección y por
 juego**. Cuando añadas una lección o un reto, documéntalo aquí
 (nombre, objetivo didáctico, vocabulario clave, arrays de
 `data.js` relacionados) y enlaza la sección correspondiente de
-[`guia-crear-actividades.md`](guia-crear-actividades.md) que
+[`guia-crear-elementos.md`](guia-crear-elementos.md) que
 gobierna la adición.
 
 Secciones a desarrollar según crezca el proyecto:

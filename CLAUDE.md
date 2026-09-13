@@ -37,6 +37,15 @@ general one on the same block.
 
 ---
 
+## Responsive design contract
+
+Follow the Apptonomia suite standard for all informational and menu pages:
+real mobile viewport, fluid container padding, no horizontal overflow, and
+flexible layouts that use the available space without excessive scrolling.
+The typing workspace may remain desktop-oriented because Teclatlon requires
+a physical keyboard; its mobile gate is intentional. Check 320px, 375px,
+768px and desktop for every other layout.
+
 ## Block A — Workflow
 
 ### A.1 Canonical sources

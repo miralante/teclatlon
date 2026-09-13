@@ -1,4 +1,4 @@
-﻿# Teclatlon ⌨️
+# Teclatlon ⌨️
 
 > 🌐 **Other languages:** [Español](README.es.md)
 >
@@ -21,7 +21,8 @@ saved only in `localStorage`, on your own device.
 - 🌐 **App**: [teclatlon.apptonomia.uk](https://teclatlon.apptonomia.uk/)
 - 📦 **Repository**: [github.com/miralante/teclatlon](https://github.com/miralante/teclatlon)
 - 💻 **Run locally**: open `index.html` directly in a browser, or serve
-  the folder with any static server (`npx serve .` /
+  the folder with any static server (
+npx serve .` /
   `python -m http.server 8080`) for the full offline-capable PWA
   experience.
 
@@ -42,7 +43,8 @@ input is always the physical keyboard.
   finger/hand map, persisted per session.
 - 📚 **Letter-by-letter lessons** — a fixed, scaffolding order that
   unlocks the next key once the previous one is mastered.
-- 🔤 **Words game** — random word lists per locale, plus the `name`
+- 🔤 **Words game** — random word lists per locale, plus the 
+ame`
   slot for the learner's own name.
 - 🔢 **Number-pad game** — for the right-hand numeric keypad.
 - 🎯 **All-keys challenge** — mixed full-keyboard test.
@@ -63,7 +65,8 @@ input is always the physical keyboard.
 |---|---|---|---|
 | 👤 **End user** (typical user profile) | Practices typing with the physical keyboard | Opens the app in a browser and types on the **physical** keyboard; the on-screen keyboard is decorative only | The app |
 | ❤️ **Support / family / teacher** | Helps an end user set up or progress through lessons | Sets the learner name in the words game; supervises progress via stars ⭐ | [`CONTRIBUTING.md`](CONTRIBUTING.md) (the "Support" section) |
-| 💻 **Build / developer** | Maintains the keyboard layouts, lessons, and the SW | Edits `data.js`, `app.js`, `sw.js`, `strings.<locale>.js`; runs `node scripts/check.js` | [`CLAUDE.md`](CLAUDE.md) |
+| 💻 **Build / developer** | Maintains the keyboard layouts, lessons, and the SW | Edits `data.js`, `app.js`, `sw.js`, `strings.<locale>.js`; runs 
+ode scripts/check.js` | [`CLAUDE.md`](CLAUDE.md) |
 
 See [`doc/en/roles.md`](doc/en/roles.md) for the full role description
 and the trio-vs-pair-vs-sole patterns across the apps of the suite.
@@ -83,9 +86,9 @@ By role and profile, the most relevant docs are:
 
 | I am… | Start here |
 |---|---|
-| 👤 End user or family member | [`doc/en/README.md`](doc/en/README.md) |
+| 👤 End user or family member | [`doc/en/readme.md`](doc/en/readme.md) |
 | ❤️ Therapist, family, or support professional | [`doc/en/team.md`](doc/en/team.md) |
-| 🤔 I want to understand what Teclatlon is and why | [`doc/en/SPEC.md`](doc/en/SPEC.md) |
+| 🤔 I want to understand what Teclatlon is and why | [`doc/en/spec.md`](doc/en/spec.md) |
 | 💻 Developer | [`doc/en/technical.md`](doc/en/technical.md) |
 
 ### 📄 Other repo documents
@@ -96,7 +99,7 @@ By role and profile, the most relevant docs are:
 | `CLAUDE.md` | AI agents: operational workflow, coordination and approvals |
 | [`CLOUDFLARE.md`](CLOUDFLARE.md) | Canonical Cloudflare Workers deploy guide for the suite (Teclatlon + Apptonomia + Calculia, Memofun, Okeymoney, Sinonimia) |
 | Project history | Lives in `git log`; no external roadmap is maintained |
-| `doc/en/I18N.md` / `doc/es/I18N.md` | Details of the ES/EN multilanguage system |
+| `doc/en/i18n.md` / `doc/es/i18n.md` | Details of the ES/EN multilanguage system |
 
 ---
 
@@ -108,7 +111,8 @@ editing one of three locale-split arrays in `data.js`:
 - **`LESSONS`** — the fixed, scaffolding order of letters
   (`lesson-01-homerow` through `lesson-NN-extra-keys`). Each
   lesson unlocks the next once the previous is mastered.
-- **`WORDS`** — random word lists per locale, plus the `name` slot
+- **`WORDS`** — random word lists per locale, plus the 
+ame` slot
   for the learner's own name.
 - **`NUMPAD`** — number-pad practice steps for the right-hand
   numeric keypad.
@@ -128,7 +132,7 @@ To add a new lesson:
 
 The `data.js` file is large (it carries all three locale-split
 practice arrays); do not split it into per-locale files without
-updating the i18n architecture — see [`doc/en/I18N.md`](doc/en/I18N.md)
+updating the i18n architecture — see [`doc/en/i18n.md`](doc/en/i18n.md)
 for the recipe.
 
 ---
@@ -139,7 +143,8 @@ for the recipe.
 node scripts/check.js
 ```
 
-No `npm install` needed — the script only uses Node's standard library.
+No 
+pm install` needed — the script only uses Node's standard library.
 It checks:
 
 - JS syntax across the app and the PWA shell.
@@ -192,7 +197,8 @@ Copyright (c) 2026 Teclatlon contributors.
 
 ## 🧹 Housekeeping
 
-There is no `node_modules` and no build artifacts in this repo. To
+There is no 
+ode_modules` and no build artifacts in this repo. To
 clean the local PWA cache during development, unregister the service
 worker from DevTools (`Application → Service workers → Unregister`)
 and clear site data. Teclatlon's SW is network-first, so a hard
@@ -242,5 +248,5 @@ This repo uses the **Workers + static assets** model (`wrangler.toml`
 Apptonomia/Teclatlon's classic Pages model — see [`CLOUDFLARE.md`](CLOUDFLARE.md)
 for the local runbook.
 
-## More about this project
+
 

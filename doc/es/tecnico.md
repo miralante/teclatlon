@@ -4,10 +4,10 @@
 
 | Documento | Qué contiene | Cuándo leerlo |
 |---|---|---|
-| [`doc/es/SPEC.md`](SPEC.md) | Alcance de producto, audiencia y reglas no negociables | Cuando cambie qué hace la app o para quién |
+| [`doc/es/spec.md`](SPEC.md) | Alcance de producto, audiencia y reglas no negociables | Cuando cambie qué hace la app o para quién |
 | [`doc/es/tecnico.md`](tecnico.md) (este) | Arquitectura, núcleo compartido, contratos y recetas de desarrollo | Cuando modifiques el código |
-| [`doc/es/I18N.md`](I18N.md) | Cómo añadir un idioma soportado | Cuando añadas una traducción |
-| [`doc/es/SPEC.md` §2](SPEC.md) | Regla "solo ordenador", gate de móvil | Cuando toques el teclado en pantalla o el gate |
+| [`doc/es/i18n.md`](I18N.md) | Cómo añadir un idioma soportado | Cuando añadas una traducción |
+| [`doc/es/spec.md` §2](SPEC.md) | Regla "solo ordenador", gate de móvil | Cuando toques el teclado en pantalla o el gate |
 | `CLAUDE.md` en la raíz del repo | Flujo operativo para agentes de IA | Solo cuando un agente de IA haga el cambio |
 | `git log` | Historial del proyecto | Cuando se pregunte "¿por qué?" sobre una decisión pasada |
 
@@ -1038,3 +1038,14 @@ demás en el mismo PR.
 ## 9. Licencia
 
 MIT. Ver [`LICENSE`](../../LICENSE).
+
+## Cabecera compacta de la aplicación
+
+La cabecera principal sigue el modelo de Memofun: icono de 44px (32px por
+debajo de 650px), título Nunito de 28px (22px en móvil), atribución a la suite
+y controles alineados. Usa un margen interior vertical de 8px y separa las
+filas 6px. El texto secundario tiene peso normal y el contador de estrellas
+es compacto. Los botones de idioma de la cabecera muestran nombres completos en escritorio
+y ES/EN en móvil, con nombres accesibles completos. Teclatlon conserva sus
+controles de teclado y ajustes; Enroca conserva navegación y ajustes. Estos
+estilos de cabecera no cambian los controles de las actividades.

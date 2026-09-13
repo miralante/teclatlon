@@ -3,4 +3,38 @@ Allow: /
 Disallow: /assets/js/
 Disallow: /legal/
 
+# === AI crawlers (allowed) ===
+# See apptonomia/doc/en/guia-de-cumplimiento.md §7.3 and
+# apptonomia/CLAUDE.md §B.8. The suite is free, no-signup and
+# no-telemetry: summarising it correctly helps users find it.
+# To block a specific crawler, add a `User-agent: <X> / Disallow: /`
+# block here instead of changing the global `User-agent: * / Allow: /`.
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
 Sitemap: https://teclatlon.pages.dev/sitemap.xml

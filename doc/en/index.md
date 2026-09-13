@@ -20,17 +20,18 @@ doc/
 │   ├── I18N.md
 │   ├── actividades.md           ← Lessons and modes catalogue
 │   ├── equipo.md                ← Guide for families / teachers
-│   ├── guia-crear-actividades.md
+│   ├── guia-crear-elementos.md
 │   └── guia-rapida.md
 └── en/
     ├── index.md                 ← This file (entry point, EN)
     ├── roles.md                 ← Project roles
     ├── SPEC.md
+    ├── README.md                ← Easy-read intro (audience-first)
     ├── technical.md
     ├── I18N.md
     ├── activities.md            ← Lessons and modes catalogue
     ├── team.md                  ← Guide for families / teachers
-    ├── creating-activities-guide.md
+    ├── creating-elements-guide.md
     └── quick-guide.md
 ```
 
@@ -47,9 +48,10 @@ license…) live in the root [`README.md`](../../README.md) and
 | If you want to… | Start with |
 |---|---|
 | Understand what Teclatlon is and who it is for | [`SPEC.md`](SPEC.md) |
+| 👤 End user or family member | [`README.md`](README.md) |
 | **Open the app and use it (4 methods: internet, ZIP, Python, Node)** | [`quick-guide.md`](quick-guide.md) |
 | See the architecture and technical recipes | [`technical.md`](technical.md) |
-| **Create a new lesson / activity (design + didactic, gamification and neuromarketing techniques)** | [`creating-activities-guide.md`](creating-activities-guide.md) |
+| **Create a new lesson / activity (design + didactic, gamification and neuromarketing techniques)** | [`creating-elements-guide.md`](creating-elements-guide.md) |
 | Browse the lessons and modes catalogue | [`activities.md`](activities.md) |
 | Support an end user (family/teacher) | [`team.md`](team.md) |
 | Add a language | [`I18N.md`](I18N.md) |

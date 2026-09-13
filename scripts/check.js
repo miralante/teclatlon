@@ -214,7 +214,7 @@ var manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'manifest.json'), 'utf
 });
 
 /* --- 5. Mandatory rule: zero disability / occupational therapy / minors mentions ---
-   doc/es/SPEC.md §4: the end user never sees terms naming disability,
+   doc/es/spec.md §4: the end user never sees terms naming disability,
    occupational therapy or minors. This check only covers the files
    the user actually visits; internal docs (SPEC.md, README.md,
    CONTRIBUTING.md, CLAUDE.md) are out of scope by design (they
@@ -276,7 +276,7 @@ userFacingTargets.forEach(function (file) {
       hit = content.indexOf(term.toLowerCase()) !== -1;
     }
     if (hit) {
-      failures.push(rel(file) + ': contains "' + term + '" — no visible page may mention disability, occupational therapy or minors (see doc/es/SPEC.md §4)');
+      failures.push(rel(file) + ': contains "' + term + '" — no visible page may mention disability, occupational therapy or minors (see doc/es/spec.md §4)');
     }
   });
 });

@@ -154,7 +154,7 @@ Where the euphemism applies and where it doesn't:
   marketing material. In these surfaces, refer to the audience as
   "la persona tipo" or "las personas tipo" of the app.
 - **Does NOT apply** to this repo's internal documentation
-  (`CLAUDE.md`, `doc/en/SPEC.md`, `doc/es/SPEC.md`, `technical.md`,
+  (`CLAUDE.md`, `doc/en/spec.md`, `doc/es/spec.md`, `technical.md`,
   [`roles.md`](roles.md), `CONTRIBUTING.md`, `CONTRIBUTING.es.md`) —
   those files are read by maintainers and contributors, and
   "intellectual disability" / "discapacidad intelectual" remains the

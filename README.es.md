@@ -1,4 +1,4 @@
-﻿# Teclatlon ⌨️
+# Teclatlon ⌨️
 
 > 🌐 **Otros idiomas:** [English](README.md)
 >
@@ -23,7 +23,8 @@ en tu propio dispositivo.
 - 📦 **Repositorio**: [github.com/miralante/teclatlon](https://github.com/miralante/teclatlon)
 - 💻 **Ejecutar en local**: abre `index.html` directamente en un
   navegador, o sirve la carpeta con cualquier servidor estático
-  (`npx serve .` / `python -m http.server 8080`) para la experiencia
+  (
+npx serve .` / `python -m http.server 8080`) para la experiencia
   PWA completa, con soporte sin conexión.
 
 ---
@@ -68,7 +69,8 @@ decorativo; la entrada real es siempre el teclado físico.
 |---|---|---|---|
 | 👤 **Persona usuaria** (persona tipo) | Practica mecanografía con el teclado físico | Abre la app en un navegador y escribe con el teclado **físico**; el teclado en pantalla es decorativo | La aplicación |
 | ❤️ **Apoyo / familia / docente** | Ayuda a la persona usuaria a configurar o avanzar en las lecciones | Define el nombre de quien aprende en el juego de palabras; supervisa el progreso por las estrellas ⭐ | [`CONTRIBUTING.es.md`](CONTRIBUTING.es.md) (la sección "Apoyo") |
-| 💻 **Construcción / desarrollador/a** | Mantiene los layouts de teclado, las lecciones y el SW | Edita `data.js`, `app.js`, `sw.js`, `strings.<locale>.js`; ejecuta `node scripts/check.js` | [`CLAUDE.md`](CLAUDE.md) |
+| 💻 **Construcción / desarrollador/a** | Mantiene los layouts de teclado, las lecciones y el SW | Edita `data.js`, `app.js`, `sw.js`, `strings.<locale>.js`; ejecuta 
+ode scripts/check.js` | [`CLAUDE.md`](CLAUDE.md) |
 
 Ver [`doc/es/roles.md`](doc/es/roles.md) para la descripción completa
 de los roles y los patrones trio/par/único del conjunto de la suite.
@@ -88,9 +90,9 @@ Según tu rol y perfil, te interesa una u otra documentación:
 
 | Soy… | Empieza por… |
 |---|---|
-| 👤 Persona usuaria o familiar | [`doc/es/README.md`](doc/es/README.md) |
+| 👤 Persona usuaria o familiar | [`doc/es/readme.md`](doc/es/readme.md) |
 | ❤️ Terapeuta, familiar o profesional de apoyo | [`doc/es/equipo.md`](doc/es/equipo.md) |
-| 🤔 Quiero entender qué es Teclatlon y por qué | [`doc/es/SPEC.md`](doc/es/SPEC.md) |
+| 🤔 Quiero entender qué es Teclatlon y por qué | [`doc/es/spec.md`](doc/es/spec.md) |
 | 💻 Desarrollador/a | [`doc/es/tecnico.md`](doc/es/tecnico.md) |
 
 ### 📄 Otros documentos del repo
@@ -101,7 +103,7 @@ Según tu rol y perfil, te interesa una u otra documentación:
 | `CLAUDE.md` | Agentes IA: reglas obligatorias y estado del proyecto |
 | [`CLOUDFLARE.md`](CLOUDFLARE.md) | Guía canónica de despliegue en Cloudflare Workers para la suite (Teclatlon + Apptonomia + Calculia, Memofun, Okeymoney, Sinonimia) |
 | Historial del proyecto | En `git log`; no se mantiene una hoja de ruta externa |
-| `doc/es/I18N.md` / `doc/en/I18N.md` | Detalles del sistema multiidioma ES/EN |
+| `doc/es/i18n.md` / `doc/en/i18n.md` | Detalles del sistema multiidioma ES/EN |
 
 ---
 
@@ -115,7 +117,8 @@ significa editar uno de los tres arrays divididos por idioma en
   (`lesson-01-homerow` hasta `lesson-NN-extra-keys`). Cada lección
   desbloquea la siguiente cuando se domina la anterior.
 - **`WORDS`** — listas de palabras aleatorias por idioma, más el slot
-  `name` para el nombre de quien aprende.
+  
+ame` para el nombre de quien aprende.
 - **`NUMPAD`** — pasos de práctica del teclado numérico de la derecha.
 
 Para añadir una lección nueva:
@@ -134,7 +137,7 @@ Para añadir una lección nueva:
 
 El fichero `data.js` es grande (lleva los tres arrays de práctica
 divididos por idioma); no lo partas en ficheros por idioma sin
-actualizar la arquitectura i18n — ver [`doc/es/I18N.md`](doc/es/I18N.md)
+actualizar la arquitectura i18n — ver [`doc/es/i18n.md`](doc/es/i18n.md)
 con la receta.
 
 ---
@@ -145,7 +148,8 @@ con la receta.
 node scripts/check.js
 ```
 
-No hace falta `npm install` — el script solo usa la librería estándar
+No hace falta 
+pm install` — el script solo usa la librería estándar
 de Node. Comprueba:
 
 - Sintaxis de JS en toda la app y en el shell PWA.
@@ -201,7 +205,8 @@ Copyright (c) 2026 Teclatlon contributors.
 
 ## 🧹 Mantenimiento
 
-Este repo no tiene `node_modules` ni artefactos de build. Para limpiar
+Este repo no tiene 
+ode_modules` ni artefactos de build. Para limpiar
 la caché local de la PWA durante el desarrollo, desregistra el SW
 desde DevTools (`Application → Service workers → Unregister`) y borra
 los datos del sitio. El SW de Teclatlon es network-first, así que un
@@ -252,6 +257,5 @@ Este repo usa el modelo **Workers + static assets** (`wrangler.toml`
 Apptonomia/Teclatlon — ver [`CLOUDFLARE.md`](CLOUDFLARE.md) para la
 guía local.
 
-## More about this project
 
-- [Privacy](https://teclatlon.apptonomia.uk/legal/)
+

@@ -186,11 +186,11 @@
       <p class="mobile-block-suggestion" data-i18n="computerOnlySuggestion">Abre esta página desde un portátil o un PC. Si tu móvil tiene un teclado físico, conéctalo por Bluetooth o USB.</p>
     </div>
   </div>
-  <div class="container">
-    <header class="tool-header">
+  <div class="container suite-home">
+    <header class="tool-header suite-header">
       <div class="tool-header-row">
-        <h1 data-i18n="title">⌨️ Teclatlon</h1>
-        <div class="header-data">
+        <div class="suite-brand"><img src="assets/img/icono.svg" alt="" width="44" height="44"><div class="suite-brand-copy"><h1>Teclatlon</h1><p class="suite-attribution"><span data-i18n="suiteBy">Una app de</span> <a href="https://apptonomia.uk/">Apptonomia</a>.</p></div></div>
+        <div class="header-data suite-controls">
           <span class="stars" id="stars">⭐ 0</span>
           <button type="button" class="btn-icon btn-open-settings" id="btnOpenSettings" aria-haspopup="dialog" aria-expanded="false" aria-controls="settingsDrawer" data-i18n-aria="openSettingsAria" aria-label="Ajustes">⚙️</button>
         </div>
@@ -203,8 +203,8 @@
            vertical room on small screens. The .keyboard-detail and
            .keyboard-legend stay where they were (they read in the
            context of the keyboard they describe) and are still scoped
-           per section by app.js (uses $$('.keyboard-detail') /
-           $$('.keyboard-legend') so it fills every copy). -->
+           per section by app.js (uses $('.keyboard-detail') /
+           $('.keyboard-legend') so it fills every copy). -->
       <div class="row keyboard-options keyboard-options--header" role="group" data-i18n-aria="keyboardViewAria" aria-label="Vista del teclado">
         <button type="button" class="btn btn-secondary btn-compact btn-keyboard" data-keyboard="simple" data-i18n="btnSimple" aria-pressed="false">🔤 Solo letras</button>
         <button type="button" class="btn btn-secondary btn-compact btn-keyboard" data-keyboard="normal" data-i18n="btnNormal" aria-pressed="false">⌨️ Letras y números</button>
@@ -216,9 +216,7 @@
     <!-- Screen: your name -->
     <section id="screenName" class="hidden stack">
       <div class="row centered-row">
-        <p class="instruction" id="nameText" data-i18n="nameScreenText">¡Hola! ¿Cómo te llamas? Escribe tu nombre con el teclado.</p>
-        <button type="button" class="btn btn-audio" id="btnListenName" data-i18n-aria="core.listenInstructions" aria-label="Escuchar las instrucciones">🔊</button>
-      </div>
+        <p class="instruction" id="nameText" data-i18n="nameScreenText">¡Hola! ¿Cómo te llamas? Escribe tu nombre con el teclado.</p>      </div>
       <input id="inputName" class="input-name" type="text" maxlength="20" autocomplete="off" spellcheck="false" data-i18n-aria="nameInputAria" aria-label="Escribe tu nombre">
       <div class="row centered-row">
         <button type="button" class="btn" id="btnSaveName" data-i18n="btnSaveName">✅ Listo</button>
@@ -238,9 +236,7 @@
     <!-- Screen: game menu -->
     <section id="screenMenu" class="hidden stack">
       <div class="row centered-row">
-        <h2 id="greeting" data-i18n="greetingHello">¡Hola!</h2>
-        <button type="button" class="btn btn-audio" id="btnListenGreeting" data-i18n-aria="core.listenText" aria-label="Escuchar el saludo">🔊</button>
-      </div>
+        <h2 id="greeting" data-i18n="greetingHello">¡Hola!</h2>      </div>
       <p class="instruction centered" data-i18n="chooseGame">Elige un juego.</p>
       <div class="row centered-row">
         <button type="button" class="btn btn-secondary btn-compact" id="btnChangeName" data-i18n="btnMyName">✏️ Mi nombre</button>
@@ -316,9 +312,7 @@
     <section id="screenGame" class="hidden stack">
       <div class="row game-screen-bar">
         <button type="button" class="btn btn-secondary btn-compact" id="btnExitGame" data-i18n="btnMenu">← Menú</button>
-        <h2 class="game-title" id="gameTitle" data-i18n="gameTitleDefault">Juego</h2>
-        <button type="button" class="btn btn-audio btn-compact" id="btnListenGame" data-i18n-aria="core.listenInstructions" aria-label="Escuchar las instrucciones">🔊</button>
-      </div>
+        <h2 class="game-title" id="gameTitle" data-i18n="gameTitleDefault">Juego</h2>      </div>
       <p class="instruction centered" id="gameInstruction"></p>
       <div class="card centered">
         <div id="targetZone" class="target-zone"></div>
@@ -350,9 +344,7 @@
     <section id="screenFree" class="hidden stack">
       <div class="row game-screen-bar">
         <button type="button" class="btn btn-secondary btn-compact" id="btnExitFree" data-i18n="btnMenu">← Menú</button>
-        <h2 class="game-title" data-i18n="modeFreeName">Escribe libre</h2>
-        <button type="button" class="btn btn-audio btn-compact" id="btnListenFree" data-i18n="core.listen" data-i18n-aria="listenTextAria" aria-label="Escuchar mi texto">🔊 Escuchar</button>
-        <button type="button" class="btn btn-secondary btn-compact" id="btnClearFree" data-i18n-aria="clearTextAria" aria-label="Borrar el texto">🗑️</button>
+        <h2 class="game-title" data-i18n="modeFreeName">Escribe libre</h2>        <button type="button" class="btn btn-secondary btn-compact" id="btnClearFree" data-i18n-aria="clearTextAria" aria-label="Borrar el texto">🗑️</button>
       </div>
       <textarea id="freeArea" class="free-area" rows="4" spellcheck="false" data-i18n-aria="freeAreaAria" aria-label="Escribe aquí lo que quieras" placeholder="Escribe aquí..."></textarea>
       <div class="row guide">
@@ -431,7 +423,6 @@
 
   <script src="assets/js/utils.js"></script>
   <script src="assets/js/i18n.js"></script>
-  <script src="assets/js/tts.js"></script>
   <script src="assets/js/storage.js"></script>
   <script src="assets/js/feedback.js"></script>
   <script src="strings.es.js"></script>

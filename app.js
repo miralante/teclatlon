@@ -1179,8 +1179,8 @@
       saveName();
     }
   });
-  $('#btnListenName').addEventListener('click', function () {
-    App.tts.speak($('#nameText').textContent + App.i18n.t('listenNameExtra'));
+  if ($('#btnListenName')) $('#btnListenName').addEventListener('click', function () {
+    if (false && App.tts && App.tts.speak) App.tts.speak($('#nameText').textContent + App.i18n.t('listenNameExtra'));
   });
 
   var confirmingClear = false;
@@ -1233,8 +1233,8 @@
     else if (m === 'templates') goTemplates();
   });
 
-  $('#btnListenGreeting').addEventListener('click', function () {
-    App.tts.speak($('#greeting').textContent + ' ' + App.i18n.t('chooseGame'));
+  if ($('#btnListenGreeting')) $('#btnListenGreeting').addEventListener('click', function () {
+    if (false && App.tts && App.tts.speak) App.tts.speak($('#greeting').textContent + ' ' + App.i18n.t('chooseGame'));
   });
 
   $('#btnChangeName').addEventListener('click', goName);
@@ -1244,24 +1244,23 @@
   $('#btnExitGame').addEventListener('click', function () {
     var mode = game && game.cfg ? game.cfg.mode : null;
     game = null;
-    App.tts.stop();
     markTarget(null);
     if (mode === 'lesson') goLessons();
     else if (mode === 'template') goTemplates();
     else goMenu();
   });
 
-  $('#btnListenGame').addEventListener('click', function () {
+  if ($('#btnListenGame')) $('#btnListenGame').addEventListener('click', function () {
     var text = $('#gameTitle').textContent + '. ' + $('#gameInstruction').textContent;
     if (game && game.type === 'seq') text += ' ' + $('#guideText').textContent;
-    App.tts.speak(text);
+    if (false && App.tts && App.tts.speak) App.tts.speak(text);
   });
 
   /* ---------- Free writing ---------- */
   $('#btnExitFree').addEventListener('click', goMenu);
-  $('#btnListenFree').addEventListener('click', function () {
+  if ($('#btnListenFree')) $('#btnListenFree').addEventListener('click', function () {
     var t = $('#freeArea').value.trim();
-    App.tts.speak(t || App.i18n.t('nothingWrittenYet'));
+    if (false && App.tts && App.tts.speak) App.tts.speak(t || App.i18n.t('nothingWrittenYet'));
   });
   $('#btnClearFree').addEventListener('click', function () {
     $('#freeArea').value = '';

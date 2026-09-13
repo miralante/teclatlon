@@ -7,6 +7,7 @@
   'use strict';
 
   App.i18n.register({
+    suiteBy: 'Una app de',
     "title": "⌨️ Teclatlon",
     "nameScreenText": "¡Hola! ¿Cómo te llamas? Escribe tu nombre con el teclado.",
     "listenNameExtra": " Cuando termines, toca el botón Listo.",

@@ -1,7 +1,6 @@
 /* ==========================================================================
    Teclatlon — Text to speech (Web Speech API)
-   Exposes window.App.tts.speak(text, onEnd) and App.tts.stop()
-   Voice and language follow App.i18n.lang() (rate 0.9).
+   Exposes window.App.tts.speak(text, onEnd) and App.tts.stop(). Voice and language follow App.i18n.lang() (rate 0.9).
    Requires i18n.js loaded first.
    ========================================================================== */
 (function () {

@@ -139,6 +139,6 @@ confirmación.
 
 - Catálogo de modos y lecciones: [`actividades.md`](actividades.md).
 - Notas pedagógicas y de diseño para profesionales:
-  [`guia-crear-actividades.md`](guia-crear-actividades.md).
+  [`guia-crear-elementos.md`](guia-crear-elementos.md).
 - Guía transversal para familias sobre habilidades de vida diaria:
   [`equipo.md` de Routime](https://github.com/thenkdframe/routime/blob/main/doc/es/equipo.md).

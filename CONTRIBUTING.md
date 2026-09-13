@@ -3,7 +3,7 @@
 ¡Gracias por tu interés! Antes de abrir un issue o un PR, echa un
 vistazo a:
 
-- [`doc/es/SPEC.md`](doc/es/SPEC.md) — reglas de producto y
+- [`doc/es/spec.md`](doc/es/spec.md) — reglas de producto y
   accesibilidad no negociables.
 - [`doc/es/tecnico.md`](doc/es/tecnico.md) — arquitectura y
   restricciones técnicas.

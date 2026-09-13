@@ -4,7 +4,7 @@
 
 This document is the **detailed didactic index of Teclatlon**. It
 expands on [`activities.md`](activities.md) and
-[`creating-activities-guide.md`](creating-activities-guide.md) by
+[`creating-elements-guide.md`](creating-elements-guide.md) by
 listing every lesson, game and pedagogical concept shipped with the
 app, and pointing back to the canonical doc for each one.
 
@@ -20,7 +20,7 @@ this is the document to read first.
 
 > **Source of truth for product rules**: [`SPEC.md`](SPEC.md).
 > **Source of truth for pedagogy**:
-> [`creating-activities-guide.md`](creating-activities-guide.md).
+> [`creating-elements-guide.md`](creating-elements-guide.md).
 > **Source of truth for keyboard layout, finger/hand colors and the
 > PWA/service-worker contract**:
 > [`technical.md`](technical.md).
@@ -61,7 +61,7 @@ This section is the **placeholder for the per-lesson and per-game
 inventory**. When you add a lesson or a challenge, document it here
 (name, didactic objective, key vocabulary, related `data.js`
 arrays) and link back to the section in
-[`creating-activities-guide.md`](creating-activities-guide.md) that
+[`creating-elements-guide.md`](creating-elements-guide.md) that
 governs the addition.
 
 Sections to flesh out as the project grows:

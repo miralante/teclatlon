@@ -19,7 +19,7 @@
 Las técnicas didácticas, de gamificación, de persuasión y de
 neuromarketing completas que comparten todas las apps de la suite
 de Apptonomia viven en el repositorio de **Routime** en
-[`guia-crear-actividades.md`](https://github.com/thenkdframe/routime/blob/main/doc/es/guia-crear-actividades.md).
+[`guia-crear-elementos.md`](https://github.com/thenkdframe/routime/blob/main/doc/es/guia-crear-elementos.md).
 
 Léela antes de diseñar nada. Cubre (entre otras cosas):
 
@@ -145,7 +145,7 @@ worker forma parte de la receta; ver [`tecnico.md`](tecnico.md)
 ## 5. Ver también
 
 - Guía pedagógica canónica (Routime):
-  [guia-crear-actividades.md](https://github.com/thenkdframe/routime/blob/main/doc/es/guia-crear-actividades.md).
+  [guia-crear-elementos.md](https://github.com/thenkdframe/routime/blob/main/doc/es/guia-crear-elementos.md).
 - Catálogo de modos y lecciones:
   [`actividades.md`](actividades.md).
 - Receta técnica:

@@ -2,250 +2,231 @@
 
 > **Production branch & automatic deploy.** Teclatlon deploys
 > **automatically on every push to `master`** via the **Cloudflare
-> Git connector** configured in the Cloudflare dashboard. There is no
-> GitHub Actions workflow that deploys — the only workflow in
-> `.github/workflows/validate.yml` runs `node scripts/check.js` on
-> every push and PR to gate content, but it does **not** deploy. The
-> Cloudflare dashboard is the source of truth for project settings.
+> Git connector**. The GitHub Actions workflow
+> [`.github/workflows/validate.yml`](.github/workflows/validate.yml)
+> runs `node scripts/check.js` on every push and PR but does **not**
+> deploy. The Cloudflare dashboard is the source of truth for
+> project settings.
 >
 > **Live URL:** <https://teclatlon.miralante.workers.dev>
 >
-> **Part of the Miralante suite.** Teclatlon is one of **six apps**
-> (Calculia, Memofun, Okeymoney, Routime, Sinonimia, Teclatlon) that
-> share the same author, the same accessibility-first / no-backend
-> philosophy and the same Cloudflare deploy story. **Apptonomia is
-> the landing portal of the suite, not a runtime app.** The
-> canonical group-wide guide lives in
-> [Apptonomia's `CLOUDFLARE.md`](https://github.com/miralante/apptonomia/blob/master/CLOUDFLARE.md).
-
-Teclatlon is deployed as a **Cloudflare Worker (static assets)**
-project, reachable at a `*.workers.dev` subdomain — **not** classic
-Cloudflare Pages (`*.pages.dev`), despite this file's history and the
-other suite docs describing it that way. In the Cloudflare dashboard
-it lives under "Workers & Pages" → Compute → Workers & Pages, alongside
-the other apps of the suite, and is driven by the same Git-connector
-auto-deploy as before: push to `master`, Cloudflare builds and
-deploys automatically. There is no custom GitHub Actions workflow that
-deploys; project configuration is split between a committed
-[`wrangler.toml`](wrangler.toml) (the static-assets binding and 404
-handling) and the Cloudflare dashboard (branch, environment
-variables). This mirrors the Sinonimia app of the suite's setup,
-which uses the same model.
+> **Part of the Miralante suite.** Teclatlon is one of the six
+> runtime apps (Calculia, Memofun, Okeymoney, Routime, Sinonimia,
+> Teclatlon) that share the same author, the same accessibility-first
+> / no-backend philosophy, and the same Cloudflare deploy story.
+> The canonical group-wide guide lives in
+> [Apptonomia's `CLOUDFLARE.md`](https://github.com/miralante/apptonomia/blob/master/CLOUDFLARE.md);
+> this document is the Teclatlon-specific runbook on top of it.
 
 ## How it works
 
-The repo is connected to a Cloudflare Workers project (`teclatlon`).
-Pushes to `master` trigger a build in Cloudflare's infrastructure via
-Workers Builds, which reads [`wrangler.toml`](wrangler.toml) to know
-this is a static-assets Worker (no `main` script) and serves the repo
-root directly — no bundling, no build command. Pull requests get an
-automatic preview channel. Cache and security headers live in
-[`_headers`](_headers) at the repo root — Cloudflare's static-assets
-runtime honours the same `_headers`/`_redirects` file conventions
-Pages used, which is why those still work unchanged. The `validate.yml`
-GitHub Action still runs on every push and PR to gate structural and
-i18n checks, but it does **not** deploy.
+1. The repo is connected to a Cloudflare Workers project named
+   `teclatlon` (Workers & Pages → Connect to Git).
+2. Every push to `master` triggers a build in Cloudflare's
+   infrastructure via Workers Builds, which reads [`wrangler.toml`](wrangler.toml)
+   to deploy the repo root as a static-assets Worker (no `main`
+   script).
+3. The build is a no-op: no `build command`, no `output directory`
+   other than `.`, so the static files are served as-is. Pull
+   requests get an automatic preview channel.
+4. The `validate.yml` GitHub Action still runs on every push and PR
+   to gate structural and i18n checks, but it does not deploy.
 
-The `<project-name>.<account-subdomain>.workers.dev` address is
-assigned by Cloudflare from the project name declared in
-`wrangler.toml`'s `name` field (here: `teclatlon.miralante.workers.dev`).
-No `_redirects`, `functions/`, `_routes.json` or Cloudflare
-service-account keys are committed — `wrangler.toml` only declares the
-static-assets binding and 404 handling; everything else (branch,
-environment variables) still lives in the dashboard.
+`wrangler.toml` is the actual deploy configuration Workers Builds
+reads — not just a convenience for local CLI use. It pins the
+project name (`name = "teclatlon"`), declares
+`[assets] directory = "."` (no `main` script, just static assets),
+and `not_found_handling = "404-page"` so Cloudflare serves this
+repo's own `404.html` for an unmatched path instead of a bare empty
+404 (verified live: `curl` returned `Content-Length: 0` for a bad
+path before the file existed).
 
-## Dashboard configuration
+> **Do not "fix" by deleting `wrangler.toml`** or by switching to
+> the legacy `pages_build_output_dir` Pages shape. Teclatlon's
+> Cloudflare dashboard project is already a Worker with "Workers
+> Builds", and that's the shape Cloudflare currently recommends for
+> static sites. The previous failure mode documented in git history
+> (a `wrangler.toml` with `name = "teclatlon"` plus a Pages-style
+> `pages_build_output_dir` setting, no `[assets]` binding) is what
+> made the Git connector mis-detect the project type — the current
+> file avoids it by declaring `[assets]` explicitly.
 
-When the project is set up in the Cloudflare dashboard:
+## Files in this repository
 
-- **Framework preset:** None
-- **Build command:** *(empty)*
-- **Deploy command:** *(default — Workers Builds runs `wrangler
-  deploy` using the committed `wrangler.toml`)*
-- **Root directory:** *(empty)*
-- **Environment variables:** none required
-- **Branch:** `master` (production)
+| File | Purpose |
+|---|---|
+| `_headers` | Cache and security headers |
+| `wrangler.toml` | Pins the project name + the `[assets]` binding + `not_found_handling = "404-page"` |
+| `.github/workflows/validate.yml` | `node scripts/check.js` and friends on every push/PR (does **not** deploy) |
 
-Cloudflare reads `_headers` from the repo root automatically and
-caches `/index.html`, `/legal/`, `/manifest.json` and `/sw.js` with
-`max-age=0, must-revalidate` (so the PWA shell can refresh) while
-keeping the fingerprinted JS/CSS/font assets in long-lived cache.
+No `_redirects`, no `functions/`, no `package.json`, no Cloudflare
+service-account keys. The repo has only two HTML entry points, both
+with their own real `index.html` (`./index.html` is the app,
+`./legal/index.html` is the privacy page), so Cloudflare's implicit
+per-directory `index.html` lookup handles deep links without any
+rewrite rule. A SPA catch-all rewrite would loop: `/index.html`
+itself matches `/*` and Cloudflare rejects it with *"Infinite loop
+detected in this rule"*.
 
-## Why no `_redirects`?
+The reason Teclatlon has **no `package.json`** mirrors the
+Apptonomia portal of the suite: Cloudflare runs `npm install` if a
+`package.json` is present, and the Playwright workerd binary
+(~122 MiB) overshoots the 25 MiB asset limit. Teclatlon ships plain
+HTML/CSS/JS and its CI scripts only use Node stdlib, so npm is
+never invoked.
 
-Cloudflare rejected the deploy with:
+## Configuration in Cloudflare
 
-> "Invalid _redirects configuration: ... Infinite loop detected in
-> this rule. ... [code: 100324]"
+| Setting | Value |
+|---|---|
+| Framework preset | None |
+| Build command | *(empty)* |
+| Build output directory | `.` |
+| Production branch | `master` |
+| Root directory | *(empty — repo root)* |
 
-when the Apptonomia portal of the suite tried the Firebase-era SPA
-catch-all `/* /index.html 200`. Cloudflare statically validates that
-the destination of a catch-all rule cannot also match the rule itself:
-because `/index.html` is a real file in the repo root, `/*` matched
-it and the validator correctly flagged the loop.
+No environment variables are required: the app makes no server-side
+calls.
 
-The fix follows the same pattern as the Apptonomia portal and the
-Sinonimia app of the suite, which have no `_redirects` at all: Cloudflare's
-implicit `index.html` lookup per directory already resolves
-every deep link the site actually has. Teclatlon has only two HTML
-entry points, both with their own real `index.html`:
+## Required Cloudflare headers
 
-- `./index.html` — the app itself (single activity, no router)
-- `./legal/index.html` — the privacy / data-protection page
+The site uses a [`_headers`](_headers) file at the repo root to set
+security headers (CSP, X-Frame-Options, Referrer-Policy,
+Permissions-Policy) and a cache policy. Cloudflare reads this file
+on every deploy and applies the rules automatically — no dashboard
+configuration needed.
 
-Visiting `/` resolves to `/index.html` and visiting `/legal/`
-resolves to `/legal/index.html`, with no rewrite needed. The SPA
-catch-all was solving a problem this project does not have.
+## How to redeploy
 
-## Why `wrangler.toml`?
+Nothing to do. Push to `master` and Cloudflare rebuilds.
 
-[`wrangler.toml`](wrangler.toml) declares `[assets] directory = "."`
-with no `main` script (a pure static-assets Worker) and
-`not_found_handling = "404-page"`. That last setting is the reason
-this file exists: without it, Cloudflare replies to any unmatched
-path with a bare, empty 404 instead of the repo's own `404.html` —
-confirmed in production (`curl` returned `Content-Length: 0` for a
-bad path) before this file was added. This mirrors the Sinonimia app
-of the suite's `wrangler.toml` exactly (same `[assets]` shape, same
-`not_found_handling`), which has served its own custom 404 page
-correctly in production the whole time.
+For a manual rebuild (e.g. after Cloudflare itself had an
+incident), go to the Cloudflare dashboard → Workers & Pages →
+`teclatlon` → **Create deployment** → choose a branch or upload a
+directory.
 
-This project previously shipped **no** `wrangler.toml` at all,
-because an earlier attempt at one (`name = "teclatlon"` plus a
-Pages-style `pages_build_output_dir` setting, no `[assets]` binding)
-made the Cloudflare Git connector mis-detect the project as a
-hand-authored Worker and fail with *"Missing entry-point to Worker
-script or to assets directory."* That failure mode is specific to a
-`wrangler.toml` that declares neither `main` nor `[assets]` — the
-current file avoids it by declaring `[assets]` explicitly, the same
-shape `sinonimia` has used successfully since it adopted the Workers
-(static assets) model. If a future edit to this file ever needs a
-`main` entry-point for real Worker code, re-read this section first.
+For a one-off preview outside the Git connector (e.g. to test a
+dirty worktree without pushing):
 
-For a manual CLI deploy (for example, to attach preview channels
-during a local debugging session), install Wrangler transiently via
-`npx wrangler deploy` from the repo root — it picks up the committed
-`wrangler.toml` automatically.
+```bash
+npx wrangler deploy
+```
 
-## Why no `package.json`?
+## How to roll back
 
-The Apptonomia portal of the suite hit a deploy failure where
-Cloudflare ran `npm install` because the repo had a `package.json`,
-pulling in a Playwright workerd binary (~122 MiB) and overshooting
-the 25 MiB asset limit. Teclatlon therefore ships **no
-`package.json`** — the repo is pure static HTML/CSS/JS, the CI
-scripts (`scripts/check.js`) run with plain `node` and only use
-stdlib modules, and Cloudflare serves the static root directly
-without ever invoking npm.
+Cloudflare dashboard → Workers & Pages → `teclatlon` →
+**Deployments**. Each successful build is listed with a timestamp.
+Click any of them and select **"Retry deployment"** or **"Rollback
+to this deployment"**.
 
-## Service worker note
+## How to add a custom domain
 
-The service worker (`sw.js`) is registered from every HTML entry
-point (`./index.html` registers `./sw.js`; `/legal/index.html`
-registers `../sw.js`). Strategy is **network-first, cache
-fallback**:
+Cloudflare dashboard → Workers & Pages → `teclatlon` → **Custom
+domains** → **Set up a custom domain** → follow the wizard. DNS is
+configured automatically if the domain is already on Cloudflare, or
+by CNAME if it is on another provider.
 
-- **Network-first** — every GET request goes to the network first,
-  and the response is mirrored into the SW cache for offline use.
-  This keeps the latest server version authoritative whenever the
-  device is online, so a redeploy is visible on the next page
-  load instead of being trapped behind a 1-year cache.
-- **Cache fallback** — when the network is unreachable (offline /
-  CDN outage), the SW serves the last cached copy.
-- **Offline shell** — for navigations that have neither a network
+## Rotating credentials
+
+There are no API tokens or secrets to rotate. The GitHub
+integration is a one-time OAuth authorisation; revoking it is a
+matter of removing the app's access on
+[github.com/settings/applications](https://github.com/settings/applications).
+
+## Service worker behaviour
+
+Teclatlon's `sw.js` is **network-first, cache fallback** —
+different from the cache-first strategy used by the rest of the
+suite (Calculia, Routime, Sinonimia, Memofun, Okeymoney). This
+matches the operational model: a single typing-activity page where
+stale code would silently misbehave, not a multi-route app where a
+year of cached HTML is fine.
+
+- **Network-first.** Every GET goes to the network first; on
+  success the response is mirrored into the SW cache and the live
+  copy is returned. The next browser load sees whatever the server
+  is serving today.
+- **Cache fallback.** Only when the network is unreachable (offline
+  / CDN outage) does the SW serve the last cached copy.
+- **Offline shell.** For navigations that have neither a network
   response nor a cached copy, the SW replies with a tiny inline
-  "Sin conexión" HTML with no `Location` header (Safari rejects a
-  top-level navigation served by the SW that carries a redirect:
-  "Response served by service worker has redirections").
-- **Resilient install** — `install` caches each asset individually,
+  "Sin conexión" HTML with **no `Location` header** — Safari
+  rejects a top-level navigation served by the SW that carries a
+  redirect ("Response served by service worker has redirections").
+- **Resilient install.** `install` caches each asset individually,
   never `cache.addAll`, so a single missing or failing file does
   not take the whole cache down. Failures are logged with
   `console.warn` and skipped.
 
-Bump `VERSION` in `sw.js` whenever you change `FILES` to discard
-the old cache. The agent-workflow checklist in [`CLAUDE.md`](CLAUDE.md)
-documents which files trigger a required `VERSION` bump.
+## Cache contract — three layers
 
-## Cache contract
-
-There are **three independent cache layers** between the user and the
-source code. Each one is correct for what it does; the goal of this
-section is to make the contract explicit so a change is not trapped
-in any of them.
+There are **three independent cache layers** between the user and
+the source code. Each one is correct for what it does; the goal of
+this section is to make the contract explicit so a change is not
+trapped in any of them.
 
 ### 1. Cloudflare edge (CDN)
 
-- Serves the static files from the closest PoP. Honoured
-  automatically by Cloudflare; no config in the repo.
-- We do **not** purge the edge cache manually on every push. The
-  `_headers` file pins `max-age=0, must-revalidate` on the shell
-  (`/index.html`, `/legal/*`, `/manifest.json`, `/sw.js`), so the
-  next browser request always revalidates and picks up the new
-  bytes; `*.js` and `*.css` use `max-age=300` (a short cache, not
-  immutable — see below) and `*.png`/`*.svg`/`*.woff2` use
-  `immutable, max-age=31536000`.
-- Verifying: `curl -sI https://<host>/sw.js` should show the new
-  `ETag` after a push that touched `sw.js`, and
-  `CF-Cache-Status: HIT` is expected (HIT means the edge is
-  serving a fresh, revalidated copy).
+Honoured automatically by Cloudflare; no config in the repo. The
+`_headers` file pins `max-age=0, must-revalidate` on the shell
+(`/index.html`, `/legal/*`, `/manifest.json`, `/sw.js`), so the
+next browser request always revalidates and picks up the new bytes.
+`*.js` and `*.css` use `max-age=300` (deliberately short, not
+immutable — these files are **not** content-hashed, and a stale
+1-year cache on `app.js`/`styles.css` previously pinned Safari iOS
+to an old shell). `*.png`/`*.svg`/`*.woff2` use
+`immutable, max-age=31536000`.
+
+Verifying: `curl -sI https://<host>/sw.js` should show the new
+`ETag` after a push that touched `sw.js`, and
+`CF-Cache-Status: HIT` is expected.
 
 ### 2. Browser HTTP cache (per origin)
 
-- Driven by `Cache-Control` in [`_headers`](_headers). Policy:
-  - Shell files (`index.html`, `legal/*`, `manifest.json`, `sw.js`)
-    → `public, max-age=0, must-revalidate`. The browser always
-    revalidates before reusing, so a redeploy is visible on the
-    next page load.
-  - `*.js` and `*.css` → `public, max-age=300`. Kept short (not
-    `immutable`) because these files are **not** content-hashed —
-    a stale 1-year cache on `app.js`/`styles.css` previously pinned
-    Safari iOS to an old shell (see `fa5531d`).
-  - `*.png`, `*.svg`, `*.woff2` → `public, max-age=31536000,
-    immutable`. Safe for a year because these truly don't change
-    without a filename change.
-- We deliberately do **not** set `no-store`: the SW relies on being
-  able to cache the response to provide the offline shell, and
-  `no-store` would break that.
+Driven by `Cache-Control` in [`_headers`](_headers). Shell files
+(`index.html`, `legal/*`, `manifest.json`, `sw.js`) →
+`public, max-age=0, must-revalidate`. JS/CSS →
+`public, max-age=300`. PNG/SVG/WOFF2 →
+`public, max-age=31536000, immutable`.
+
+We deliberately do **not** set `no-store`: the SW relies on being
+able to cache the response to provide the offline shell, and
+`no-store` would break that.
 
 ### 3. Service-worker cache (`caches.open(VERSION)`)
 
-- Strategy: **network-first, cache fallback** (see comments in
-  [`sw.js`](sw.js)).
-  - `install` caches every file in `FILES` individually (never
-    `cache.addAll`, so one missing asset does not brick the cache).
-  - `fetch` always tries the network first; on success it mirrors
-    the response into the SW cache and returns the live response.
-    Only when the network fails does it serve the cached copy, and
-    only when the cache also misses does it reply with the inline
-    "Sin conexión" HTML.
-- Cache key: `teclatlon-vN`. On `activate`, every cache whose name
-  is not the current `VERSION` is deleted, so bumping `VERSION` is
-  the **only** mechanism that purges stale SW state on the client.
-- Rule (mirrors the checklist in [`CLAUDE.md`](CLAUDE.md)):
-  bump `VERSION` whenever you change any file in `FILES`,
-  including `app.js`, `data.js`, the `strings.*.js` files, and
-  anything under `assets/`. Forgetting the bump means the redeploy
-  is invisible to every client that already has the SW installed —
-  the SW keeps serving the previous shell from cache because the
-  network path is never reached for files the user already has.
-- **Also bump `VERSION` after any `_headers` change that affects
-  `sw.js`'s own response headers (CSP in particular).** A service
-  worker's execution context inherits its CSP from the response that
-  fetched `sw.js` at install time and does **not** re-read it later.
-  A broken CSP once shipped in `_headers` (`content-security-policy`
-  applies to `/*`, including `sw.js`) means every already-installed
-  client is running an SW instance permanently stuck with that broken
-  policy — its own `fetch()` calls inside the `fetch` handler start
-  throwing (blocked by the bad CSP), which lands in the `.catch()`
-  branch and serves the cached copy or the inline "Sin conexión" page,
-  no matter how healthy the server is now. Fixing `_headers` alone
-  does nothing for clients that already registered the SW: `sw.js`'s
-  bytes are unchanged, so the browser's update check finds no diff and
-  keeps the broken instance running. Only a `VERSION` bump changes the
-  script bytes, forcing a real reinstall that fetches `sw.js` fresh
-  under the corrected headers.
+Strategy: **network-first, cache fallback** — see comments in
+[`sw.js`](sw.js). `install` caches every file in `FILES`
+individually (never `cache.addAll`, so one missing asset does not
+brick the cache). `fetch` always tries the network first; on
+success it mirrors the response into the SW cache and returns the
+live response. Only when the network fails does it serve the
+cached copy, and only when the cache also misses does it reply with
+the inline "Sin conexión" HTML.
 
-### What to do after a deploy that did not show up
+Cache key: `teclatlon-vN`. On `activate`, every cache whose name
+is not the current `VERSION` is deleted, so **bumping `VERSION` is
+the only mechanism that purges stale SW state on the client**.
+
+> **Also bump `VERSION` after any `_headers` change that affects
+> `sw.js`'s own response headers (CSP in particular).** A service
+> worker's execution context inherits its CSP from the response
+> that fetched `sw.js` at install time and does **not** re-read it
+> later. A broken CSP once shipped in `_headers` (where
+> `content-security-policy` applies to `/*`, including `sw.js`)
+> means every already-installed client is running an SW instance
+> permanently stuck with that broken policy — its own `fetch()`
+> calls inside the `fetch` handler start throwing (blocked by the
+> bad CSP), which lands in the `.catch()` branch and serves the
+> cached copy or the inline "Sin conexión" page, no matter how
+> healthy the server is now. Fixing `_headers` alone does nothing
+> for clients that already registered the SW: `sw.js`'s bytes are
+> unchanged, so the browser's update check finds no diff and keeps
+> the broken instance running. Only a `VERSION` bump changes the
+> script bytes, forcing a real reinstall that fetches `sw.js`
+> fresh under the corrected headers.
+
+### Troubleshooting a deploy that did not show up
 
 If a push is live on GitHub and on the Cloudflare dashboard but a
 client keeps showing the old UI, walk the three layers in order:
@@ -263,8 +244,6 @@ client keeps showing the old UI, walk the three layers in order:
    `CF-Cache-Status` header; the dashboard has a "Purge cache"
    option as a last resort.
 
-### Verifying after a deploy
-
 ```bash
 # Effective SW version on the edge
 curl -s https://<host>/sw.js | grep "^var VERSION"
@@ -277,6 +256,4 @@ curl -sI https://<host>/sw.js | grep -i cf-cache-status
 ```
 
 `HIT` with a current `ETag` and a current `VERSION` is the green
-state. `MISS` immediately after a push is also normal (the first
-request after a deploy rebuilds the edge entry); what matters is
-that the bytes served match `master`.
+state.

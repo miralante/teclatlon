@@ -1,0 +1,31 @@
+# Teclatlon — Mecanografía con el teclado del ordenador
+
+> Aplicación web gratuita y sin registro para aprender mecanografía con el teclado del ordenador: colocación de dedos, lecciones por letra, palabras, números y escritura libre.
+
+## What it is
+
+- Una aplicación para aprender mecanografía dedo a dedo, en un orden fijo de lecciones, con un teclado decorativo en pantalla que no se toca.
+- Incluye un juego de palabras, un juego del teclado numérico, un reto 'todas las teclas' y un modo de escritura libre que lee lo escrito.
+- Gratuita, sin registro y con el progreso guardado en el navegador.
+- Diseñada con lectura fácil y contraste alto para que las instrucciones se entiendan a la primera.
+
+## What it is not
+
+- No funciona en móvil ni en tablet: necesita el teclado físico de un PC o portátil.
+- No usa IA generativa en tiempo de ejecución: ninguna página llama a una API externa.
+- No envía datos a un servidor: todo el progreso vive en el navegador de quien lo usa.
+- No sustituye a una clase de mecanografía: es un complemento para practicar entre sesiones.
+
+## Resources
+
+- [Portal Apptonomia](https://apptonomia.uk/) — Página de inicio de la suite.
+- [Calculia](https://calculia.apptonomia.uk/) — Cálculo y razonamiento lógico.
+- [Routime](https://routime.apptonomia.uk/) — Actividades cotidianas.
+- [Okeymoney](https://okeymoney.apptonomia.uk/) — Dinero del día a día.
+- [Sinonimia](https://sinonimia.apptonomia.uk/) — Diccionario en lectura fácil.
+- [Memofun](https://memofun.apptonomia.uk/) — Tarjetas de estudio.
+- [Teclatlon](https://teclatlon.apptonomia.uk/) — Esta aplicación.
+
+## License
+
+MIT (código). Las lecciones, palabras y textos de práctica son contenido propio bajo CC BY 4.0.

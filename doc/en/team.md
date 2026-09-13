@@ -129,6 +129,6 @@ Resetting progress is destructive and requires confirmation.
 
 - Modes and lessons catalogue: [`activities.md`](activities.md).
 - Pedagogical and design notes for professionals:
-  [`creating-activities-guide.md`](creating-activities-guide.md).
+  [`creating-elements-guide.md`](creating-elements-guide.md).
 - Cross-suite guide for families on daily living skills:
   [Routime's `team.md`](https://github.com/thenkdframe/routime/blob/main/doc/en/team.md).

@@ -96,7 +96,7 @@ son en Teclatlon:
 ## 6. Cómo añadir una lección nueva
 
 Esta es la tarea del rol de apoyo / build. El flujo completo vive
-en [`guia-crear-actividades.md`](guia-crear-actividades.md). La
+en [`guia-crear-elementos.md`](guia-crear-elementos.md). La
 versión corta:
 
 1. **Edita `data.js`** para extender `LESSON_ORDER` (modo letras)
@@ -120,4 +120,4 @@ los datos y sus restricciones.
 - Arquitectura: [`tecnico.md`](tecnico.md).
 - Idiomas: [`I18N.md`](I18N.md).
 - Cómo crear lecciones nuevas:
-  [`guia-crear-actividades.md`](guia-crear-actividades.md).
+  [`guia-crear-elementos.md`](guia-crear-elementos.md).

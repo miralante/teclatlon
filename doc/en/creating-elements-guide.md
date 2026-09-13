@@ -19,7 +19,7 @@
 The full didactic, gamification, persuasion and neuromarketing
 techniques that all the apps of the Miralante suite share live in the
 **Routime** repository under
-[`creating-activities-guide.md`](https://github.com/thenkdframe/routime/blob/main/doc/en/creating-activities-guide.md).
+[`creating-elements-guide.md`](https://github.com/thenkdframe/routime/blob/main/doc/en/creating-elements-guide.md).
 
 Read it before designing anything. It covers (non-exhaustive):
 
@@ -129,7 +129,7 @@ before writing any code.** Bumping the service worker cache
 ## 5. See also
 
 - Canonical pedagogical guide (Routime):
-  [creating-activities-guide.md](https://github.com/thenkdframe/routime/blob/main/doc/en/creating-activities-guide.md).
+  [creating-elements-guide.md](https://github.com/thenkdframe/routime/blob/main/doc/en/creating-elements-guide.md).
 - Modes and lessons catalogue:
   [`activities.md`](activities.md).
 - Technical recipe:

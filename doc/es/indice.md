@@ -16,12 +16,11 @@ doc/
 ├── es/
 │   ├── indice.md                ← Esta carpeta (punto de entrada, ES)
 │   ├── roles.md                 ← Roles del proyecto
-│   ├── SPEC.md
-│   ├── tecnico.md
+│   ├── SPEC.md    ├── README.md                ← Introducción en lectura fácil (orientada a la audiencia)│   ├── tecnico.md
 │   ├── I18N.md
 │   ├── actividades.md           ← Catálogo de lecciones y modos
 │   ├── equipo.md                ← Guía para familias / docentes
-│   ├── guia-crear-actividades.md
+│   ├── guia-crear-elementos.md
 │   └── guia-rapida.md
 └── en/
     ├── index.md                 ← Punto de entrada (EN)
@@ -31,7 +30,7 @@ doc/
     ├── I18N.md
     ├── activities.md
     ├── team.md
-    ├── creating-activities-guide.md
+    ├── creating-elements-guide.md
     └── quick-guide.md
 ```
 
@@ -48,9 +47,10 @@ la raíz y en [`CONTRIBUTING.md`](../../CONTRIBUTING.md).
 | Si quieres… | Empieza por |
 |---|---|
 | Entender qué es Teclatlon y para quién es | [`SPEC.md`](SPEC.md) |
+| 👤 Persona usuaria o familiar | [`README.md`](README.md) |
 | **Abrir la app y usarla (4 métodos: internet, ZIP, Python, Node)** | [`guia-rapida.md`](guia-rapida.md) |
 | Ver la arquitectura y recetas técnicas | [`tecnico.md`](tecnico.md) |
-| **Crear una lección / actividad nueva (diseño + técnicas didácticas, de gamificación y neuromarketing)** | [`guia-crear-actividades.md`](guia-crear-actividades.md) |
+| **Crear una lección / actividad nueva (diseño + técnicas didácticas, de gamificación y neuromarketing)** | [`guia-crear-elementos.md`](guia-crear-elementos.md) |
 | Recorrer el catálogo de lecciones y modos | [`actividades.md`](actividades.md) |
 | Apoyar a una persona usuaria (familia/docente) | [`equipo.md`](equipo.md) |
 | Añadir un idioma | [`I18N.md`](I18N.md) |
