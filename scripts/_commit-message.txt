@@ -1,0 +1,21 @@
+docs(suite): fold the suite-pattern into a section of technical.md
+
+Mirror the cross-repo suite pattern (originally a standalone
+doc/en/suite-pattern.md in teclatlon, folded into teclatlon's
+technical.md section 8 in the previous commit) into the equivalent
+technical docs of every other app of the Miralante suite.
+
+The block is appended as the new last top-level section of each
+file. Its number is computed from the highest existing `## N.`
+in the destination doc (calculia section 8, memofun section 10,
+okeymoney section 12, routime section 14, sinonimia ES section 12;
+sinonimia EN keeps its unnumbered heading style). Sub-headings
+(`### N.M` and `#### N.M.K`) are renumbered to match, so they don't
+collide with any pre-existing `### N.M` in the destination doc.
+The HTML `<title>Teclatlon - ...</title>` example inside the
+block is rewritten to each app's name; the rest of the block
+is verbatim.
+
+Apptonomia is skipped: it does not ship `doc/en/technical.md`,
+and the suite-pattern content is already covered by its own
+`CLAUDE.md`.
