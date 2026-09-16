@@ -1,19 +1,36 @@
-name: Validate
-
-# Runs the project's structural and i18n check on every push and pull
-# request. Deploy to Cloudflare Pages is handled by the Cloudflare Git
-# connector reading _headers from the repo root — this workflow does
-# not deploy.
+# Canonical CI gate for the Miralante suite — Teclatlon flavour.
 #
-# scripts/check.js requires no npm dependencies: it runs with plain
-# node and only uses stdlib modules (fs, path, vm, child_process).
-# The repo has no package.json — nothing to install.
+# Runs the project's structural and i18n checks plus the sw.js
+# VERSION bump gate on every push and PR against master/main.
+# Deploy is handled by the Cloudflare Git connector reading _headers
+# from the repo root; this workflow does not deploy.
+#
+# All scripts run with plain node and only use stdlib modules (fs,
+# path, vm, child_process). The repo has no package.json — nothing
+# to install.
+#
+# Teclatlon's SW is network-first (cache-fallback), but the
+# bump-VERSION rule still applies: bump on every commit that
+# touches a cached file, otherwise returning offline users won't
+# see the change. See CLAUDE.md §B.1 for the full contract.
+#
+# Job list:
+#   1. check      — runs scripts/check.js (structural + i18n).
+#   2. cache-bump — runs scripts/check-version-bump.js. Fails the
+#                    PR if a sw.js-cached file changed but VERSION
+#                    was not bumped (see CLAUDE.md §B.1).
+name: Validate
 
 on:
   push:
     branches: [master, main]
   pull_request:
     branches: [master, main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   check:
@@ -22,11 +39,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          # Full history: scripts/check-version-bump.js diffs against the
-          # previous commit / PR base to catch a cached file changing
-          # without VERSION being bumped in sw.js.
-          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -36,7 +48,21 @@ jobs:
       - name: Run structural and i18n checks
         run: node scripts/check.js
 
-      - name: Check sw.js VERSION bump
+  cache-bump:
+    name: sw.js VERSION bump check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Verify VERSION was bumped when a cached file changed
         env:
-          DIFF_BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+          DIFF_BASE: ${{ github.event.pull_request.base.sha || (github.event.before == '0000000000000000000000000000000000000000' && 'HEAD~1') || github.event.before }}
         run: node scripts/check-version-bump.js

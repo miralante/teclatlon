@@ -10,6 +10,7 @@
 [![PWA](https://img.shields.io/badge/PWA-instalable-5A0FC8.svg)](manifest.json)
 [![i18n](https://img.shields.io/badge/i18n-es%20%7C%20en-yellow.svg)](#-documentaci%C3%B3n-del-proyecto-biling%C3%BCe)
 [![CI](https://img.shields.io/badge/CI-node%20scripts%2Fcheck.js-blue.svg)](.github/workflows/validate.yml)
+[![Pacto del colaborador](https://img.shields.io/badge/Pacto%20del%20colaborador-2.1-4baaaa.svg)](CODE_OF_CONDUCT.es.md)
 
 Una aplicación web gratuita, estática y sin dependencias para aprender
 a escribir con el **teclado del ordenador**. Enseña a colocar los
@@ -69,8 +70,7 @@ decorativo; la entrada real es siempre el teclado físico.
 |---|---|---|---|
 | 👤 **Persona usuaria** (persona tipo) | Practica mecanografía con el teclado físico | Abre la app en un navegador y escribe con el teclado **físico**; el teclado en pantalla es decorativo | La aplicación |
 | ❤️ **Apoyo / familia / docente** | Ayuda a la persona usuaria a configurar o avanzar en las lecciones | Define el nombre de quien aprende en el juego de palabras; supervisa el progreso por las estrellas ⭐ | [`CONTRIBUTING.es.md`](CONTRIBUTING.es.md) (la sección "Apoyo") |
-| 💻 **Construcción / desarrollador/a** | Mantiene los layouts de teclado, las lecciones y el SW | Edita `data.js`, `app.js`, `sw.js`, `strings.<locale>.js`; ejecuta 
-ode scripts/check.js` | [`CLAUDE.md`](CLAUDE.md) |
+| 💻 **Construcción / desarrollador/a** | Mantiene los layouts de teclado, las lecciones y el SW | Edita `data.js`, `app.js`, `sw.js`, `strings.<locale>.js`; ejecuta `node scripts/check.js` | [`CLAUDE.md`](CLAUDE.md) |
 
 Ver [`doc/es/roles.md`](doc/es/roles.md) para la descripción completa
 de los roles y los patrones trio/par/único del conjunto de la suite.
@@ -100,6 +100,7 @@ Según tu rol y perfil, te interesa una u otra documentación:
 | Documento | Para quién |
 |---|---|
 | [`CONTRIBUTING.es.md`](CONTRIBUTING.es.md) | Familias, terapeutas y desarrolladores que quieran contribuir |
+| [`CODE_OF_CONDUCT.es.md`](CODE_OF_CONDUCT.es.md) | Pacto del colaborador (Contributor Covenant 2.1) |
 | `CLAUDE.md` | Agentes IA: reglas obligatorias y estado del proyecto |
 | [`CLOUDFLARE.md`](CLOUDFLARE.md) | Guía canónica de despliegue en Cloudflare Workers para la suite (Teclatlon + Apptonomia + Calculia, Memofun, Okeymoney, Sinonimia) |
 | Historial del proyecto | En `git log`; no se mantiene una hoja de ruta externa |
@@ -203,6 +204,15 @@ Copyright (c) 2026 Teclatlon contributors.
 
 ---
 
+## Contribuir
+
+Issues y pull requests son bienvenidos. Ver [`CONTRIBUTING.es.md`](CONTRIBUTING.es.md)
+para el flujo de trabajo (y [`CONTRIBUTING.md`](CONTRIBUTING.md) para la versión en inglés).
+Todas las personas participantes deben seguir
+[`CODE_OF_CONDUCT.es.md`](CODE_OF_CONDUCT.es.md).
+
+---
+
 ## 🧹 Mantenimiento
 
 Este repo no tiene 
@@ -212,22 +222,6 @@ desde DevTools (`Application → Service workers → Unregister`) y borra
 los datos del sitio. El SW de Teclatlon es network-first, así que un
 hard refresh toma el código nuevo directamente cuando hay buena
 conexión — la caché solo importa para uso sin red.
-
----
-
-## 🙏 Créditos
-
-Teclatlon salió de la app Apptonomia de la suite (que fue el origen
-del grupo con una suite más amplia de actividades de terapia
-ocupacional) donde esto era una actividad entre muchas, con un modo
-móvil de teclado en pantalla pulsable que se descartó deliberadamente
-aquí. **Teclatlon está pensada para el teclado del ordenador solo** —
-el teclado en pantalla es decorativo; la entrada real es siempre el
-teclado físico.
-
-El sistema de colores por dedo/mano y las guías de la fila base se
-derivan de la pedagogía estándar de mecanografía, simplificada para
-una experiencia a una sola pantalla.
 
 ---
 

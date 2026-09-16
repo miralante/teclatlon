@@ -10,6 +10,7 @@
 [![PWA](https://img.shields.io/badge/PWA-installable-5A0FC8.svg)](manifest.json)
 [![i18n](https://img.shields.io/badge/i18n-es%20%7C%20en-yellow.svg)](#-project-documentation-bilingual)
 [![CI](https://img.shields.io/badge/CI-node%20scripts%2Fcheck.js-blue.svg)](.github/workflows/validate.yml)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 
 A free, static, dependency-free touch-typing trainer for the **computer
 keyboard**. Learn finger placement, go through letter-by-letter lessons,
@@ -21,8 +22,7 @@ saved only in `localStorage`, on your own device.
 - 🌐 **App**: [teclatlon.apptonomia.uk](https://teclatlon.apptonomia.uk/)
 - 📦 **Repository**: [github.com/miralante/teclatlon](https://github.com/miralante/teclatlon)
 - 💻 **Run locally**: open `index.html` directly in a browser, or serve
-  the folder with any static server (
-npx serve .` /
+  the folder with any static server (`npx serve .` /
   `python -m http.server 8080`) for the full offline-capable PWA
   experience.
 
@@ -43,8 +43,7 @@ input is always the physical keyboard.
   finger/hand map, persisted per session.
 - 📚 **Letter-by-letter lessons** — a fixed, scaffolding order that
   unlocks the next key once the previous one is mastered.
-- 🔤 **Words game** — random word lists per locale, plus the 
-ame`
+- 🔤 **Words game** — random word lists per locale, plus the `name`
   slot for the learner's own name.
 - 🔢 **Number-pad game** — for the right-hand numeric keypad.
 - 🎯 **All-keys challenge** — mixed full-keyboard test.
@@ -96,6 +95,7 @@ By role and profile, the most relevant docs are:
 | Document | Audience |
 |---|---|
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | Anyone who wants to contribute (family, therapists, devs) |
+| [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) | Contributor covenant (Contributor Covenant 2.1) |
 | `CLAUDE.md` | AI agents: operational workflow, coordination and approvals |
 | [`CLOUDFLARE.md`](CLOUDFLARE.md) | Canonical Cloudflare Workers deploy guide for the suite (Teclatlon + Apptonomia + Calculia, Memofun, Okeymoney, Sinonimia) |
 | Project history | Lives in `git log`; no external roadmap is maintained |
@@ -111,8 +111,7 @@ editing one of three locale-split arrays in `data.js`:
 - **`LESSONS`** — the fixed, scaffolding order of letters
   (`lesson-01-homerow` through `lesson-NN-extra-keys`). Each
   lesson unlocks the next once the previous is mastered.
-- **`WORDS`** — random word lists per locale, plus the 
-ame` slot
+- **`WORDS`** — random word lists per locale, plus the `name` slot
   for the learner's own name.
 - **`NUMPAD`** — number-pad practice steps for the right-hand
   numeric keypad.
@@ -195,6 +194,15 @@ Copyright (c) 2026 Teclatlon contributors.
 
 ---
 
+## Contributing
+
+Issues and pull requests are welcome. See [`CONTRIBUTING.md`](CONTRIBUTING.md)
+for the workflow (and [`CONTRIBUTING.es.md`](CONTRIBUTING.es.md) for the
+Spanish version). All participants are expected to follow
+[`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
+
+---
+
 ## 🧹 Housekeeping
 
 There is no 
@@ -204,21 +212,6 @@ worker from DevTools (`Application → Service workers → Unregister`)
 and clear site data. Teclatlon's SW is network-first, so a hard
 refresh picks up new code immediately on a good connection — the
 cache only matters for offline use.
-
----
-
-## 🙏 Credits
-
-Teclatlon was split out of another app of the suite (Apptonomia, a broader
-occupational-therapy activity suite) where this used to be one
-activity among many, including a tappable mobile-keyboard mode that
-was deliberately dropped here. **Teclatlon targets the computer
-keyboard only** — the on-screen keyboard is decorative; the real
-input is always the physical keyboard.
-
-The finger/hand colour system and the home-row guides are derived
-from standard touch-typing pedagogy, simplified for a single-screen
-experience.
 
 ---
 

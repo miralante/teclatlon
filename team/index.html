@@ -19,8 +19,8 @@
   <div class="container about">
     <header class="cabecera-about">
       <div class="idioma-selector" role="group" aria-label="Elegir idioma">
-        <button type="button" class="btn-idioma" id="btnIdiomaEs" data-locale="es" aria-pressed="false">🇪🇸 Español</button>
-        <button type="button" class="btn-idioma" id="btnIdiomaEn" data-locale="en" aria-pressed="false">🇬🇧 English</button>
+        <button type="button" class="btn-lang" id="btnLangEs" data-locale="es" aria-pressed="false">🇪🇸 Español</button>
+        <button type="button" class="btn-lang" id="btnLangEn" data-locale="en" aria-pressed="false">🇬🇧 English</button>
       </div>
       <p class="aviso-ruta" data-i18n="routeNotice">Esta página no se enlaza desde la aplicación. Solo se llega escribiendo la dirección.</p>
       <img src="../assets/img/icono.svg" alt="" width="80" height="80" class="logo-about">
@@ -63,11 +63,11 @@
       'use strict';
       function paintLanguageSelector() {
         var active = App.i18n.locale();
-        document.getElementById('btnIdiomaEs').setAttribute('aria-pressed', String(active === 'es'));
-        document.getElementById('btnIdiomaEn').setAttribute('aria-pressed', String(active === 'en'));
+        document.getElementById('btnLangEs').setAttribute('aria-pressed', String(active === 'es'));
+        document.getElementById('btnLangEn').setAttribute('aria-pressed', String(active === 'en'));
       }
-      document.getElementById('btnIdiomaEs').addEventListener('click', function () { App.i18n.setLocale('es'); });
-      document.getElementById('btnIdiomaEn').addEventListener('click', function () { App.i18n.setLocale('en'); });
+      document.getElementById('btnLangEs').addEventListener('click', function () { App.i18n.setLocale('es'); });
+      document.getElementById('btnLangEn').addEventListener('click', function () { App.i18n.setLocale('en'); });
       paintLanguageSelector();
     })();
   </script>
