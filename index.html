@@ -322,7 +322,10 @@
         </div>
       </div>
       <div class="feedback" id="feedback" aria-live="polite"></div>
-      <div class="live-metrics hidden" id="liveMetrics" aria-live="polite"></div>
+      <div class="live-metrics hidden" id="liveMetrics" aria-live="polite">
+        <div class="live-metrics-pills"></div>
+      </div>
+      <div class="goal-bars hidden" id="goalBars"></div>
       <div class="row guide" id="guide">
         <div class="hands" id="handsSvg" aria-hidden="true"></div>
         <p class="guide-text" id="guideText"></p>
@@ -417,6 +420,42 @@
       <span class="setting-label" data-i18n="metricsLabel">Métricas</span>
       <button type="button" id="btnMetrics" class="btn-icon" aria-pressed="false" data-i18n-aria="metricsLabelAria" aria-label="Activar o desactivar las métricas de precisión y velocidad">Métricas: apagadas</button>
     </div>
+
+    <div class="setting-row">
+      <span class="setting-label" data-i18n="errorSound">Sonido de error</span>
+      <button type="button" id="btnErrorSound" class="btn-icon" aria-pressed="false" data-i18n-aria="errorSoundAria" aria-label="Activar o desactivar el sonido de error">Sil</button>
+    </div>
+
+    <details class="settings-section" id="goalSettings">
+      <summary class="settings-section-title" data-i18n="goalSectionTitle">🎯 Metas opcionales</summary>
+      <p class="help-text" data-i18n="goalSectionHelp">Activa y elige una meta para cada sesión. Se muestra en la barra de progreso durante la práctica.</p>
+      <div class="setting-row">
+        <span class="setting-label" data-i18n="goalAccuracy">Precisión mínima</span>
+        <select id="goalAccuracySelect" class="goal-select" aria-label="Precisión mínima">
+          <option value="0" data-i18n="goalAccuracyOff">Sin meta</option>
+          <option value="90" data-i18n="goalAccuracy90">90 %</option>
+          <option value="95" data-i18n="goalAccuracy95">95 %</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <span class="setting-label" data-i18n="goalSpeed">Velocidad mínima</span>
+        <select id="goalSpeedSelect" class="goal-select" aria-label="Velocidad mínima">
+          <option value="0" data-i18n="goalSpeedOff">Sin meta</option>
+          <option value="30" data-i18n="goalSpeed30">30 ppm</option>
+          <option value="50" data-i18n="goalSpeed50">50 ppm</option>
+          <option value="80" data-i18n="goalSpeed80">80 ppm</option>
+        </select>
+      </div>
+    </details>
+
+    <div class="setting-row">
+      <button type="button" id="btnToggleAchievements" class="btn btn-secondary" data-i18n="achievementsShow">⭐ Ver logros</button>
+    </div>
+    <details class="settings-section" id="achievementsSection">
+      <summary class="settings-section-title" data-i18n="achievementsTitle">⭐ Logros</summary>
+      <p class="help-text" data-i18n="achievementsHint">Los logros se desbloquean automáticamente al practicar.</p>
+      <div class="achievements-grid" id="achievementsGrid"></div>
+    </details>
 
     <p class="help-text" data-i18n="settingsHelp">Estos ajustes se guardan en este dispositivo.</p>
   </aside>

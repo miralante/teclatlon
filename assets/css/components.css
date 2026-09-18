@@ -434,11 +434,18 @@
 /* ---- Live metrics overlay (game screen) ---- */
 .live-metrics {
   display: flex;
-  gap: var(--space);
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
   font-size: var(--text-small);
   font-weight: 700;
   color: var(--color-text-soft);
+}
+
+.live-metrics-pills {
+  display: flex;
+  gap: var(--space);
+  justify-content: center;
 }
 
 .live-metrics .live-metric {
@@ -497,4 +504,185 @@ html.focus-mode .celebration {
 }
 
 html.focus-mode .celebration .message { color: #FFFFFF; }
+
+/* ---- Goal progress bars (inside #goalBars) ---- */
+.goal-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.goal-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.goal-bar-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text-soft);
+  min-width: 60px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.goal-bar-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.goal-bar-track {
+  height: 8px;
+  background: var(--color-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.goal-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.goal-bar-fill.goal-met {
+  background: var(--color-success);
+}
+
+.goal-bar-threshold {
+  font-size: 10px;
+  color: var(--color-text-soft);
+  line-height: 1;
+}
+
+/* ---- Settings collapsible section ---- */
+.settings-section {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+
+.settings-section[open] {
+  padding-bottom: 12px;
+}
+
+.settings-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-weight: 700;
+  font-size: var(--text-base);
+  color: var(--color-text);
+  cursor: pointer;
+  list-style: none;
+  padding: 4px 0;
+  user-select: none;
+}
+
+.settings-section-title::-webkit-details-marker { display: none; }
+
+.settings-section .setting-row {
+  padding: 6px 0;
+}
+
+/* ---- Goal select ---- */
+.goal-select {
+  width: 100%;
+  padding: 6px 10px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--text-base);
+  font-family: inherit;
+  cursor: pointer;
+  appearance: auto;
+  -webkit-appearance: auto;
+}
+
+.goal-select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---- Achievements panel ---- */
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.achievement-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+  padding: 12px 8px;
+  border-radius: var(--radius);
+  border: 2px solid var(--color-border);
+  background: var(--color-surface);
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.achievement-badge.locked {
+  opacity: 0.45;
+  filter: grayscale(1);
+}
+
+.achievement-badge.unlocked {
+  border-color: var(--color-star);
+  background: var(--accent-soft);
+}
+
+.achievement-badge-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.achievement-badge-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.2;
+}
+
+.achievement-badge-desc {
+  font-size: 10px;
+  color: var(--color-text-soft);
+  line-height: 1.3;
+}
+
+.achievement-badge-status {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-success);
+  margin-top: 2px;
+}
+
+.achievement-badge.locked .achievement-badge-status {
+  color: var(--color-text-soft);
+}
+
+.btn-close-achievements {
+  font-size: 12px;
+  padding: 2px 6px;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--color-text-soft);
+  transition: background 0.15s;
+}
+
+.btn-close-achievements:hover {
+  background: var(--color-border);
+}
 

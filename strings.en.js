@@ -135,5 +135,48 @@
        own strings.<locale>.js pair (legal/strings.en.js,
        about/strings.en.js, team/strings.en.js), so anything that needs
        /legal or /about copy reads it from those files, not from here. */
+
+    /* --- Goals & achievements ---------------------------------------
+       Improvements #3 and #6. */
+    "goalSectionTitle": "🎯 Optional goals",
+    "goalSectionHelp": "Enable and choose a target for each session. Displayed as a progress bar during practice.",
+    "goalAccuracy": "Minimum accuracy",
+    "goalAccuracyOff": "No goal",
+    "goalAccuracy90": "90 %",
+    "goalAccuracy95": "95 %",
+    "goalSpeed": "Minimum speed",
+    "goalSpeedOff": "No goal",
+    "goalSpeed30": "30 ppm",
+    "goalSpeed50": "50 ppm",
+    "goalSpeed80": "80 ppm",
+    "goalAccuracyBar": "Accuracy",
+    "goalSpeedBar": "Speed",
+    "goalMet": "Goal reached!",
+    "goalAccuracyMet": "Accuracy ✔",
+    "goalSpeedMet": "Speed ✔",
+
+    "errorSound": "Error sound",
+    "errorSoundOn": "On",
+    "errorSoundOff": "Off",
+
+    "achievementsTitle": "⭐ Achievements",
+    "achievementsShow": "Show achievements",
+    "achievementsHide": "Hide",
+    "achievementsHint": "Achievements are unlocked automatically while you practice.",
+    "achievementFirstStar": "First star",
+    "achievementFirstStarDesc": "Earn your first practice star.",
+    "achievementTenStars": "Ten stars",
+    "achievementTenStarsDesc": "Accumulate ten practice stars.",
+    "achievementStreak3": "3-session streak",
+    "achievementStreak3Desc": "Complete three consecutive sessions with goal met.",
+    "achievementAllLessons": "All lessons",
+    "achievementAllLessonsDesc": "Complete at least one lesson in every game mode.",
+    "achievementAllKeys": "Key by key",
+    "achievementAllKeysDesc": "Complete the all-keys challenge.",
+    "achievementPerfectRound": "Perfect session",
+    "achievementPerfectRoundDesc": "Complete a session with 100 % accuracy and no errors.",
+    "achievementLocked": "Locked",
+    "achievementUnlocked": "Unlocked",
+    "achievementUnlockedAt": "Unlocked on {date}",
     }, 'en');
 })();

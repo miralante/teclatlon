@@ -1,7 +1,7 @@
 /* ==========================================================================
    Teclatlon — Positive reinforcement and encouragement messages
    Exposes window.App.feedback.success(zone, pan) / .encourage(zone) /
-   .celebrate(msg, after) / .successSound(pan).
+   .celebrate(msg, after) / .successSound(pan) / .errorSound().
    Mistakes are never punished; feedback stays brief (<= 2 s).
    Messages follow the active language (App.i18n.pick). Requires i18n.js.
 
@@ -11,6 +11,8 @@
      each tone is panned (StereoPannerNode) by the column of the key
      that triggered it (-1 = left, +1 = right). Off by default so the
      experience stays calm.
+   - Optional error audio: when state.options.errorSound is true,
+     a short low-pitch tone plays on a wrong key press.
    (Vibration was removed: navigator.vibrate() only works on touch
    devices, and Teclatlon is computer-only — see SPEC.md §2.)
    ========================================================================== */
@@ -83,6 +85,13 @@
     }, 120); /* E */
   }
 
+  /* Short low-pitch tone: distinct from the C-E success ding.
+     Plays when a key is wrong and error sound is enabled. */
+  function errorSound() {
+    if (!readOption('errorSound', false)) return;
+    tone(180, 0.12, 'triangle', null);
+  }
+
   function cheerSound() {
     /* Mistakes stay silent: audio is reserved for correctly pressed keys. */
   }
@@ -115,7 +124,7 @@
       zone.classList.remove('success');
       zone.classList.add('encourage');
     }
-    cheerSound();
+    errorSound();
     return msg;
   }
 
@@ -159,6 +168,7 @@
     success: success,
     encourage: encourage,
     celebrate: celebrate,
-    successSound: successSound
+    successSound: successSound,
+    errorSound: errorSound
   };
 })();

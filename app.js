@@ -22,6 +22,16 @@
      selector-less by default. */
   var SCREENS_WITH_KEYBOARD = ['screenName', 'screenGame', 'screenFree'];
 
+  /* ---------- Achievements ---------- */
+  var ACHIEVEMENTS = [
+    { id: 'firstStar',    icon: '⭐', key: 'achievementFirstStar' },
+    { id: 'tenStars',     icon: '🌟', key: 'achievementTenStars' },
+    { id: 'streak3',      icon: '🔥', key: 'achievementStreak3' },
+    { id: 'allLessons',   icon: '🎓', key: 'achievementAllLessons' },
+    { id: 'allKeys',      icon: '🏆', key: 'achievementAllKeys' },
+    { id: 'perfectRound', icon: '💯', key: 'achievementPerfectRound' }
+  ];
+
   /* ---------- State and progress ---------- */
   /* One-time migration from the legacy Spanish-keyed shape (nombre,
      estrellas, completado, opciones.{teclado,tema,texto,foco,espacial,
@@ -57,6 +67,9 @@
   state.options.focusMode = !!state.options.focusMode;
   state.options.keySound = state.options.keySound === undefined ? true : !!state.options.keySound;
   state.options.metrics = !!state.options.metrics;
+  state.options.errorSound = !!state.options.errorSound;
+  state.goal = state.goal || { accuracyMin: null, speedMin: null };
+  state.achievements = state.achievements || {};
 
   function save() { App.storage.set(SLUG, state); }
 
@@ -102,6 +115,85 @@
       save();
       updateStars();
     }
+  }
+
+  /* Unlock an achievement once (idempotent). Stores the unlock timestamp. */
+  function achieve(id) {
+    if (state.achievements[id]) return;
+    state.achievements[id] = Date.now();
+    save();
+  }
+
+  /* Award a bonus star when a personal goal is met (e.g. precision goal). */
+  function bonusStar() {
+    state.stars += 1;
+    save();
+    updateStars();
+  }
+
+  /* Check end-of-round metrics against the active goal and award
+     a bonus star if it is met. Also updates achievement state. */
+  function checkGoal(cfg) {
+    var m = state.metrics;
+    if (!m || !m.keys) return;
+    var accuracy = Math.round((m.hits / m.keys) * 100);
+    var minutes = Math.max((Date.now() - m.startMs) / 60000, 1 / 60);
+    var kpm = Math.round(m.keys / minutes);
+    var goalMet = false;
+
+    if (state.goal.accuracyMin && accuracy >= state.goal.accuracyMin) goalMet = true;
+    if (state.goal.speedMin && kpm >= state.goal.speedMin) goalMet = true;
+
+    if (goalMet) {
+      bonusStar();
+      App.feedback.celebrate(App.i18n.t('goalMet'), null);
+    }
+
+    /* Achievement checks */
+    if (state.stars >= 1) achieve('firstStar');
+    if (state.stars >= 10) achieve('tenStars');
+    if (accuracy === 100) achieve('perfectRound');
+
+    /* allLessons: every lesson in the curriculum is completed */
+    var allLessons = lessons();
+    if (allLessons.length > 0 && allLessons.every(function (l) { return !!state.completed[l.id]; })) {
+      achieve('allLessons');
+    }
+
+    /* allKeys: awarded by updateChallenge() when the challenge is complete */
+    if (state.completed['allKeys']) achieve('allKeys');
+
+    /* streak3: three consecutive lesson completions */
+    var streak = 0;
+    allLessons.forEach(function (l) {
+      if (state.completed[l.id]) streak++;
+      else streak = 0;
+    });
+    if (streak >= 3) achieve('streak3');
+  }
+
+  /* Render the achievements panel inside the settings drawer. */
+  function renderAchievements() {
+    var container = $('#achievementsGrid');
+    if (!container) return;
+    container.innerHTML = '';
+    ACHIEVEMENTS.forEach(function (a) {
+      var unlocked = !!state.achievements[a.id];
+      var dateStr = unlocked ? new Date(state.achievements[a.id]).toLocaleDateString() : null;
+      var item = document.createElement('div');
+      item.className = 'achievement-badge' + (unlocked ? ' unlocked' : ' locked');
+      item.setAttribute('aria-label', App.i18n.t(a.key + 'Desc') + (unlocked ? '' : ' (' + App.i18n.t('achievementLocked') + ')'));
+      item.innerHTML =
+        '<span class="achievement-badge-icon">' + a.icon + '</span>' +
+        '<span class="achievement-badge-name">' + App.i18n.t(a.key) + '</span>' +
+        '<span class="achievement-badge-desc">' + App.i18n.t(a.key + 'Desc') + '</span>' +
+        '<span class="achievement-badge-status">' +
+          (unlocked
+            ? App.i18n.t('achievementUnlockedAt').replace('{date}', dateStr)
+            : App.i18n.t('achievementLocked')) +
+        '</span>';
+      container.appendChild(item);
+    });
   }
 
   /* ---------- Key data ---------- */
@@ -271,6 +363,7 @@
     updateSettingsButton('#btnFocusMode', 'focusModeLabel', state.options.focusMode);
     updateSettingsButton('#btnKeySound', 'keySoundLabel', state.options.keySound);
     updateSettingsButton('#btnMetrics', 'metricsLabel', state.options.metrics);
+    updateSettingsButton('#btnErrorSound', 'errorSoundLabel', state.options.errorSound);
     updateLiveMetrics();
   }
 
@@ -298,6 +391,14 @@
     });
     $('#btnOpenSettings').setAttribute('aria-expanded', 'true');
     $('#btnCloseSettings').focus();
+    /* Sync goal selects and show achievements */
+    var accSel = $('#goalAccuracySelect');
+    var spdSel = $('#goalSpeedSelect');
+    if (accSel) accSel.value = String(state.goal.accuracyMin || '0');
+    if (spdSel) spdSel.value = String(state.goal.speedMin || '0');
+    var details = $('#achievementsSection');
+    if (details) details.open = true;
+    renderAchievements();
   }
 
   function closeSettings() {
@@ -343,6 +444,38 @@
     if (e.target.closest('#btnFocusMode')) { state.options.focusMode = !state.options.focusMode; save(); applyOptions(); return; }
     if (e.target.closest('#btnKeySound')) { state.options.keySound = !state.options.keySound; save(); applyOptions(); return; }
     if (e.target.closest('#btnMetrics')) { state.options.metrics = !state.options.metrics; save(); applyOptions(); return; }
+    if (e.target.closest('#btnErrorSound')) { state.options.errorSound = !state.options.errorSound; save(); applyOptions(); return; }
+
+    /* Goal: accuracy selector */
+    var goalAcc = e.target.closest('#goalAccuracySelect');
+    if (goalAcc) {
+      var val = goalAcc.value;
+      state.goal.accuracyMin = val === '0' ? 0 : parseInt(val, 10);
+      save();
+      updateLiveMetrics();
+      return;
+    }
+
+    /* Goal: speed selector */
+    var goalSpd = e.target.closest('#goalSpeedSelect');
+    if (goalSpd) {
+      var val2 = goalSpd.value;
+      state.goal.speedMin = val2 === '0' ? 0 : parseInt(val2, 10);
+      save();
+      updateLiveMetrics();
+      return;
+    }
+
+    /* Achievements panel toggle — the <details> element handles open/close natively */
+    var btnToggleAchieve = e.target.closest('#btnToggleAchievements');
+    if (btnToggleAchieve) {
+      var details = $('#achievementsSection');
+      if (details) {
+        details.open = !details.open;
+        if (details.open) renderAchievements();
+      }
+      return;
+    }
   });
 
   /* ---------- Live metrics (accuracy and speed) ---------- */
@@ -363,15 +496,58 @@
     var minutes = Math.max((Date.now() - m.startMs) / 60000, 1 / 60);
     var kpm = Math.round(m.keys / minutes);
     zone.innerHTML = '';
-    [
-      App.i18n.t('accuracyShort').replace('{n}', accuracy),
-      App.i18n.t('keysPerMinuteShort').replace('{n}', kpm)
-    ].forEach(function (text) {
-      var pill = document.createElement('span');
-      pill.className = 'live-metric';
-      pill.textContent = text;
-      zone.appendChild(pill);
-    });
+
+    /* Pill row (always shown when metrics are on) */
+    var pills = document.createElement('div');
+    pills.className = 'live-metrics-pills';
+
+    var accPill = document.createElement('span');
+    accPill.className = 'live-metric';
+    accPill.textContent = App.i18n.t('accuracyShort').replace('{n}', accuracy);
+    pills.appendChild(accPill);
+
+    var spdPill = document.createElement('span');
+    spdPill.className = 'live-metric';
+    spdPill.textContent = App.i18n.t('keysPerMinuteShort').replace('{n}', kpm);
+    pills.appendChild(spdPill);
+    zone.appendChild(pills);
+
+    /* Goal progress bars — appended to the separate #goalBars zone */
+    var goalBarsEl = $('#goalBars');
+    goalBarsEl.innerHTML = '';
+    if (state.goal.accuracyMin || state.goal.speedMin) {
+      goalBarsEl.classList.remove('hidden');
+      if (state.goal.accuracyMin) {
+        var accFill = Math.min(100, Math.round((accuracy / state.goal.accuracyMin) * 100));
+        goalBarsEl.insertAdjacentHTML('beforeend',
+          '<div class="goal-bar-row">' +
+            '<span class="goal-bar-label">' + App.i18n.t('goalAccuracyBar') + '</span>' +
+            '<div class="goal-bar-wrap">' +
+              '<div class="goal-bar-track">' +
+                '<div class="goal-bar-fill' + (accuracy >= state.goal.accuracyMin ? ' goal-met' : '') + '" style="width:' + accFill + '%"></div>' +
+              '</div>' +
+              '<span class="goal-bar-threshold">' + accuracy + '% / ' + state.goal.accuracyMin + '%</span>' +
+            '</div>' +
+          '</div>'
+        );
+      }
+      if (state.goal.speedMin) {
+        var spdFill = Math.min(100, Math.round((kpm / state.goal.speedMin) * 100));
+        goalBarsEl.insertAdjacentHTML('beforeend',
+          '<div class="goal-bar-row">' +
+            '<span class="goal-bar-label">' + App.i18n.t('goalSpeedBar') + '</span>' +
+            '<div class="goal-bar-wrap">' +
+              '<div class="goal-bar-track">' +
+                '<div class="goal-bar-fill' + (kpm >= state.goal.speedMin ? ' goal-met' : '') + '" style="width:' + spdFill + '%"></div>' +
+              '</div>' +
+              '<span class="goal-bar-threshold">' + kpm + ' / ' + state.goal.speedMin + ' ppm</span>' +
+            '</div>' +
+          '</div>'
+        );
+      }
+    } else {
+      goalBarsEl.classList.add('hidden');
+    }
   }
 
   function keysOf(ch) {
@@ -742,6 +918,7 @@
   function endSequence() {
     var cfg = game.cfg;
     game = null;
+    checkGoal(cfg);
     award(cfg.starKey);
     celebrateWithTransfer(cfg.onFinish);
   }
@@ -1000,6 +1177,18 @@
     updateChallenge();
   }
 
+  function endChallenge() {
+    game = null;
+    /* Check goal and achievements for the challenge round. The cfg
+       object is not available here (challenge doesn't use cfg), so
+       pass null — checkGoal() handles null gracefully. */
+    checkGoal(null);
+    achieve('allKeys');
+    award('allKeys');
+    celebrateWithTransfer(goMenu);
+  }
+  }
+
   function challengeKey(ch) {
     var typeable = typeableKeys(visibleRows());
     if (!typeable[ch] || game.set[ch]) return;
@@ -1086,15 +1275,13 @@
     $('#challengeFill').style.width = (total ? Math.round(done / total * 100) : 0) + '%';
     $('#challengeText').textContent = App.i18n.t('doneOfTotal').replace('{done}', done).replace('{total}', total);
     if (total > 0 && done === total) {
-      game = null;
       /* Clear the next-key highlight and the hand guide so the
          completion feedback doesn't leave a stale "press X" prompt
          on screen while the success banner shows. */
       markTarget(null);
       $('#guideText').textContent = '';
       $('#handsSvg').innerHTML = handsSVG(null, null);
-      award('allKeys');
-      celebrateWithTransfer(goMenu);
+      endChallenge();
       return;
     }
     challengeGuide();
@@ -1201,8 +1388,10 @@
       name: '', stars: 0, completed: {},
       options: {
         keyboard: 'simple', color: 'hands', theme: 'auto', textSize: 'normal',
-        focusMode: false, keySound: true, metrics: false
-      }
+        focusMode: false, keySound: true, metrics: false, errorSound: false
+      },
+      goal: { accuracyMin: 0, speedMin: 0 },
+      achievements: {}
     };
     save();
     btn.textContent = App.i18n.t('btnClearProgress');
