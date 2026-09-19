@@ -116,6 +116,7 @@ server.listen(PORT, async () => {
   // "Sin conexión" on a cold start with bad network.
   const pass = !!deCacheIdx;
   console.log(`[smoke] result: ${pass ? 'PASS' : 'FAIL'} (offline-navigation-cacheable)`);
-  server.close();
-  process.exit(pass ? 0 : 1);
+  server.close(() => {
+    process.exitCode = pass ? 0 : 1;
+  });
 });

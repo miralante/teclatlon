@@ -1187,7 +1187,6 @@
     award('allKeys');
     celebrateWithTransfer(goMenu);
   }
-  }
 
   function challengeKey(ch) {
     var typeable = typeableKeys(visibleRows());

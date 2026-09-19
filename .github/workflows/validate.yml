@@ -5,9 +5,9 @@
 # Deploy is handled by the Cloudflare Git connector reading _headers
 # from the repo root; this workflow does not deploy.
 #
-# All scripts run with plain node and only use stdlib modules (fs,
-# path, vm, child_process). The repo has no package.json — nothing
-# to install.
+# Structural checks run with plain node and only use stdlib modules
+# (fs, path, vm, child_process). The Playwright UI job installs the
+# dev dependency and Chromium separately.
 #
 # Teclatlon's SW is network-first (cache-fallback), but the
 # bump-VERSION rule still applies: bump on every commit that
@@ -19,6 +19,7 @@
 #   2. cache-bump — runs scripts/check-version-bump.js. Fails the
 #                    PR if a sw.js-cached file changed but VERSION
 #                    was not bumped (see CLAUDE.md §B.1).
+#   3. ui         — runs the real-browser Playwright suite.
 name: Validate
 
 on:
@@ -66,3 +67,24 @@ jobs:
         env:
           DIFF_BASE: ${{ github.event.pull_request.base.sha || (github.event.before == '0000000000000000000000000000000000000000' && 'HEAD~1') || github.event.before }}
         run: node scripts/check-version-bump.js
+
+  ui:
+    name: Playwright UI tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Playwright
+        run: npm install --no-audit --no-fund
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run real-browser UI suite
+        run: npm run test:ui

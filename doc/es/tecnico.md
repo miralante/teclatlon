@@ -979,9 +979,14 @@ ficheros de superficie (`*.html`, `*.js`, `*.css`, `sw.js`,
 `manifest.json`, `data.js`):
 
 ```bash
-node scripts/check.js           # debe reportar OK (N checks, sin fallos)
-node scripts/check-version-bump.js   # debe pasar
+npm install                         # una vez, para instalar Playwright
+npx playwright install chromium     # una vez, para instalar Chromium
+npm run test:ui                     # todos los flujos de UI deben pasar
+node scripts/check.js               # debe reportar OK (N checks, sin fallos)
+node scripts/check-version-bump.js  # debe pasar y confirmar el bump si aplica
 ```
+
+Estos tres checks son obligatorios antes de hacer `push`.
 
 Después abrir las páginas afectadas en un navegador en
 `http://localhost:<puerto>/<ruta>` y recorrer el smoke

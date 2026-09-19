@@ -156,6 +156,7 @@
     "goalSpeedMet": "Speed ✔",
 
     "errorSound": "Error sound",
+    "errorSoundAria": "Enable or disable error sound",
     "errorSoundOn": "On",
     "errorSoundOff": "Off",
 

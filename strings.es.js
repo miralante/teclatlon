@@ -157,6 +157,7 @@
     "goalSpeedMet": "Velocidad ✔",
 
     "errorSound": "Sonido de error",
+    "errorSoundAria": "Activar o desactivar el sonido de error",
     "errorSoundOn": "Son",
     "errorSoundOff": "Sil",
 

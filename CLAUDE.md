@@ -188,7 +188,17 @@ belongs to the in-flight work before adding new changes.
    is unreachable). The cache only becomes the source of truth if you
    fail to bump `VERSION`, in which case a change stays trapped in
    old clients. Full contract: `CLOUDFLARE.md` §"Cache contract".
-4. Report only verifications you actually ran; flag remaining manual
+4. **Before pushing**, run the complete local gate and do not push if
+   any command fails:
+   ```bash
+   npm run test:ui
+   node scripts/check.js
+   node scripts/check-version-bump.js
+   ```
+   The Playwright suite must pass the real-browser UI flows, the
+   structural checks must report `OK`, and the VERSION check must
+   confirm the service-worker bump when cached files changed.
+5. Report only verifications you actually ran; flag remaining manual
    tests (e.g. a real browser check of the physical-keyboard flow).
 
 ### A.3 External and destructive operations

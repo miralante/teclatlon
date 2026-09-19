@@ -943,9 +943,14 @@ Run this on every PR that touches any of the surface files
 (`*.html`, `*.js`, `*.css`, `sw.js`, `manifest.json`, `data.js`):
 
 ```bash
-node scripts/check.js           # must report OK (N checks, no failures)
-node scripts/check-version-bump.js   # must pass
+npm install                         # once, to install Playwright
+npx playwright install chromium     # once, to install Chromium
+npm run test:ui                     # all UI flows must pass
+node scripts/check.js               # must report OK (N checks, no failures)
+node scripts/check-version-bump.js  # must pass and confirm the bump when needed
 ```
+
+These three checks are mandatory before pushing.
 
 Then open the affected pages in a browser at
 `http://localhost:<port>/<route>` and walk through the manual

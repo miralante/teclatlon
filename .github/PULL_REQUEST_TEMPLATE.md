@@ -6,7 +6,10 @@
 
 ## Comprobaciones
 
+- [ ] `npm run test:ui` pasa con todos los flujos Playwright.
 - [ ] `node scripts/check.js` pasa en local.
+- [ ] `node scripts/check-version-bump.js` pasa y confirma el bump de
+      `VERSION` cuando ha cambiado un archivo cacheado.
 - [ ] Si tocas `index.html`, `styles.css`, `app.js`, `data.js`,
       `sw.js` o `manifest.json`, has actualizado la documentación
       canónica correspondiente (`doc/es/`).
