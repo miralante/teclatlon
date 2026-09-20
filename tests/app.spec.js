@@ -54,6 +54,7 @@ test.describe('Teclatlon UI', () => {
 
   test('cambia la vista y los colores del teclado', async ({ page }) => {
     await openFreshApp(page);
+    await page.locator('#btnOpenSettings').click();
     const normal = page.locator('.btn-keyboard[data-keyboard="normal"]');
     const extended = page.locator('.btn-keyboard[data-keyboard="extended"]');
 
