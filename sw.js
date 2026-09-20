@@ -1,11 +1,11 @@
 /* ============================================================
-   Teclatlon — Service Worker
+   Teclatlon ï¿½ Service Worker
    Network-first, cache-fallback strategy for the app shell
    (works offline). When adding new files: add them to FILES
    and bump VERSION so the activate step purges the old cache.
-   See CLOUDFLARE.md §"Cache contract" for the full contract.
+   See CLOUDFLARE.md ï¿½"Cache contract" for the full contract.
    ============================================================ */
-var VERSION = 'teclatlon-v55';
+var VERSION = 'teclatlon-v56';
 
 var FILES = [
   './index.html',
@@ -158,11 +158,11 @@ function offlineResponse() {
   return new Response(
     '<!doctype html><html lang="es"><head><meta charset="utf-8">' +
     '<meta name="viewport" content="width=device-width,initial-scale=1">' +
-    '<title>Sin conexión</title><style>body{font-family:system-ui,sans-serif;' +
+    '<title>Sin conexiï¿½n</title><style>body{font-family:system-ui,sans-serif;' +
     'margin:2rem auto;max-width:32rem;padding:0 1rem;line-height:1.5}' +
     'a{color:#1d4ed8}</style></head><body>' +
-    '<h1>Sin conexión</h1>' +
-    '<p>No hemos podido cargar esta página. Comprueba tu conexión a ' +
+    '<h1>Sin conexiï¿½n</h1>' +
+    '<p>No hemos podido cargar esta pï¿½gina. Comprueba tu conexiï¿½n a ' +
     'Internet y vuelve a intentarlo.</p>' +
     '<p><a href="./index.html">Volver a Teclatlon</a></p>' +
     '</body></html>',
