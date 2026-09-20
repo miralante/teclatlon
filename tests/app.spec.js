@@ -79,6 +79,7 @@ test.describe('Teclatlon UI', () => {
     await expect(page.locator('#btnFocusMode')).toHaveAttribute('aria-pressed', 'true');
     await page.locator('.btn-theme[data-theme="dark"]').click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    await page.locator('#goalSettings summary').click();
     await page.locator('#goalAccuracySelect').selectOption('90');
     await expect(page.locator('#goalAccuracySelect')).toHaveValue('90');
     await page.locator('#goalSpeedSelect').selectOption('50');
