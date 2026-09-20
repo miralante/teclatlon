@@ -1457,6 +1457,29 @@
     });
   });
 
+  /* ---------- Goal selects: handle native 'change' event from <select> ---------- */
+  /* The main click handler above only catches click events, but native <select>
+     elements fire 'change' (not 'click') when the user picks a new option.
+     This listener ensures the goal selectors persist to localStorage. */
+  (function () {
+    var accSel = $('#goalAccuracySelect');
+    var spdSel = $('#goalSpeedSelect');
+    if (accSel) {
+      accSel.addEventListener('change', function () {
+        state.goal.accuracyMin = accSel.value === '0' ? 0 : parseInt(accSel.value, 10);
+        save();
+        updateLiveMetrics();
+      });
+    }
+    if (spdSel) {
+      spdSel.addEventListener('change', function () {
+        state.goal.speedMin = spdSel.value === '0' ? 0 : parseInt(spdSel.value, 10);
+        save();
+        updateLiveMetrics();
+      });
+    }
+  }());
+
   /* ---------- Boot ---------- */
   /* Computer-only gate (SPEC.md section 2): the pre-paint script
      in index.html sets <html data-app-blocked="mobile"> on

@@ -80,10 +80,9 @@ test.describe('Teclatlon UI', () => {
     await page.locator('.btn-theme[data-theme="dark"]').click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
     await page.locator('#goalSettings summary').click();
-    // Click the option directly (not selectOption) so the app's click handler picks it up
-    await page.locator('#goalAccuracySelect option[value="90"]').click();
+    await page.locator('#goalAccuracySelect').selectOption('90');
     await expect(page.locator('#goalAccuracySelect')).toHaveValue('90');
-    await page.locator('#goalSpeedSelect option[value="50"]').click();
+    await page.locator('#goalSpeedSelect').selectOption('50');
     await expect(page.locator('#goalSpeedSelect')).toHaveValue('50');
     await page.locator('#btnMetrics').click();
     await expect(page.locator('#btnMetrics')).toHaveAttribute('aria-pressed', 'true');
