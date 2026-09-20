@@ -195,22 +195,6 @@
           <button type="button" class="btn-icon btn-open-settings" id="btnOpenSettings" aria-haspopup="dialog" aria-expanded="false" aria-controls="settingsDrawer" data-i18n-aria="openSettingsAria" aria-label="Ajustes">⚙️</button>
         </div>
       </div>
-      <!-- Single source of truth for the keyboard-view selector. Lived
-           inline inside screenName/screenGame/screenFree before
-           and was duplicated three times; hoisted into the header so
-           it's always one click away (no scrolling mid-game) and so the
-           per-section keyboard panels can shed that row to gain
-           vertical room on small screens. The .keyboard-detail and
-           .keyboard-legend stay where they were (they read in the
-           context of the keyboard they describe) and are still scoped
-           per section by app.js (uses $('.keyboard-detail') /
-           $('.keyboard-legend') so it fills every copy). -->
-      <div class="row keyboard-options keyboard-options--header" role="group" data-i18n-aria="keyboardViewAria" aria-label="Vista del teclado">
-        <button type="button" class="btn btn-secondary btn-compact btn-keyboard" data-keyboard="simple" data-i18n="btnSimple" aria-pressed="false">🔤 Solo letras</button>
-        <button type="button" class="btn btn-secondary btn-compact btn-keyboard" data-keyboard="normal" data-i18n="btnNormal" aria-pressed="false">⌨️ Letras y números</button>
-        <button type="button" class="btn btn-secondary btn-compact btn-keyboard" data-keyboard="extended" data-i18n="btnExtended" aria-pressed="false">🔢 Con números al lado</button>
-        <button type="button" class="btn btn-secondary btn-compact btn-color" data-i18n="btnColorsHands" aria-pressed="false">🎨 Colores: manos</button>
-      </div>
     </header>
 
     <!-- Screen: your name -->
@@ -224,7 +208,6 @@
       </div>
       <p class="feedback" id="nameNotice" aria-live="polite"></p>
       <div class="keyboard-panel stack">
-        <p class="keyboard-detail" aria-live="polite"></p>
         <div class="row-keyboard-view">
           <div class="keyboard" aria-hidden="true"></div>
           <div class="numpad-inline hidden" aria-hidden="true"></div>
@@ -331,7 +314,6 @@
         <p class="guide-text" id="guideText"></p>
       </div>
       <div class="keyboard-panel stack" id="keyboardPanel">
-        <p class="keyboard-detail" aria-live="polite"></p>
         <div class="row-keyboard-view">
           <div class="keyboard" aria-hidden="true"></div>
           <div class="numpad-inline hidden" aria-hidden="true"></div>
@@ -355,7 +337,6 @@
         <p class="guide-text" id="guideTextFree"></p>
       </div>
       <div class="keyboard-panel stack">
-        <p class="keyboard-detail" aria-live="polite"></p>
         <div class="row-keyboard-view">
           <div class="keyboard" aria-hidden="true"></div>
           <div class="numpad-inline hidden" aria-hidden="true"></div>
@@ -424,6 +405,23 @@
     <div class="setting-row">
       <span class="setting-label" data-i18n="errorSound">Sonido de error</span>
       <button type="button" id="btnErrorSound" class="btn-icon" aria-pressed="false" data-i18n-aria="errorSoundAria" aria-label="Activar o desactivar el sonido de error">Sil</button>
+    </div>
+
+    <div class="setting-row">
+      <span class="setting-label" data-i18n="keyboardViewAria">Vista del teclado</span>
+      <span class="text-group" role="group">
+        <button type="button" class="btn-icon btn-keyboard" data-keyboard="simple" data-i18n="btnSimple" aria-pressed="false">🔤 Solo letras</button>
+        <button type="button" class="btn-icon btn-keyboard" data-keyboard="normal" data-i18n="btnNormal" aria-pressed="false">⌨️ Letras y números</button>
+        <button type="button" class="btn-icon btn-keyboard" data-keyboard="extended" data-i18n="btnExtended" aria-pressed="false">🔢 Con números</button>
+      </span>
+    </div>
+
+    <div class="setting-row">
+      <span class="setting-label" data-i18n="colorModeLabel">Colores del teclado</span>
+      <span class="text-group" role="group">
+        <button type="button" class="btn-icon btn-color" data-i18n="btnColorsHands" aria-pressed="false">🎨 Manos</button>
+        <button type="button" class="btn-icon btn-color" data-i18n="btnColorsFingers" aria-pressed="false">🎨 Dedos</button>
+      </span>
     </div>
 
     <details class="settings-section" id="goalSettings">

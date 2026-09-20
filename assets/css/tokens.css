@@ -131,7 +131,6 @@
    it's an anchor (see SPEC.md §2 and the pointer-events:none rule in
    components.css). -------- */
 html.focus-mode .keyboard-legend,
-html.focus-mode .keyboard-detail,
 html.focus-mode .panel-numpad-inline {
   display: none !important;
 }

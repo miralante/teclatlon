@@ -59,7 +59,7 @@
   state.completed = state.completed || {};
   state.options = state.options || {};
   if (!DATA.layouts[state.options.keyboard]) {
-    state.options.keyboard = 'simple';
+    state.options.keyboard = 'normal';
   }
   if (state.options.color !== 'fingers') state.options.color = 'hands';
   if (['auto', 'light', 'dark', 'contrast'].indexOf(state.options.theme) === -1) state.options.theme = 'light';
@@ -310,14 +310,6 @@
   function updateOptionsUI() {
     $$('.btn-keyboard').forEach(function (b) {
       b.setAttribute('aria-pressed', String(b.dataset.keyboard === state.options.keyboard));
-    });
-    var detailKey = ({
-      simple: 'btnSimpleDetail',
-      normal: 'btnNormalDetail',
-      extended: 'btnExtendedDetail'
-    })[state.options.keyboard];
-    $$('.keyboard-detail').forEach(function (p) {
-      p.textContent = detailKey ? App.i18n.t(detailKey) : '';
     });
     $$('.btn-color').forEach(function (b) {
       b.setAttribute('aria-pressed', String(state.options.color === 'fingers'));
@@ -620,10 +612,6 @@
       if (!el) return;
       el.classList.toggle('hidden', p !== id);
       el.setAttribute('aria-hidden', p !== id ? 'true' : 'false');
-    });
-    var withKb = SCREENS_WITH_KEYBOARD.indexOf(id) !== -1;
-    $$('.keyboard-options--header').forEach(function (row) {
-      row.classList.toggle('hidden', !withKb);
     });
   }
 
@@ -1386,7 +1374,7 @@
     state = {
       name: '', stars: 0, completed: {},
       options: {
-        keyboard: 'simple', color: 'hands', theme: 'auto', textSize: 'normal',
+        keyboard: 'normal', color: 'hands', theme: 'auto', textSize: 'normal',
         focusMode: false, keySound: true, metrics: false, errorSound: false
       },
       goal: { accuracyMin: 0, speedMin: 0 },

@@ -536,17 +536,17 @@ html.focus-mode .celebration .message { color: #FFFFFF; }
 }
 
 .goal-bar-track {
-  height: 8px;
-  background: var(--color-border);
-  border-radius: 999px;
+  height: 6px;
+  background: #ddd9eb;
+  border-radius: 4px;
   overflow: hidden;
 }
 
 .goal-bar-fill {
   height: 100%;
   width: 0%;
-  background: var(--accent);
-  border-radius: 999px;
+  background: #7462bb;
+  border-radius: 4px;
   transition: width 0.3s ease;
 }
 
@@ -685,4 +685,3 @@ html.focus-mode .celebration .message { color: #FFFFFF; }
 .btn-close-achievements:hover {
   background: var(--color-border);
 }
-
