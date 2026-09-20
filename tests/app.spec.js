@@ -81,8 +81,10 @@ test.describe('Teclatlon UI', () => {
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
     await page.locator('#goalSettings summary').click();
     await page.locator('#goalAccuracySelect').selectOption('90');
+    await page.locator('#goalAccuracySelect').dispatchEvent('change');
     await expect(page.locator('#goalAccuracySelect')).toHaveValue('90');
     await page.locator('#goalSpeedSelect').selectOption('50');
+    await page.locator('#goalSpeedSelect').dispatchEvent('change');
     await expect(page.locator('#goalSpeedSelect')).toHaveValue('50');
     await page.locator('#btnMetrics').click();
     await expect(page.locator('#btnMetrics')).toHaveAttribute('aria-pressed', 'true');
@@ -100,6 +102,7 @@ test.describe('Teclatlon UI', () => {
     await expect(page.locator('#settingsDrawer')).toBeHidden();
     await page.locator('#btnOpenSettings').click();
     await expect(page.locator('#btnFocusMode')).toHaveAttribute('aria-pressed', 'true');
+    await page.locator('#goalSettings summary').click();
     await expect(page.locator('#goalAccuracySelect')).toHaveValue('90');
     await expect(page.locator('#goalSpeedSelect')).toHaveValue('50');
   });
