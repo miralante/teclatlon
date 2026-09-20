@@ -92,7 +92,7 @@
 /* ---- Hand guide ---- */
 .guide { justify-content: center; gap: 12px; align-items: flex-start; }
 .hands { width: 160px; max-width: 35%; flex-shrink: 0; }
-.guide-text { font-weight: 700; max-width: 8em; line-height: 1.3; }
+.guide-text { font-weight: 700; max-width: 12em; line-height: 1.3; }
 .hands .palm { fill: #E7E1D7; stroke: var(--color-border); stroke-width: 2; }
 .hands .finger { fill: #EDE5D8; stroke: var(--color-border); stroke-width: 2; }
 .hands .finger.active { fill: var(--accent); stroke: var(--accent); }
