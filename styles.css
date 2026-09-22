@@ -67,18 +67,18 @@
 
 /* ---- Game target zone ---- */
 .game-title { flex: 1; }
-.target-zone { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; min-height: 38px; }
+.target-zone { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; min-height: 36px; }
 .letter {
-  width: 26px; height: 30px; display: flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
   font-size: 15px; font-weight: 800;
   background: var(--color-bg); color: var(--color-text-soft);
-  border: 3px solid var(--color-border); border-radius: 8px;
+  border: 2px solid var(--color-border); border-radius: 6px;
 }
 .letter.current { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
 .letter.done { background: var(--color-success-soft); color: var(--color-success); border-color: var(--color-success); }
 /* A special-key step (e.g. "Home") shows its full name, not a single
    uppercase character -- needs auto width and normal casing. */
-.letter.wide { width: auto; min-width: 40px; padding: 0 10px; font-size: var(--text-small); text-transform: none; }
+.letter.wide { width: auto; min-width: 40px; padding: 0 10px; font-size: var(--text-small); text-transform: none; height: 28px; }
 
 /* "Real texts" (template mode): sentences are much longer than a
    single letter/word target, so the boxes shrink to fit more of the
@@ -87,12 +87,12 @@
    one -- see renderTarget() in app.js. */
 .target-zone--compact { gap: 6px; row-gap: 8px; }
 .target-zone--compact .word { display: flex; gap: 3px; }
-.target-zone--compact .letter { width: 18px; height: 24px; font-size: 11px; border-radius: 5px; }
+.target-zone--compact .letter { width: 20px; height: 22px; font-size: 11px; border-radius: 5px; }
 
 /* ---- Hand guide ---- */
 .guide { justify-content: center; gap: 12px; align-items: flex-start; }
-.hands { width: 130px; max-width: 30%; flex-shrink: 0; }
-.guide-text { font-weight: 700; max-width: 26em; line-height: 1.2; }
+.hands { width: 160px; max-width: 38%; flex-shrink: 0; }
+.guide-text { font-weight: 600; font-size: var(--text-small); max-width: 26em; line-height: 1.25; color: var(--color-text-soft); }
 .hands .palm { fill: #E7E1D7; stroke: var(--color-border); stroke-width: 2; }
 .hands .finger { fill: #EDE5D8; stroke: var(--color-border); stroke-width: 2; }
 .hands .finger.active { fill: var(--accent); stroke: var(--accent); }
@@ -205,7 +205,7 @@
    data-app-blocked="mobile" overlay above. */
 @media (min-width: 1024px) {
   .key { min-height: 44px; }
-  .letter { font-size: 15px; }
+  .letter { font-size: 15px; width: 28px; height: 28px; }
   .free-area { font-size: 19px; padding: 16px; }
 }
 
