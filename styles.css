@@ -67,10 +67,10 @@
 
 /* ---- Game target zone ---- */
 .game-title { flex: 1; }
-.target-zone { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; min-height: 42px; }
+.target-zone { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; min-height: 38px; }
 .letter {
-  width: 28px; height: 34px; display: flex; align-items: center; justify-content: center;
-  font-size: 16px; font-weight: 800;
+  width: 26px; height: 30px; display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 800;
   background: var(--color-bg); color: var(--color-text-soft);
   border: 3px solid var(--color-border); border-radius: 8px;
 }
@@ -87,12 +87,12 @@
    one -- see renderTarget() in app.js. */
 .target-zone--compact { gap: 6px; row-gap: 8px; }
 .target-zone--compact .word { display: flex; gap: 3px; }
-.target-zone--compact .letter { width: 20px; height: 26px; font-size: 12px; border-radius: 6px; }
+.target-zone--compact .letter { width: 18px; height: 24px; font-size: 11px; border-radius: 5px; }
 
 /* ---- Hand guide ---- */
 .guide { justify-content: center; gap: 12px; align-items: flex-start; }
 .hands { width: 130px; max-width: 30%; flex-shrink: 0; }
-.guide-text { font-weight: 700; max-width: 16em; line-height: 1.2; }
+.guide-text { font-weight: 700; max-width: 26em; line-height: 1.2; }
 .hands .palm { fill: #E7E1D7; stroke: var(--color-border); stroke-width: 2; }
 .hands .finger { fill: #EDE5D8; stroke: var(--color-border); stroke-width: 2; }
 .hands .finger.active { fill: var(--accent); stroke: var(--accent); }
@@ -205,7 +205,7 @@
    data-app-blocked="mobile" overlay above. */
 @media (min-width: 1024px) {
   .key { min-height: 44px; }
-  .letter { font-size: 16px; }
+  .letter { font-size: 15px; }
   .free-area { font-size: 19px; padding: 16px; }
 }
 
