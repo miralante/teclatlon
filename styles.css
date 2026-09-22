@@ -67,10 +67,10 @@
 
 /* ---- Game target zone ---- */
 .game-title { flex: 1; }
-.target-zone { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; min-height: 70px; }
+.target-zone { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; min-height: 56px; }
 .letter {
-  width: 44px; height: 52px; display: flex; align-items: center; justify-content: center;
-  font-size: 26px; font-weight: 800;
+  width: 38px; height: 46px; display: flex; align-items: center; justify-content: center;
+  font-size: 22px; font-weight: 800;
   background: var(--color-bg); color: var(--color-text-soft);
   border: 3px solid var(--color-border); border-radius: 10px;
 }
@@ -87,7 +87,7 @@
    one -- see renderTarget() in app.js. */
 .target-zone--compact { gap: 6px; row-gap: 8px; }
 .target-zone--compact .word { display: flex; gap: 3px; }
-.target-zone--compact .letter { width: 28px; height: 36px; font-size: 17px; border-radius: 8px; }
+.target-zone--compact .letter { width: 24px; height: 32px; font-size: 15px; border-radius: 8px; }
 
 /* ---- Hand guide ---- */
 .guide { justify-content: center; gap: 12px; align-items: flex-start; }
@@ -134,10 +134,10 @@
 }
 .row-keys { display: flex; gap: 4px; justify-content: center; }
 .key {
-  position: relative; flex: 1 1 0; min-width: 0; max-width: 76px; min-height: 44px;
+  position: relative; flex: 1 1 0; min-width: 0; max-width: 76px; min-height: 38px;
   display: flex; align-items: center; justify-content: center;
   background: var(--color-bg); border: 2px solid var(--color-border); border-radius: 10px;
-  font-size: 20px; font-weight: 700; text-transform: uppercase;
+  font-size: 17px; font-weight: 700; text-transform: uppercase;
   transition: background 0.1s ease, transform 0.1s ease;
 }
 .key.wide { flex: 7 1 0; max-width: none; font-size: var(--text-small); text-transform: none; }
@@ -204,8 +204,8 @@
    a 1920px-wide window. Phones/tablets stay gated by the
    data-app-blocked="mobile" overlay above. */
 @media (min-width: 1024px) {
-  .key { min-height: 76px; }
-  .letter { font-size: 26px; }
+  .key { min-height: 56px; }
+  .letter { font-size: 22px; }
   .free-area { font-size: 19px; padding: 16px; }
 }
 
