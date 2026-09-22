@@ -5,7 +5,7 @@
    and bump VERSION so the activate step purges the old cache.
    See CLOUDFLARE.md �"Cache contract" for the full contract.
    ============================================================ */
-var VERSION = 'teclatlon-v58';
+var VERSION = 'teclatlon-v59';
 
 var FILES = [
   './index.html',
