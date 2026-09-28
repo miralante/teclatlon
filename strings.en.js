@@ -158,6 +158,11 @@
     "errorSoundOn": "On",
     "errorSoundOff": "Off",
 
+    "fingerTextLabel": "Finger text",
+    "fingerTextLabelAria": "Show or hide the finger text",
+    "fingerTextLabelOn": "✅ Finger text: visible",
+    "fingerTextLabelOff": "⬜ Finger text: hidden",
+
     "achievementsTitle": "⭐ Achievements",
     "achievementsShow": "Show achievements",
     "achievementsHide": "Hide",

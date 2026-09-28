@@ -36,7 +36,7 @@ const DATA = {
     { ch: '1', finger: 'lp' }, { ch: '2', finger: 'lr' },
     { ch: '3', finger: 'lm' }, { ch: '4', finger: 'li' },
     { ch: '5', finger: 'li' }, { ch: '6', finger: 'ri' },
-    { ch: '7', finger: 'ri' }, { ch: '8', finger: 'rm' },
+    { ch: '7', finger: 'rm' }, { ch: '8', finger: 'rm' },
     { ch: '9', finger: 'rr' }, { ch: '0', finger: 'rp' }
   ],
 
@@ -68,14 +68,14 @@ const DATA = {
   ],
 
   numpad: [
-    [{ ch: '7', finger: 'ri' }, { ch: '8', finger: 'rm' }, { ch: '9', finger: 'rr' }],
+    [{ ch: '7', finger: 'rm' }, { ch: '8', finger: 'rm' }, { ch: '9', finger: 'rr' }],
     [{ ch: '4', finger: 'ri' }, { ch: '5', finger: 'rm', bump: true }, { ch: '6', finger: 'rr' }],
     [{ ch: '1', finger: 'ri' }, { ch: '2', finger: 'rm' }, { ch: '3', finger: 'rr' }],
     [{ ch: '0', finger: 'th', wide: true }, { ch: '.', finger: 'rr' }]
   ],
 
   numpadFingers: {
-    '7': 'ri', '8': 'rm', '9': 'rr',
+    '7': 'rm', '8': 'rm', '9': 'rr',
     '4': 'ri', '5': 'rm', '6': 'rr',
     '1': 'ri', '2': 'rm', '3': 'rr',
     '0': 'th', '.': 'rr'

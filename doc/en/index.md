@@ -4,7 +4,7 @@
 > for project roles, see [`roles.md`](roles.md); for how to contribute, see
 > the root [`CONTRIBUTING.md`](../../CONTRIBUTING.md).
 >
-> **App**: [teclatlon.apptonomia.uk](https://teclatlon.apptonomia.uk) · **Repository**: [github.com/thenkdframe/teclatlon](https://github.com/thenkdframe/teclatlon) · **Other language**: [Español](../es/indice.md)
+> **App**: [teclatlon.apptonomia.uk](https://teclatlon.apptonomia.uk) · **Repository**: [github.com/miralante/teclatlon](https://github.com/miralante/teclatlon) · **Other language**: [Español](../es/indice.md)
 
 ---
 

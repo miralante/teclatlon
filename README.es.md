@@ -64,7 +64,73 @@ decorativo; la entrada real es siempre el teclado físico.
 
 ---
 
-## 👥 Roles del proyecto
+## � Acerca de
+
+Teclatlon es un **entrenador de mecanografía táctil para el
+teclado físico del ordenador**. Enseña la colocación de los
+dedos, dedo a dedo, en un orden fijo de lecciones que desbloquea
+la siguiente tecla cuando se domina la anterior; luego un juego
+de palabras, el teclado numérico, el reto de "todas las teclas"
+y la escritura libre con lectura en voz alta de lo escrito. El
+teclado en pantalla es decorativo — la entrada real es siempre
+el teclado físico.
+
+Teclatlon es solo para ordenador por decisión de diseño (sin
+entrada táctil, sin pulsación en pantalla, ver
+[`doc/es/spec.md`](doc/es/spec.md) §2.2). Se publica como web
+estática sin dependencias y como PWA instalable. Es una de las
+**siete apps** de la suite **Miralante** — la lista completa
+está en [🌐 La suite Miralante](#-la-suite-miralante--proyectos-del-grupo)
+más abajo. La especificación real del producto vive en
+[`doc/es/spec.md`](doc/es/spec.md); este README rehúye
+reformular decisiones de producto para que la descripción
+pública y la especificación no se separen.
+
+---
+
+## 🎯 Objetivos
+
+Teclatlon se construye para:
+
+- ⌨️ **Enseñar la fila base en la primera sesión** — la
+  colocación de los dedos, las cuatro lecciones dedo a dedo y
+  el mapa de colores por dedo / mano antes que nada.
+- 🔤 **Desbloquear la siguiente tecla solo cuando se domina la
+  anterior** — orden fijo de andamiaje, sin "saltar
+  adelante".
+- 🎮 **Ofrecer cuatro modos de práctica** — palabras, teclado
+  numérico, reto de todas las teclas y escritura libre con
+  texto a voz.
+- 🌐 **Mantener la paridad bilingüe** — español por defecto y
+  fuente de verdad; inglés con paridad en cada cadena y cada
+  palabra de práctica.
+- 🔒 **Guardar el progreso solo en el dispositivo** — cada ⭐
+  vive en `localStorage` bajo el prefijo `teclatlon:`; nada se
+  sube nunca.
+- 📦 **Funcionar sin conexión como PWA** — instalar, cerrar el
+  portátil, seguir tecleando.
+- 🖐️ **Quedarse solo con el teclado físico** — nunca un
+  teclado en pantalla pulsable (ver [`doc/es/spec.md`](doc/es/spec.md) §2.2).
+
+Cada objetivo referencia una sección de
+[`doc/es/spec.md`](doc/es/spec.md); si un objetivo no está allí,
+añádelo a la especificación o sácalo de la lista.
+
+---
+
+## 👥 Audiencia y roles
+
+Teclatlon está pensada para una **persona tipo** — quien quiera
+aprender mecanografía táctil en un teclado real, a su ritmo, en
+su propio dispositivo, sin cuenta ni presión. La especificación
+real del producto vive en [`doc/es/spec.md`](doc/es/spec.md);
+este README evita a propósito cualquier etiqueta clínica para
+que la descripción pública se mantenga genérica.
+
+---
+
+El proyecto reconoce tres roles alrededor de la app, cada uno
+con su propio punto de entrada:
 
 | Rol | Quién es | Cómo participa | Dónde mira primero |
 |---|---|---|---|
@@ -192,7 +258,8 @@ aísla.
 
 Ver [`SECURITY.es.md`](SECURITY.es.md) (o [`SECURITY.md`](SECURITY.md)
 para la versión en inglés) para reportar una sospecha de forma
-privada.
+privada (canal preferido:
+[`hello@apptonomia.uk`](mailto:hello@apptonomia.uk)).
 
 ---
 
@@ -227,7 +294,7 @@ conexión — la caché solo importa para uso sin red.
 
 ## 🌐 La suite Miralante — proyectos del grupo
 
-Teclatlon es una de las **seis apps** de la suite **Miralante**, que
+Teclatlon es una de las **siete apps** de la suite **Miralante**, que
 comparten autor, la misma filosofía de accesibilidad sin backend y la
 misma historia de despliegue en Cloudflare. Apptonomia, además de ser
 una app en sí misma, actúa como **portal de la suite** que la presenta
@@ -238,6 +305,7 @@ este es el producto original del que nació el grupo.
 |---|---|---|
 | **Apptonomia** *(portal — landing only, no es app)* | Landing que presenta la suite Miralante (no es una app en tiempo de ejecución) | [github.com/miralante/apptonomia](https://github.com/miralante/apptonomia) |
 | [Calculia](https://calculia.apptonomia.uk/) | Cálculo y razonamiento lógico | [github.com/miralante/calculia](https://github.com/miralante/calculia) |
+| [Ludia](https://ludia.apptonomia.uk/) | Juegos adaptados con reglas, ejercicios y partidas | [github.com/miralante/ludia](https://github.com/miralante/ludia) |
 | [Memofun](https://memofun.apptonomia.uk/) | Tarjetas de memoria con aprendizaje significativo | [github.com/miralante/memofun](https://github.com/miralante/memofun) |
 | [Okeymoney](https://okeymoney.apptonomia.uk/) | Finanzas personales y autonomía cotidiana | [github.com/miralante/okeymoney](https://github.com/miralante/okeymoney) |
 | [Routime](https://routime.apptonomia.uk/) | Actividades para rutinas y vida cotidiana | [github.com/miralante/routime](https://github.com/miralante/routime) |

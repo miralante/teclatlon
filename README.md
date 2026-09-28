@@ -58,14 +58,74 @@ input is always the physical keyboard.
 
 ---
 
-## 👥 Roles in the project
+## � About
+
+Teclatlon is a **touch-typing trainer for the physical computer
+keyboard**. It teaches finger placement, finger-by-finger, in a
+fixed lesson order that unlocks the next key once the previous
+one is mastered; then a words game, a number-pad game, an "all
+keys" challenge, and a free-writing mode that reads back what was
+typed. The on-screen keyboard is decorative only — the real
+input is always the physical keyboard.
+
+Teclatlon is computer-only by design (no touch or tap input on
+purpose — see [`doc/en/spec.md`](doc/en/spec.md) §2.2). It ships
+as a static, dependency-free web app and a progressive web app.
+It is one of the **Miralante** suite of seven sibling apps — see
+[🌐 The Miralante suite](#-the-miralante-suite--projects-in-the-suite)
+below for the full list. The real product specification lives in
+[`doc/en/spec.md`](doc/en/spec.md); this README deliberately
+avoids rephrasing product decisions to keep the public
+description and the spec in lock-step.
+
+---
+
+## 🎯 Goals
+
+Teclatlon is built to:
+
+- ⌨️ **Teach the home row in the first session** — finger
+  placement, the four finger-by-finger lessons, and the colour
+  map by finger/hand before anything else.
+- 🔤 **Unlock the next key only when the previous one is
+  mastered** — fixed scaffolding order, no "skip ahead" path.
+- 🎮 **Offer four practice modes** — words, number-pad, all-
+  keys challenge, free writing with text-to-speech.
+- 🌐 **Stay bilingual end-to-end** — Spanish is the default
+  and source of truth; English keeps parity in every string and
+  every practice word.
+- 🔒 **Keep progress on the user's device only** — every ⭐
+  lives in `localStorage` under the `teclatlon:` prefix;
+  nothing is ever uploaded.
+- 📦 **Work offline as a PWA** — install, close the laptop,
+  keep typing.
+- 🖐️ **Stay physical-keyboard only** — no tappable on-screen
+  keyboard, ever (see [`doc/en/spec.md`](doc/en/spec.md) §2.2).
+
+Each goal cross-references a spec section in
+[`doc/en/spec.md`](doc/en/spec.md); if a goal is not in the spec,
+either add it to the spec or drop it from this list.
+
+---
+
+## 👥 Audience & roles
+
+Teclatlon is designed for a **typical user profile** — anyone
+who wants to learn touch typing on a real keyboard, at their own
+pace, on their own device, with no account and no pressure. The
+real product specification lives in [`doc/en/spec.md`](doc/en/spec.md);
+this README deliberately avoids any clinical label so the public
+description stays generic.
+
+
+The project recognises three roles around the app, each with its
+own entry point:
 
 | Role | Who they are | How they participate | Where they look first |
 |---|---|---|---|
 | 👤 **End user** (typical user profile) | Practices typing with the physical keyboard | Opens the app in a browser and types on the **physical** keyboard; the on-screen keyboard is decorative only | The app |
-| ❤️ **Support / family / teacher** | Helps an end user set up or progress through lessons | Sets the learner name in the words game; supervises progress via stars ⭐ | [`CONTRIBUTING.md`](CONTRIBUTING.md) (the "Support" section) |
-| 💻 **Build / developer** | Maintains the keyboard layouts, lessons, and the SW | Edits `data.js`, `app.js`, `sw.js`, `strings.<locale>.js`; runs 
-ode scripts/check.js` | [`CLAUDE.md`](CLAUDE.md) |
+| ❤ **Support / family / teacher** | Helps an end user set up or progress through lessons | Sets the learner name in the words game; supervises progress via stars ⭐ | [`CONTRIBUTING.md`](CONTRIBUTING.md) (the “Support” section) |
+| 💻 **Build / developer** | Maintains the lessons, the sequence game, and the CI | Edits `app.js`, the locale-split practice data, and the lesson order | [`CLAUDE.md`](CLAUDE.md) |
 
 See [`doc/en/roles.md`](doc/en/roles.md) for the full role description
 and the trio-vs-pair-vs-sole patterns across the apps of the suite.
@@ -182,7 +242,8 @@ backend, no database and no telemetry. The threat model is essentially
 browser already sandboxes.
 
 See [`SECURITY.md`](SECURITY.md) (or [`SECURITY.es.md`](SECURITY.es.md))
-for how to report a suspected issue privately.
+for how to report a suspected issue privately (preferred channel:
+[`hello@apptonomia.uk`](mailto:hello@apptonomia.uk)).
 
 ---
 
@@ -217,7 +278,7 @@ cache only matters for offline use.
 
 ## 🌐 The Miralante suite — projects in the suite
 
-Teclatlon is one of **six apps** in the **Miralante** suite, sharing
+Teclatlon is one of **seven apps** in the **Miralante** suite, sharing
 the same author, the same accessibility-first / no-backend philosophy
 and the same deploy story. Apptonomia, on top of being an app itself,
 also acts as the **landing portal** that introduces the whole suite.
@@ -228,6 +289,7 @@ just the original product this group grew out of.
 |---|---|---|
 | **Apptonomia** *(portal — landing only, no app)* | Landing page that introduces the Miralante suite (not a runtime app) | [github.com/miralante/apptonomia](https://github.com/miralante/apptonomia) |
 | [Calculia](https://calculia.apptonomia.uk/) | Math and logical reasoning | [github.com/miralante/calculia](https://github.com/miralante/calculia) |
+| [Ludia](https://ludia.apptonomia.uk/) | Adapted games with rules, exercises and matches | [github.com/miralante/ludia](https://github.com/miralante/ludia) |
 | [Memofun](https://memofun.apptonomia.uk/) | Flashcards built around meaningful learning | [github.com/miralante/memofun](https://github.com/miralante/memofun) |
 | [Okeymoney](https://okeymoney.apptonomia.uk/) | Personal finance and everyday autonomy | [github.com/miralante/okeymoney](https://github.com/miralante/okeymoney) |
 | [Routime](https://routime.apptonomia.uk/) | Activities for routines and daily-life skills | [github.com/miralante/routime](https://github.com/miralante/routime) |

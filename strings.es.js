@@ -159,6 +159,11 @@
     "errorSoundOn": "Son",
     "errorSoundOff": "Sil",
 
+    "fingerTextLabel": "Texto del dedo",
+    "fingerTextLabelAria": "Mostrar u ocultar el texto del dedo",
+    "fingerTextLabelOn": "✅ Texto del dedo: visible",
+    "fingerTextLabelOff": "⬜ Texto del dedo: oculto",
+
     "achievementsTitle": "⭐ Logros",
     "achievementsShow": "Ver logros",
     "achievementsHide": "Ocultar",

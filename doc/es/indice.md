@@ -5,7 +5,7 @@
 > contribuir, consulta el [`CONTRIBUTING.md`](../../CONTRIBUTING.md) de
 > la raíz.
 >
-> **App**: [teclatlon.apptonomia.uk](https://teclatlon.apptonomia.uk) · **Repositorio**: [github.com/thenkdframe/teclatlon](https://github.com/thenkdframe/teclatlon) · **Otro idioma**: [English](../en/index.md)
+> **App**: [teclatlon.apptonomia.uk](https://teclatlon.apptonomia.uk) · **Repositorio**: [github.com/miralante/teclatlon](https://github.com/miralante/teclatlon) · **Otro idioma**: [English](../en/index.md)
 
 ---
 
@@ -16,7 +16,9 @@ doc/
 ├── es/
 │   ├── indice.md                ← Esta carpeta (punto de entrada, ES)
 │   ├── roles.md                 ← Roles del proyecto
-│   ├── SPEC.md    ├── README.md                ← Introducción en lectura fácil (orientada a la audiencia)│   ├── tecnico.md
+│   ├── SPEC.md
+│   ├── README.md                ← Introducción en lectura fácil (orientada a la audiencia)
+│   ├── tecnico.md
 │   ├── I18N.md
 │   ├── actividades.md           ← Catálogo de lecciones y modos
 │   ├── equipo.md                ← Guía para familias / docentes
@@ -56,4 +58,4 @@ la raíz y en [`CONTRIBUTING.md`](../../CONTRIBUTING.md).
 | Añadir un idioma | [`I18N.md`](I18N.md) |
 | Entender los roles del proyecto y cómo se decide | [`roles.md`](roles.md) |
 | Entender el patrón transversal de la suite (cómo se construye cada app de Miralante, qué está prohibido) | [`tecnico.md` §8](tecnico.md#8-patrón-de-la-suite-cómo-se-construye-cada-app-de-miralante) |
-tecnico.md` §8](tecnico.md#8-patrón-de-la-suite-cómo-se-construye-cada-app-de-miralante
+

@@ -22,6 +22,7 @@
   "dcSubject": "Aplicación web gratuita para aprender mecanografía con el teclado del ordenador: colocación de dedos, lecciones por letra, palabras, números y escritura libre.",
   "dcRights": "MIT (código). Las lecciones, palabras y textos de práctica son contenido propio bajo CC BY 4.0.",
   "dcType": "InteractiveResource",
+  "supportEmail": "hello@apptonomia.uk",
   "faq": [
     {
       "question": "¿Qué es Teclatlon?",

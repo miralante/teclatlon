@@ -158,8 +158,7 @@
 
   <link rel="stylesheet" href="assets/css/tokens.css">
   <link rel="stylesheet" href="assets/css/base.css">
-  <link rel="stylesheet" href="assets/css/components.css">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="assets/css/components.css"><link rel="stylesheet" href="assets/css/locale-picker.css?v=teclatlon-v1">  <link rel="stylesheet" href="styles.css">
       <!-- Pre-paint bootstrap (device gate + locale + saved accessibility
        settings). External file so the CSP can keep `script-src 'self'`
        without 'unsafe-inline'. The whole file is one synchronous IIFE
@@ -168,6 +167,7 @@
        and before the first paint — no flash of the app on phones.
        See assets/js/gate.js for the detection logic. -->
   <script src="assets/js/gate.js"></script>
+  <link rel="manifest" href="./manifest.json">
 </head>
 <body>
   <!-- Overlay: "computer only" gate. Rendered inline (no JS dep, no
@@ -362,8 +362,7 @@
     <div class="setting-row">
       <span class="setting-label" data-i18n="languageLabel">🌐 Idioma</span>
       <span class="text-group" role="group" id="languageGroup" data-i18n-aria="languageLabelAria" aria-label="Elegir idioma">
-        <button type="button" class="btn-icon btn-language" data-locale="es" aria-pressed="false">🇪🇸 Español</button>
-        <button type="button" class="btn-icon btn-language" data-locale="en" aria-pressed="false">🇬🇧 English</button>
+        <div id="locale-picker"></div>
       </span>
     </div>
 
@@ -405,6 +404,11 @@
     <div class="setting-row">
       <span class="setting-label" data-i18n="errorSound">Sonido de error</span>
       <button type="button" id="btnErrorSound" class="btn-icon" aria-pressed="false" data-i18n-aria="errorSoundAria" aria-label="Activar o desactivar el sonido de error">Sil</button>
+    </div>
+
+    <div class="setting-row">
+      <span class="setting-label" data-i18n="fingerTextLabel">Texto del dedo</span>
+      <button type="button" id="btnFingerText" class="btn-icon" aria-pressed="false" data-i18n-aria="fingerTextLabelAria" aria-label="Mostrar u ocultar el texto del dedo">Texto del dedo: encendido</button>
     </div>
 
     <div class="setting-row">
@@ -466,6 +470,18 @@
   <script src="strings.en.js"></script>
   <script src="data.js"></script>
   <script src="app.js"></script>
+  <!-- Locale picker config (must run BEFORE assets/js/locale-picker.js).
+       Teclatlon stores strings next to index.html (not under assets/js/),
+       so path: 'strings'. storageKey must match the one assets/js/i18n.js
+       writes to localStorage ('teclatlon:locale'). -->
+  <script>
+  window.LocalePickerConfig = {
+    storageKey: 'teclatlon:locale',
+    path: 'strings',
+    defaultLocale: 'es'
+  };
+  </script>
+  <script src="assets/js/locale-picker.js?v=teclatlon-v1" defer></script>
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js').catch(function () {});

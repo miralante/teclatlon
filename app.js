@@ -68,6 +68,7 @@
   state.options.keySound = state.options.keySound === undefined ? true : !!state.options.keySound;
   state.options.metrics = !!state.options.metrics;
   state.options.errorSound = !!state.options.errorSound;
+  state.options.showFingerText = state.options.showFingerText === undefined ? true : !!state.options.showFingerText;
   state.goal = state.goal || { accuracyMin: null, speedMin: null };
   state.achievements = state.achievements || {};
 
@@ -355,7 +356,8 @@
     updateSettingsButton('#btnFocusMode', 'focusModeLabel', state.options.focusMode);
     updateSettingsButton('#btnKeySound', 'keySoundLabel', state.options.keySound);
     updateSettingsButton('#btnMetrics', 'metricsLabel', state.options.metrics);
-    updateSettingsButton('#btnErrorSound', 'errorSoundLabel', state.options.errorSound);
+    updateSettingsButton('#btnErrorSound', 'errorSound', state.options.errorSound);
+    updateSettingsButton('#btnFingerText', 'fingerTextLabel', state.options.showFingerText);
     updateLiveMetrics();
   }
 
@@ -391,6 +393,7 @@
     var details = $('#achievementsSection');
     if (details) details.open = true;
     renderAchievements();
+    applyOptions();
   }
 
   function closeSettings() {
@@ -437,6 +440,7 @@
     if (e.target.closest('#btnKeySound')) { state.options.keySound = !state.options.keySound; save(); applyOptions(); return; }
     if (e.target.closest('#btnMetrics')) { state.options.metrics = !state.options.metrics; save(); applyOptions(); return; }
     if (e.target.closest('#btnErrorSound')) { state.options.errorSound = !state.options.errorSound; save(); applyOptions(); return; }
+    if (e.target.closest('#btnFingerText')) { state.options.showFingerText = !state.options.showFingerText; save(); applyOptions(); return; }
 
     /* Goal: accuracy selector */
     var goalAcc = e.target.closest('#goalAccuracySelect');
@@ -473,7 +477,6 @@
   /* ---------- Live metrics (accuracy and speed) ---------- */
   function startMetrics() {
     state.metrics = { keys: 0, hits: 0, misses: 0, startMs: Date.now() };
-    updateLiveMetrics();
   }
 
   function updateLiveMetrics() {
@@ -603,6 +606,7 @@
     }
     else text = App.i18n.t('findKey');
     $('#guideText').textContent = text;
+    $('#guideText').classList.toggle('hidden', !state.options.showFingerText);
   }
 
   /* ---------- Screens ---------- */
@@ -720,7 +724,17 @@
   }
 
   /* ---------- Sequence engine ---------- */
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
   function startSequence(cfg) {
+    cfg.steps = shuffle(cfg.steps);
     game = { type: 'seq', cfg: cfg, idx: 0, pos: 0, waiting: false };
     $('#gameTitle').textContent = cfg.title;
     var inNumpad = cfg.mode === 'numbers';
@@ -731,6 +745,7 @@
     $('#guide').classList.remove('hidden');
     clearFeedback();
     startMetrics();
+    updateLiveMetrics();
     showScreen('screenGame');
     loadStep();
   }
@@ -1161,6 +1176,7 @@
     markTarget(null);
     $$('.key.done').forEach(function (t) { t.classList.remove('done'); });
     startMetrics();
+    updateLiveMetrics();
     showScreen('screenGame');
     updateChallenge();
   }
@@ -1508,12 +1524,32 @@
   applyOptions();
   updateStars();
 
-  /* Boot: pick the right first screen. On a fresh install the
-     user types their name; if they've been here before, the
-     menu opens directly. */
-  if (state.name) {
-    goMenu();
-  } else {
-    goName();
+  /* Hash routing — supports direct navigation via URL hash
+     (e.g. page.goto('/#/screenMenu') in tests). */
+  function routeHash() {
+    var h = location.hash.replace(/^#\/?/, '');
+    if (h === 'screenMenu' || h === 'menu')            { goMenu(); return true; }
+    if (h === 'screenLessons' || h === 'lessons')      { goLessons(); return true; }
+    if (h === 'screenTemplates' || h === 'templates')  { goTemplates(); return true; }
+    if (h === 'screenName' || h === 'name')             { goName(); return true; }
+    if (h === 'screenFree' || h === 'free')              { goFree(); return true; }
+    if (h === 'screenGame' || h === 'game')              { return true; } // game needs active sequence
+    return false;
   }
+
+  /* Boot: pick the right first screen. Deferred to 'load' so that
+     hash routing (routeHash) runs synchronously first during page
+     load and the boot screen does not override it. */
+  window.addEventListener('load', function () {
+    /* If routeHash handled a hash (e.g. /#/screenMenu), don't also
+       call goName/goMenu here — the hash handler already picked a screen. */
+    if (routeHash()) return;
+    if (state.name) {
+      goMenu();
+    } else {
+      goName();
+    }
+  });
+
+  window.addEventListener('hashchange', routeHash);
 })();

@@ -1,39 +1,65 @@
-# Política de seguridad
+# Security policy
 
-Teclatlon es un sitio estático completamente del lado del cliente:
-no hay servidor, ni backend, ni base de datos, ni telemetría. La
-superficie de ataque es esencialmente la del navegador sobre el
-mismo origen.
+Teclatlon is a fully client-side static site: no server of its own,
+no backend, no database, no telemetry, no third-party runtime calls, no
+accounts. The attack surface is essentially the browser sandbox on the
+same origin (the HTTP security headers in `_headers` are
+written to keep it that way — CSP locked to `'self'`, no inline scripts,
+no `connect-src` to third parties).
 
-## Versiones soportadas
 
-Solo la rama `master` recibe parches de seguridad. No mantenemos
-versiones antiguas.
 
-## Cómo reportar una vulnerabilidad
+## Supported versions
 
-Abre un aviso privado a través de
+Only the `main` branch receives security patches. We do not
+maintain old versions.
+
+The cache-bump rule (see `CLAUDE.md` §B.1) is what makes "supported"
+meaningful: a `VERSION` bump in `sw.js` is the only mechanism that
+forces installed PWAs to pick up the new code. We support the
+**latest deployed `VERSION` only**; older versions are not patched.
+
+## Reporting a vulnerability
+
+Open a private advisory via
 [GitHub Security Advisories](https://github.com/miralante/teclatlon/security/advisories/new).
 
-Por favor, incluye:
+Please include:
 
-- Descripción breve y pasos para reproducir.
-- Impacto observado o esperado.
-- SHA de commit o etiqueta afectada.
+- A short description and reproduction steps.
+- Observed or expected impact.
+- The affected commit SHA or tag.
 
-Si no puedes usar Security Advisories, abre un issue etiquetándolo
-claramente como **security** y añade el prefijo `[SEC]` al título.
-**No subas pruebas de concepto explotables** a un issue público:
-espera a que un maintainer coordine.
+If you cannot use Security Advisories, open an issue clearly labelled
+as **security** and prepend `[SEC]` to the title. **Do not upload
+runnable proof-of-concept code** to a public issue — wait for a
+maintainer to coordinate.
 
-## Qué esperar
+If neither channel is appropriate, email `hello@apptonomia.uk` instead.
 
-- Acuse de recibo en 5 días laborables.
-- Primera evaluación (reproducción, severidad, plan) en 15 días
-  laborables.
-- Si se confirma, un parche o mitigación en cuanto sea viable.
+## What to expect
 
-## Divulgación coordinada
+- Acknowledgement within 5 business days.
+- First assessment (reproduction, severity, plan) within 15 business days.
+- If confirmed, a patch or mitigation as soon as feasible.
 
-Preferimos coordinar la divulgación si la corrección requiere
-cambios visibles en la UI o en el shell de la PWA.
+## Coordinated disclosure
+
+We prefer to coordinate disclosure if the fix requires user-visible
+changes to the UI or the PWA shell.
+
+## Out of scope
+
+- Vulnerabilities in the user's browser (we ship plain HTML/CSS/JS;
+  report to the browser vendor).
+- Vulnerabilities in Cloudflare's Workers runtime (report to
+  Cloudflare).
+- Self-XSS (a user pasting malicious code into their own browser
+  console).
+
+## See also
+
+- [`CLOUDFLARE.md`](CLOUDFLARE.md) — the deploy runbook.
+- [`_headers`](_headers) — the HTTP security headers in effect.
+- `CLAUDE.md` §B — the suite-wide policies (no telemetry, WCAG
+  AAA, public-facing wording).

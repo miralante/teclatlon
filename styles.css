@@ -67,12 +67,12 @@
 
 /* ---- Game target zone ---- */
 .game-title { flex: 1; }
-.target-zone { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; min-height: 36px; }
+.target-zone { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; min-height: 44px; }
 .letter {
-  width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
-  font-size: 15px; font-weight: 800;
+  width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 800;
   background: var(--color-bg); color: var(--color-text-soft);
-  border: 2px solid var(--color-border); border-radius: 6px;
+  border: 2px solid var(--color-border); border-radius: 8px;
 }
 .letter.current { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
 .letter.done { background: var(--color-success-soft); color: var(--color-success); border-color: var(--color-success); }
@@ -87,7 +87,7 @@
    one -- see renderTarget() in app.js. */
 .target-zone--compact { gap: 6px; row-gap: 8px; }
 .target-zone--compact .word { display: flex; gap: 3px; }
-.target-zone--compact .letter { width: 20px; height: 22px; font-size: 11px; border-radius: 5px; }
+.target-zone--compact .letter { width: 24px; height: 26px; font-size: 13px; border-radius: 5px; }
 
 /* ---- Hand guide ---- */
 .guide { justify-content: center; gap: 12px; align-items: flex-start; }
@@ -205,7 +205,8 @@
    data-app-blocked="mobile" overlay above. */
 @media (min-width: 1024px) {
   .key { min-height: 44px; }
-  .letter { font-size: 15px; width: 28px; height: 28px; }
+  .letter { font-size: 18px; width: 38px; height: 38px; }
+  .target-zone--compact .letter { width: 24px; height: 26px; font-size: 13px; }
   .free-area { font-size: 19px; padding: 16px; }
 }
 

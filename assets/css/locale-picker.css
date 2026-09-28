@@ -1,0 +1,149 @@
+/* Apptonomia — locale picker (dropdown de siglas).
+   Estilos del componente reutilizable. Cada app lo carga con UN solo
+   <link rel="stylesheet" href="assets/css/locale-picker.css">.
+
+   Diseño:
+   - Botón compacto: sigla uppercase + chevron.
+   - Panel flotante debajo del botón con sombra suave.
+   - Opciones: sigla uppercase + nombre nativo, alineados.
+   - Animación de 120ms al abrir/cerrar.
+   - Hover y foco accesibles (WCAG AA).
+   - Responsive: en móvil el panel ocupa el ancho disponible.
+
+   Las apps pueden sobreescribir variables CSS (--lp-bg, --lp-border,
+   --lp-text, --lp-accent) para adaptar el componente a su paleta
+   de marca sin tener que tocar el CSS. */
+
+#locale-picker {
+  position: relative;
+  display: inline-block;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* Botón trigger */
+.locale-picker-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  min-height: 40px;
+  background: var(--lp-bg, var(--color-surface, #FFFFFF));
+  color: var(--lp-text, var(--color-text, #1A1A2E));
+  border: 1px solid var(--lp-border, var(--color-border, #D8D2C8));
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.locale-picker-btn:hover {
+  border-color: var(--lp-accent, var(--accent, #1B6CA8));
+  background: var(--lp-bg-hover, var(--accent-soft, #E3EEF6));
+}
+
+.locale-picker-btn:focus-visible {
+  outline: 3px solid var(--lp-accent, var(--accent, #1B6CA8));
+  outline-offset: 2px;
+}
+
+.locale-picker-current {
+  /* Sigla en uppercase, no crece */
+  display: inline-block;
+  min-width: 1.5em;
+  text-align: center;
+}
+
+.locale-picker-chevron {
+  display: inline-block;
+  width: 10px;
+  height: 6px;
+  color: currentColor;
+  opacity: 0.65;
+  transition: transform 0.15s ease;
+}
+
+.locale-picker-btn[aria-expanded="true"] .locale-picker-chevron {
+  transform: rotate(180deg);
+}
+
+/* Panel desplegable */
+.locale-picker-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 180px;
+  margin: 0;
+  padding: 6px 0;
+  list-style: none;
+  background: var(--lp-bg, var(--color-surface, #FFFFFF));
+  border: 1px solid var(--lp-border, var(--color-border, #D8D2C8));
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(26, 26, 46, 0.12);
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.12s ease, transform 0.12s ease, visibility 0s linear 0.12s;
+}
+
+.locale-picker-panel.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: opacity 0.12s ease, transform 0.12s ease, visibility 0s;
+}
+
+/* Opciones */
+.locale-picker-panel li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  cursor: pointer;
+  color: var(--lp-text, var(--color-text, #1A1A2E));
+  transition: background-color 0.1s ease;
+}
+
+.locale-picker-panel li:hover {
+  background: var(--lp-bg-hover, var(--accent-soft, #E3EEF6));
+}
+
+.locale-picker-panel li:focus-visible {
+  outline: 2px solid var(--lp-accent, var(--accent, #1B6CA8));
+  outline-offset: -2px;
+}
+
+.locale-picker-panel li[aria-selected="true"] {
+  background: var(--lp-bg-active, var(--accent-soft, #E3EEF6));
+  font-weight: 700;
+}
+
+.locale-picker-sigla {
+  display: inline-block;
+  min-width: 2em;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--lp-accent, var(--accent, #1B6CA8));
+  text-align: center;
+}
+
+.locale-picker-nombre {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Móvil: panel a ancho completo */
+@media (max-width: 480px) {
+  .locale-picker-panel {
+    right: auto;
+    left: 0;
+    min-width: 200px;
+  }
+}
