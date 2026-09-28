@@ -135,7 +135,13 @@
        text-size/focus-mode for returning users. */
     var theme = rawOptions.theme || rawOptions.tema;
     var textSize = rawOptions.textSize || rawOptions.texto;
-    var focusMode = rawOptions.focusMode || rawOptions.foco;
+    /* Legacy focusMode (focusMode/foco) → enable all 3 new flags.
+       Once app.js migrates and saves, focusMode is gone and the
+       individual flags are used directly. */
+    var legacyFocus = rawOptions.focusMode || rawOptions.foco;
+    var hideLegend = rawOptions.hideLegend !== undefined ? rawOptions.hideLegend : !!legacyFocus;
+    var hideNumpad = rawOptions.hideNumpad !== undefined ? rawOptions.hideNumpad : !!legacyFocus;
+    var dimCelebration = rawOptions.dimCelebration !== undefined ? rawOptions.dimCelebration : !!legacyFocus;
     var html = document.documentElement;
     /* Default theme is "light". If the user has chosen "auto" we
        still need a concrete data-theme before first paint to
@@ -153,6 +159,8 @@
       var textSizeMap = { chico: 'small', grande: 'large', enorme: 'huge' };
       html.setAttribute('data-text-size', textSizeMap[textSize] || textSize);
     }
-    if (focusMode) html.classList.add('focus-mode');
+    if (hideLegend) html.classList.add('hide-legend');
+    if (hideNumpad) html.classList.add('hide-numpad');
+    if (dimCelebration) html.classList.add('dim-celebration');
   } catch (e) { /* ignore */ }
 })();

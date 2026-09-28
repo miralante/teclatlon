@@ -64,7 +64,19 @@
   if (state.options.color !== 'fingers') state.options.color = 'hands';
   if (['auto', 'light', 'dark', 'contrast'].indexOf(state.options.theme) === -1) state.options.theme = 'light';
   if (['small', 'normal', 'large', 'huge'].indexOf(state.options.textSize) === -1) state.options.textSize = 'normal';
-  state.options.focusMode = !!state.options.focusMode;
+  /* Migrate legacy focusMode → 3 separate options. */
+  if (state.options.focusMode !== undefined) {
+    /* Legacy focusMode enabled → enable all three new options. */
+    if (state.options.focusMode) {
+      state.options.hideLegend = true;
+      state.options.hideNumpad = true;
+      state.options.dimCelebration = true;
+    }
+    delete state.options.focusMode;
+  }
+  state.options.hideLegend = !!state.options.hideLegend;
+  state.options.hideNumpad = !!state.options.hideNumpad;
+  state.options.dimCelebration = !!state.options.dimCelebration;
   state.options.keySound = state.options.keySound === undefined ? true : !!state.options.keySound;
   state.options.metrics = !!state.options.metrics;
   state.options.errorSound = !!state.options.errorSound;
@@ -345,7 +357,9 @@
     else html.setAttribute('data-theme', state.options.theme);
     if (state.options.textSize === 'normal') html.removeAttribute('data-text-size');
     else html.setAttribute('data-text-size', state.options.textSize);
-    html.classList.toggle('focus-mode', state.options.focusMode);
+    html.classList.toggle('hide-legend', state.options.hideLegend);
+    html.classList.toggle('hide-numpad', state.options.hideNumpad);
+    html.classList.toggle('dim-celebration', state.options.dimCelebration);
 
     $$('.btn-text-size').forEach(function (b) {
       b.setAttribute('aria-pressed', String(b.dataset.textSize === state.options.textSize));
@@ -353,7 +367,9 @@
     $$('.btn-theme').forEach(function (b) {
       b.setAttribute('aria-pressed', String(b.dataset.theme === state.options.theme));
     });
-    updateSettingsButton('#btnFocusMode', 'focusModeLabel', state.options.focusMode);
+    updateSettingsButton('#btnHideLegend', 'hideLegendLabel', state.options.hideLegend);
+    updateSettingsButton('#btnHideNumpad', 'hideNumpadLabel', state.options.hideNumpad);
+    updateSettingsButton('#btnDimCelebration', 'dimCelebrationLabel', state.options.dimCelebration);
     updateSettingsButton('#btnKeySound', 'keySoundLabel', state.options.keySound);
     updateSettingsButton('#btnMetrics', 'metricsLabel', state.options.metrics);
     updateSettingsButton('#btnErrorSound', 'errorSound', state.options.errorSound);
@@ -436,7 +452,9 @@
     var bTheme = e.target.closest('.btn-theme');
     if (bTheme) { state.options.theme = bTheme.dataset.theme; save(); applyOptions(); return; }
 
-    if (e.target.closest('#btnFocusMode')) { state.options.focusMode = !state.options.focusMode; save(); applyOptions(); return; }
+    if (e.target.closest('#btnHideLegend')) { state.options.hideLegend = !state.options.hideLegend; save(); applyOptions(); return; }
+    if (e.target.closest('#btnHideNumpad')) { state.options.hideNumpad = !state.options.hideNumpad; save(); applyOptions(); return; }
+    if (e.target.closest('#btnDimCelebration')) { state.options.dimCelebration = !state.options.dimCelebration; save(); applyOptions(); return; }
     if (e.target.closest('#btnKeySound')) { state.options.keySound = !state.options.keySound; save(); applyOptions(); return; }
     if (e.target.closest('#btnMetrics')) { state.options.metrics = !state.options.metrics; save(); applyOptions(); return; }
     if (e.target.closest('#btnErrorSound')) { state.options.errorSound = !state.options.errorSound; save(); applyOptions(); return; }
@@ -1461,7 +1479,7 @@
       name: '', stars: 0, completed: {},
       options: {
         keyboard: 'normal', color: 'hands', theme: 'auto', textSize: 'normal',
-        focusMode: false, keySound: true, metrics: false, errorSound: false
+        hideLegend: false, hideNumpad: false, dimCelebration: false, keySound: true, metrics: false, errorSound: false
       },
       goal: { accuracyMin: 0, speedMin: 0 },
       achievements: {}

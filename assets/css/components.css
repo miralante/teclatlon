@@ -526,14 +526,6 @@
 
 .avatar-current svg { width: 100%; height: 100%; }
 
-/* Focus mode: dim the celebration background for less distraction */
-html.focus-mode .celebration {
-  background: rgba(0, 0, 0, 0.85);
-  color: #FFFFFF;
-}
-
-html.focus-mode .celebration .message { color: #FFFFFF; }
-
 /* ---- Goal progress bars (inside #goalBars) ---- */
 .goal-bars {
   display: flex;

@@ -118,21 +118,24 @@
 
 
 
-/* -------- Distraction-free mode ("focusModeLabel" -- previously
-   called "modo foco"/"focus mode", renamed for clarity: see
-   strings.*.js): hides secondary text-based chrome (the keyboard-type
-   legend/description and the inline numpad). The on-screen keyboard
-   (including the highlighted target key) AND the hand/finger guide
-   stay, since for many players the hand picture is the PRIMARY way to
-   find the next key, not supporting chrome -- hiding it here would
-   work against the whole point of the mode. The keyboard-type buttons
-   (Simple/Normal/Extended/Colours) are hidden by a separate, future
-   option, not by this one. The on-screen keyboard is never the input;
-   it's an anchor (see SPEC.md §2 and the pointer-events:none rule in
-   components.css). -------- */
-html.focus-mode .keyboard-legend,
-html.focus-mode .panel-numpad-inline {
+/* -------- hideLegend: hides the keyboard-type legend bar -------- */
+html.hide-legend .keyboard-legend {
   display: none !important;
+}
+
+/* -------- hideNumpad: hides the inline numpad -------- */
+html.hide-numpad .panel-numpad-inline {
+  display: none !important;
+}
+
+/* -------- dimCelebration: dims the celebration overlay -------- */
+html.dim-celebration .celebration {
+  background: rgba(0, 0, 0, 0.85);
+  color: #FFFFFF;
+}
+
+html.dim-celebration .celebration .message {
+  color: #FFFFFF;
 }
 
 /* -------- Text size steps (controlled by --text-base) -------- */
