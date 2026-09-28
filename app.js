@@ -1163,8 +1163,13 @@
   }
 
   /* ---------- Challenge: all keys ---------- */
+  /* Challenge phases:
+     0 = left-to-right, 1 = right-to-left, 2 = random
+     Stars are awarded one per completed phase. */
+  var CHALLENGE_PHASES = 3;
+
   function playChallenge() {
-    game = { type: 'challenge', set: {} };
+    game = { type: 'challenge', set: {}, phase: 0, stars: 0 };
     $('#gameTitle').textContent = App.i18n.t('allKeysTitle');
     $('#gameInstruction').textContent = App.i18n.t('allKeysInstruction');
     $('#keyboardPanel').classList.remove('hidden');
@@ -1179,6 +1184,19 @@
     updateLiveMetrics();
     showScreen('screenGame');
     updateChallenge();
+  }
+
+  function advanceChallengePhase() {
+    game.stars += 1;
+    game.phase += 1;
+    game.set = {};
+    $$('.key.done').forEach(function (t) { t.classList.remove('done'); });
+    /* Brief feedback before continuing */
+    App.feedback.success($('#feedback'));
+    setTimeout(function () {
+      clearFeedback();
+      updateChallenge();
+    }, 800);
   }
 
   function endChallenge() {
@@ -1218,19 +1236,36 @@
   }
 
   /* Pick the next key the player still has to press in the "all keys"
-     challenge. Iteration is stable (layout row order) so the player
-     sees a predictable left-to-right, top-to-bottom rhythm instead of
-     a random-looking highlight jumping around. */
+     challenge. Phase 0 = left-to-right, phase 1 = right-to-left,
+     phase 2 = random. */
   function nextPendingKey() {
     var pending = null;
-    visibleRows().forEach(function (f) {
-      f.forEach(function (k) {
-        if (!k.ch || k.special) return;
-        if (game.set[k.ch]) return;
-        if (!pending) pending = [];
-        pending.push(k);
+    if (game.phase === 1) {
+      /* Right-to-left: collect keys in reverse order. */
+      var rows = visibleRows().slice().reverse();
+      rows.forEach(function (f) {
+        f.slice().reverse().forEach(function (k) {
+          if (!k.ch || k.special) return;
+          if (game.set[k.ch]) return;
+          if (!pending) pending = [];
+          pending.push(k);
+        });
       });
-    });
+    } else {
+      visibleRows().forEach(function (f) {
+        f.forEach(function (k) {
+          if (!k.ch || k.special) return;
+          if (game.set[k.ch]) return;
+          if (!pending) pending = [];
+          pending.push(k);
+        });
+      });
+    }
+    if (game.phase === 2 && pending && pending.length > 1) {
+      /* Random: pick one at random instead of first. */
+      var idx = Math.floor(Math.random() * pending.length);
+      return pending[idx];
+    }
     return pending ? pending[0] : null;
   }
 
@@ -1279,6 +1314,7 @@
     });
     $('#challengeFill').style.width = (total ? Math.round(done / total * 100) : 0) + '%';
     $('#challengeText').textContent = App.i18n.t('doneOfTotal').replace('{done}', done).replace('{total}', total);
+    updateChallengeStars();
     if (total > 0 && done === total) {
       /* Clear the next-key highlight and the hand guide so the
          completion feedback doesn't leave a stale "press X" prompt
@@ -1286,10 +1322,29 @@
       markTarget(null);
       $('#guideText').textContent = '';
       $('#handsSvg').innerHTML = handsSVG(null, null);
-      endChallenge();
+      if (game.phase < CHALLENGE_PHASES - 1) {
+        advanceChallengePhase();
+      } else {
+        endChallenge();
+      }
       return;
     }
     challengeGuide();
+  }
+
+  function updateChallengeStars() {
+    var starsEl = $('#challengeStars');
+    if (!starsEl) return;
+    var html = '';
+    for (var i = 0; i < CHALLENGE_PHASES; i++) {
+      var earned = i < game.stars;
+      var active = i === game.phase && !earned;
+      html += '<span class="challenge-star' +
+        (earned ? ' earned' : '') +
+        (active ? ' active' : '') +
+        '">' + (earned ? '★' : '☆') + '</span>';
+    }
+    starsEl.innerHTML = html;
   }
 
   /* ---------- Physical keyboard: the only real input ---------- */
