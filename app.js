@@ -1190,6 +1190,7 @@
     game.stars += 1;
     game.phase += 1;
     game.set = {};
+    game.phaseAnnounced = false;
     $$('.key.done').forEach(function (t) { t.classList.remove('done'); });
     /* Brief feedback before continuing */
     App.feedback.success($('#feedback'));
@@ -1290,6 +1291,18 @@
     else if (ch.length === 1 && /[a-zA-Z]/.test(ch)) keyText = ch.toUpperCase();
     else keyText = ch;
     var text;
+    /* Announce phase name once at the start of each phase. */
+    if (!game.phaseAnnounced) {
+      game.phaseAnnounced = true;
+      text = App.i18n.t('challengePhase' + game.phase) || '';
+      $('#guideText').textContent = text;
+      $('#guideText').classList.toggle('hidden', !state.options.showFingerText);
+      return;
+    }
+    if (!state.options.showFingerText) {
+      $('#guideText').textContent = '';
+      return;
+    }
     if (finger === 'th') {
       text = App.i18n.t('challengeNextKeyThumb').replace('{key}', keyText);
     } else if (finger) {
