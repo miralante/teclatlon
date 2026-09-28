@@ -36,7 +36,7 @@ const DATA = {
     { ch: '1', finger: 'lp' }, { ch: '2', finger: 'lr' },
     { ch: '3', finger: 'lm' }, { ch: '4', finger: 'li' },
     { ch: '5', finger: 'li' }, { ch: '6', finger: 'ri' },
-    { ch: '7', finger: 'rm' }, { ch: '8', finger: 'rm' },
+    { ch: '7', finger: 'ri' }, { ch: '8', finger: 'rm' },
     { ch: '9', finger: 'rr' }, { ch: '0', finger: 'rp' }
   ],
 

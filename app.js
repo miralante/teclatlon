@@ -1195,6 +1195,9 @@
   function challengeKey(ch) {
     var typeable = typeableKeys(visibleRows());
     if (!typeable[ch] || game.set[ch]) return;
+    /* Only accept the key if it is the current expected target. */
+    var expected = nextPendingKey();
+    if (!expected || ch !== expected.ch) return;
     game.set[ch] = true;
     state.metrics.keys += 1;
     state.metrics.hits += 1;
@@ -1244,7 +1247,12 @@
       return;
     }
     var ch = k.ch;
-    var inNumpad = !!DATA.numpadFingers[ch];
+    /* Check whether this key is genuinely in the numpad layout
+       (right-hand numeric keypad), not just present in numpadFingers
+       (which also holds the digits of the main number row). */
+    var inNumpad = DATA.numpad.some(function(row) {
+      return row.some(function(key) { return key.ch === ch; });
+    });
     var finger = fingerOf(ch, inNumpad);
     markTarget(ch);
     renderHands(finger, null);
