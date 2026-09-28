@@ -47,9 +47,17 @@
     return audioCtx;
   }
 
+  /* Resume audio context if suspended (browser autoplay policy requires
+     user gesture before AudioContext can run). */
+  function resumeAudio() {
+    var ctx = audioContext();
+    if (ctx && ctx.state === 'suspended') ctx.resume();
+  }
+
   function tone(frequency, duration, type, pan) {
     var ctx = audioContext();
     if (!ctx) return;
+    resumeAudio();
     try {
       var osc = ctx.createOscillator();
       var gain = ctx.createGain();
