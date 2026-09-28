@@ -1247,13 +1247,7 @@
       return;
     }
     var ch = k.ch;
-    /* Check whether this key is genuinely in the numpad layout
-       (right-hand numeric keypad), not just present in numpadFingers
-       (which also holds the digits of the main number row). */
-    var inNumpad = DATA.numpad.some(function(row) {
-      return row.some(function(key) { return key.ch === ch; });
-    });
-    var finger = fingerOf(ch, inNumpad);
+    var finger = k.finger || fingerOf(ch);
     markTarget(ch);
     renderHands(finger, null);
     var keyText;
