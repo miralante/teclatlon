@@ -164,10 +164,10 @@
     "goalAccuracyMet": "Accuracy ✔",
     "goalSpeedMet": "Speed ✔",
 
-    "errorSound": "Error sound",
-    "errorSoundAria": "Enable or disable error sound",
-    "errorSoundOn": "On",
-    "errorSoundOff": "Off",
+    "errorSoundLabel": "Error sound",
+    "errorSoundLabelAria": "Enable or disable error sound",
+    "errorSoundLabelOn": "✅ Error sound: on",
+    "errorSoundLabelOff": "⬜ Error sound: off",
 
     "fingerTextLabel": "Finger text",
     "fingerTextLabelAria": "Show or hide the finger text",

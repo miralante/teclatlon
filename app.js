@@ -372,7 +372,7 @@
     updateSettingsButton('#btnDimCelebration', 'dimCelebrationLabel', state.options.dimCelebration);
     updateSettingsButton('#btnKeySound', 'keySoundLabel', state.options.keySound);
     updateSettingsButton('#btnMetrics', 'metricsLabel', state.options.metrics);
-    updateSettingsButton('#btnErrorSound', 'errorSound', state.options.errorSound);
+    updateSettingsButton('#btnErrorSound', 'errorSoundLabel', state.options.errorSound);
     updateSettingsButton('#btnFingerText', 'fingerTextLabel', state.options.showFingerText);
     updateLiveMetrics();
   }

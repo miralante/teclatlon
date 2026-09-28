@@ -165,10 +165,10 @@
     "goalAccuracyMet": "Precisión ✔",
     "goalSpeedMet": "Velocidad ✔",
 
-    "errorSound": "Sonido de error",
-    "errorSoundAria": "Activar o desactivar el sonido de error",
-    "errorSoundOn": "Son",
-    "errorSoundOff": "Sil",
+    "errorSoundLabel": "Sonido de error",
+    "errorSoundLabelAria": "Activar o desactivar el sonido de error",
+    "errorSoundLabelOn": "✅ Sonido de error: activado",
+    "errorSoundLabelOff": "⬜ Sonido de error: desactivado",
 
     "fingerTextLabel": "Texto del dedo",
     "fingerTextLabelAria": "Mostrar u ocultar el texto del dedo",
