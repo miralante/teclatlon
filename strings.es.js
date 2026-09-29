@@ -61,6 +61,7 @@
     "typeTheWord": "Escribe la palabra.",
     "allKeysTitle": "Todas las teclas",
     "allKeysInstruction": "Pulsa todas las teclas de tu teclado. Cada tecla se enciende en la pantalla.",
+    "challengePhase": "Fase del reto",
     "challengePhase0": "Fase 1/3: Izquierda → Derecha",
     "challengePhase1": "Fase 2/3: Derecha → Izquierda",
     "challengePhase2": "Fase 3/3: ¡Aleatorio!",
@@ -112,6 +113,11 @@
     "metricsLabelAria": "Activar o desactivar las métricas de precisión y velocidad",
     "metricsLabelOn": "✅ Métricas: encendidas",
     "metricsLabelOff": "⬜ Métricas: apagadas",
+
+    "focusModeLabel": "🎯 Modo de concentración",
+    "focusModeLabelAria": "Activar o desactivar el modo de concentración",
+    "focusModeLabelOn": "✅ Modo de concentración: activado",
+    "focusModeLabelOff": "⬜ Modo de concentración: apagado",
 
     /* Sonido espacial: el tono de acierto suena por el lado (izquierda
        o derecha) de la tecla pulsada, para reforzar la posición de la

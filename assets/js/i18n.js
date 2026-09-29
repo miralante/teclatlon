@@ -6,7 +6,7 @@
 
    Active language: localStorage 'teclatlon:locale' if supported; otherwise
    detected from navigator.language (first 2-letter prefix in SUPPORTED,
-   fallback `es`, the source of truth).
+   fallback `en`, the source of truth).
 
    Each strings.<locale>.js calls App.i18n.register({key: 'text', ...}, 'es'|'en').
    ========================================================================== */
@@ -17,7 +17,7 @@
 
   var LOCALE_KEY = 'teclatlon:locale';
   var SUPPORTED = ['es', 'en'];
-  var DEFAULT_LOCALE = 'es';
+  var DEFAULT_LOCALE = 'en';
   /* BCP47 mapping for speechSynthesis voices. Add a new entry for each
      locale in SUPPORTED. Falls back to DEFAULT_LOCALE if a language
      isn't listed. */

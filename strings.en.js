@@ -61,6 +61,7 @@
     "typeTheWord": "Type the word.",
     "allKeysTitle": "All the keys",
     "allKeysInstruction": "Press every key on your keyboard. Each key lights up on the screen.",
+    "challengePhase": "Challenge phase",
     "challengePhase0": "Phase 1/3: Left → Right",
     "challengePhase1": "Phase 2/3: Right → Left",
     "challengePhase2": "Phase 3/3: Random!",
@@ -112,6 +113,11 @@
     "metricsLabelAria": "Turn accuracy and speed metrics on or off",
     "metricsLabelOn": "✅ Metrics: on",
     "metricsLabelOff": "⬜ Metrics: off",
+
+    "focusModeLabel": "🎯 Focus mode",
+    "focusModeLabelAria": "Turn focus mode on or off",
+    "focusModeLabelOn": "✅ Focus mode: on",
+    "focusModeLabelOff": "⬜ Focus mode: off",
 
     /* Spatial sound: the success tone plays from the side (left or
        right) of the key that was pressed, reinforcing hand position

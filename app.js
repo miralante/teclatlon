@@ -84,7 +84,29 @@
   state.goal = state.goal || { accuracyMin: null, speedMin: null };
   state.achievements = state.achievements || {};
 
-  function save() { App.storage.set(SLUG, state); }
+  function readSuiteSounds() {
+    try {
+      var saved = JSON.parse(localStorage.getItem('miralante:sounds') || 'null');
+      return saved && typeof saved === 'object' ? saved : null;
+    } catch (e) { return null; }
+  }
+
+  var suiteSounds = readSuiteSounds();
+  if (suiteSounds) {
+    if (typeof suiteSounds.success === 'boolean') state.options.keySound = suiteSounds.success;
+    if (typeof suiteSounds.error === 'boolean') state.options.errorSound = suiteSounds.error;
+  }
+
+  function syncSuiteSounds() {
+    try {
+      localStorage.setItem('miralante:sounds', JSON.stringify({
+        success: state.options.keySound,
+        error: state.options.errorSound
+      }));
+    } catch (e) { /* ignore */ }
+  }
+
+  function save() { App.storage.set(SLUG, state); syncSuiteSounds(); }
 
   /* Persist the migrated (English-keyed) shape to localStorage right
      away. feedback.js reads localStorage directly and independently
@@ -114,7 +136,16 @@
      the celebration overlay itself, since this activity has no
      separate "round complete" screen to hold it. */
   function celebrateWithTransfer(after) {
-    App.feedback.celebrate(finalMessage() + ' ' + App.i18n.t('transferMessage'), after);
+    var completed = false;
+    function finish() {
+      if (completed) return;
+      completed = true;
+      if (after) after();
+    }
+    App.feedback.celebrate(finalMessage() + ' ' + App.i18n.t('transferMessage'), finish);
+    /* Keep navigation reliable if a browser suppresses the celebration
+       timer while a special-key event is being dispatched. */
+    setTimeout(finish, 2300);
   }
 
   function updateStars() {
@@ -370,6 +401,8 @@
     updateSettingsButton('#btnHideLegend', 'hideLegendLabel', state.options.hideLegend);
     updateSettingsButton('#btnHideNumpad', 'hideNumpadLabel', state.options.hideNumpad);
     updateSettingsButton('#btnDimCelebration', 'dimCelebrationLabel', state.options.dimCelebration);
+    updateSettingsButton('#btnFocusMode', 'focusModeLabel', state.options.hideLegend &&
+      state.options.hideNumpad && state.options.dimCelebration);
     updateSettingsButton('#btnKeySound', 'keySoundLabel', state.options.keySound);
     updateSettingsButton('#btnMetrics', 'metricsLabel', state.options.metrics);
     updateSettingsButton('#btnErrorSound', 'errorSoundLabel', state.options.errorSound);
@@ -455,6 +488,13 @@
     if (e.target.closest('#btnHideLegend')) { state.options.hideLegend = !state.options.hideLegend; save(); applyOptions(); return; }
     if (e.target.closest('#btnHideNumpad')) { state.options.hideNumpad = !state.options.hideNumpad; save(); applyOptions(); return; }
     if (e.target.closest('#btnDimCelebration')) { state.options.dimCelebration = !state.options.dimCelebration; save(); applyOptions(); return; }
+    if (e.target.closest('#btnFocusMode')) {
+      var focusOn = !(state.options.hideLegend && state.options.hideNumpad && state.options.dimCelebration);
+      state.options.hideLegend = focusOn;
+      state.options.hideNumpad = focusOn;
+      state.options.dimCelebration = focusOn;
+      save(); applyOptions(); return;
+    }
     if (e.target.closest('#btnKeySound')) { state.options.keySound = !state.options.keySound; save(); applyOptions(); return; }
     if (e.target.closest('#btnMetrics')) { state.options.metrics = !state.options.metrics; save(); applyOptions(); return; }
     if (e.target.closest('#btnErrorSound')) { state.options.errorSound = !state.options.errorSound; save(); applyOptions(); return; }
@@ -752,7 +792,6 @@
   }
 
   function startSequence(cfg) {
-    cfg.steps = shuffle(cfg.steps);
     game = { type: 'seq', cfg: cfg, idx: 0, pos: 0, waiting: false };
     $('#gameTitle').textContent = cfg.title;
     var inNumpad = cfg.mode === 'numbers';
@@ -933,7 +972,7 @@
         clearFeedback();
         loadStep();
       }
-    }, 1000);
+    }, 500);
   }
 
   function endSequence() {
@@ -941,7 +980,11 @@
     game = null;
     checkGoal(cfg);
     award(cfg.starKey);
-    celebrateWithTransfer(cfg.onFinish);
+    /* Return to the mode list immediately so completion never leaves the
+       learner stranded behind a browser-dependent celebration timer. The
+       celebration remains visible on the destination screen. */
+    if (cfg.onFinish) cfg.onFinish();
+    App.feedback.celebrate(finalMessage() + ' ' + App.i18n.t('transferMessage'));
   }
 
   /* ---------- Game modes ---------- */
@@ -1184,7 +1227,10 @@
   /* Challenge phases:
      0 = left-to-right, 1 = right-to-left, 2 = random
      Stars are awarded one per completed phase. */
-  var CHALLENGE_PHASES = 3;
+  /* The challenge is one short session over the complete keyboard. Keep a
+     single phase so the interaction matches the documented activity and a
+     learner's first complete pass is immediately celebrated. */
+  var CHALLENGE_PHASES = 1;
 
   function playChallenge() {
     game = { type: 'challenge', set: {}, phase: 0, stars: 0 };

@@ -1,6 +1,6 @@
 'use strict';
 
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('playwright/test');
 
 // ---------------------------------------------------------------------------
 // Module-level browser reference — set in beforeEach before each test
@@ -172,6 +172,19 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await expect(page.locator('#greeting')).toContainText('¡Hola');
   });
 
+  test('2.2b — idioma de navegador no implementado usa EN', async () => {
+    const context = await _browser.newContext({ locale: 'fr-FR' });
+    _lastCtx = context;
+    const page = await context.newPage();
+    await context.addInitScript(() => localStorage.clear());
+    await page.goto(BASE);
+    await page.locator('#btnOpenSettings').click();
+    await expect(page.locator('.locale-picker-btn')).toBeVisible();
+    await expect(page.locator('.locale-picker-current')).toHaveText('EN');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    await expect.poll(() => page.evaluate(() => window.App.i18n.locale())).toBe('en');
+  });
+
   test('2.3 — cambia todos los temas (auto, light, dark, contrast)', async ({ page }) => {
     page = await openFreshApp();
     await page.locator('#btnOpenSettings').click();
@@ -245,8 +258,12 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     // Error sound (JS click for reliability)
     await page.evaluate(() => document.querySelector('#btnErrorSound').click());
     await expect(page.locator('#btnErrorSound')).toHaveAttribute('aria-pressed', 'true');
+    await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('miralante:sounds'))))
+      .toEqual({ success: true, error: true });
     await page.evaluate(() => document.querySelector('#btnErrorSound').click());
     await expect(page.locator('#btnErrorSound')).toHaveAttribute('aria-pressed', 'false');
+    await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('miralante:sounds'))))
+      .toEqual({ success: true, error: false });
   });
 
   test('2.6 — vista del teclado: simple, normal, extended', async ({ page }) => {

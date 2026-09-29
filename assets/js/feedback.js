@@ -36,6 +36,19 @@
     return fallback;
   }
 
+  function readSharedSound(key) {
+    try {
+      var saved = JSON.parse(localStorage.getItem('miralante:sounds') || 'null');
+      if (saved && typeof saved[key] === 'boolean') return saved[key];
+    } catch (e) { /* ignore */ }
+    return null;
+  }
+
+  function soundOption(key, fallback) {
+    var shared = readSharedSound(key);
+    return shared === null ? readOption(key, fallback) : shared;
+  }
+
   /* Soft sound with Web Audio (no audio files). Fails silently. */
   var audioCtx = null;
 
@@ -66,7 +79,7 @@
       gain.gain.setValueAtTime(0.12, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
       var destination = ctx.destination;
-      if (typeof pan === 'number' && readOption('keySound', true)) {
+      if (typeof pan === 'number' && soundOption('keySound', true)) {
         var panner = ctx.createStereoPanner();
         panner.pan.value = Math.max(-1, Math.min(1, pan));
         osc.connect(gain);
@@ -86,17 +99,17 @@
      (e.g. the all-keys challenge, which fires one tone per key and
      mustn't spam the live region) can play it directly. */
   function successSound(pan) {
-    if (!readOption('keySound', true)) return;
+    if (!soundOption('keySound', true)) return;
     tone(523.25, 0.15, 'sine', pan);          /* C */
     setTimeout(function () {
-      if (readOption('keySound', true)) tone(659.25, 0.2, 'sine', pan);
+      if (soundOption('keySound', true)) tone(659.25, 0.2, 'sine', pan);
     }, 120); /* E */
   }
 
   /* Short low-pitch tone: distinct from the C-E success ding.
      Plays when a key is wrong and error sound is enabled. */
   function errorSound() {
-    if (!readOption('errorSound', false)) return;
+    if (!soundOption('errorSound', false)) return;
     tone(180, 0.12, 'triangle', null);
   }
 

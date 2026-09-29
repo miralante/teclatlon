@@ -10,7 +10,7 @@ const assert = require('node:assert/strict');
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
-const { chromium } = require('@playwright/test');
+const { chromium } = require('playwright');
 
 const ROOT = path.resolve(__dirname, '..');
 const MIME = {

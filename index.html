@@ -403,6 +403,11 @@
     </div>
 
     <div class="setting-row">
+      <span class="setting-label" data-i18n="focusModeLabel">Modo de concentración</span>
+      <button type="button" id="btnFocusMode" class="btn-icon" aria-pressed="false" data-i18n-aria="focusModeLabelAria">Modo de concentración: apagado</button>
+    </div>
+
+    <div class="setting-row">
       <span class="setting-label" data-i18n="keySoundLabel">Sonido de teclas</span>
       <button type="button" id="btnKeySound" class="btn-icon" aria-pressed="false" data-i18n-aria="keySoundLabelAria" aria-label="Activar o desactivar el sonido de teclas">Sonido de teclas: encendido</button>
     </div>
@@ -489,7 +494,8 @@
   window.LocalePickerConfig = {
     storageKey: 'teclatlon:locale',
     path: 'strings',
-    defaultLocale: 'es'
+    defaultLocale: 'en',
+    settings: false
   };
   </script>
   <script src="assets/js/locale-picker.js?v=teclatlon-v1" defer></script>

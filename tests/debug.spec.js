@@ -1,6 +1,6 @@
 'use strict';
 
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('playwright/test');
 const BASE = 'http://127.0.0.1:4173/';
 
 let _browser;

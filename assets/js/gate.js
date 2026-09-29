@@ -8,7 +8,7 @@
    ========================================================================== */
 (function () {
   var SUPPORTED = ['es', 'en'];
-  var DEFAULT_LOCALE = 'es';
+  var DEFAULT_LOCALE = 'en';
 
   function detectLocale() {
     try {
