@@ -195,6 +195,13 @@ partida. Interacciones con el motor:
   (`App.utils.columnOf` + `App.utils.panOfColumn`, o `panOf` en
   `app.js`); el audio solo pasa por `StereoPannerNode` cuando
   `state.options.spatialSound` vale `true`.
+- `state.options.restMinutes` (número de minutos) elige cada cuánto
+  tiempo de práctica aparece el aviso de descanso. Vive en
+  `feedback.js`, que es quien cuenta y quien muestra la frase
+  (`celebrate()` la añade a la celebración cuando toca), y el panel de
+  ajustes solo la escribe: `DEFAULT_REST_MINUTES` (20) y `REST_CHOICES`
+  se exportan desde `App.feedback` para que ambos no puedan discrepar.
+  Ver §2.6.
 
 ### 2.3 `data.js` — distribuciones de teclado y contenido de práctica
 
@@ -343,6 +350,79 @@ inicializar listeners, contextos de audio o el motor de juego (no
 queremos reservar recursos en un dispositivo que no va a usar la app).
 Los estilos del overlay (`mobile-block*`) viven al final de `styles.css`
 y tienen colores de fallback por si `tokens.css` aún no ha cargado.
+
+### 2.6 Aviso de descanso: tiempo de práctica, no tiempo de reloj
+
+`feedback.celebrate()` añade la frase `core.rest` ("¡Llevas un buen
+rato! Puedes descansar si quieres.") a la celebración cuando se cumple
+el intervalo elegido en ajustes (`state.options.restMinutes`, **20
+minutos por defecto**). Al mostrarse, el contador vuelve a cero, así que
+el aviso se repite cada N minutos de práctica.
+
+Dos reglas definen qué se cuenta:
+
+- **Cuenta tiempo de práctica, no tiempo de reloj.** El contador solo
+  avanza si la pestaña está a la vista (`document.hidden === false`) y
+  la persona ha pulsado alguna tecla o hecho clic en el último minuto
+  (`IDLE_MS`). Una pestaña abierta en segundo plano, o una lectura larga
+  de las instrucciones, no "ganan" un aviso que no hacía falta. La
+  actividad se registra con dos listeners en fase `capture` sobre
+  `document` (`keydown` y `pointerdown`), que ven el evento antes de que
+  el motor de juego pueda pararlo.
+- **Nunca se guarda.** El contador es una variable de módulo, no está en
+  `localStorage`: cada sesión nueva empieza en cero. Lo único que se
+  persiste es el intervalo elegido.
+
+El contador se actualiza en `tick()`, que suma el tiempo transcurrido
+desde la última llamada. Un `setInterval` de 15 s (`TICK_MS`) la llama
+para que el contador no dependa de cuándo se termina una ronda, y
+`restDue()` la llama otra vez antes de decidir, de modo que una
+celebración que llega 3 minutos después del último tick sigue viendo el
+total correcto.
+
+El contrato vive entero en `feedback.js`: `DEFAULT_REST_MINUTES`,
+`REST_CHOICES` (10/15/20/30/45/60) y el propio aviso. Se exportan en
+`App.feedback` para que `app.js` normalice `state.options.restMinutes`
+contra esa misma lista (cualquier valor desconocido vuelve al
+predeterminado) y para que el `<select id="restMinutesSelect">` del
+panel de ajustes no pueda ofrecer un valor que el contador no
+entiende. Como cualquier `<select>`, dispara `change` (no `click`), así
+que se cablea con un listener `change` propio, igual que
+`#goalAccuracySelect` y `#goalSpeedSelect`.
+
+### 2.7 Reto "todas las teclas": tres fases, ninguna en pantalla
+
+El reto barre el teclado completo tres veces (`CHALLENGE_PHASES = 3`),
+cada una con un orden distinto: fase 0 izquierda→derecha, fase 1
+derecha→izquierda, fase 2 barajado. El orden se construye **una vez por
+fase** (`challengeSequence()`, cacheado en `game.order`) y
+`nextPendingKey()` lo recorre en orden: la tecla que dice la guía y la que
+resalta `.target` son siempre la misma que valida `challengeKey()`. Antes
+la fase aleatoria sorteaba una tecla nueva en cada consulta, así que la
+tecla resaltada casi nunca era la que se aceptaba al pulsar y la fase no
+se podía completar.
+
+Las fases son un detalle interno: el texto junto a la mano dice solo qué
+tecla pulsar y con qué dedo (`challengeGuide()`), nunca en qué fase está,
+y por eso no hay claves `challengePhase*` en `strings.<locale>.js`. Cada
+fase completada enciende su estrella en `#challengeStars` —`updateChallengeStars()`,
+llamado al instante desde `advanceChallengePhase()`, no 800 ms después— y
+el reto sigue; `endChallenge()`, que enciende también la última estrella,
+da la ⭐ del modo y el logro `allKeys`, solo se llama tras la tercera.
+
+Si se cambia la vista del teclado a mitad de reto, `reapplyChallenge()`
+descarta `game.order` para que se reconstruya sobre el diseño nuevo.
+
+### 2.8 Texto del dedo: se escribe siempre, se oculta la caja
+
+`state.options.showFingerText` (activado por defecto) controla el texto
+junto a la imagen de la mano. Tanto `renderHands()` como
+`challengeGuide()` **escriben siempre la frase** y lo que cambia es la
+clase `hidden` del `<p>`: si al apagarlo se vaciara el `textContent`,
+volver a activarlo dejaría una caja vacía hasta la siguiente tecla.
+`applyOptions()` sincroniza esa clase en `#guideText` y `#guideTextFree`
+al cambiar el ajuste, para que el efecto sea inmediato y no espere a la
+siguiente pulsación.
 
 ---
 

@@ -3,6 +3,9 @@
    Exposes window.App.feedback.success(zone, pan) / .encourage(zone) /
    .celebrate(msg, after) / .successSound(pan) / .errorSound().
    Mistakes are never punished; feedback stays brief (<= 2 s).
+   `celebrate` also carries the rest reminder: every N minutes of
+   practice (N = state.options.restMinutes, 20 by default) it appends
+   the `core.rest` phrase and starts counting again.
    Messages follow the active language (App.i18n.pick). Requires i18n.js.
 
    Audio:
@@ -149,9 +152,70 @@
     return msg;
   }
 
-  /* Rounds completed in this page session (never in localStorage, never
-     pressure — just a kind phrase every 5 rounds). */
-  var sessionRounds = 0;
+  /* ---------- Rest reminder (per session, never persisted) ----------
+     A kind nudge to take a break after a while of practice — never
+     pressure, never a penalty. Two rules shape it:
+
+     1. It counts *practice* time, not wall-clock time. The counter
+        only advances while the page is in front of the person and
+        they have typed something in the last IDLE_MS, so a tab left
+        open in the background (or a long read of the instructions)
+        does not silently "earn" a reminder they never needed.
+     2. It lives in a module variable, never in localStorage, so a new
+        session always starts the counter at zero. When the configured
+        number of minutes is reached, the phrase is appended to the
+        next celebration and the counter resets — which is what makes
+        it come back every N minutes from then on.
+
+     The chosen interval is a user setting (state.options.restMinutes),
+     read straight from localStorage the same way the sound options
+     above are read; the allowed values and the default are published
+     on App.feedback so app.js has a single source of truth. */
+  var DEFAULT_REST_MINUTES = 20;
+  var REST_CHOICES = [10, 15, 20, 30, 45, 60];
+  var IDLE_MS = 60 * 1000;   /* no key and no click for 1 min → not practising */
+  var TICK_MS = 15 * 1000;   /* how often the counter adds the elapsed time */
+
+  var restElapsed = 0;       /* practice time since load or last reminder */
+  var lastTick = Date.now();
+  var lastActive = Date.now();
+
+  /* Any key or click means the person is here. Capture phase on
+     `document`, so it sees the event before the game handlers
+     (which may stop propagation) get it. */
+  function noteActivity() { lastActive = Date.now(); }
+  document.addEventListener('keydown', noteActivity, true);
+  document.addEventListener('pointerdown', noteActivity, true);
+
+  /** Configured reminder interval in minutes, or the default. */
+  function restMinutes() {
+    try {
+      var data = window.App.storage && window.App.storage.get('keyboard');
+      var value = data && data.options ? Number(data.options.restMinutes) : NaN;
+      if (REST_CHOICES.indexOf(value) !== -1) return value;
+    } catch (e) { /* ignore */ }
+    return DEFAULT_REST_MINUTES;
+  }
+
+  /* Adds the time elapsed since the previous call, but only while the
+     page is visible and the person typed recently. Called by the
+     interval *and* before every check, so a round finished 3 minutes
+     after the last tick still sees the right total. */
+  function tick() {
+    var now = Date.now();
+    var delta = now - lastTick;
+    lastTick = now;
+    if (delta <= 0) return;
+    if (document.hidden) return;
+    if (now - lastActive > IDLE_MS) return;
+    restElapsed += delta;
+  }
+  setInterval(tick, TICK_MS);
+
+  function restDue() {
+    tick();
+    return restElapsed >= restMinutes() * 60 * 1000;
+  }
 
   /**
    * Brief celebration screen (uses .celebration from components.css).
@@ -160,10 +224,10 @@
    * @param {function} [after] - callback when it hides
    */
   function celebrate(message, after) {
-    sessionRounds += 1;
-    if (sessionRounds % 5 === 0) {
+    if (restDue()) {
       var rest = window.App.i18n ? window.App.i18n.t('core.rest') : '';
       if (rest) message = message + ' ' + rest;
+      restElapsed = 0; /* the next reminder starts counting from here */
     }
     var layer = document.getElementById('app-celebration');
     if (!layer) {
@@ -190,6 +254,10 @@
     encourage: encourage,
     celebrate: celebrate,
     successSound: successSound,
-    errorSound: errorSound
+    errorSound: errorSound,
+    /* Rest-reminder contract, read by app.js so the settings panel and
+       the notice can never disagree on the default or the choices. */
+    DEFAULT_REST_MINUTES: DEFAULT_REST_MINUTES,
+    REST_CHOICES: REST_CHOICES
   };
 })();

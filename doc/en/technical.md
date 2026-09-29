@@ -187,6 +187,13 @@ Interactions with the engine:
   (`App.utils.columnOf` + `App.utils.panOfColumn`, or `panOf` in
   `app.js`); the audio feedback only routes through `StereoPannerNode`
   when `state.options.spatialSound` is true.
+- `state.options.restMinutes` (a number of minutes) sets how often the
+  rest reminder appears after that much practice. It lives in
+  `feedback.js`, which owns both the countdown and the phrase
+  (`celebrate()` appends it to the celebration when it is due), and the
+  settings panel only writes it: `DEFAULT_REST_MINUTES` (20) and
+  `REST_CHOICES` are exported from `App.feedback` so the two can't
+  disagree. See §2.6.
 
 ### 2.3 `data.js` — keyboard layouts and practice content
 
@@ -330,6 +337,78 @@ listeners, audio contexts or the game engine (no point reserving
 resources on a device that won't use the app). The overlay styles
 (`mobile-block*`) live at the bottom of `styles.css` with fallback
 colors in case `tokens.css` hasn't loaded yet.
+
+### 2.6 Rest reminder: practice time, not wall-clock time
+
+`feedback.celebrate()` appends the `core.rest` phrase ("You have been
+playing a while! You can rest if you want.") to the celebration once the
+interval chosen in settings (`state.options.restMinutes`, **20 minutes
+by default**) has elapsed. Showing it resets the counter, so the
+reminder comes back every N minutes of practice.
+
+Two rules decide what gets counted:
+
+- **It counts practice time, not wall-clock time.** The counter only
+  advances while the tab is in front of the person
+  (`document.hidden === false`) and they pressed a key or clicked in the
+  last minute (`IDLE_MS`). A tab left open in the background, or a long
+  read of the instructions, doesn't "earn" a reminder it never needed.
+  Activity is tracked by two capture-phase listeners on `document`
+  (`keydown` and `pointerdown`), which see the event before the game
+  engine can stop it.
+- **It is never saved.** The counter is a module variable, not a
+  `localStorage` entry: every new session starts at zero. The only thing
+  persisted is the chosen interval.
+
+The counter advances in `tick()`, which adds the time elapsed since its
+last call. A 15 s `setInterval` (`TICK_MS`) calls it so the counter
+doesn't depend on when a round happened to finish, and `restDue()`
+calls it once more before deciding, so a celebration that lands 3
+minutes after the last tick still sees the right total.
+
+The whole contract lives in `feedback.js`: `DEFAULT_REST_MINUTES`,
+`REST_CHOICES` (10/15/20/30/45/60) and the reminder itself. They're
+exported on `App.feedback` so `app.js` normalises
+`state.options.restMinutes` against that same list (any unknown value
+falls back to the default) and so the `<select id="restMinutesSelect">`
+in the settings panel can't offer a value the counter doesn't
+understand. Like any `<select>`, it fires `change` (not `click`), so it
+is wired with its own `change` listener, exactly like
+`#goalAccuracySelect` and `#goalSpeedSelect`.
+
+### 2.7 The "all keys" challenge: three phases, none of them on screen
+
+The challenge sweeps the complete keyboard three times
+(`CHALLENGE_PHASES = 3`), each in a different order: phase 0
+left→right, phase 1 right→left, phase 2 shuffled. The order is built
+**once per phase** (`challengeSequence()`, cached in `game.order`) and
+`nextPendingKey()` walks it in order, so the key the guide names and the
+one carrying `.target` are always the key `challengeKey()` accepts. The
+random phase used to draw a fresh key on every lookup, which meant the
+highlighted key was almost never the accepted one and the phase could
+not be finished.
+
+The phases are an internal detail: the guide next to the hand only says
+which key to press and with which finger (`challengeGuide()`), never
+which phase it is, which is why there are no `challengePhase*` keys in
+`strings.<locale>.js`. Each completed phase lights its star in
+`#challengeStars` — `updateChallengeStars()`, called straight from
+`advanceChallengePhase()`, not 800 ms later — and the challenge carries
+on; `endChallenge()`, which lights the last star too, awards the mode's ⭐
+and the `allKeys` achievement, only runs after the third one.
+
+If the keyboard view changes mid-challenge, `reapplyChallenge()` drops
+`game.order` so it is rebuilt on the new layout.
+
+### 2.8 Finger text: always written, the box is what hides
+
+`state.options.showFingerText` (on by default) controls the text next to
+the hand image. Both `renderHands()` and `challengeGuide()` **always
+write the sentence**; what changes is the `hidden` class on the `<p>`.
+Clearing the `textContent` when the option is off would leave an empty
+box when it is turned back on, until the next keystroke. `applyOptions()`
+syncs that class on `#guideText` and `#guideTextFree` when the setting
+changes, so the effect is immediate instead of waiting for the next key.
 
 ---
 

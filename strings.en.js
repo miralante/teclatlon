@@ -61,10 +61,11 @@
     "typeTheWord": "Type the word.",
     "allKeysTitle": "All the keys",
     "allKeysInstruction": "Press every key on your keyboard. Each key lights up on the screen.",
-    "challengePhase": "Challenge phase",
-    "challengePhase0": "Phase 1/3: Left → Right",
-    "challengePhase1": "Phase 2/3: Right → Left",
-    "challengePhase2": "Phase 3/3: Random!",
+    /* The "all keys" challenge has three phases (left→right,
+       right→left and random), but they are an internal detail: the
+       learner sees which key to press and with which finger, never
+       which phase they are on. There are no phase keys because none
+       are ever shown. */
     "challengeNextKey": "Press the {key} key with the {finger} finger of your {hand} hand.",
     "challengeNextKeyThumb": "Press the {key} key with your thumb.",
     "doneOfTotal": "{done} of {total}",
@@ -179,6 +180,19 @@
     "fingerTextLabelAria": "Show or hide the finger text",
     "fingerTextLabelOn": "✅ Finger text: visible",
     "fingerTextLabelOff": "⬜ Finger text: hidden",
+
+    /* Rest reminder: how long you practise before the "you can rest"
+       phrase joins the celebration. The timer lives in this session
+       only (never saved) and resets every time the reminder shows. */
+    "restMinutesLabel": "⏸️ Rest reminder",
+    "restMinutesAria": "Choose how often the rest reminder appears",
+    "restMinutesHelp": "When you have typed for this long, a reminder to rest appears. The timer starts again. The reminder comes back later.",
+    "restOption10": "10 minutes",
+    "restOption15": "15 minutes",
+    "restOption20": "20 minutes",
+    "restOption30": "30 minutes",
+    "restOption45": "45 minutes",
+    "restOption60": "60 minutes",
 
     "achievementsTitle": "⭐ Achievements",
     "achievementsShow": "Show achievements",

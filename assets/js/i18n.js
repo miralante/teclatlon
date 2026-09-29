@@ -80,13 +80,11 @@
 
   function detect() {
     try {
-      var langs = navigator.languages && navigator.languages.length
-        ? navigator.languages
-        : [navigator.language || ''];
-      for (var i = 0; i < langs.length; i++) {
-        var prefix = (langs[i] || '').slice(0, 2).toLowerCase();
-        if (SUPPORTED.indexOf(prefix) !== -1) return prefix;
-      }
+      var langs = (navigator.languages && navigator.languages.length)
+        ? navigator.languages[0]
+        : (navigator.language || '');
+      var prefix = (langs || '').split(/[-_]/)[0].toLowerCase();
+      if (SUPPORTED.indexOf(prefix) !== -1) return prefix;
     } catch (e) { /* ignore */ }
     return DEFAULT_LOCALE;
   }

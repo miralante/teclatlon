@@ -85,7 +85,7 @@
 .progress-bar {
   position: relative;
   height: 6px;
-  background: #ddd9eb;
+  background: var(--color-border);
   border: 0;
   border-radius: 4px;
   overflow: hidden;
@@ -94,7 +94,8 @@
 .progress-fill {
   height: 100%;
   width: 0%;
-  background: #7462bb;
+  background: var(--accent);
+  background-image: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.18) 0 3px, transparent 3px 6px);
   border-radius: 4px;
   transition: width 0.4s ease;
 }
@@ -558,7 +559,7 @@
 
 .goal-bar-track {
   height: 6px;
-  background: #ddd9eb;
+  background: var(--color-border);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -566,13 +567,15 @@
 .goal-bar-fill {
   height: 100%;
   width: 0%;
-  background: #7462bb;
+  background: var(--accent);
+  background-image: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.18) 0 3px, transparent 3px 6px);
   border-radius: 4px;
   transition: width 0.3s ease;
 }
 
 .goal-bar-fill.goal-met {
   background: var(--color-success);
+  background-image: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.18) 0 3px, transparent 3px 6px);
 }
 
 .goal-bar-threshold {
@@ -612,8 +615,9 @@
   padding: 6px 0;
 }
 
-/* ---- Goal select ---- */
-.goal-select {
+/* ---- Settings selects (goals, rest reminder) ---- */
+.goal-select,
+.setting-select {
   width: 100%;
   padding: 6px 10px;
   border: 2px solid var(--color-border);
@@ -627,7 +631,8 @@
   -webkit-appearance: auto;
 }
 
-.goal-select:focus {
+.goal-select:focus,
+.setting-select:focus {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }

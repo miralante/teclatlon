@@ -203,13 +203,18 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     page = await openFreshApp();
     await page.locator('#btnOpenSettings').click();
 
+    const expectedFontSizes = { small: 18, normal: 20, large: 24, huge: 30 };
     for (const size of ['small', 'large', 'huge']) {
       await page.locator(`.btn-text-size[data-text-size="${size}"]`).click();
       await expect(page.locator('html')).toHaveAttribute('data-text-size', size);
+      await expect.poll(() => page.evaluate(() => parseFloat(getComputedStyle(document.body).fontSize)))
+        .toBe(expectedFontSizes[size]);
     }
     // 'normal' removes the attribute
     await page.locator('.btn-text-size[data-text-size="normal"]').click();
     await expect(page.locator('html')).not.toHaveAttribute('data-text-size');
+    await expect.poll(() => page.evaluate(() => parseFloat(getComputedStyle(document.body).fontSize)))
+      .toBe(expectedFontSizes.normal);
   });
 
   test('2.5 — toggles: focus mode, sonido teclas, métricas, sonido error', async ({ page }) => {
@@ -607,18 +612,38 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
       return out;
     });
 
-    // Dispatch keydown events for every collected key. This is what the app's
-    // document listener receives from a real keyboard, and it handles ALL
-    // characters (incl. ñ, á, é…) unlike Playwright's keyboard.press() which
-    // has a limited US-ASCII key table.
-    for (const ch of keys) {
+    // The challenge runs three phases over the whole keyboard and each one
+    // asks for the keys in a different order (left→right, right→left,
+    // random). Rather than replaying an order here, read the key the app
+    // is currently asking for — the one carrying .target — and press
+    // exactly that. Dispatched as a raw keydown event, which is what the
+    // app's document listener receives from a real keyboard and handles
+    // ALL characters (incl. ñ, á, é…) unlike Playwright's keyboard.press()
+    // with its limited US-ASCII key table.
+    //
+    // Between phases the target is cleared for ~800 ms, and at the very
+    // end the challenge closes and goes back to the menu, so a null
+    // target means "wait and look again" rather than "done".
+    const maxPresses = keys.length * 3 + 40;
+    let presses = 0;
+    while (presses < maxPresses) {
+      const target = await page.evaluate(() => {
+        const el = document.querySelector('#keyboardPanel .key.target');
+        return el ? el.dataset.ch : null;
+      });
+      if (target === null) {
+        if (await page.locator('#screenMenu').isVisible()) break;
+        await page.waitForTimeout(200);
+        continue;
+      }
       await page.evaluate((c) => {
         document.dispatchEvent(new KeyboardEvent('keydown', {
           key: c,
           code: c === ' ' ? 'Space' : 'Key' + c.toUpperCase(),
           bubbles: true, cancelable: true
         }));
-      }, ch);
+      }, target);
+      presses += 1;
       await page.waitForTimeout(30);
     }
 

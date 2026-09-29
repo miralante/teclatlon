@@ -57,46 +57,39 @@
   var settingsState = null;
   var soundState = null;
   var baseRootFontSize = null;
+  var textSizeIsExplicit = false;
 
   /* Mapa de etiquetas nativas (cómo se llama cada idioma en sí
      mismo). Si la app pasa su propio `localeLabels`, se usa ese;
-     si no, usamos este fallback para los locales comunes. */
+     si no, usamos este fallback para los idiomas soportados. */
   var NATIVE_LABELS = LOCALE_LABELS || {
     es: 'Español',
-    en: 'English',
-    ca: 'Català',
-    gl: 'Galego',
-    eu: 'Euskara',
-    pt: 'Português',
-    fr: 'Français',
-    de: 'Deutsch',
-    it: 'Italiano',
-    nl: 'Nederlands',
-    pl: 'Polski',
-    ru: 'Русский',
-    zh: '中文',
-    ja: '日本語',
-    ar: 'العربية',
+    en: 'English'
   };
 
   /* ============================================================
      Descubrimiento de locales disponibles.
-     Estrategia: hacer fetch en HEAD sobre archivos `strings.<locale>.js`
-     en la ruta STRINGS_PATH. Si el archivo existe (200), ese locale
-     está disponible. Si da 404, no.
+     Estrategia: comprobar en HEAD los archivos `strings.es.js` y
+     `strings.en.js` en STRINGS_PATH. Solo esos dos idiomas están
+     disponibles en la suite.
      Si STRINGS_PATH es null/falsy (modo "skip discovery"), usamos
      directamente NATIVE_LABELS sin hacer ningún fetch. Esto es lo que
      usan apps como sinonimia que guardan sus strings inline en
      js/i18n.js en vez de un archivo por locale.
      ============================================================ */
-  var COMMON_LOCALES = ['es', 'en', 'ca', 'gl', 'eu', 'pt', 'fr', 'de', 'it'];
+  var COMMON_LOCALES = ['es', 'en'];
+  var SUPPORTED_LOCALES = ['es', 'en'];
+
+  function filterSupportedLocales(locales) {
+    return SUPPORTED_LOCALES.filter(function (loc) { return locales.indexOf(loc) !== -1; });
+  }
 
   function discoverLocales(cb) {
     if (!STRINGS_PATH) {
       /* Modo "skip discovery": usamos la lista de locales que la app
          pasó explícitamente (requiredLocales), o caemos al
          fallback de NATIVE_LABELS. */
-      cb(cfg.requiredLocales || Object.keys(NATIVE_LABELS));
+      cb(filterSupportedLocales(cfg.requiredLocales || SUPPORTED_LOCALES));
       return;
     }
     var found = [];
@@ -116,8 +109,9 @@
      Render del dropdown.
      ============================================================ */
   function buildUI(locales, activeLocale) {
+    locales = filterSupportedLocales(locales);
     var root = document.getElementById('locale-picker');
-    if (!root) return;
+    if (!root || !locales.length) return;
 
     var active = locales.indexOf(activeLocale) !== -1 ? activeLocale
       : (locales.indexOf(DEFAULT_LOCALE) !== -1 ? DEFAULT_LOCALE : locales[0]);
@@ -209,8 +203,10 @@
     var saved = null;
     try { saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || 'null'); } catch (e) {}
     saved = saved && typeof saved === 'object' ? saved : {};
+    textSizeIsExplicit = saved.textSizeSet === true || saved.textSize === 'small' || saved.textSize === 'large';
     return {
       textSize: ['small', 'normal', 'large'].indexOf(saved.textSize) !== -1 ? saved.textSize : 'normal',
+      textSizeSet: textSizeIsExplicit,
       contrast: saved.contrast === true
     };
   }
@@ -238,6 +234,11 @@
     html.style.fontSize = settingsState.textSize === 'normal'
       ? ''
       : (baseRootFontSize * (settingsState.textSize === 'large' ? 1.15 : 0.9)) + 'px';
+    if (textSizeIsExplicit) {
+      var scale = settingsState.textSize === 'large' ? 1.15 : (settingsState.textSize === 'small' ? 0.9 : 1);
+      html.style.setProperty('--text-scale', scale);
+      html.style.setProperty('--escala-texto', scale);
+    }
     html.classList.toggle('high-contrast', settingsState.contrast && cfg.legacyContrastClass === true);
   }
 
@@ -342,6 +343,8 @@
     drawer.querySelectorAll('[data-settings-size]').forEach(function (button) {
       button.addEventListener('click', function () {
         settingsState.textSize = button.getAttribute('data-settings-size');
+        settingsState.textSizeSet = true;
+        textSizeIsExplicit = true;
         saveSettings(); applySettings(); renderSettings(drawer);
       });
     });
@@ -433,11 +436,11 @@
   function detectLocale() {
     try {
       var saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) return saved;
+      if (SUPPORTED_LOCALES.indexOf(saved) !== -1) return saved;
     } catch (e) {}
     var navLang = (navigator.languages && navigator.languages[0]) || navigator.language || '';
-    var prefix = navLang.slice(0, 2).toLowerCase();
-    return prefix || DEFAULT_LOCALE;
+    var prefix = navLang.split(/[-_]/)[0].toLowerCase();
+    return SUPPORTED_LOCALES.indexOf(prefix) !== -1 ? prefix : DEFAULT_LOCALE;
   }
 
   function init() {
@@ -446,10 +449,9 @@
       if (locales.length === 0) {
         /* Fallback: si el fetch HEAD falla (file:// sin servidor), usar
            SOLO los locales hardcodeados que la app pasó en cfg o el
-           fallback COMMON_LOCALES. Esto permite que el componente
+           fallback de idiomas soportados. Esto permite que el componente
            funcione también en previews locales. */
-        locales = Object.keys(NATIVE_LABELS);
-        if (cfg.requiredLocales) locales = cfg.requiredLocales;
+        locales = filterSupportedLocales(cfg.requiredLocales || SUPPORTED_LOCALES);
       }
       buildUI(locales, current);
     });

@@ -61,10 +61,10 @@
     "typeTheWord": "Escribe la palabra.",
     "allKeysTitle": "Todas las teclas",
     "allKeysInstruction": "Pulsa todas las teclas de tu teclado. Cada tecla se enciende en la pantalla.",
-    "challengePhase": "Fase del reto",
-    "challengePhase0": "Fase 1/3: Izquierda → Derecha",
-    "challengePhase1": "Fase 2/3: Derecha → Izquierda",
-    "challengePhase2": "Fase 3/3: ¡Aleatorio!",
+    /* El reto "todas las teclas" tiene tres fases (izquierda→derecha,
+       derecha→izquierda y aleatoria), pero son un detalle interno: la
+       persona ve qué tecla pulsar y con qué dedo, nunca en qué fase
+       está. No hay claves de fase porque no se muestran. */
     "challengeNextKey": "Pulsa la tecla {key} con el dedo {finger} de la mano {hand}.",
     "challengeNextKeyThumb": "Pulsa la tecla {key} con el pulgar.",
     "doneOfTotal": "{done} de {total}",
@@ -180,6 +180,20 @@
     "fingerTextLabelAria": "Mostrar u ocultar el texto del dedo",
     "fingerTextLabelOn": "✅ Texto del dedo: visible",
     "fingerTextLabelOff": "⬜ Texto del dedo: oculto",
+
+    /* Aviso de descanso: cada cuánto tiempo de práctica aparece la
+       frase de "puedes descansar" junto a la celebración. El contador
+       vive solo en esta sesión (nunca se guarda) y se reinicia cada
+       vez que aparece el aviso. */
+    "restMinutesLabel": "⏸️ Aviso de descanso",
+    "restMinutesAria": "Elegir cada cuánto tiempo aparece el aviso de descanso",
+    "restMinutesHelp": "Cuando llevas este tiempo escribiendo, aparece un aviso para descansar. El contador vuelve a cero. Y el aviso aparece otra vez.",
+    "restOption10": "10 minutos",
+    "restOption15": "15 minutos",
+    "restOption20": "20 minutos",
+    "restOption30": "30 minutos",
+    "restOption45": "45 minutos",
+    "restOption60": "60 minutos",
 
     "achievementsTitle": "⭐ Logros",
     "achievementsShow": "Ver logros",

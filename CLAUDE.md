@@ -1,5 +1,19 @@
 # CLAUDE.md — AI agent workflow
 
+## Shared Playwright installation
+
+Playwright and its browsers are installed globally for the machine by
+`dev/setups/pc-playwright-first-setup.ps1` or
+`pc-playwright-next-setup.ps1`. Run the project's existing browser-test
+command (for example, `npm run test:ui`) or invoke the global CLI with
+`playwright test`.
+
+Do not add `playwright` or `@playwright/test` to project dependencies, install
+Playwright with `npm`/`npx`, or run `npx playwright install`. The setup scripts
+manage the shared browser cache under `{drive}\apps\playwright_browsers`.
+Always attempt the relevant browser test; if the global CLI or browsers are
+unavailable, report that blocker and continue with the other checks.
+
 ## About this project
 
 Teclatlon is a **free static web app that teaches touch-typing on the physical computer keyboard**, finger-by-finger, in a fixed lesson order, with a words game, a number-pad game, an "all keys" challenge and a free-writing mode that reads back what was typed. Computer-only — there is no touch or tap input. It is one of the seven siblings of the Apptonomia suite.

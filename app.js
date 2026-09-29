@@ -81,6 +81,14 @@
   state.options.metrics = !!state.options.metrics;
   state.options.errorSound = !!state.options.errorSound;
   state.options.showFingerText = state.options.showFingerText === undefined ? true : !!state.options.showFingerText;
+  /* Rest reminder interval (minutes). The default and the allowed values
+     live in feedback.js, the module that owns the notice, so the panel
+     and the countdown can't drift apart. Anything unknown (a value from
+     an older version, or a hand-edited localStorage) falls back to the
+     default. */
+  if (App.feedback.REST_CHOICES.indexOf(Number(state.options.restMinutes)) === -1) {
+    state.options.restMinutes = App.feedback.DEFAULT_REST_MINUTES;
+  }
   state.goal = state.goal || { accuracyMin: null, speedMin: null };
   state.achievements = state.achievements || {};
 
@@ -407,6 +415,17 @@
     updateSettingsButton('#btnMetrics', 'metricsLabel', state.options.metrics);
     updateSettingsButton('#btnErrorSound', 'errorSoundLabel', state.options.errorSound);
     updateSettingsButton('#btnFingerText', 'fingerTextLabel', state.options.showFingerText);
+    /* The finger text is rewritten on every key, so turning the setting
+       off/on has to act on the guide that is already on screen instead
+       of waiting for the next keystroke to redraw it. */
+    ['#guideText', '#guideTextFree'].forEach(function (sel) {
+      var guide = $(sel);
+      if (guide) guide.classList.toggle('hidden', !state.options.showFingerText);
+    });
+    /* The rest-reminder <select> keeps its own "selected" state, so
+       sync the value instead of aria-pressed. */
+    var restSel = $('#restMinutesSelect');
+    if (restSel) restSel.value = String(state.options.restMinutes);
     updateLiveMetrics();
   }
 
@@ -1225,15 +1244,20 @@
 
   /* ---------- Challenge: all keys ---------- */
   /* Challenge phases:
-     0 = left-to-right, 1 = right-to-left, 2 = random
-     Stars are awarded one per completed phase. */
-  /* The challenge is one short session over the complete keyboard. Keep a
-     single phase so the interaction matches the documented activity and a
-     learner's first complete pass is immediately celebrated. */
-  var CHALLENGE_PHASES = 1;
+     0 = left-to-right, 1 = right-to-left, 2 = random.
+     The order of the keys changes between phases, but the phases are
+     an internal detail of this mode: the guide next to the hand only
+     ever says which key to press and with which finger, never which
+     phase it is (see challengeGuide()). Each completed phase lights up
+     its star in #challengeStars and the challenge carries on; it only
+     finishes — with the star for the mode and the achievement — once
+     the last phase is done. */
+  var CHALLENGE_PHASES = 3;
 
   function playChallenge() {
-    game = { type: 'challenge', set: {}, phase: 0, stars: 0 };
+    /* 'order' is the key sequence for the current phase, built on demand
+       by challengeSequence() (see nextPendingKey). */
+    game = { type: 'challenge', set: {}, phase: 0, stars: 0, order: null };
     $('#gameTitle').textContent = App.i18n.t('allKeysTitle');
     $('#gameInstruction').textContent = App.i18n.t('allKeysInstruction');
     $('#keyboardPanel').classList.remove('hidden');
@@ -1254,8 +1278,13 @@
     game.stars += 1;
     game.phase += 1;
     game.set = {};
-    game.phaseAnnounced = false;
+    /* New phase, new order (left→right / right→left / shuffled). */
+    game.order = null;
     $$('.key.done').forEach(function (t) { t.classList.remove('done'); });
+    /* Light up the star for the phase just finished right away: the
+       learner has to see it before the next phase starts, and the
+       next updateChallenge() is 800 ms away. */
+    updateChallengeStars();
     /* Brief feedback before continuing */
     App.feedback.success($('#feedback'));
     setTimeout(function () {
@@ -1265,6 +1294,11 @@
   }
 
   function endChallenge() {
+    /* The last phase earns its star too, exactly like the ones before
+       it, so the closing celebration shows the full row of stars lit
+       instead of leaving the final one empty. */
+    game.stars = CHALLENGE_PHASES;
+    updateChallengeStars();
     game = null;
     /* Check goal and achievements for the challenge round. The cfg
        object is not available here (challenge doesn't use cfg), so
@@ -1294,50 +1328,61 @@
   }
 
   function reapplyChallenge() {
+    /* The keyboard layout may have changed under us, so the order built
+       from the old layout is stale: drop it and let nextPendingKey()
+       rebuild it for the current one. */
+    game.order = null;
     Object.keys(game.set).forEach(function (ch) {
       keysOf(ch).forEach(function (t) { t.classList.add('done'); });
     });
     updateChallenge();
   }
 
+  /* Build the order in which the challenge asks for the keys, once per
+     phase. Phase 0 = left-to-right, phase 1 = right-to-left, phase 2 =
+     shuffled. The order is fixed for the whole phase on purpose: the
+     guide, the .target highlight and challengeKey() all read it, and
+     while it was rebuilt on every call the random phase drew a fresh
+     key each time — so the key shown on screen was almost never the key
+     the next press was compared against, and that phase could not be
+     finished. */
+  function challengeSequence(phase) {
+    var rows = visibleRows().slice();
+    if (phase === 1) rows = rows.reverse();
+    var keys = [];
+    rows.forEach(function (row) {
+      var line = row.filter(function (k) { return k.ch && !k.special; });
+      if (phase === 1) line = line.reverse();
+      keys = keys.concat(line);
+    });
+    if (phase === 2) keys = App.utils.shuffle(keys);
+    return keys;
+  }
+
   /* Pick the next key the player still has to press in the "all keys"
-     challenge. Phase 0 = left-to-right, phase 1 = right-to-left,
-     phase 2 = random. */
+     challenge, following the phase's order. */
   function nextPendingKey() {
-    var pending = null;
-    if (game.phase === 1) {
-      /* Right-to-left: collect keys in reverse order. */
-      var rows = visibleRows().slice().reverse();
-      rows.forEach(function (f) {
-        f.slice().reverse().forEach(function (k) {
-          if (!k.ch || k.special) return;
-          if (game.set[k.ch]) return;
-          if (!pending) pending = [];
-          pending.push(k);
-        });
-      });
-    } else {
-      visibleRows().forEach(function (f) {
-        f.forEach(function (k) {
-          if (!k.ch || k.special) return;
-          if (game.set[k.ch]) return;
-          if (!pending) pending = [];
-          pending.push(k);
-        });
-      });
+    if (!game) return null;
+    if (!game.order) game.order = challengeSequence(game.phase);
+    for (var i = 0; i < game.order.length; i++) {
+      var k = game.order[i];
+      if (k && k.ch && !game.set[k.ch]) return k;
     }
-    if (game.phase === 2 && pending && pending.length > 1) {
-      /* Random: pick one at random instead of first. */
-      var idx = Math.floor(Math.random() * pending.length);
-      return pending[idx];
-    }
-    return pending ? pending[0] : null;
+    return null;
   }
 
   /* Render the hand guide and the on-screen keyboard highlight for the
      next key still pending in the challenge. The marker reuses the
      same "target" class the rest of the modes use to light up the
-     target key, so the visual cue is consistent across modes. */
+     target key, so the visual cue is consistent across modes.
+
+     The guide next to the hand only tells the learner which key to
+     press and with which finger — the phase is an internal detail of
+     this mode and is never named on screen. Visibility follows
+     state.options.showFingerText exactly like renderHands(): the text
+     is written either way and the "hidden" class is what switches it,
+     so turning the setting off and on again mid-challenge restores
+     the sentence instead of leaving an empty box. */
   function challengeGuide() {
     var k = nextPendingKey();
     if (!k) {
@@ -1355,18 +1400,6 @@
     else if (ch.length === 1 && /[a-zA-Z]/.test(ch)) keyText = ch.toUpperCase();
     else keyText = ch;
     var text;
-    /* Announce phase name once at the start of each phase. */
-    if (!game.phaseAnnounced) {
-      game.phaseAnnounced = true;
-      text = App.i18n.t('challengePhase' + game.phase) || '';
-      $('#guideText').textContent = text;
-      $('#guideText').classList.toggle('hidden', !state.options.showFingerText);
-      return;
-    }
-    if (!state.options.showFingerText) {
-      $('#guideText').textContent = '';
-      return;
-    }
     if (finger === 'th') {
       text = App.i18n.t('challengeNextKeyThumb').replace('{key}', keyText);
     } else if (finger) {
@@ -1378,6 +1411,7 @@
       text = App.i18n.t('findKey');
     }
     $('#guideText').textContent = text;
+    $('#guideText').classList.toggle('hidden', !state.options.showFingerText);
   }
 
   function updateChallenge() {
@@ -1628,6 +1662,19 @@
         updateLiveMetrics();
       });
     }
+  }());
+
+  /* ---------- Rest reminder select: same native 'change' contract ---------- */
+  (function () {
+    var restSel = $('#restMinutesSelect');
+    if (!restSel) return;
+    restSel.addEventListener('change', function () {
+      var value = Number(restSel.value);
+      if (App.feedback.REST_CHOICES.indexOf(value) === -1) return;
+      state.options.restMinutes = value;
+      save();
+      applyOptions();
+    });
   }());
 
   /* ---------- Boot ---------- */

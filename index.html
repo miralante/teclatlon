@@ -166,7 +166,7 @@
        size attributes) lands before the stylesheet cascade evaluates
        and before the first paint — no flash of the app on phones.
        See assets/js/gate.js for the detection logic. -->
-  <script src="assets/js/gate.js"></script>
+  <script src="assets/js/gate.js?v=2"></script>
   <link rel="manifest" href="./manifest.json">
 </head>
 <body>
@@ -427,6 +427,23 @@
       <button type="button" id="btnFingerText" class="btn-icon" aria-pressed="false" data-i18n-aria="fingerTextLabelAria" aria-label="Mostrar u ocultar el texto del dedo">Texto del dedo: encendido</button>
     </div>
 
+    <!-- Rest reminder: how long the practice timer runs before the
+         "you've been going a while, you can rest" phrase joins the
+         next celebration. The counter itself is per-session (it is
+         never saved), so it starts at zero every time the app opens. -->
+    <div class="setting-row">
+      <label class="setting-label" for="restMinutesSelect" data-i18n="restMinutesLabel">⏸️ Aviso de descanso</label>
+      <select id="restMinutesSelect" class="setting-select" data-i18n-aria="restMinutesAria" aria-label="Elegir cada cuánto tiempo aparece el aviso de descanso">
+        <option value="10" data-i18n="restOption10">10 minutos</option>
+        <option value="15" data-i18n="restOption15">15 minutos</option>
+        <option value="20" data-i18n="restOption20">20 minutos</option>
+        <option value="30" data-i18n="restOption30">30 minutos</option>
+        <option value="45" data-i18n="restOption45">45 minutos</option>
+        <option value="60" data-i18n="restOption60">60 minutos</option>
+      </select>
+      <p class="help-text" data-i18n="restMinutesHelp">Cuando llevas este tiempo escribiendo, aparece un aviso para descansar. El contador vuelve a cero. Y el aviso aparece otra vez.</p>
+    </div>
+
     <div class="setting-row">
       <span class="setting-label" data-i18n="keyboardViewAria">Vista del teclado</span>
       <span class="text-group" role="group">
@@ -479,7 +496,7 @@
   </aside>
 
   <script src="assets/js/utils.js"></script>
-  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/i18n.js?v=2"></script>
   <script src="assets/js/storage.js"></script>
   <script src="assets/js/feedback.js"></script>
   <script src="strings.es.js"></script>
@@ -498,7 +515,7 @@
     settings: false
   };
   </script>
-  <script src="assets/js/locale-picker.js?v=teclatlon-v1" defer></script>
+  <script src="assets/js/locale-picker.js?v=teclatlon-v2" defer></script>
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js').catch(function () {});
