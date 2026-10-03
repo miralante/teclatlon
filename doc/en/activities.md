@@ -100,20 +100,19 @@ mode rather than extras:
    between letters (`game.waiting`) is released when the reading ends,
    but also by a timer, so an utterance that dies silently cannot leave
    the activity mute and stuck.
-4. **The letter is shown until the machine proves it can speak.** A
-   voice list proves nothing: a computer can have voices installed and
-   read nothing at all (muted output, wrong device, a voice that fails
-   silently). The only signal the platform gives is the `onstart`
-   event. So the letter is **not hidden** until the engine has managed
-   to start a single reading in this session, and if it cannot even do
-   that within 2.5 s the app stops waiting for sound and puts the
-   letter on screen. While the computer does read, the letter is not
-   shown: showing it would turn dictation into copying the letter,
-   which is not what the mode trains.
+4. **The letter is always on screen.** This is not a shortcut: **no
+   browser can tell whether its own sound is audible.** The voice list
+   is no proof (a machine can have voices and read nothing), and
+   neither is `onstart` — the engine can start "talking" into muted
+   output or the wrong device and produce complete silence while
+   firing every event it promises. Both signals were used here as if
+   they were proof and both left somebody staring at a screen that said
+   nothing. So the sound is what it is: a bonus on top of a letter
+   that is always legible.
 
-And if the computer **does not read the letter**, it moves from the
-speakers to the screen and the activity keeps working. That decision is
-the app's alone: no browser can know whether it really made a sound.
+The panel carries a **"🔊 Listen again"** button that repeats the
+current letter without moving on, for anyone who did not catch it the
+first time.
 
 ## 5. What is **not** an activity here
 

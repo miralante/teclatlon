@@ -17,13 +17,15 @@
    2. `hasVoice()` is the honest question; `available` is not. The API
       can be present with zero installed voices, which is completely
       silent: nothing is read aloud and no event ever says why.
-   3. `confirmed()` reports whether a reading has actually STARTED in
-      this page session. This is the only evidence the platform ever
-      gives that the engine is talking, and it is the only honest
-      answer to "is the sound coming out?": a voice list is not proof,
-      because a machine can list voices and still read nothing at all
-      (muted output, wrong device, a voice that fails silently). No
-      caller should assume sound is audible before this is true.
+
+      Beyond that, no caller should try to infer from this module
+      whether sound is actually reaching the room. There is no way: the
+      voice list is not proof, and neither is `onstart` -- the engine
+      can start "talking" into muted output or the wrong device and
+      produce complete silence while firing every event it promises.
+      Both signals were tried as if they were proof and both left a
+      user staring at a screen that said nothing. Anything the interface
+      shows must therefore be shown unconditionally.
    ========================================================================== */
 (function () {
   'use strict';
@@ -37,10 +39,6 @@
      the synth and read a stale letter out loud. */
   var seq = 0;
   var watchdog = null;
-  /* Set the first time an utterance reaches `onstart`. False for the
-     whole session on a machine that never speaks — which is exactly
-     when a caller needs to stop waiting for sound. */
-  var spokenOnce = false;
 
   function activeLanguage() {
     return (window.App.i18n && window.App.i18n.lang()) || 'es-ES';
@@ -79,15 +77,6 @@
     return picked;
   }
 
-  /**
-   * True once a reading has actually started in this session. Until
-   * then, callers that depend on sound must assume they may be mute.
-   * @returns {boolean}
-   */
-  function confirmed() {
-    return spokenOnce;
-  }
-
   function clearWatchdog() {
     if (watchdog) { clearTimeout(watchdog); watchdog = null; }
   }
@@ -98,12 +87,9 @@
    * @param {string} text
    * @param {function} [onEnd] - called exactly once, when the reading
    *   finishes, fails, or the watchdog gives up waiting for it.
-   * @param {function} [onStart] - called when the engine actually begins
-   *   speaking. The only proof the platform gives that sound is coming
-   *   out; also flips confirmed() for the rest of the session.
    * @returns {boolean} true when the utterance was queued to be read
    */
-  function speak(text, onEnd, onStart) {
+  function speak(text, onEnd) {
     var plain = String(text || '').replace(/<[^>]+>/g, '');
     var done = onEnd || function () { /* nothing to release */ };
     var mine = ++seq;
@@ -139,10 +125,6 @@
     }
     u.onend = end;
     u.onerror = end;
-    u.onstart = function () {
-      spokenOnce = true;
-      if (onStart) onStart();
-    };
 
     /* Ceiling on how long we wait for a callback the browser may never
        send. Short texts are read in well under the floor; long ones can
@@ -173,7 +155,6 @@
     stop: stop,
     /* "The API exists" — keep for callers that only gate on the API. */
     available: !!synth,
-    hasVoice: hasVoice,
-    confirmed: confirmed
+    hasVoice: hasVoice
   };
 })();

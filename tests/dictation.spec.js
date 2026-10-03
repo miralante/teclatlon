@@ -136,9 +136,11 @@ test('the screen explains the activity and waits for the person to start it', as
   await expect(page.locator('#btnDictationStart')).toBeHidden();
   await expect(page.locator('#btnDictationAgain')).toBeEnabled();
 
-  /* A machine that can speak does not show the letter: asking for it by
-     ear is the whole point of the mode. */
-  await expect(page.locator('#dictationFallback')).toBeHidden();
+  /* The letter is on screen even with a working voice, on purpose. The
+     app cannot know whether its own sound is audible, so it never hides
+     the letter. */
+  await expect(page.locator('#dictationFallback')).toBeVisible();
+  expect((await page.locator('#dictationLetter').textContent()).trim()).toBe(await askedKey(page));
 
   /* Asking again re-reads the SAME letter, it does not move on. */
   const first = await askedKey(page);
@@ -176,12 +178,11 @@ test('the right key moves on to another letter, a wrong key asks again', async (
   await ctx.close();
 });
 
-test('a machine with no voice shows the letter, and the activity still runs', async () => {
+test('with no voice at all the activity still runs', async () => {
   const { page, ctx } = await openApp({ withVoices: false });
   await startDictation(page);
 
-  /* No voice installed: the request moves from the speakers to the
-     screen instead of silently doing nothing. */
+  /* Nothing can be read aloud, and the letter is on screen anyway. */
   await expect(page.locator('#dictationFallback')).toBeVisible();
   await expect(page.locator('.dictation-fallback-note')).not.toBeEmpty();
   const letter = (await page.locator('#dictationLetter').textContent()).trim();
@@ -224,23 +225,27 @@ test('a letter that is never read out loud does not lock the keyboard', async ()
 
 test('a machine that lists voices but never speaks still shows the letter', async () => {
   const { page, ctx } = await openApp();
-  /* The real-world case: a voice is installed, so the voice list is
-     not empty, but nothing ever comes out of the speakers. The only
-     signal is `onstart`, and when it never arrives the letter has to
-     come to the screen. */
+  /* The real-world case: a voice is installed, so the voice list is not
+     empty, and the engine even starts and ends every event it promises
+     — and still nothing comes out of the speakers. The letter is on
+     screen from the first moment, because no page can tell this
+     apart from a machine that works. */
   await page.evaluate(() => { window.__tts.silent = true; });
   await startDictation(page);
 
-  await expect(page.locator('#dictationFallback')).toBeVisible({ timeout: 6000 });
+  await expect(page.locator('#dictationFallback')).toBeVisible();
   const letter = (await page.locator('#dictationLetter').textContent()).trim();
   expect(letter).toMatch(/^[a-zñ]$/);
 
   /* And the activity is still a real exercise. A mute engine also never
      releases the between-letters lock, so the 6 s net is what frees the
-     keyboard here — which is exactly the path that has to work. */
-  await page.waitForTimeout(4000);
-  await pressLetter(page, letter);
-  await expect(page.locator('#feedback')).toHaveClass(/success/, { timeout: 8000 });
+     keyboard here — which is exactly the path that has to work. Retried
+     rather than waited on a guessed delay, so the test does not depend
+     on how long the surrounding assertions took. */
+  await expect(async () => {
+    await pressLetter(page, letter);
+    await expect(page.locator('#feedback')).toHaveClass(/success/, { timeout: 500 });
+  }).toPass({ timeout: 15000 });
 
   await ctx.close();
 });

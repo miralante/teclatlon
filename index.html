@@ -320,11 +320,12 @@
           <button type="button" class="btn" id="btnDictationStart" data-i18n="dictationStart">▶ Empezar</button>
           <button type="button" class="btn btn-secondary" id="btnDictationAgain" data-i18n="dictationAgain" disabled>🔊 Escuchar otra vez</button>
         </div>
-        <!-- Only when the machine has no voice to read with: the letter
-             moves from the speakers to the screen so the activity still
-             works instead of silently doing nothing. -->
+        <!-- The letter is always on screen. No browser can tell whether
+             its own speech is audible, so nothing here may depend on
+             that: the sound is a bonus on top of a letter that is
+             always legible. -->
         <div class="dictation-fallback hidden" id="dictationFallback">
-          <p class="dictation-fallback-note" data-i18n="dictationNoVoice">Tu ordenador no puede leer la letra en voz alta. Léela aquí.</p>
+          <p class="dictation-fallback-note" data-i18n="dictationLetterNote">La letra también está escrita aquí, por si no la oyes.</p>
           <p class="dictation-letter" id="dictationLetter" aria-live="polite">a</p>
         </div>
       </div>
@@ -364,6 +365,9 @@
         <h2 class="game-title" data-i18n="modeFreeName">Escribe libre</h2>        <button type="button" class="btn btn-secondary btn-compact" id="btnClearFree" data-i18n-aria="clearTextAria" aria-label="Borrar el texto">🗑️</button>
       </div>
       <textarea id="freeArea" class="free-area" rows="4" spellcheck="false" data-i18n-aria="freeAreaAria" aria-label="Escribe aquí lo que quieras" placeholder="Escribe aquí..."></textarea>
+      <div class="dictation-actions free-actions">
+        <button type="button" class="btn btn-secondary" id="btnListenFree" data-i18n="listenTextButton" data-i18n-aria="listenTextAria" aria-label="Escuchar mi texto" disabled>🔊 Escuchar mi texto</button>
+      </div>
       <div class="row guide">
         <div class="hands" id="handsSvgFree" aria-hidden="true"></div>
         <p class="guide-text" id="guideTextFree"></p>

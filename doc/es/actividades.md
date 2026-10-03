@@ -102,21 +102,18 @@ y las tres son parte del modo, no extras:
    entre letras (`game.waiting`) lo libera el final de la lectura, pero
    también un temporizador, así que un utterance que muere en silencio
    no deja la actividad muda y bloqueada.
-4. **La letra se enseña hasta que el ordenador demuestre que habla.**
-   Una lista de voces no es prueba de nada: un equipo puede tener
-   voces instaladas y no leer absolutamente nada (volumen mute, dispositivo
-   equivocado, una voz que falla en silencio). La única señal que da la
-   plataforma es el evento `onstart`. Así que la letra **no se oculta**
-   mientras el motor no haya conseguido empezar una lectura en esta
-   sesión, y si tampoco lo consigue en 2,5 s la app deja de esperar el
-   sonido y pone la letra en pantalla. Mientras el ordenador lee, la
-   letra no se enseña: mostrarla convertiría el dictado en copiar la
-   letra, que no es lo que entrena.
+4. **La letra está siempre en pantalla.** No es un atajo: **ningún
+   navegador puede saber si su propio sonido se oye.** La lista de
+   voces no es prueba (un equipo puede tener voces y no leer nada), y
+   el evento `onstart` tampoco: el motor puede empezar a "hablar" hacia
+   una salida muteada o hacia el dispositivo equivocado y guardar
+   silencio mientras dispara todos los eventos que promete. Las dos
+   señales se usaron aquí como si fueran prueba y las dos dejaron a
+   alguien mirando una pantalla que no decía nada. Así que el sonido
+   es lo que es: un extra sobre una letra que siempre se lee.
 
-Además, si el ordenador **no lee la letra**, esta pasa de los
-altavoces a la pantalla y la actividad sigue funcionando. Esa decisión
-la toma sola la app: no hay forma de que un navegador sepa si de verdad
-suena.
+El panel lleva un botón **"🔊 Escuchar otra vez"** que repite la letra
+actual sin avanzar, para quien no la oyó la primera vez.
 
 ## 5. Lo que **no** es una actividad aquí
 

@@ -128,7 +128,7 @@
   /* In-progress game. null outside screenGame.
      type 'seq': { cfg: { mode, title, steps, starKey, onFinish }, idx, pos, waiting }
      type 'challenge': { set: { ch: true } }
-     type 'dictation': { letters, letter, waiting, audioDead } */
+     type 'dictation': { letters, letter, waiting, phase } */
   var game = null;
   var dictationTimer = null;
   var dictationUnlock = null;
@@ -1283,13 +1283,6 @@
      even when it does not); this is the net for an utterance that dies
      silently, so it sits above that watchdog on purpose. */
   var DICTATION_UNLOCK_MS = 6000;
-  /* How long the engine gets to prove it actually starts talking before
-     the letter is put on screen. A voice list is not proof: a machine
-     can list voices and read nothing at all (muted output, wrong
-     device, a voice that fails silently), and the only signal the
-     platform gives is `onstart`. */
-  var DICTATION_START_GRACE_MS = 2500;
-  var dictationStartWatch = null;
 
   function dictationLetters() {
     return DATA.rows.reduce(function (letters, row) {
@@ -1305,17 +1298,16 @@
     if (!show) dictationLetter(null);
   }
 
-  /** Whether the letter has to be on screen right now. The one rule:
-      never hide the letter unless the machine has demonstrably spoken. */
-  function dictationLetterOnScreen() {
-    return !!game.audioDead || !App.tts.hasVoice() || !App.tts.confirmed();
-  }
+  /** Puts the current letter on screen, or hides it with no argument.
 
-  function dictationUpdateLetter() {
-    dictationLetter(dictationLetterOnScreen() ? game.letter : null);
-  }
-
-  /** Shows the current letter on screen, or hides it with no argument. */
+      The letter is ALWAYS shown while a letter is pending. This is not
+      a shortcut: no browser can tell whether its own speech is audible.
+      The voice list is no proof (a machine can have voices and read
+      nothing), and `onstart` is no proof either — the engine can start
+      "talking" into muted output or the wrong device and produce
+      silence. Both were tried as signals here and both left somebody
+      staring at a panel that said nothing. So the sound is treated as
+      what it is: a bonus on top of a letter that is always legible. */
   function dictationLetter(letter) {
     if (letter) $('#dictationLetter').textContent = letter;
     $('#dictationFallback').classList.toggle('hidden', !letter);
@@ -1330,48 +1322,26 @@
     game.phase = 'running';
     game.waiting = true;
     renderDictationActions();
-    /* No voice to read with: there is nothing to wait for. */
-    if (!App.tts.hasVoice()) game.audioDead = true;
-    /* Put the letter up only when sound is known NOT to be coming — no
-       voice at all, or the engine already caught mute. While the engine
-       still has its chance to start, the letter stays off, so a machine
-       that works never flashes it. */
-    if (game.audioDead) dictationUpdateLetter();
+    dictationLetter(game.letter);
     if (dictationUnlock) clearTimeout(dictationUnlock);
     dictationUnlock = setTimeout(function () {
       dictationUnlock = null;
       if (game && game.type === 'dictation') game.waiting = false;
     }, DICTATION_UNLOCK_MS);
-    if (dictationStartWatch) { clearTimeout(dictationStartWatch); dictationStartWatch = null; }
-    if (!game.audioDead) {
-      dictationStartWatch = setTimeout(function () {
-        dictationStartWatch = null;
-        if (game && game.type !== 'dictation') return;
-        /* The engine never even started. Stop waiting for a sound that
-           is not coming and show the letter instead. */
-        if (!App.tts.confirmed()) { game.audioDead = true; dictationUpdateLetter(); }
-      }, DICTATION_START_GRACE_MS);
-    }
     var name = App.i18n.t('dictationLetterNames.' + game.letter);
     var prompt = App.i18n.t('dictationPrompt').replace('{letter}', name);
     App.tts.speak(prompt, function () {
       if (game && game.type === 'dictation') game.waiting = false;
-    }, function () {
-      /* It started talking, so the sound is real after all: the letter
-         goes back off the screen. */
-      if (dictationStartWatch) { clearTimeout(dictationStartWatch); dictationStartWatch = null; }
-      if (game && game.type === 'dictation') { game.audioDead = false; dictationUpdateLetter(); }
     });
   }
 
   function playDictation() {
     if (dictationTimer) clearTimeout(dictationTimer);
     if (dictationUnlock) clearTimeout(dictationUnlock);
-    if (dictationStartWatch) { clearTimeout(dictationStartWatch); dictationStartWatch = null; }
     /* phase 'ready': the panel explains the activity and waits. Nothing
        is asked for and no key counts until the person starts, so a key
        pressed while reading the instructions is not read as a mistake. */
-    game = { type: 'dictation', letters: dictationLetters(), letter: null, waiting: true, audioDead: false, phase: 'ready' };
+    game = { type: 'dictation', letters: dictationLetters(), letter: null, waiting: true, phase: 'ready' };
     $('#gameTitle').textContent = App.i18n.t('modeDictationName');
     $('#gameInstruction').textContent = App.i18n.t('dictationInstruction');
     /* The card only ever holds the target and the challenge progress,
@@ -1798,7 +1768,6 @@
     var mode = game && game.cfg ? game.cfg.mode : null;
     if (dictationTimer) clearTimeout(dictationTimer);
     if (dictationUnlock) clearTimeout(dictationUnlock);
-    if (dictationStartWatch) { clearTimeout(dictationStartWatch); dictationStartWatch = null; }
     if (App.tts) App.tts.stop();
     game = null;
     markTarget(null);
@@ -1831,14 +1800,25 @@
   });
 
   /* ---------- Free writing ---------- */
-  $('#btnExitFree').addEventListener('click', goMenu);
-  if ($('#btnListenFree')) $('#btnListenFree').addEventListener('click', function () {
+  $('#btnExitFree').addEventListener('click', function () {
+    if (App.tts) App.tts.stop();
+    goMenu();
+  });
+  var freeArea = $('#freeArea');
+  var listenFree = $('#btnListenFree');
+  function updateListenFree() {
+    listenFree.disabled = !freeArea.value.trim();
+  }
+  freeArea.addEventListener('input', updateListenFree);
+  listenFree.addEventListener('click', function () {
     var t = $('#freeArea').value.trim();
-    if (false && App.tts && App.tts.speak) App.tts.speak(t || App.i18n.t('nothingWrittenYet'));
+    if (t && App.tts && App.tts.speak) App.tts.speak(t);
   });
   $('#btnClearFree').addEventListener('click', function () {
-    $('#freeArea').value = '';
-    $('#freeArea').focus();
+    freeArea.value = '';
+    if (App.tts) App.tts.stop();
+    updateListenFree();
+    freeArea.focus();
   });
 
   /* ---------- Language selector ---------- */
