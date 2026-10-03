@@ -109,16 +109,21 @@
   font-size: var(--text-base); font-weight: 600;
 }
 .dictation-steps li { display: flex; align-items: center; gap: 10px; }
-/* The counter is drawn, not spoken: a learner who cannot hear the panel
-   still has a second, non-auditory way to follow the same order. */
-.dictation-steps li::before {
-  content: counter(list-item);
+/* The step numbers are real text, not a CSS counter. A counter printed
+   a literal 0 next to every step when list-style was none, and it could
+   not be checked from a test either: getComputedStyle returns
+   "counter(...)", never the number that was drawn. Marked up, they are
+   both correct and readable. aria-hidden, because the sentence next to
+   them already says what to do. */
+.dictation-step-n {
   flex: none; width: 30px; height: 30px;
   display: flex; align-items: center; justify-content: center;
   background: var(--accent-soft); color: var(--accent);
   border-radius: 50%; font-size: var(--text-small); font-weight: 800;
 }
+.dictation-step-t { text-align: left; }
 .dictation-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.dictation-actions .btn[disabled] { opacity: 0.5; cursor: default; }
 /* Only shown when the machine has no voice: the letter moves from the
    speakers to the screen on the same accent pairing as the lesson
    counter (.btn-lesson .num), which reads in all three themes. */

@@ -85,10 +85,14 @@ It is the only mode that asks for a key **by ear**, so its screen has
 to cover what the sound does not. Three rules, all of them part of the
 mode rather than extras:
 
-1. **The activity explains itself on screen.** A panel with the four
-   steps (you hear a letter, you say its name, you press its key, if
-   you get it wrong you hear it again) stays visible the whole time. It
-   takes the place of the target card, which this mode does not use.
+1. **The activity explains itself on screen and waits for the person to
+   start it.** A panel with the four steps (you hear a letter, you say
+   its name, you press its key, if you get it wrong you hear it again)
+   stays visible the whole time. It takes the place of the target card,
+   which this mode does not use. It carries two buttons: **"▶ Start"** and
+   **"🔊 Listen again"**. Until Start is pressed no letter is asked for
+   and no key counts, so a key pressed while reading is not read as a
+   mistake.
 2. **The letter can be heard again.** A "🔊 Listen again" button
    repeats the current letter without moving on. Without it, whoever
    did not catch it the first time has nothing to press.
@@ -107,10 +111,9 @@ mode rather than extras:
    shown: showing it would turn dictation into copying the letter,
    which is not what the mode trains.
 
-There is also a **"👁 Show the letter"** button the person can press at
-any time. No browser can make that judgement for them: some people read
-better with the letter in front of them, and the app remembers the
-choice across sessions.
+And if the computer **does not read the letter**, it moves from the
+speakers to the screen and the activity keeps working. That decision is
+the app's alone: no browser can know whether it really made a sound.
 
 ## 5. What is **not** an activity here
 

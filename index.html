@@ -311,14 +311,14 @@
       <div class="dictation-panel hidden" id="dictationPanel">
         <h3 class="dictation-title" data-i18n="dictationWhatTitle">¿Qué haces aquí?</h3>
         <ol class="dictation-steps">
-          <li data-i18n="dictationStepListen">Oyes una letra.</li>
-          <li data-i18n="dictationStepSay">Dices su nombre en voz alta.</li>
-          <li data-i18n="dictationStepPress">Pulsas su tecla en el teclado.</li>
-          <li data-i18n="dictationStepRetry">Si te equivocas, la oyes otra vez.</li>
+          <li><span class="dictation-step-n" aria-hidden="true">1</span><span class="dictation-step-t" data-i18n="dictationStepListen">Oyes una letra.</span></li>
+          <li><span class="dictation-step-n" aria-hidden="true">2</span><span class="dictation-step-t" data-i18n="dictationStepSay">Dices su nombre en voz alta.</span></li>
+          <li><span class="dictation-step-n" aria-hidden="true">3</span><span class="dictation-step-t" data-i18n="dictationStepPress">Pulsas su tecla en el teclado.</span></li>
+          <li><span class="dictation-step-n" aria-hidden="true">4</span><span class="dictation-step-t" data-i18n="dictationStepRetry">Si te equivocas, la oyes otra vez.</span></li>
         </ol>
         <div class="dictation-actions">
-          <button type="button" class="btn btn-secondary" id="btnDictationAgain" data-i18n="dictationAgain">🔊 Escuchar otra vez</button>
-          <button type="button" class="btn btn-secondary" id="btnDictationShow" data-i18n="dictationShowLetter" aria-pressed="false">👁 Ver la letra</button>
+          <button type="button" class="btn" id="btnDictationStart" data-i18n="dictationStart">▶ Empezar</button>
+          <button type="button" class="btn btn-secondary" id="btnDictationAgain" data-i18n="dictationAgain" disabled>🔊 Escuchar otra vez</button>
         </div>
         <!-- Only when the machine has no voice to read with: the letter
              moves from the speakers to the screen so the activity still

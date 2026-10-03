@@ -51,10 +51,15 @@ async function openApp(options = {}) {
   return { page, ctx };
 }
 
+/** Opens the dictation screen and starts the activity, which is a
+    separate, deliberate act: nothing is asked for until the person
+    presses "Start". */
 async function startDictation(page) {
   await page.locator('[data-mode="dictation"]').click();
   await expect(page.locator('#screenGame')).toBeVisible();
   await expect(page.locator('#dictationPanel')).toBeVisible();
+  await page.locator('#btnDictationStart').click();
+  await expect.poll(async () => (await spoken(page)).length).toBeGreaterThan(0);
 }
 
 /** What the app has asked for so far, oldest first. */
@@ -77,16 +82,31 @@ function askedKey(page) {
   });
 }
 
+/** Presses a letter the way the physical keyboard does.
+    NOT page.keyboard.type(): for ñ that produces no keydown at all
+    (Playwright inserts the character as text), and keyboard.press('ñ')
+    throws "Unknown key" — which made every test here that typed the
+    shown letter fail roughly one run in 27, whenever the random pick
+    landed on ñ. A dispatched KeyboardEvent is exactly what the browser
+    delivers when the ñ key is pressed, and it works for every letter. */
+async function pressLetter(page, letter) {
+  await page.evaluate((k) => {
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true }));
+  }, letter);
+}
+
 async function pressRightKey(page) {
   const key = await askedKey(page);
   expect(key).toBeTruthy();
-  await page.keyboard.type(key);
+  await pressLetter(page, key);
   return key;
 }
 
-test('the screen explains what the activity is, and offers to hear the letter again', async () => {
+test('the screen explains the activity and waits for the person to start it', async () => {
   const { page, ctx } = await openApp();
-  await startDictation(page);
+  await page.locator('[data-mode="dictation"]').click();
+  await expect(page.locator('#screenGame')).toBeVisible();
+  await expect(page.locator('#dictationPanel')).toBeVisible();
 
   await expect(page.locator('#gameTitle')).toHaveText('Dictado');
   /* The card that holds the target is not used by this mode, and must
@@ -96,12 +116,29 @@ test('the screen explains what the activity is, and offers to hear the letter ag
   const steps = page.locator('.dictation-steps li');
   await expect(steps).toHaveCount(4);
   for (let i = 0; i < 4; i++) await expect(steps.nth(i)).not.toBeEmpty();
-  await expect(page.locator('#btnDictationAgain')).toBeVisible();
+
+  /* The step numbers are real text. They were a CSS counter once, which
+     printed a literal 0 beside every step, and which no test could read
+     either: getComputedStyle answers "counter(...)", not the number. */
+  await expect(page.locator('.dictation-step-n')).toHaveText(['1', '2', '3', '4']);
+  /* And the sentences still switch with the language. */
+  await expect(page.locator('.dictation-step-t').first()).toHaveText('Oyes una letra.');
+
+  /* Nothing is asked for, and no key counts, until it is started. */
+  expect((await spoken(page)).length).toBe(0);
+  await pressLetter(page, 'a');
+  await pressLetter(page, 'e');
+  await expect(page.locator('#feedback')).toHaveText('');
+  await expect(page.locator('#btnDictationAgain')).toBeDisabled();
+
+  await page.locator('#btnDictationStart').click();
+  await expect.poll(async () => (await spoken(page)).length).toBeGreaterThan(0);
+  await expect(page.locator('#btnDictationStart')).toBeHidden();
+  await expect(page.locator('#btnDictationAgain')).toBeEnabled();
 
   /* A machine that can speak does not show the letter: asking for it by
      ear is the whole point of the mode. */
   await expect(page.locator('#dictationFallback')).toBeHidden();
-  expect((await spoken(page)).length).toBeGreaterThan(0);
 
   /* Asking again re-reads the SAME letter, it does not move on. */
   const first = await askedKey(page);
@@ -126,7 +163,7 @@ test('the right key moves on to another letter, a wrong key asks again', async (
   // A letter that is not the one asked for is never the right answer.
   const wrong = (second === 'q' ? 'w' : 'q');
   const beforeWrong = (await spoken(page)).length;
-  await page.keyboard.type(wrong);
+  await pressLetter(page, wrong);
   await expect(page.locator('#feedback')).toHaveClass(/encourage/);
 
   /* The same letter comes back, so a mistake is recoverable. Waited for
@@ -151,7 +188,7 @@ test('a machine with no voice shows the letter, and the activity still runs', as
   expect(letter).toMatch(/^[a-zñ]$/);
 
   /* And the exercise is a real exercise: that letter can be typed. */
-  await page.keyboard.type(letter);
+  await pressLetter(page, letter);
   await expect(page.locator('#feedback')).toHaveClass(/success/);
   await expect.poll(async () => (await page.locator('#dictationLetter').textContent()).trim()).not.toBe(letter);
 
@@ -173,13 +210,13 @@ test('a letter that is never read out loud does not lock the keyboard', async ()
   expect(key).toBeTruthy();
   /* Nothing has been released yet, so this press is (correctly) ignored:
      the key the app is waiting for has not been asked aloud. */
-  await page.keyboard.type(key);
+  await pressLetter(page, key);
   await page.waitForTimeout(1500);
   await expect(page.locator('#feedback')).toHaveText('');
 
   /* Past the release, the very same key is accepted. */
   await page.waitForTimeout(5500);
-  await page.keyboard.type(key);
+  await pressLetter(page, key);
   await expect(page.locator('#feedback')).toHaveClass(/success/, { timeout: 8000 });
 
   await ctx.close();
@@ -202,38 +239,8 @@ test('a machine that lists voices but never speaks still shows the letter', asyn
      releases the between-letters lock, so the 6 s net is what frees the
      keyboard here — which is exactly the path that has to work. */
   await page.waitForTimeout(4000);
-  await page.keyboard.type(letter);
+  await pressLetter(page, letter);
   await expect(page.locator('#feedback')).toHaveClass(/success/, { timeout: 8000 });
-
-  await ctx.close();
-});
-
-test('the person decides whether the letter is shown, whatever the machine does', async () => {
-  const { page, ctx } = await openApp();
-  await startDictation(page);
-
-  /* Working audio: the letter stays off, and the toggle offers it. */
-  await expect(page.locator('#dictationFallback')).toBeHidden();
-  const btn = page.locator('#btnDictationShow');
-  await expect(btn).toHaveAttribute('aria-pressed', 'false');
-
-  await btn.click();
-  await expect(btn).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('#dictationFallback')).toBeVisible();
-  expect((await page.locator('#dictationLetter').textContent()).trim()).toMatch(/^[a-zñ]$/);
-
-  /* Back off again. */
-  await btn.click();
-  await expect(btn).toHaveAttribute('aria-pressed', 'false');
-  await expect(page.locator('#dictationFallback')).toBeHidden();
-
-  /* And the choice survives a reload, because it is a person, not a
-     session, who is being accommodated. */
-  await btn.click();
-  await page.reload();
-  await page.locator('#btnSkipName').click();
-  await page.locator('[data-mode="dictation"]').click();
-  await expect(page.locator('#btnDictationShow')).toHaveAttribute('aria-pressed', 'true');
 
   await ctx.close();
 });

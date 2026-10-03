@@ -47,15 +47,24 @@ function measure() {
     return html && html.a > 0.9 ? html : { r: 255, g: 255, b: 255, a: 1 };
   };
 
-  const sel = 'h1,h2,h3,h4,p,li,label,button,a,span.name,span.detail,span.picto,td,th,legend,summary';
+  /* The dictation panel's own spans are in the selector on purpose:
+     its step numbers and step sentences live in spans, and a generic
+     span is not part of the shared list, so without these two the panel
+     would look "measured" while its steps went unchecked. */
+  const sel = 'h1,h2,h3,h4,p,li,label,button,a,span.name,span.detail,span.picto,.dictation-step-n,.dictation-step-t,td,th,legend,summary';
   const rows = [];
   const seen = new Set();
 
-  // El aviso "solo en ordenador" vive en un overlay oculto por
-  // defecto; se fuerza visible para medirlo, porque su CSS tenía
-  // colores fijos que en oscuro quedaban ilegibles.
+  // The "computer only" notice lives in an overlay hidden by default;
+  // it is forced visible to be measured, because its CSS had hardcoded
+  // colours that turned illegible in the dark theme. It is then put
+  // back exactly as it was: a measurement that leaves the page changed
+  // blocks whatever the test does next (that overlay covers the app, so
+  // the following click times out).
   const mb = document.getElementById('mobileBlock');
+  let mbWasHidden = null;
   if (mb) {
+    mbWasHidden = mb.hasAttribute('hidden');
     mb.hidden = false;
     mb.removeAttribute('hidden');
   }
@@ -103,6 +112,15 @@ function measure() {
       low: r2 < need,
     });
   });
+  if (mb) {
+    if (mbWasHidden) {
+      mb.hidden = true;
+      mb.setAttribute('hidden', '');
+    } else {
+      mb.hidden = false;
+      mb.removeAttribute('hidden');
+    }
+  }
   return rows;
 }
 
@@ -171,21 +189,29 @@ test.describe('contraste de la pantalla de dictado', () => {
       await page.waitForTimeout(400);
       await page.locator('[data-mode="dictation"]').click();
       await expect(page.locator('#dictationPanel')).toBeVisible();
-      /* El panel aparece antes de que el navegador decida si tiene
-         voces; sin ellas la letra se muestra tras un sondeo corto. */
+
+      /* The panel has to be measured in BOTH states it is ever in: the
+         whole of it before the activity starts (both buttons), and
+         again once it has, because the letter only reaches the screen
+         then — and that letter is the one text on the accent tint. A
+         single pass would silently skip one of the two. */
+      const before = (await page.evaluate(measure)).filter((r) => r.inPanel);
+      const steps = await page.locator('#dictationPanel li').count();
+      /* Counted from the DOM, so adding a step does not make this stale.
+         Each step contributes two texts of its own: the number and the
+         sentence. Plus the title and the two buttons. */
+      expect(before.length, 'panel completo antes de empezar').toBe(steps * 2 + 3);
+
+      await page.locator('#btnDictationStart').click();
       await expect(page.locator('#dictationFallback')).toBeVisible();
       await page.waitForTimeout(300);
 
-      const report = await page.evaluate(measure);
-      const mine = report.filter((r) => r.inPanel);
-      /* Every own-text element of the panel must be measured: the
-         numbered steps (counted from the DOM, so adding a step does not
-         make this stale), plus the title, the two buttons, the note and
-         the letter. A filter that quietly matches nothing would report
-         a green screen it never looked at. */
-      const steps = await page.locator('#dictationPanel li').count();
-      expect(mine.length, 'el panel de dictado debe tener todo su texto medido').toBe(steps + 5);
+      const after = (await page.evaluate(measure)).filter((r) => r.inPanel);
+      const classes = after.map((r) => r.cls);
+      expect(classes, 'la letra en pantalla debe medirse').toContain('dictation-letter');
+      expect(classes, 'el aviso debe medirse').toContain('dictation-fallback-note');
 
+      const mine = before.concat(after);
       console.log(`\n=== dictado, tema ${theme}: ${mine.length} textos ===`);
       mine.forEach((r) => console.log(
         `  ${r.cls} "${r.text}" → ${r.ratio} (min ${r.need}) ${r.px}px/${r.weight} fg=${r.fg} bg=${r.bg}`

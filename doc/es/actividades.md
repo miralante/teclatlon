@@ -87,10 +87,14 @@ Es el único modo que pide una tecla **por el oído**, así que su
 pantalla tiene que resolver lo que el sonido no resuelva. Tres reglas,
 y las tres son parte del modo, no extras:
 
-1. **La actividad se explica en pantalla.** Un panel con los cuatro
-   pasos (oyes una letra, dices su nombre, pulsas su tecla, si te
-   equivocas la oyes otra vez) está siempre visible mientras se
-   practica. Sustituye a la tarjeta de objetivo, que este modo no usa.
+1. **La actividad se explica en pantalla y espera a que empiece la
+   persona.** Un panel con los cuatro pasos (oyes una letra, dices su
+   nombre, pulsas su tecla, si te equivocas la oyes otra vez) está
+   siempre visible mientras se practica. Sustituye a la tarjeta de
+   objetivo, que este modo no usa. Tiene dos botones: **"▶ Empezar"** y
+   **"🔊 Escuchar otra vez"**. Hasta que se pulsa Empezar no se pide
+   ninguna letra y ninguna tecla cuenta, para que una tecla pulsada
+   mientras se lee no se lea como un error.
 2. **La letra se puede volver a oír.** Un botón "🔊 Escuchar otra
    vez" repite la letra actual sin avanzar. Sin él, el que no la oyó
    la primera vez se queda sin nada que pulsar.
@@ -109,10 +113,10 @@ y las tres son parte del modo, no extras:
    letra no se enseña: mostrarla convertiría el dictado en copiar la
    letra, que no es lo que entrena.
 
-Además hay un botón **"👁 Ver la letra"** que la persona puede pulsar
-cuando quiera. Esa decisión no la puede tomar ningún navegador: hay
-quien lee mejor con la letra delante, y la app lo recuerda entre
-sesiones.
+Además, si el ordenador **no lee la letra**, esta pasa de los
+altavoces a la pantalla y la actividad sigue funcionando. Esa decisión
+la toma sola la app: no hay forma de que un navegador sepa si de verdad
+suena.
 
 ## 5. Lo que **no** es una actividad aquí
 

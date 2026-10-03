@@ -84,11 +84,6 @@
   state.options.metrics = !!state.options.metrics;
   state.options.errorSound = !!state.options.errorSound;
   state.options.showFingerText = state.options.showFingerText === undefined ? true : !!state.options.showFingerText;
-  /* Dictation: show the letter on screen as well as (or instead of)
-     reading it out. Off by default, because hearing the letter is the
-     exercise; the app turns it on by itself whenever the machine has
-     not proved it can speak. */
-  state.options.showDictationLetter = state.options.showDictationLetter === undefined ? false : !!state.options.showDictationLetter;
   /* Rest reminder interval (minutes). The default and the allowed range
      live in feedback.js, the module that owns the notice, so the panel
      and the countdown can't drift apart. Anything unusable (a value from
@@ -1311,11 +1306,9 @@
   }
 
   /** Whether the letter has to be on screen right now. The one rule:
-      never hide the letter unless the machine has demonstrably spoken
-      and the person has not asked to see it. */
+      never hide the letter unless the machine has demonstrably spoken. */
   function dictationLetterOnScreen() {
-    return !!state.options.showDictationLetter || !!game.audioDead ||
-      !App.tts.hasVoice() || !App.tts.confirmed();
+    return !!game.audioDead || !App.tts.hasVoice() || !App.tts.confirmed();
   }
 
   function dictationUpdateLetter() {
@@ -1334,7 +1327,9 @@
       var letters = game.letters.filter(function (letter) { return letter !== game.letter; });
       game.letter = letters[Math.floor(Math.random() * letters.length)];
     }
+    game.phase = 'running';
     game.waiting = true;
+    renderDictationActions();
     /* No voice to read with: there is nothing to wait for. */
     if (!App.tts.hasVoice()) game.audioDead = true;
     /* Put the letter up only when sound is known NOT to be coming — no
@@ -1373,7 +1368,10 @@
     if (dictationTimer) clearTimeout(dictationTimer);
     if (dictationUnlock) clearTimeout(dictationUnlock);
     if (dictationStartWatch) { clearTimeout(dictationStartWatch); dictationStartWatch = null; }
-    game = { type: 'dictation', letters: dictationLetters(), letter: null, waiting: true, audioDead: false };
+    /* phase 'ready': the panel explains the activity and waits. Nothing
+       is asked for and no key counts until the person starts, so a key
+       pressed while reading the instructions is not read as a mistake. */
+    game = { type: 'dictation', letters: dictationLetters(), letter: null, waiting: true, audioDead: false, phase: 'ready' };
     $('#gameTitle').textContent = App.i18n.t('modeDictationName');
     $('#gameInstruction').textContent = App.i18n.t('dictationInstruction');
     /* The card only ever holds the target and the challenge progress,
@@ -1390,11 +1388,25 @@
     startMetrics();
     updateLiveMetrics();
     showScreen('screenGame');
-    speakDictationLetter(true);
+    renderDictationActions();
+  }
+
+  /* The two buttons: start is offered only while waiting to begin, and
+     listen again only once there is a letter to repeat. */
+  function renderDictationActions() {
+    var ready = game.phase === 'ready';
+    var start = $('#btnDictationStart');
+    var again = $('#btnDictationAgain');
+    start.classList.toggle('hidden', !ready);
+    start.disabled = !ready;
+    again.disabled = ready || !game.letter;
   }
 
   function dictationKey(ch) {
-    if (!game || game.type !== 'dictation' || game.waiting) return;
+    if (!game || game.type !== 'dictation') return;
+    /* Before the activity starts there is no letter to match, so a key
+       pressed while reading the panel is not a mistake. */
+    if (game.phase !== 'running' || game.waiting) return;
     state.metrics.keys += 1;
     if (ch === game.letter) {
       state.metrics.hits += 1;
@@ -1795,29 +1807,21 @@
     else goMenu();
   });
 
+  /* Start the activity: the panel has been read, so the first letter is
+     asked for now. Deliberately explicit — the person decides when the
+     exercise begins rather than having a letter fired at them while
+     they are still reading what the mode is. */
+  $('#btnDictationStart').addEventListener('click', function () {
+    if (!game || game.type !== 'dictation' || game.phase !== 'ready') return;
+    speakDictationLetter(true);
+  });
+
   /* Ask for the current letter again. The mode speaks each letter once
      and then waits, so this is the only way back for anyone who did not
      catch it the first time. */
   $('#btnDictationAgain').addEventListener('click', function () {
-    if (!game || game.type !== 'dictation') return;
+    if (!game || game.type !== 'dictation' || game.phase !== 'running') return;
     speakDictationLetter(false);
-  });
-
-  /* Show or hide the letter on screen. The app decides this by itself
-     when the machine has not proved it can speak, but the judgement
-     that matters is the person's: some people read better with the
-     letter in front of them, and no browser can tell us that. */
-  function renderDictationShowButton() {
-    var btn = $('#btnDictationShow');
-    var on = !!state.options.showDictationLetter;
-    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-    btn.textContent = App.i18n.t(on ? 'dictationHideLetter' : 'dictationShowLetter');
-  }
-  $('#btnDictationShow').addEventListener('click', function () {
-    state.options.showDictationLetter = !state.options.showDictationLetter;
-    save();
-    renderDictationShowButton();
-    if (game && game.type === 'dictation') dictationUpdateLetter();
   });
 
   if ($('#btnListenGame')) $('#btnListenGame').addEventListener('click', function () {
@@ -1944,9 +1948,6 @@
   renderRows($('#numpad'), DATA.numpad);
   renderKeyboards();
   applyOptions();
-  /* Its label is a state word, not static copy, so i18n.apply() on boot
-     gets it wrong for anyone who left the letter shown. */
-  renderDictationShowButton();
   if (systemThemeQuery) {
     var updateSystemTheme = function () {
       if (state.options.theme === 'auto') applyOptions();
