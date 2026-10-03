@@ -23,7 +23,7 @@
   border: 3px solid transparent;
   border-radius: var(--radius);
   background: var(--accent);
-  color: #FFFFFF;
+  color: var(--color-on-accent, #FFFFFF);
   font-size: var(--text-base);
   font-weight: 700;
   text-decoration: none;

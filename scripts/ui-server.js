@@ -15,6 +15,25 @@ const MIME = {
   '.woff2': 'font/woff2',
 };
 
+/* Production sends a strict CSP (see _headers). This preview server must
+   send the SAME one, otherwise anything that only breaks under CSP --
+   every inline <script> -- looks perfect here and ships broken. That is
+   not hypothetical: the nested settings gear the suite shipped to
+   production was an inline LocalePickerConfig that the browser dropped,
+   and no local check noticed because this server had no CSP.
+   Read from _headers so the two can never drift. */
+function productionCsp() {
+  try {
+    const raw = fs.readFileSync(path.join(ROOT, '_headers'), 'utf8');
+    const match = raw.match(/^\s*Content-Security-Policy:\s*(.+)$/m);
+    return match ? match[1].trim() : '';
+  } catch (error) {
+    return '';
+  }
+}
+
+const CSP = productionCsp();
+
 const server = http.createServer((req, res) => {
   let requestPath;
   try {
@@ -37,7 +56,9 @@ const server = http.createServer((req, res) => {
       res.end('not found');
       return;
     }
-    res.writeHead(200, { 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream' });
+    const headers = { 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream' };
+    if (CSP) headers['Content-Security-Policy'] = CSP;
+    res.writeHead(200, headers);
     res.end(data);
   });
 });

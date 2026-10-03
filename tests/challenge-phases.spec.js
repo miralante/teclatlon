@@ -12,7 +12,7 @@ const { test, expect } = require('playwright/test');
 // after the last one.
 // ---------------------------------------------------------------------------
 
-const BASE = 'http://127.0.0.1:4173/';
+const BASE = `http://127.0.0.1:${process.env.PORT || 4173}/`;
 
 let _browser;
 let _ctx = null;

@@ -48,6 +48,13 @@
       never uploaded), and `graphify-out*` (build artifacts). Warns
       at 20 MB (still legal but worth a nudge) and fails at 25 MB
       (Cloudflare will reject the deploy).
+  11. No executable inline <script> in any HTML page. The CSP is
+      `script-src 'self'`, so the browser DROPS inline scripts in
+      production — silently, with no build or lint error. Move the
+      code to an external .js file. Data blocks such as
+      <script type="application/ld+json"> are not executed and stay
+      allowed. (scripts/ui-server.js now sends the same CSP as
+      production so the preview cannot hide this again.)
    Output: list of failures with the exact file. Exit code 1 if there
    are any, "OK (N checks)" otherwise.
    ============================================================ */
@@ -193,9 +200,16 @@ var filesMatch = swContent.match(/var FILES = \[([\s\S]*?)\];/);
 if (!filesMatch) {
   failures.push('sw.js: FILES array not found');
 } else {
+  var body = filesMatch[1]
+    /* Strip comments first: the array legitimately carries explanatory
+       comments, and a quoted word inside one (e.g. the CSP's 'self') is
+       not a path. Without this, a comment silently becomes a
+       "does not exist on disk" failure. */
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\/\/.*$/gm, '');
   var re = /'([^']+)'/g;
   var m;
-  while ((m = re.exec(filesMatch[1])) !== null) {
+  while ((m = re.exec(body)) !== null) {
     var full = path.join(ROOT, m[1].replace(/^\.\//, ''));
     if (!fs.existsSync(full)) {
       failures.push('sw.js: FILES lists ' + m[1] + ' but it does not exist on disk');
@@ -546,6 +560,56 @@ var fileSizeExcluded = ['.git', 'node_modules', '.claude', 'graphify-out', 'grap
     }
   });
 })(ROOT);
+
+/* --- 11. No executable inline <script> in any HTML page.
+
+   The production CSP is `script-src 'self'` (see _headers), so an inline
+   <script> is dropped by the browser at runtime: no build error, no lint
+   error, no failed test — the code just silently does not run in
+   production while working perfectly on the preview server.
+
+   That is exactly how an inline `window.LocalePickerConfig` shipped: the
+   shared locale picker fell back to its defaults, ignored `settings: false`
+   and rendered a second ⚙️ settings drawer inside the app's own settings
+   drawer, repeating text size, contrast and sounds. The same mistake
+   disabled the service worker and the language buttons on about/,
+   legal/ and team/.
+
+   Non-executable data blocks (`<script type="application/ld+json">`, the
+   JSON-LD in index.html) are allowed: CSP does not apply to them. */
+var INLINE_DATA_TYPE = /^(application\/ld\+json|application\/json|text\/json|text\/template)\s*$/i;
+var htmlExcluded = ['.git', 'node_modules', '.claude', 'graphify-out', 'graphify-out-meta', 'test-results', 'doc'];
+var inlineScriptHits = [];
+(function walkForInlineScripts(dir) {
+  if (!fs.existsSync(dir)) return;
+  fs.readdirSync(dir, { withFileTypes: true }).forEach(function (entry) {
+    if (htmlExcluded.indexOf(entry.name) !== -1) return;
+    var full = path.join(dir, entry.name);
+    if (entry.isDirectory()) return walkForInlineScripts(full);
+    if (!entry.isFile() || !/\.html?$/.test(entry.name)) return;
+    checks += 1;
+    var src = fs.readFileSync(full, 'utf8');
+    /* Blank out HTML comments (keeping the newlines, so offsets and line
+       numbers stay exact). Prose in a comment is allowed to mention
+       `<script>` — that is not a tag. */
+    var scannable = src.replace(/<!--[\s\S]*?-->/g, function (comment) {
+      return comment.replace(/[^\n]/g, ' ');
+    });
+    var tagRe = /<script\b([^>]*)>/gi;
+    var m;
+    while ((m = tagRe.exec(scannable)) !== null) {
+      var attrs = m[1];
+      if (/\ssrc\s*=/i.test(attrs)) continue;           // external: allowed
+      var typeMatch = attrs.match(/\stype\s*=\s*["']?([^"'\s>]+)/i);
+      var type = typeMatch ? typeMatch[1] : '';
+      if (type && INLINE_DATA_TYPE.test(type)) continue; // data block: not executed
+      var line = scannable.slice(0, m.index).split('\n').length;
+      inlineScriptHits.push(rel(full) + ':' + line + '  <script>' + (type ? ' type="' + type + '"' : '') +
+        ' is inline and will not run in production (CSP script-src \'self\') - move it to an external .js file');
+    }
+  });
+})(ROOT);
+inlineScriptHits.forEach(function (hit) { failures.push(hit); });
 
 /* --- Result --- */
 if (warnings.length) {

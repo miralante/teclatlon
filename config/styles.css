@@ -23,22 +23,28 @@
 
 .btn-lang {
   padding: 0.4rem 0.8rem;
-  border: 1px solid var(--borde, #d0d0d0);
+  /* Los tokens de esta pagina usaban nombres en español (--borde,
+     --fondo-tarjeta) que no existen en assets/css/tokens.css, asi que
+     caia a los literales: fondo blanco fijo y texto del navegador. En
+     tema oscuro la tarjeta quedaba blanca con texto oscuro y el boton
+     activo blanco sobre acento claro (1.07:1). */
+  border: 1px solid var(--color-border, #d0d0d0);
   border-radius: 6px;
-  background: var(--fondo-tarjeta, #fff);
+  background: var(--color-surface, #fff);
+  color: var(--color-text, #1A1A2E);
   cursor: pointer;
   font-size: 0.95rem;
 }
 
 .btn-lang[aria-pressed="true"] {
-  background: var(--acento, #5a8fbe);
-  color: #fff;
-  border-color: var(--acento, #5a8fbe);
+  background: var(--accent, #5a8fbe);
+  color: var(--color-on-accent, #fff);
+  border-color: var(--accent, #5a8fbe);
 }
 
 .aviso-ruta {
   font-size: 0.85rem;
-  color: var(--texto-secundario, #555);
+  color: var(--color-text-soft, #555);
   font-style: italic;
   margin: 0;
 }
@@ -55,7 +61,7 @@
 }
 
 .card.guia {
-  border-left: 4px solid var(--acento, #5a8fbe);
+  border-left: 4px solid var(--accent, #5a8fbe);
 }
 
 .btn-peligro {
@@ -74,9 +80,9 @@
 }
 
 .btn-secundario {
-  background: var(--fondo-tarjeta, #fff);
-  color: var(--texto, #222);
-  border: 1px solid var(--borde, #d0d0d0);
+  background: var(--color-surface, #fff);
+  color: var(--color-text, #1A1A2E);
+  border: 1px solid var(--color-border, #d0d0d0);
   padding: 0.6rem 1rem;
   border-radius: 6px;
   font-size: 1rem;
@@ -94,12 +100,12 @@
 }
 
 .feedback.animo {
-  color: var(--texto-secundario, #555);
+  color: var(--color-text-soft, #555);
 }
 
 .pie {
   font-size: 0.85rem;
-  color: var(--texto-secundario, #555);
+  color: var(--color-text-soft, #555);
   text-align: center;
   margin-top: 1.5rem;
 }

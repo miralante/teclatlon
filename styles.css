@@ -163,8 +163,8 @@
   color: var(--accent); animation: heartbeat 1s ease-in-out infinite;
 }
 @keyframes heartbeat { 50% { transform: scale(1.07); } }
-.key.pressed { background: var(--accent); border-color: var(--accent); color: #FFFFFF; transform: translateY(2px); }
-.key.pressed .mark { background: #FFFFFF; }
+.key.pressed { background: var(--accent); border-color: var(--accent); color: var(--color-on-accent, #FFFFFF); transform: translateY(2px); }
+.key.pressed .mark { background: var(--color-on-accent, #FFFFFF); }
 .key.miss { background: var(--color-encourage-soft); border-color: var(--color-encourage); color: var(--color-encourage); }
 .key.done { background: var(--color-success-soft); border-color: var(--color-success); color: var(--color-success); }
 
@@ -249,11 +249,8 @@ html[data-app-blocked="mobile"] .app-footer { display: none !important; }
 .mobile-block-box {
   max-width: 32rem; width: 100%;
   background: var(--color-surface, #FFFFFF);
-  background: #FFFFFF;
   border: 3px solid var(--color-border, #D8D2C5);
-  border: 3px solid #D8D2C5;
   border-radius: var(--radius, 16px);
-  border-radius: 16px;
   padding: 32px 24px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   text-align: center;
@@ -264,20 +261,17 @@ html[data-app-blocked="mobile"] .app-footer { display: none !important; }
   margin: 0 0 12px;
   font-size: 28px; font-weight: 800;
   color: var(--color-text, #2A2A2A);
-  color: #2A2A2A;
 }
 .mobile-block-why {
   margin: 0 0 16px;
   font-size: 20px; line-height: 1.5; font-weight: 700;
   color: var(--color-text, #2A2A2A);
-  color: #2A2A2A;
 }
 .mobile-block-reason,
 .mobile-block-suggestion {
   margin: 0 0 12px;
   font-size: 18px; line-height: 1.5;
   color: var(--color-text-soft, #555555);
-  color: #555555;
 }
 .mobile-block-suggestion { font-size: 16px; }
 

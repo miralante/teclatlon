@@ -100,6 +100,15 @@
   transition: opacity 0.12s ease, transform 0.12s ease, visibility 0s;
 }
 
+/* A native settings drawer creates its own stacking context above the
+   backdrop. Keep the locale menu inside that drawer; right-aligning the
+   full-width panel row can otherwise place half the menu underneath the
+   backdrop, where it is visible but cannot receive pointer input. */
+.settings-drawer #locale-picker .locale-picker-panel {
+  right: auto;
+  left: 0;
+}
+
 /* Opciones */
 .locale-picker-panel li {
   display: flex;

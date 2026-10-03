@@ -83,26 +83,7 @@
   <script src="../assets/js/i18n.js"></script>
   <script src="strings.es.js"></script>
   <script src="strings.en.js"></script>
-  <script>
-    (function () {
-      'use strict';
-      function paintLanguageSelector() {
-        var active = App.i18n.locale();
-        document.getElementById('btnLangEs').setAttribute('aria-pressed', String(active === 'es'));
-        document.getElementById('btnLangEn').setAttribute('aria-pressed', String(active === 'en'));
-      }
-      document.getElementById('btnLangEs').addEventListener('click', function () { App.i18n.setLocale('es'); });
-      document.getElementById('btnLangEn').addEventListener('click', function () { App.i18n.setLocale('en'); });
-      paintLanguageSelector();
-    })();
-  </script>
-  <script>
-    /* Register the SW from this entry point so it is active for any later
-       navigation, matching what the main index.html and the sibling
-       standalone pages (about/, team/, config/) already do. */
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('../sw.js').catch(function () {});
-    }
-  </script>
+  <script src="../assets/js/subpage-lang.js?v=1"></script>
+  <script src="../assets/js/register-sw.js?v=1"></script>
 </body>
 </html>

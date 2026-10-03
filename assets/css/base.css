@@ -65,6 +65,12 @@ button {
   font-family: inherit;
   font-size: inherit;
   cursor: pointer;
+  /* Sin esto el <button> usa su negro por defecto (buttontext) en vez
+     del token del tema, y queda ilegible en oscuro y en alto contraste.
+     Cada botón con fondo de acento lo sobrescribe a mano. */
+  color: var(--color-text, #1A1A2E);
+  background: none;
+  border: 0;
 }
 
 a { color: var(--accent); }

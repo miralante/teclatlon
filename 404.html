@@ -14,13 +14,10 @@
   <h1>404</h1>
   <p>La página que buscas no existe.</p>
   <p><a href="index.html">Volver al inicio de Teclatlon</a></p>
-  <script>
-    // Register the service worker on this fallback too, so a 404 hit
-    // still leaves the SW active for the next navigation back into the
-    // app (matches the pattern in ./index.html).
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js').catch(function () {});
-    }
-  </script>
+  <!-- Register the service worker on this fallback too, so a 404 hit still
+       leaves the SW active for the next navigation back into the app.
+       External because the production CSP is `script-src 'self'`; it
+       resolves the root sw.js from its own src. -->
+  <script src="assets/js/register-sw.js?v=1"></script>
 </body>
 </html>

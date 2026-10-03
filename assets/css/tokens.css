@@ -16,6 +16,12 @@
      accent for buttons, links and focus states). */
   --accent: #1B6CA8;         /* blue — left hand / thumbs */
   --accent-soft: #E3EEF6;
+  /* Texto legible ENCIMA de --accent / --color-success. En claro los
+     acentos son oscuros y el texto va en blanco; en oscuro y contraste
+     los acentos se aclaran para destacar sobre el fondo, así que el
+     texto tiene que volverse oscuro o blanco sería ilegible. */
+  --color-on-accent: #FFFFFF;
+  --color-on-success: #FFFFFF;
   --color-hand-right: #2E7D32;   /* green — right hand / index fingers */
   --color-hand-right-soft: #E6F2E6;
   --color-finger-ring: #C05621;    /* orange — ring fingers */
@@ -34,10 +40,8 @@
 
   /* Typography */
   --font: 'Atkinson Hyperlegible', 'Nunito', system-ui, -apple-system, sans-serif;
-  --text-base: 20px;
-  --text-small: 17px;
-  --text-large: 28px;
-  --text-title: 36px;
+  /* --text-base y la escala derivada (--text-small/large/title) se
+     declaran al final del archivo, junto a los pasos de tamaño. */
 
   /* Touch and spacing */
   --button-min: 64px;
@@ -73,6 +77,9 @@
   --color-border: #2E3346;
   --accent: #6BB4F2;
   --accent-soft: #19354D;
+  /* Sobre el azul claro y el verde claro hace falta texto oscuro. */
+  --color-on-accent: #14161E;
+  --color-on-success: #14161E;
   --color-success: #7BD389;
   --color-success-soft: #1E2A20;
   --color-encourage: #F2B07A;
@@ -100,6 +107,9 @@
   --color-border: #FFFFFF;
   --accent: #FFFF00;
   --accent-soft: #000000;
+  /* Amarillo y verde puro: cualquier texto claro desaparece. */
+  --color-on-accent: #000000;
+  --color-on-success: #000000;
   --color-success: #00FF66;
   --color-success-soft: #000000;
   --color-encourage: #FF8800;
@@ -124,7 +134,7 @@ html.hide-legend .keyboard-legend {
 }
 
 /* -------- hideNumpad: hides the inline numpad -------- */
-html.hide-numpad .panel-numpad-inline {
+html.hide-numpad .numpad-inline {
   display: none !important;
 }
 
@@ -138,8 +148,21 @@ html.dim-celebration .celebration .message {
   color: #FFFFFF;
 }
 
-/* -------- Text size steps (controlled by --text-base) -------- */
+/* -------- Text size steps (controlled by --text-base) --------
+   Los cuatro tamaños se escalan juntos, no solo --text-base: si solo
+   creciera la base, en "huge" el texto de apoyo (17px) quedaría por
+   debajo del normal (20px) y la jerarquía se invertiría justo cuando
+   la persona que agranda la letra la necesita. La proporción se
+   mantiene: small = 0.85, large = 1.4, title = 1.8 sobre la base. */
 :root { --text-base: 20px; }
 [data-text-size="small"] { --text-base: 18px; }
 [data-text-size="large"] { --text-base: 24px; }
-[data-text-size="huge"] { --text-base: 30px; }
+[data-text-size="huge"]   { --text-base: 30px; }
+
+/* La escala se deriva de la base con calc() para que cada paso mueva
+   los cuatro tamaños a la vez. */
+:root {
+  --text-small: calc(var(--text-base) * 0.85);
+  --text-large: calc(var(--text-base) * 1.40);
+  --text-title: calc(var(--text-base) * 1.80);
+}

@@ -141,15 +141,14 @@
     var hideNumpad = rawOptions.hideNumpad !== undefined ? rawOptions.hideNumpad : !!legacyFocus;
     var dimCelebration = rawOptions.dimCelebration !== undefined ? rawOptions.dimCelebration : !!legacyFocus;
     var html = document.documentElement;
-    /* Default theme is "light". If the user has chosen "auto" we
-       still need a concrete data-theme before first paint to
-       avoid flashing dark on systems with prefers-color-scheme:
-       dark — auto resolves to "light" for first paint and the
-       real OS theme is applied right after by app.js#applyOptions()
-       when it swaps back to data-theme unset for "auto". If they
-       picked an explicit theme we honour it as before. */
+    /* Resolve "auto" before first paint so systems using dark mode
+       don't briefly show the light palette. app.js listens for later
+       prefers-color-scheme changes and keeps this resolved theme in
+       sync while the saved option remains "auto". */
     if (theme === 'dark' || theme === 'oscuro' || theme === 'contrast' || theme === 'contraste') {
       html.setAttribute('data-theme', theme === 'oscuro' ? 'dark' : (theme === 'contraste' ? 'contrast' : theme));
+    } else if (theme === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      html.setAttribute('data-theme', 'dark');
     } else {
       html.setAttribute('data-theme', 'light');
     }

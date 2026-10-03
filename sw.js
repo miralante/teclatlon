@@ -5,7 +5,7 @@
    and bump VERSION so the activate step purges the old cache.
    See CLOUDFLARE.md �"Cache contract" for the full contract.
    ============================================================ */
-var VERSION = 'teclatlon-v73';
+var VERSION = 'teclatlon-v75';
 
 var FILES = [
   './index.html',
@@ -55,6 +55,14 @@ var FILES = [
   './assets/js/tts.js',
   './assets/js/storage.js',
   './assets/js/feedback.js',
+  /* External scripts that used to be inline <script> blocks. The CSP is
+     `script-src 'self'`, so they must stay external: locale-picker-config
+     (settings: false keeps the accessibility gear out of the app's own
+     settings drawer), register-sw (the PWA) and subpage-lang (the
+     language buttons on about/, legal/ and team/). */
+  './assets/js/locale-picker-config.js',
+  './assets/js/register-sw.js',
+  './assets/js/subpage-lang.js',
   './assets/img/icono.svg'
 ];
 

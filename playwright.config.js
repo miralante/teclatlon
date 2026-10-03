@@ -2,6 +2,16 @@
 
 const { defineConfig } = require('playwright/test');
 
+/* The preview port is overridable so two sessions (or two sibling
+   projects) can run their suites at the same time. Hardcoding 4173 made
+   this suite silently measure the WRONG app: when another session's
+   preview server took the port, our ui-server could not bind, Playwright
+   happily probed the foreign server, and 24 tests failed with
+   ERR_CONNECTION_REFUSED while one "contrast" failure was actually a
+   bug in a different project. Run with e.g. PORT=4188 to isolate. */
+const PORT = Number(process.env.PORT || 4173);
+const BASE_URL = `http://127.0.0.1:${PORT}/`;
+
 module.exports = defineConfig({
   testDir: './tests',
   timeout: 60000,
@@ -10,7 +20,7 @@ module.exports = defineConfig({
   fullyParallel: false,
   reporter: 'line',
   use: {
-    baseURL: 'http://127.0.0.1:4173/',
+    baseURL: BASE_URL,
     locale: 'es-ES',
     serviceWorkers: 'block',
     viewport: { width: 1280, height: 900 },
@@ -22,7 +32,7 @@ module.exports = defineConfig({
   },
   webServer: {
     command: 'node scripts/ui-server.js',
-    url: 'http://127.0.0.1:4173/',
+    url: BASE_URL,
     reuseExistingServer: false,
     timeout: 30000,
     stdout: 'pipe',

@@ -16,7 +16,7 @@ const { test, expect } = require('playwright/test');
 // = the page is open but nobody touches it.
 // ---------------------------------------------------------------------------
 
-const BASE = 'http://127.0.0.1:4173/';
+const BASE = `http://127.0.0.1:${process.env.PORT || 4173}/`;
 const MIN = 60 * 1000;
 
 let _browser;

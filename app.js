@@ -54,6 +54,9 @@
   }
 
   var state = migrateLegacyState(App.storage.get(SLUG));
+  var systemThemeQuery = window.matchMedia
+    ? window.matchMedia('(prefers-color-scheme: dark)')
+    : null;
   state.name = typeof state.name === 'string' ? state.name : '';
   state.stars = state.stars || 0;
   state.completed = state.completed || {};
@@ -364,8 +367,7 @@
       b.setAttribute('aria-pressed', String(b.dataset.keyboard === state.options.keyboard));
     });
     $$('.btn-color').forEach(function (b) {
-      b.setAttribute('aria-pressed', String(state.options.color === 'fingers'));
-      b.textContent = App.i18n.t(state.options.color === 'fingers' ? 'btnColorsFingers' : 'btnColorsHands');
+      b.setAttribute('aria-pressed', String(b.dataset.color === state.options.color));
     });
     $$('.keyboard-legend').forEach(function (l) {
       l.textContent = App.i18n.t(state.options.color === 'fingers' ? 'legendFingers' : 'legendHands');
@@ -392,8 +394,10 @@
      everything consistent once app.js has taken over. */
   function applyOptions() {
     var html = document.documentElement;
-    if (state.options.theme === 'auto') html.removeAttribute('data-theme');
-    else html.setAttribute('data-theme', state.options.theme);
+    var activeTheme = state.options.theme === 'auto'
+      ? (systemThemeQuery && systemThemeQuery.matches ? 'dark' : 'light')
+      : state.options.theme;
+    html.setAttribute('data-theme', activeTheme);
     if (state.options.textSize === 'normal') html.removeAttribute('data-text-size');
     else html.setAttribute('data-text-size', state.options.textSize);
     html.classList.toggle('hide-legend', state.options.hideLegend);
@@ -1510,7 +1514,7 @@
     }
     var bc = e.target.closest('.btn-color');
     if (bc) {
-      state.options.color = state.options.color === 'hands' ? 'fingers' : 'hands';
+      state.options.color = bc.dataset.color === 'fingers' ? 'fingers' : 'hands';
       save();
       renderKeyboards();
     }
@@ -1703,6 +1707,13 @@
   renderRows($('#numpad'), DATA.numpad);
   renderKeyboards();
   applyOptions();
+  if (systemThemeQuery) {
+    var updateSystemTheme = function () {
+      if (state.options.theme === 'auto') applyOptions();
+    };
+    if (systemThemeQuery.addEventListener) systemThemeQuery.addEventListener('change', updateSystemTheme);
+    else if (systemThemeQuery.addListener) systemThemeQuery.addListener(updateSystemTheme);
+  }
   updateStars();
 
   /* Hash routing — supports direct navigation via URL hash

@@ -2,6 +2,7 @@
     "name": "teclatlon-ui-smoke",
     "private": true,
     "scripts": {
+        "test:contrast": "powershell -ExecutionPolicy Bypass -File ..\\contrast\\check-contrast.ps1",
         "test:ui": "playwright test",
         "test:ui:headed": "playwright test --headed"
     },

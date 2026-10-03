@@ -120,7 +120,13 @@
 
   function wireLanguageButtons() {
     var currentLocale = App.i18n.locale();
-    App.utils.$$('.btn-idioma').forEach(function (btn) {
+    /* The markup was migrated from .btn-idioma to .btn-lang (and the ids
+       from btnIdiomaEs/En to btnLangEs/En), but this selector was left
+       behind: $$('.btn-idioma') matched nothing, the first btn.textContent
+       below threw on null, and that killed the rest of the DOMContentLoaded
+       handler — so the language buttons and the "borrar todo" button were
+       all dead on this page. */
+    App.utils.$$('.btn-lang').forEach(function (btn) {
       var pressed = btn.dataset.locale === currentLocale;
       btn.setAttribute('aria-pressed', String(pressed));
       btn.addEventListener('click', function () {
@@ -141,7 +147,7 @@
       resetPersonalData
     );
     confirmTwice(
-      $('#btnBorrarTodo'),
+      $('#btnEraseAll'),
       'btnResetAll',
       'confirmResetAll',
       resetEverything

@@ -156,9 +156,9 @@
 }
   </script>
 
-  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/tokens.css?v=teclatlon-v2">
   <link rel="stylesheet" href="assets/css/base.css">
-  <link rel="stylesheet" href="assets/css/components.css"><link rel="stylesheet" href="assets/css/locale-picker.css?v=teclatlon-v1">  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="assets/css/components.css"><link rel="stylesheet" href="assets/css/locale-picker.css?v=teclatlon-v3">  <link rel="stylesheet" href="styles.css">
       <!-- Pre-paint bootstrap (device gate + locale + saved accessibility
        settings). External file so the CSP can keep `script-src 'self'`
        without 'unsafe-inline'. The whole file is one synchronous IIFE
@@ -456,8 +456,8 @@
     <div class="setting-row">
       <span class="setting-label" data-i18n="colorModeLabel">Colores del teclado</span>
       <span class="text-group" role="group">
-        <button type="button" class="btn-icon btn-color" data-i18n="btnColorsHands" aria-pressed="false">🎨 Manos</button>
-        <button type="button" class="btn-icon btn-color" data-i18n="btnColorsFingers" aria-pressed="false">🎨 Dedos</button>
+        <button type="button" class="btn-icon btn-color" data-color="hands" data-i18n="btnColorsHands" aria-pressed="true">🎨 Manos</button>
+        <button type="button" class="btn-icon btn-color" data-color="fingers" data-i18n="btnColorsFingers" aria-pressed="false">🎨 Dedos</button>
       </span>
     </div>
 
@@ -504,22 +504,13 @@
   <script src="data.js"></script>
   <script src="app.js"></script>
   <!-- Locale picker config (must run BEFORE assets/js/locale-picker.js).
-       Teclatlon stores strings next to index.html (not under assets/js/),
-       so path: 'strings'. storageKey must match the one assets/js/i18n.js
-       writes to localStorage ('teclatlon:locale'). -->
-  <script>
-  window.LocalePickerConfig = {
-    storageKey: 'teclatlon:locale',
-    path: 'strings',
-    defaultLocale: 'en',
-    settings: false
-  };
-  </script>
-  <script src="assets/js/locale-picker.js?v=teclatlon-v2" defer></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js').catch(function () {});
-    }
-  </script>
+       External file: the CSP is `script-src 'self'`, so an inline
+       <script> would be dropped in production and the component would
+       fall back to its defaults. See assets/js/locale-picker-config.js. -->
+  <script src="assets/js/locale-picker-config.js?v=1"></script>
+  <script src="assets/js/locale-picker.js?v=teclatlon-v4" defer></script>
+  <!-- SW registration, also external for the same CSP reason. Resolves
+       the root sw.js from its own src, so it needs no path here. -->
+  <script src="assets/js/register-sw.js?v=1"></script>
 </body>
 </html>

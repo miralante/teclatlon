@@ -5,7 +5,7 @@ const { test, expect } = require('playwright/test');
 // ---------------------------------------------------------------------------
 // Module-level browser reference — set in beforeEach before each test
 // ---------------------------------------------------------------------------
-const BASE = 'http://127.0.0.1:4173/';
+const BASE = `http://127.0.0.1:${process.env.PORT || 4173}/`;
 
 let _browser;
 let _lastCtx = null; // context created by the current test's openFreshApp()
@@ -189,14 +189,41 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     page = await openFreshApp();
     await page.locator('#btnOpenSettings').click();
 
-    for (const theme of ['light', 'dark', 'contrast']) {
+    const palette = () => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--color-bg').trim());
+    await page.locator('.btn-theme[data-theme="light"]').click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    await expect(page.locator('.btn-theme[data-theme="light"]')).toHaveAttribute('aria-pressed', 'true');
+    const lightPalette = await palette();
+    for (const theme of ['dark', 'contrast']) {
       await page.locator(`.btn-theme[data-theme="${theme}"]`).click();
       await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+      await expect(page.locator(`.btn-theme[data-theme="${theme}"]`)).toHaveAttribute('aria-pressed', 'true');
+      const themePalette = await palette();
+      expect(themePalette).not.toBe(lightPalette);
     }
 
-    // auto follows system
+    // Auto follows the system preference and keeps doing so if it changes.
+    await page.emulateMedia({ colorScheme: 'dark' });
     await page.locator('.btn-theme[data-theme="auto"]').click();
-    await page.waitForTimeout(200);
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    await expect(page.locator('.btn-theme[data-theme="auto"]')).toHaveAttribute('aria-pressed', 'true');
+    await page.emulateMedia({ colorScheme: 'light' });
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  });
+
+  test('2.3b — el tema auto sigue la preferencia del sistema al iniciar', async () => {
+    const context = await _browser.newContext({ colorScheme: 'dark' });
+    _lastCtx = context;
+    const page = await context.newPage();
+    await context.addInitScript(() => {
+      localStorage.setItem('teclatlon:keyboard', JSON.stringify({
+        name: '', options: { theme: 'auto' }, goal: { accuracyMin: 0, speedMin: 0 }
+      }));
+    });
+    await page.goto(BASE);
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    await expect.poll(() => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--color-bg').trim()))
+      .toBe('#14161E');
   });
 
   test('2.4 — cambia todos los tamaños de texto (small, normal, large, huge)', async ({ page }) => {
@@ -221,19 +248,86 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     page = await openFreshApp();
     await page.locator('#btnOpenSettings').click();
     await page.waitForTimeout(300); // wait for drawer animation to complete
+    await page.evaluate(() => {
+      window.__audioStarts = 0;
+      window.AudioContext = function () {
+        this.currentTime = 0;
+        this.destination = {};
+        this.state = 'running';
+        this.createOscillator = () => ({
+          type: '', frequency: { value: 0 }, connect() {},
+          start() { window.__audioStarts += 1; }, stop() {}
+        });
+        this.createGain = () => ({
+          gain: { setValueAtTime() {}, exponentialRampToValueAtTime() {} }, connect() {}
+        });
+        this.createStereoPanner = () => ({ pan: { value: 0 }, connect() {} });
+      };
+    });
 
-    // Focus mode: toggle on then off (JS click for reliability)
+    // Each visibility control changes the content, not only its button state.
+    const legend = page.locator('#screenName .keyboard-legend');
+    await expect(legend).toBeVisible();
+    await page.locator('#btnHideLegend').click();
+    await expect(legend).toBeHidden();
+    await page.locator('#btnHideLegend').click();
+    await expect(legend).toBeVisible();
+
+    await page.locator('.btn-keyboard[data-keyboard="extended"]').click();
+    const numpad = page.locator('#screenName .numpad-inline');
+    await expect(numpad).toBeVisible();
+    await page.locator('#btnHideNumpad').click();
+    await expect(numpad).toBeHidden();
+    await page.locator('#btnHideNumpad').click();
+    await expect(numpad).toBeVisible();
+
+    const celebrationColors = await page.evaluate(() => {
+      const fixture = document.createElement('div');
+      fixture.className = 'celebration';
+      fixture.style.cssText = 'position:absolute;top:-9999px;left:-9999px';
+      const message = document.createElement('span');
+      message.className = 'message';
+      fixture.appendChild(message);
+      document.body.appendChild(fixture);
+      const before = [getComputedStyle(fixture).backgroundColor, getComputedStyle(message).color];
+      document.querySelector('#btnDimCelebration').click();
+      const after = [getComputedStyle(fixture).backgroundColor, getComputedStyle(message).color];
+      fixture.remove();
+      return { before, after };
+    });
+    expect(celebrationColors.after).not.toEqual(celebrationColors.before);
+    await expect(page.locator('#btnDimCelebration')).toHaveAttribute('aria-pressed', 'true');
+    await page.locator('#btnDimCelebration').click();
+
+    // Focus mode enables/disables the three focus settings together.
     await page.evaluate(() => document.querySelector('#btnFocusMode').click());
     await expect(page.locator('#btnFocusMode')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('html')).toHaveClass(/hide-legend/);
+    await expect(page.locator('html')).toHaveClass(/hide-numpad/);
+    await expect(page.locator('html')).toHaveClass(/dim-celebration/);
     await page.evaluate(() => document.querySelector('#btnFocusMode').click());
     await expect(page.locator('#btnFocusMode')).toHaveAttribute('aria-pressed', 'false');
+    await expect(page.locator('html')).not.toHaveClass(/hide-legend/);
+    await expect(page.locator('html')).not.toHaveClass(/hide-numpad/);
+    await expect(page.locator('html')).not.toHaveClass(/dim-celebration/);
 
     // Key sound: toggle via JS and verify textContent changes
     await page.evaluate(() => document.querySelector('#btnKeySound').click());
     const afterFirst = await page.locator('#btnKeySound').textContent();
     expect(afterFirst).not.toBe('⌨️ Sonido de teclas');
+    await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('miralante:sounds'))))
+      .toEqual({ success: false, error: false });
+    await page.evaluate(() => {
+      App.feedback.successSound(0);
+      App.feedback.errorSound();
+    });
+    await expect.poll(() => page.evaluate(() => window.__audioStarts)).toBe(0);
     await page.evaluate(() => document.querySelector('#btnKeySound').click());
     await expect(page.locator('#btnKeySound')).toHaveAttribute('aria-pressed', 'true');
+    await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('miralante:sounds'))))
+      .toEqual({ success: true, error: false });
+    await page.evaluate(() => App.feedback.successSound(0));
+    await expect.poll(() => page.evaluate(() => window.__audioStarts)).toBe(2);
 
     // Metrics (JS click for reliability)
     // Inspect state before and after click by reading DOM directly
@@ -265,10 +359,14 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await expect(page.locator('#btnErrorSound')).toHaveAttribute('aria-pressed', 'true');
     await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('miralante:sounds'))))
       .toEqual({ success: true, error: true });
+    await page.evaluate(() => App.feedback.errorSound());
+    await expect.poll(() => page.evaluate(() => window.__audioStarts)).toBe(3);
     await page.evaluate(() => document.querySelector('#btnErrorSound').click());
     await expect(page.locator('#btnErrorSound')).toHaveAttribute('aria-pressed', 'false');
     await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('miralante:sounds'))))
       .toEqual({ success: true, error: false });
+    await page.evaluate(() => App.feedback.errorSound());
+    await expect.poll(() => page.evaluate(() => window.__audioStarts)).toBe(3);
   });
 
   test('2.6 — vista del teclado: simple, normal, extended', async ({ page }) => {
@@ -277,10 +375,12 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
 
     await page.locator('.btn-keyboard[data-keyboard="simple"]').click();
     await expect(page.locator('.btn-keyboard[data-keyboard="simple"]')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('#screenName .keyboard .key[data-ch="1"]')).toHaveCount(0);
+    await expect(page.locator('#screenName .keyboard .key[data-ch="q"]')).toBeVisible();
 
     await page.locator('.btn-keyboard[data-keyboard="normal"]').click();
     await expect(page.locator('.btn-keyboard[data-keyboard="normal"]')).toHaveAttribute('aria-pressed', 'true');
-    await expect(page.locator('#screenName .keyboard .key:visible')).not.toHaveCount(0);
+    await expect(page.locator('#screenName .keyboard .key[data-ch="1"]')).toBeVisible();
 
     await page.locator('.btn-keyboard[data-keyboard="extended"]').click();
     await expect(page.locator('.btn-keyboard[data-keyboard="extended"]')).toHaveAttribute('aria-pressed', 'true');
@@ -291,17 +391,41 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     page = await openFreshApp();
     await page.locator('#btnOpenSettings').click();
 
-    // Keyboard starts with 'color-hands' class
     const keyboard = page.locator('#screenName .keyboard');
+    const handsButton = page.locator('.btn-color[data-color="hands"]');
+    const fingersButton = page.locator('.btn-color[data-color="fingers"]');
+    const pinkyKey = page.locator('#screenName .keyboard .key[data-ch="q"]');
     await expect(keyboard).toHaveClass(/color-hands/);
+    await expect(handsButton).toHaveAttribute('aria-pressed', 'true');
+    await expect(fingersButton).toHaveAttribute('aria-pressed', 'false');
 
-    // Click color button → toggles to 'fingers'
-    await page.locator('.btn-color').first().click();
+    const handsColor = await page.evaluate(() => getComputedStyle(document.querySelector('#screenName .keyboard .key.f-lp')).backgroundColor);
+
+    // Choosing either button selects its named colour mode; clicking the
+    // selected button again must not silently switch to the other mode.
+    await handsButton.click();
+    await expect(keyboard).toHaveClass(/color-hands/);
+    await fingersButton.click();
+    await expect(keyboard).toHaveClass(/color-fingers/);
+    await expect(handsButton).toHaveAttribute('aria-pressed', 'false');
+    await expect(fingersButton).toHaveAttribute('aria-pressed', 'true');
+    const fingersColor = await pinkyKey.evaluate(el => getComputedStyle(el).backgroundColor);
+    expect(fingersColor).not.toBe(handsColor);
+    await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('teclatlon:keyboard')).options.color)).toBe('fingers');
+
+    await fingersButton.click();
     await expect(keyboard).toHaveClass(/color-fingers/);
 
-    // Click again → toggles back to 'hands'
-    await page.locator('.btn-color').first().click();
+    await handsButton.click();
     await expect(keyboard).toHaveClass(/color-hands/);
+    await expect(handsButton).toHaveAttribute('aria-pressed', 'true');
+    await expect(fingersButton).toHaveAttribute('aria-pressed', 'false');
+
+    await fingersButton.click();
+    await page.reload();
+    await page.locator('#btnOpenSettings').click();
+    await expect(keyboard).toHaveClass(/color-fingers/);
+    await expect(fingersButton).toHaveAttribute('aria-pressed', 'true');
   });
 
   test('2.8 — metas: precisión y velocidad se guardan', async ({ page }) => {
@@ -309,6 +433,9 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await page.locator('#btnOpenSettings').click();
 
     await page.locator('#goalSettings summary').click();
+    await expect(page.locator('#goalSettings')).toHaveAttribute('open', '');
+    await expect(page.locator('#goalAccuracySelect')).toBeVisible();
+    await expect(page.locator('#goalSpeedSelect')).toBeVisible();
     await page.locator('#goalAccuracySelect').selectOption('95');
     await page.evaluate(() => document.querySelector('#goalAccuracySelect').dispatchEvent(new Event('change', { bubbles: true })));
     await expect(page.locator('#goalAccuracySelect')).toHaveValue('95');
@@ -320,9 +447,17 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
 
     // Reopen and verify persistence
     await page.locator('#btnOpenSettings').click();
-    await page.locator('#goalSettings summary').click();
+    await expect(page.locator('#goalSettings')).toHaveAttribute('open', '');
     await expect(page.locator('#goalAccuracySelect')).toHaveValue('95');
     await expect(page.locator('#goalSpeedSelect')).toHaveValue('80');
+    await page.locator('#btnMetrics').click();
+    await page.locator('#btnCloseSettings').click();
+    await page.locator('#btnSkipName').click();
+    await page.locator('[data-mode="words"]').click();
+    await expect(page.locator('#screenGame')).toBeVisible();
+    await expect(page.locator('#goalBars .goal-bar-row')).toHaveCount(2);
+    await expect(page.locator('#goalBars')).toContainText('95%');
+    await expect(page.locator('#goalBars')).toContainText('80 ppm');
   });
 
   test('2.9 — logros: sección abre, cierra y muestra badges', async ({ page }) => {
@@ -1047,6 +1182,12 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await expect(page.locator('#liveMetrics')).toBeVisible();
     // Accuracy (Prec.) and speed (PPM) values shown.
     await expect(page.locator('#liveMetrics')).toContainText(/%|PPM/i);
+
+    // Switching the option off during the activity removes the live metrics.
+    await page.locator('#btnOpenSettings').click();
+    await page.locator('#btnMetrics').click();
+    await page.locator('#btnCloseSettings').click();
+    await expect(page.locator('#liveMetrics')).toBeHidden();
   });
 
   // -----------------------------------------------------------------
