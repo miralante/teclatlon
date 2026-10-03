@@ -28,7 +28,7 @@ la sesión o lista de lecciones que le corresponde.
 | **Números (juego del teclado numérico)** | Práctica del teclado numérico con la posición base de la mano derecha. | [`tecnico.md`](tecnico.md) §"Modo números". |
 | **Todas las teclas** | Práctica mixta que ejercita el **teclado completo** del diseño activo — todas las letras, todos los números cuando el diseño los muestra, la barra espaciadora y todas las teclas de puntuación. | [`SPEC.md`](SPEC.md) §3.7. |
 | **Escritura libre** | Texto libre + lectura en voz alta de lo que se ha escrito. | [`tecnico.md`](tecnico.md) §"Modo escritura libre". |
-| **Dictado** | Escucha una letra aleatoria y pide pulsarla en el teclado físico. El teclado en pantalla y la guía de manos permanecen ocultos; los aciertos y errores tienen sonidos distintos. | `playDictation()` en `app.js`. |
+| **Dictado** | Escucha una letra aleatoria y pide pulsarla en el teclado físico. El teclado en pantalla y la guía de manos permanecen ocultos; los aciertos y errores tienen sonidos distintos. La pantalla explica en qué consiste la actividad y ofrece volver a oír la letra. | `playDictation()` en `app.js`. |
 
 Cada modo es corto y reutilizable a propósito. No hay una
 "compuerta de nivel completado" que bloquee el siguiente modo — la
@@ -82,6 +82,29 @@ El dictado también es una sesión continua. Dice una letra aleatoria
 cada vez y espera a que la persona pulse su tecla. Si se equivoca,
 vuelve a decir la misma letra. Incluye todas las letras del teclado
 español, también la ñ, y no repite una letra dos veces seguidas.
+
+Es el único modo que pide una tecla **por el oído**, así que su
+pantalla tiene que resolver lo que el sonido no resuelva. Tres reglas,
+y las tres son parte del modo, no extras:
+
+1. **La actividad se explica en pantalla.** Un panel con los cuatro
+   pasos (oyes una letra, dices su nombre, pulsas su tecla, si te
+   equivocas la oyes otra vez) está siempre visible mientras se
+   practica. Sustituye a la tarjeta de objetivo, que este modo no usa.
+2. **La letra se puede volver a oír.** Un botón "🔊 Escuchar otra
+   vez" repite la letra actual sin avanzar. Sin él, el que no la oyó
+   la primera vez se queda sin nada que pulsar.
+3. **Nunca se bloquea el teclado esperando un sonido.** El bloqueo
+   entre letras (`game.waiting`) lo libera el final de la lectura, pero
+   también un temporizador, así que un utterance que muere en silencio
+   no deja la actividad muda y bloqueada. Y si el ordenador **no tiene
+   ninguna voz instalada**, la letra pasa de los altavoces a la
+   pantalla y la actividad sigue funcionando.
+
+Mientras el ordenador puede leer la letra, **no se muestra en
+pantalla**: enseñarla convertiría el dictado en copiar la letra, que no
+es lo que entrena. La letra en pantalla es solo el respaldo de quien no
+puede oír.
 
 ## 5. Lo que **no** es una actividad aquí
 

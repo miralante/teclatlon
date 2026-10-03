@@ -108,8 +108,10 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
 
   test('1.2 — skip lleva al menú principal vacío', async ({ page }) => {
     page = await skipToMenu();
-    // 7 mode cards present
-    await expect(page.locator('.mode-card')).toHaveCount(7);
+    // 8 mode cards present: posición, palabras, números, todas las teclas,
+    // escritura libre, plantillas y dictado. Hardcoded on purpose — a new
+    // mode has to be counted here, not slip in unnoticed.
+    await expect(page.locator('.mode-card')).toHaveCount(8);
   });
 
   test('1.3 — escribir nombre y guardar lleva al menú con saludo', async ({ page }) => {

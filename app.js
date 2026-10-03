@@ -128,9 +128,10 @@
   /* In-progress game. null outside screenGame.
      type 'seq': { cfg: { mode, title, steps, starKey, onFinish }, idx, pos, waiting }
      type 'challenge': { set: { ch: true } }
-     type 'dictation': { letters, letter, waiting } */
+     type 'dictation': { letters, letter, waiting, noVoice } */
   var game = null;
   var dictationTimer = null;
+  var dictationUnlock = null;
 
   function capitalize(name) {
     return name ? name.charAt(0).toUpperCase() + name.slice(1) : '';
@@ -824,10 +825,21 @@
     return a;
   }
 
+  /* The target/challenge card and the dictation panel are mutually
+     exclusive: the card is the thing to look at in every mode except
+     dictation, which puts its own panel in that same place. Every mode
+     that opens the game screen comes through here, so neither one can
+     be left behind by whichever mode ran before it. */
+  function showGameCard() {
+    $('#gameCard').classList.remove('hidden');
+    dictationPanel(false);
+  }
+
   function startSequence(cfg) {
     game = { type: 'seq', cfg: cfg, idx: 0, pos: 0, waiting: false };
     $('#gameTitle').textContent = cfg.title;
     var inNumpad = cfg.mode === 'numbers';
+    showGameCard();
     $('#keyboardPanel').classList.toggle('hidden', inNumpad);
     $('#numpadPanel').classList.toggle('hidden', !inNumpad);
     $('#targetZone').classList.remove('hidden');
@@ -1256,7 +1268,26 @@
     });
   }
 
-  /* ---------- Dictation: hear a random letter, then type it ---------- */
+  /* ---------- Dictation: hear a random letter, then type it ----------
+     This is the one mode that asks for a key through sound, so all of it
+     is written around a single rule: a letter that never reaches the
+     ears must not leave the activity stuck.
+       - the screen says what the activity is and offers to repeat the
+         letter (#dictationPanel), so the request is never a mystery;
+       - `waiting` is released by a timer as well as by the reading, so a
+         dropped utterance cannot lock the keyboard with no visible sign;
+       - with no installed voice the letter is shown instead of spoken,
+         so the activity still works. */
+  /* How long the keyboard stays deaf after a letter is asked for. A
+     reading normally ends first (and tts.js guarantees the callback
+     even when it does not); this is the net for an utterance that dies
+     silently, so it sits above that watchdog on purpose. */
+  var DICTATION_UNLOCK_MS = 6000;
+  /* Chrome fills the voice list asynchronously, so a first "no voices"
+     reading is not proof of anything: poll briefly before giving up and
+     moving the letter onto the screen. */
+  var DICTATION_VOICE_POLL_MS = 900;
+
   function dictationLetters() {
     return DATA.rows.reduce(function (letters, row) {
       row.forEach(function (key) {
@@ -1266,6 +1297,33 @@
     }, []);
   }
 
+  function dictationPanel(show) {
+    $('#dictationPanel').classList.toggle('hidden', !show);
+    if (!show) dictationLetter(null);
+  }
+
+  /** Shows the current letter on screen, or hides it with no argument.
+      The letter is never shown while the machine can read it aloud: the
+      whole point of the mode is to ask for it by ear. */
+  function dictationLetter(letter) {
+    if (letter) $('#dictationLetter').textContent = letter;
+    $('#dictationFallback').classList.toggle('hidden', !letter);
+  }
+
+  /** Reports whether this machine can read a letter out loud.
+      Resolves immediately when it can; waits out a short poll when the
+      voice list has not been filled in yet, so a late-loading voice is
+      not mistaken for a missing one. */
+  function dictationCanSpeak(done) {
+    var waited = 0;
+    (function poll() {
+      if (App.tts.hasVoice()) { done(true); return; }
+      waited += 100;
+      if (waited > DICTATION_VOICE_POLL_MS) { done(false); return; }
+      setTimeout(poll, 100);
+    })();
+  }
+
   function speakDictationLetter(nextLetter) {
     if (!game || game.type !== 'dictation') return;
     if (nextLetter || !game.letter) {
@@ -1273,6 +1331,12 @@
       game.letter = letters[Math.floor(Math.random() * letters.length)];
     }
     game.waiting = true;
+    dictationLetter(game.noVoice ? game.letter : null);
+    if (dictationUnlock) clearTimeout(dictationUnlock);
+    dictationUnlock = setTimeout(function () {
+      dictationUnlock = null;
+      if (game && game.type === 'dictation') game.waiting = false;
+    }, DICTATION_UNLOCK_MS);
     var name = App.i18n.t('dictationLetterNames.' + game.letter);
     var prompt = App.i18n.t('dictationPrompt').replace('{letter}', name);
     App.tts.speak(prompt, function () {
@@ -1282,9 +1346,15 @@
 
   function playDictation() {
     if (dictationTimer) clearTimeout(dictationTimer);
-    game = { type: 'dictation', letters: dictationLetters(), letter: null, waiting: true };
+    if (dictationUnlock) clearTimeout(dictationUnlock);
+    game = { type: 'dictation', letters: dictationLetters(), letter: null, waiting: true, noVoice: false };
     $('#gameTitle').textContent = App.i18n.t('modeDictationName');
     $('#gameInstruction').textContent = App.i18n.t('dictationInstruction');
+    /* The card only ever holds the target and the challenge progress,
+       both of which this mode does without, and the panel below replaces
+       it as the thing to look at. */
+    $('#gameCard').classList.add('hidden');
+    dictationPanel(true);
     $('#keyboardPanel').classList.add('hidden');
     $('#numpadPanel').classList.add('hidden');
     $('#targetZone').classList.add('hidden');
@@ -1294,7 +1364,13 @@
     startMetrics();
     updateLiveMetrics();
     showScreen('screenGame');
-    speakDictationLetter(true);
+    /* Ask first, then ask for the letter: with no voice to read it, the
+       letter goes on screen and the activity carries on all the same. */
+    dictationCanSpeak(function (canSpeak) {
+      if (!game || game.type !== 'dictation') return;
+      game.noVoice = !canSpeak;
+      speakDictationLetter(true);
+    });
   }
 
   function dictationKey(ch) {
@@ -1334,6 +1410,7 @@
     game = { type: 'challenge', set: {}, phase: 0, stars: 0, order: null };
     $('#gameTitle').textContent = App.i18n.t('allKeysTitle');
     $('#gameInstruction').textContent = App.i18n.t('allKeysInstruction');
+    showGameCard();
     $('#keyboardPanel').classList.remove('hidden');
     $('#numpadPanel').classList.add('hidden');
     $('#targetZone').classList.add('hidden');
@@ -1556,10 +1633,18 @@
       return;
     }
     if (e.ctrlKey || e.metaKey || e.altKey) return;
+    var focused = document.activeElement;
+    /* Space and Enter belong to a focused button, not to the exercise:
+       while a game is running this handler calls preventDefault() on
+       every key, which would leave a keyboard-driven button (the
+       dictation "listen again") impossible to press. Every other key
+       still reaches the exercise — a letter typed with a button focused
+       is a letter. Checked before normalizeKey() because Enter is not a
+       single character and would be dropped as "not a game key". */
+    if (focused && focused.tagName === 'BUTTON' && (e.key === ' ' || e.key === 'Enter' || e.key === 'Spacebar')) return;
     var ch = normalizeKey(e.key);
     if (!ch) return;
     flashKey(stripAccents(ch), true);
-    var focused = document.activeElement;
     if (focused && (focused.tagName === 'INPUT' || focused.tagName === 'TEXTAREA')) return;
     if (!game) return;
     e.preventDefault();
@@ -1680,12 +1765,21 @@
   $('#btnExitGame').addEventListener('click', function () {
     var mode = game && game.cfg ? game.cfg.mode : null;
     if (dictationTimer) clearTimeout(dictationTimer);
+    if (dictationUnlock) clearTimeout(dictationUnlock);
     if (App.tts) App.tts.stop();
     game = null;
     markTarget(null);
     if (mode === 'lesson') goLessons();
     else if (mode === 'template') goTemplates();
     else goMenu();
+  });
+
+  /* Ask for the current letter again. The mode speaks each letter once
+     and then waits, so this is the only way back for anyone who did not
+     catch it the first time. */
+  $('#btnDictationAgain').addEventListener('click', function () {
+    if (!game || game.type !== 'dictation') return;
+    speakDictationLetter(false);
   });
 
   if ($('#btnListenGame')) $('#btnListenGame').addEventListener('click', function () {

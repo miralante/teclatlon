@@ -27,7 +27,7 @@ session or lesson list that matches it.
 | **Numbers (number-pad game)** | Number-pad practice with the right-hand home position. | [`technical.md`](technical.md) §"Numbers mode". |
 | **All keys** | Mixed practice that exercises the **complete** keyboard of the currently selected layout — every letter, every number when the layout shows them, the space bar, and every punctuation key. | [`SPEC.md`](SPEC.md) §3.7. |
 | **Free writing** | Free text + read-aloud of what was typed. | [`technical.md`](technical.md) §"Free writing mode". |
-| **Dictation** | Hears a randomly chosen letter and asks the learner to press it on the physical keyboard. The on-screen keyboard and hand guide stay hidden; correct and incorrect answers have distinct sounds. | `playDictation()` in `app.js`. |
+| **Dictation** | Hears a randomly chosen letter and asks the learner to press it on the physical keyboard. The on-screen keyboard and hand guide stay hidden; correct and incorrect answers have distinct sounds. The screen explains what the activity is and offers to hear the letter again. | `playDictation()` in `app.js`. |
 
 Each mode is intentionally short and replayable. There is no
 "level completed" gate that locks the next mode — the learner can
@@ -80,6 +80,29 @@ letter at a time, accepts the matching physical key, and repeats the
 letter after an incorrect press. It includes every letter on the
 Spanish keyboard, including ñ, and avoids repeating the same letter
 twice in a row.
+
+It is the only mode that asks for a key **by ear**, so its screen has
+to cover what the sound does not. Three rules, all of them part of the
+mode rather than extras:
+
+1. **The activity explains itself on screen.** A panel with the four
+   steps (you hear a letter, you say its name, you press its key, if
+   you get it wrong you hear it again) stays visible the whole time. It
+   takes the place of the target card, which this mode does not use.
+2. **The letter can be heard again.** A "🔊 Listen again" button
+   repeats the current letter without moving on. Without it, whoever
+   did not catch it the first time has nothing to press.
+3. **The keyboard is never locked waiting for a sound.** The pause
+   between letters (`game.waiting`) is released when the reading ends,
+   but also by a timer, so an utterance that dies silently cannot leave
+   the activity mute and stuck. And when the machine has **no voice
+   installed at all**, the letter moves from the speakers to the screen
+   and the activity keeps working.
+
+While the machine can read the letter aloud it is **not shown on
+screen**: showing it would turn dictation into copying the letter, which
+is not what the mode trains. The on-screen letter is only the fallback
+for whoever cannot hear.
 
 ## 5. What is **not** an activity here
 

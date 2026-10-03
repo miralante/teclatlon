@@ -65,8 +65,11 @@
 }
 
 .btn-peligro {
-  background: var(--error, #b03a3a);
-  color: #fff;
+  background: var(--color-encourage);
+  /* --color-encourage se aclara en oscuro (#F2B07A) y en contraste
+     (#FF8800): con blanco fijo el texto caia a 1.86:1. El token
+     "on" sigue la misma progresion que el color que cubre. */
+  color: var(--color-on-accent);
   border: 0;
   padding: 0.6rem 1rem;
   border-radius: 6px;
@@ -96,7 +99,7 @@
 }
 
 .feedback.acierto {
-  color: var(--ok, #1e7a3a);
+  color: var(--color-success);
 }
 
 .feedback.animo {

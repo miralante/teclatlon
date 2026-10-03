@@ -44,6 +44,15 @@
     "dictationInstruction": "Listen to the letter and press its key.",
     "dictationPrompt": "Letter {letter}.",
     "dictationLetterNames": {"a":"ay","b":"bee","c":"see","d":"dee","e":"ee","f":"ef","g":"gee","h":"aitch","i":"eye","j":"jay","k":"kay","l":"el","m":"em","n":"en","ñ":"enye","o":"oh","p":"pee","q":"cue","r":"ar","s":"ess","t":"tee","u":"you","v":"vee","w":"double you","x":"ex","y":"why","z":"zee"},
+    /* Dictation: what the activity is, and how to get the letter again.
+       UNE 153101 easy read — one short sentence per step, everyday words. */
+    "dictationWhatTitle": "What do I do here?",
+    "dictationStepListen": "You hear a letter.",
+    "dictationStepSay": "You say its name out loud.",
+    "dictationStepPress": "You press its key on the keyboard.",
+    "dictationStepRetry": "If you get it wrong, you hear it again.",
+    "dictationAgain": "🔊 Listen again",
+    "dictationNoVoice": "Your computer cannot read the letter out loud. Read it here.",
     "modeFreeName": "Free writing",
     "modeFreeDetail": "Type and listen to your text.",
     "modeTemplatesName": "Real texts",

@@ -303,7 +303,31 @@
         <button type="button" class="btn btn-secondary btn-compact" id="btnExitGame" data-i18n="btnMenu">← Menú</button>
         <h2 class="game-title" id="gameTitle" data-i18n="gameTitleDefault">Juego</h2>      </div>
       <p class="instruction centered" id="gameInstruction"></p>
-      <div class="card centered">
+      <!-- Dictation only. This mode asks for a letter through sound, so
+           the screen has to say out loud what the activity is, and give a
+           second chance to hear the letter: without these two blocks, a
+           letter that never reaches the ears leaves the learner with
+           nothing to press and no way to ask for it again. -->
+      <div class="dictation-panel hidden" id="dictationPanel">
+        <h3 class="dictation-title" data-i18n="dictationWhatTitle">¿Qué haces aquí?</h3>
+        <ol class="dictation-steps">
+          <li data-i18n="dictationStepListen">Oyes una letra.</li>
+          <li data-i18n="dictationStepSay">Dices su nombre en voz alta.</li>
+          <li data-i18n="dictationStepPress">Pulsas su tecla en el teclado.</li>
+          <li data-i18n="dictationStepRetry">Si te equivocas, la oyes otra vez.</li>
+        </ol>
+        <div class="dictation-actions">
+          <button type="button" class="btn btn-secondary" id="btnDictationAgain" data-i18n="dictationAgain">🔊 Escuchar otra vez</button>
+        </div>
+        <!-- Only when the machine has no voice to read with: the letter
+             moves from the speakers to the screen so the activity still
+             works instead of silently doing nothing. -->
+        <div class="dictation-fallback hidden" id="dictationFallback">
+          <p class="dictation-fallback-note" data-i18n="dictationNoVoice">Tu ordenador no puede leer la letra en voz alta. Léela aquí.</p>
+          <p class="dictation-letter" id="dictationLetter" aria-live="polite">a</p>
+        </div>
+      </div>
+      <div class="card centered" id="gameCard">
         <div id="targetZone" class="target-zone"></div>
         <div id="challengeZone" class="progress-bar hidden">
           <div class="challenge-stars" id="challengeStars"></div>
