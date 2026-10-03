@@ -43,8 +43,8 @@ datos tenga.
 Si de verdad necesitas un modo nuevo (p. ej. un "drill de
 velocidad" o un "juego de ritmo"), eso es un cambio de ingeniería,
 no de contenido — consúltalo con el rol de build antes de abrir un
-PR, y ten en cuenta que añadir un modo rompe la forma de "seis
-modos fijos" que documenta la cuadrícula de inicio.
+PR, y mantén sincronizados el catálogo de la cuadrícula de inicio y
+los ficheros de cadenas de los dos idiomas.
 
 ### 2.2 Longitud y ritmo de las lecciones
 

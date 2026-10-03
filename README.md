@@ -14,8 +14,8 @@
 
 A free, static, dependency-free touch-typing trainer for the **computer
 keyboard**. Learn finger placement, go through letter-by-letter lessons,
-practice words, the number pad, and free writing — with a decorative
-on-screen keyboard that mirrors your physical one. No accounts, no
+practice words, the number pad, free writing, and audio dictation — with
+a decorative on-screen keyboard that mirrors your physical one. No accounts, no
 cookies, no analytics: everything runs in the browser and progress is
 saved only in `localStorage`, on your own device.
 
@@ -48,6 +48,7 @@ input is always the physical keyboard.
 - 🔢 **Number-pad game** — for the right-hand numeric keypad.
 - 🎯 **All-keys challenge** — mixed full-keyboard test.
 - ✍️ **Free writing** — text-to-speech reads back what was typed.
+- 🔊 **Dictation** — listen to random letters and type them without an on-screen keyboard or hand guide.
 - 🪶 **Zero runtime dependencies** — pure HTML/CSS/JS, no build step.
 - 🌐 **Bilingual** — UI in Spanish (default) and English.
 - 🔒 **Privacy by default** — no accounts, no cookies, no analytics:

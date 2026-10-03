@@ -15,7 +15,7 @@
 Una aplicación web gratuita, estática y sin dependencias para aprender
 a escribir con el **teclado del ordenador**. Enseña a colocar los
 dedos, lecciones letra a letra, práctica de palabras, teclado numérico
-y escritura libre — con un teclado en pantalla decorativo que refleja
+y escritura libre y dictado por voz — con un teclado en pantalla decorativo que refleja
 el teclado físico. Sin cuentas, sin cookies, sin analítica: todo se
 ejecuta en el navegador y el progreso solo se guarda en `localStorage`,
 en tu propio dispositivo.
@@ -51,6 +51,7 @@ decorativo; la entrada real es siempre el teclado físico.
   derecha.
 - 🎯 **Reto "todas las teclas"** — prueba mixta con todo el teclado.
 - ✍️ **Escritura libre** — texto a voz que lee lo escrito.
+- 🔊 **Dictado** — escucha letras aleatorias y púlsalas sin teclado en pantalla ni guía de manos.
 - 🪶 **Sin dependencias en tiempo de ejecución** — HTML/CSS/JS puros,
   sin paso de build.
 - 🌐 **Bilingüe** — interfaz en español (por defecto) e inglés.

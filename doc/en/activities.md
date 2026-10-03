@@ -16,8 +16,8 @@ any lesson/mode pair.
 
 ## 1. The home grid (the modes)
 
-The home screen shows the practice modes. Each mode opens one screen
-and accepts any lesson that matches its `accepts` filter.
+The home screen shows the practice modes. Each mode opens the practice
+session or lesson list that matches it.
 
 | Mode | What it trains | Reference |
 |---|---|---|
@@ -27,6 +27,7 @@ and accepts any lesson that matches its `accepts` filter.
 | **Numbers (number-pad game)** | Number-pad practice with the right-hand home position. | [`technical.md`](technical.md) §"Numbers mode". |
 | **All keys** | Mixed practice that exercises the **complete** keyboard of the currently selected layout — every letter, every number when the layout shows them, the space bar, and every punctuation key. | [`SPEC.md`](SPEC.md) §3.7. |
 | **Free writing** | Free text + read-aloud of what was typed. | [`technical.md`](technical.md) §"Free writing mode". |
+| **Dictation** | Hears a randomly chosen letter and asks the learner to press it on the physical keyboard. The on-screen keyboard and hand guide stay hidden; correct and incorrect answers have distinct sounds. | `playDictation()` in `app.js`. |
 
 Each mode is intentionally short and replayable. There is no
 "level completed" gate that locks the next mode — the learner can
@@ -68,11 +69,17 @@ deduplication, custom-name merging) are in
 
 ## 4. The "all keys" challenge
 
-This is the only mode that is a single, fixed practice session, not
+The "all keys" challenge is a single, fixed practice session, not
 a flow of lessons: it picks a passage that uses the **complete**
 keyboard of the currently selected layout and asks the learner to
 type it through. The passage is short, the feedback is per-key, and
 there is no time pressure.
+
+Dictation is also an ongoing practice session. It speaks one random
+letter at a time, accepts the matching physical key, and repeats the
+letter after an incorrect press. It includes every letter on the
+Spanish keyboard, including ñ, and avoids repeating the same letter
+twice in a row.
 
 ## 5. What is **not** an activity here
 

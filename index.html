@@ -267,6 +267,12 @@
           <span class="detail" data-i18n="modeNumbersDetail">Usa el teclado de números.</span>
           <span class="done"></span>
         </button>
+        <button type="button" class="mode-card" data-mode="dictation">
+          <span class="picto" aria-hidden="true">🔊</span>
+          <span class="name" data-i18n="modeDictationName">Dictado</span>
+          <span class="detail" data-i18n="modeDictationDetail">Escucha una letra y púlsala.</span>
+          <span class="done"></span>
+        </button>
       </div>
       <p class="instruction centered" id="summary" aria-live="polite"></p>
     </section>
@@ -291,7 +297,7 @@
       <div class="grid-lessons" id="templatesList"></div>
     </section>
 
-    <!-- Screen: game (position, lessons, words, challenge and numbers) -->
+    <!-- Screen: game (position, lessons, words, challenge, numbers and dictation) -->
     <section id="screenGame" class="hidden stack">
       <div class="row game-screen-bar">
         <button type="button" class="btn btn-secondary btn-compact" id="btnExitGame" data-i18n="btnMenu">← Menú</button>
@@ -505,6 +511,7 @@
 
   <script src="assets/js/utils.js"></script>
   <script src="assets/js/i18n.js?v=2"></script>
+  <script src="assets/js/tts.js"></script>
   <script src="assets/js/storage.js"></script>
   <script src="assets/js/feedback.js"></script>
   <script src="strings.es.js"></script>

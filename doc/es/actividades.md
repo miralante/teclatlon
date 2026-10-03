@@ -18,8 +18,7 @@ lección/modo.
 ## 1. La cuadrícula de inicio (los modos)
 
 La pantalla de inicio muestra los modos de práctica. Cada modo abre
-una pantalla y acepta cualquier lección que encaje con su filtro
-`accepts`.
+la sesión o lista de lecciones que le corresponde.
 
 | Modo | Qué entrena | Referencia |
 |---|---|---|
@@ -29,6 +28,7 @@ una pantalla y acepta cualquier lección que encaje con su filtro
 | **Números (juego del teclado numérico)** | Práctica del teclado numérico con la posición base de la mano derecha. | [`tecnico.md`](tecnico.md) §"Modo números". |
 | **Todas las teclas** | Práctica mixta que ejercita el **teclado completo** del diseño activo — todas las letras, todos los números cuando el diseño los muestra, la barra espaciadora y todas las teclas de puntuación. | [`SPEC.md`](SPEC.md) §3.7. |
 | **Escritura libre** | Texto libre + lectura en voz alta de lo que se ha escrito. | [`tecnico.md`](tecnico.md) §"Modo escritura libre". |
+| **Dictado** | Escucha una letra aleatoria y pide pulsarla en el teclado físico. El teclado en pantalla y la guía de manos permanecen ocultos; los aciertos y errores tienen sonidos distintos. | `playDictation()` en `app.js`. |
 
 Cada modo es corto y reutilizable a propósito. No hay una
 "compuerta de nivel completado" que bloquee el siguiente modo — la
@@ -72,11 +72,16 @@ en [`tecnico.md`](tecnico.md) §"Lista de palabras".
 
 ## 4. El reto "todas las teclas"
 
-Es el único modo que es una sola sesión fija de práctica, no un
+El reto "todas las teclas" es una sola sesión fija de práctica, no un
 flujo de lecciones: coge un fragmento que usa el **teclado
 completo** del diseño activo y le pide a quien aprende que lo
 escriba entero. El fragmento es corto, el feedback es por tecla y
 no hay presión de tiempo.
+
+El dictado también es una sesión continua. Dice una letra aleatoria
+cada vez y espera a que la persona pulse su tecla. Si se equivoca,
+vuelve a decir la misma letra. Incluye todas las letras del teclado
+español, también la ñ, y no repite una letra dos veces seguidas.
 
 ## 5. Lo que **no** es una actividad aquí
 

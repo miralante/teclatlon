@@ -1,11 +1,11 @@
 # Teclatlon — Mecanografía con el teclado del ordenador
 
-> Aplicación web gratuita y sin registro para aprender mecanografía con el teclado del ordenador: colocación de dedos, lecciones por letra, palabras, números y escritura libre.
+> Aplicación web gratuita y sin registro para aprender mecanografía con el teclado del ordenador: colocación de dedos, lecciones por letra, palabras, números, escritura libre y dictado por voz.
 
 ## What it is
 
 - Una aplicación para aprender mecanografía dedo a dedo, en un orden fijo de lecciones, con un teclado decorativo en pantalla que no se toca.
-- Incluye un juego de palabras, un juego del teclado numérico, un reto 'todas las teclas' y un modo de escritura libre que lee lo escrito.
+- Incluye palabras, números, un reto 'todas las teclas', escritura libre y dictado de letras aleatorias por voz.
 - Gratuita, sin registro y con el progreso guardado en el navegador.
 - Diseñada con lectura fácil y contraste alto para que las instrucciones se entiendan a la primera.
 

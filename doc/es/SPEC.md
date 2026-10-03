@@ -9,8 +9,9 @@ Una aplicación web gratuita, estática y de propósito único que enseña
 mecanografía en el **teclado físico del ordenador**: colocación de los
 dedos, lecciones letra a letra en orden fijo, un juego de palabras
 (incluido el nombre de la persona), un juego de teclado numérico, un reto
-de "todas las teclas" y un modo de escritura libre que lee en voz alta lo
-escrito.
+de "todas las teclas", un modo de escritura libre que lee en voz alta lo
+escrito y un modo de dictado que dice letras aleatorias para que la
+persona las pulse.
 
 Teclatlon es parte de Apptonomia, una suite más amplia de actividades de
 terapia ocupacional, donde esta era una actividad más entre muchas.
@@ -67,7 +68,8 @@ técnica expresada con dificultad.
    precisión y velocidad neuromotoras en todo el teclado, no solo en
    la fila central o en las letras que introduce una lección
    concreta. Las decisiones de diseño de cada actividad (posición,
-   paso a paso, palabras, números, todas las teclas, escritura libre)
+   paso a paso, palabras, números, todas las teclas, escritura libre,
+   dictado)
    deben sumar esa cobertura; una lección que solo ejercita las
    letras nuevas que introduce está incompleta. Ver
    [`tecnico.md` §"Motor del juego de secuencia"](tecnico.md) para

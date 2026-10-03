@@ -127,8 +127,10 @@
 
   /* In-progress game. null outside screenGame.
      type 'seq': { cfg: { mode, title, steps, starKey, onFinish }, idx, pos, waiting }
-     type 'challenge': { set: { ch: true } } */
+     type 'challenge': { set: { ch: true } }
+     type 'dictation': { letters, letter, waiting } */
   var game = null;
+  var dictationTimer = null;
 
   function capitalize(name) {
     return name ? name.charAt(0).toUpperCase() + name.slice(1) : '';
@@ -1254,6 +1256,66 @@
     });
   }
 
+  /* ---------- Dictation: hear a random letter, then type it ---------- */
+  function dictationLetters() {
+    return DATA.rows.reduce(function (letters, row) {
+      row.forEach(function (key) {
+        if (key.ch && /^[a-zñ]$/i.test(key.ch)) letters.push(key.ch);
+      });
+      return letters;
+    }, []);
+  }
+
+  function speakDictationLetter(nextLetter) {
+    if (!game || game.type !== 'dictation') return;
+    if (nextLetter || !game.letter) {
+      var letters = game.letters.filter(function (letter) { return letter !== game.letter; });
+      game.letter = letters[Math.floor(Math.random() * letters.length)];
+    }
+    game.waiting = true;
+    var name = App.i18n.t('dictationLetterNames.' + game.letter);
+    var prompt = App.i18n.t('dictationPrompt').replace('{letter}', name);
+    App.tts.speak(prompt, function () {
+      if (game && game.type === 'dictation') game.waiting = false;
+    });
+  }
+
+  function playDictation() {
+    if (dictationTimer) clearTimeout(dictationTimer);
+    game = { type: 'dictation', letters: dictationLetters(), letter: null, waiting: true };
+    $('#gameTitle').textContent = App.i18n.t('modeDictationName');
+    $('#gameInstruction').textContent = App.i18n.t('dictationInstruction');
+    $('#keyboardPanel').classList.add('hidden');
+    $('#numpadPanel').classList.add('hidden');
+    $('#targetZone').classList.add('hidden');
+    $('#challengeZone').classList.add('hidden');
+    $('#guide').classList.add('hidden');
+    clearFeedback();
+    startMetrics();
+    updateLiveMetrics();
+    showScreen('screenGame');
+    speakDictationLetter(true);
+  }
+
+  function dictationKey(ch) {
+    if (!game || game.type !== 'dictation' || game.waiting) return;
+    state.metrics.keys += 1;
+    if (ch === game.letter) {
+      state.metrics.hits += 1;
+      game.waiting = true;
+      App.feedback.success($('#feedback'));
+      App.feedback.successSound(null, true);
+      updateLiveMetrics();
+      dictationTimer = setTimeout(function () { speakDictationLetter(true); }, 550);
+    } else {
+      state.metrics.misses += 1;
+      game.waiting = true;
+      App.feedback.encourage($('#feedback'), true);
+      updateLiveMetrics();
+      dictationTimer = setTimeout(function () { speakDictationLetter(false); }, 300);
+    }
+  }
+
   /* ---------- Challenge: all keys ---------- */
   /* Challenge phases:
      0 = left-to-right, 1 = right-to-left, 2 = random.
@@ -1503,6 +1565,7 @@
     e.preventDefault();
     if (e.repeat) return;
     if (game.type === 'challenge') challengeKey(ch);
+    else if (game.type === 'dictation') dictationKey(ch);
     else gameKey(ch, e.shiftKey);
   });
 
@@ -1601,6 +1664,7 @@
     else if (m === 'words') playWords();
     else if (m === 'allKeys') playChallenge();
     else if (m === 'numbers') playNumbers();
+    else if (m === 'dictation') playDictation();
     else if (m === 'free') goFree();
     else if (m === 'templates') goTemplates();
   });
@@ -1615,6 +1679,8 @@
 
   $('#btnExitGame').addEventListener('click', function () {
     var mode = game && game.cfg ? game.cfg.mode : null;
+    if (dictationTimer) clearTimeout(dictationTimer);
+    if (App.tts) App.tts.stop();
     game = null;
     markTarget(null);
     if (mode === 'lesson') goLessons();

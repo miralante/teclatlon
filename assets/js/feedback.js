@@ -1,7 +1,7 @@
 /* ==========================================================================
    Teclatlon — Positive reinforcement and encouragement messages
-   Exposes window.App.feedback.success(zone, pan) / .encourage(zone) /
-   .celebrate(msg, after) / .successSound(pan) / .errorSound().
+   Exposes window.App.feedback.success(zone, pan) / .encourage(zone, forceSound) /
+   .celebrate(msg, after) / .successSound(pan, force) / .errorSound(force).
    Mistakes are never punished; feedback stays brief (<= 2 s).
    `celebrate` also carries the rest reminder: every N minutes of
    practice (N = state.options.restMinutes, 20 by default) it appends
@@ -101,18 +101,18 @@
      want the sound without the on-screen "⭐ Well done!" message
      (e.g. the all-keys challenge, which fires one tone per key and
      mustn't spam the live region) can play it directly. */
-  function successSound(pan) {
-    if (!soundOption('keySound', true)) return;
+  function successSound(pan, force) {
+    if (!force && !soundOption('keySound', true)) return;
     tone(523.25, 0.15, 'sine', pan);          /* C */
     setTimeout(function () {
-      if (soundOption('keySound', true)) tone(659.25, 0.2, 'sine', pan);
+      if (force || soundOption('keySound', true)) tone(659.25, 0.2, 'sine', pan);
     }, 120); /* E */
   }
 
   /* Short low-pitch tone: distinct from the C-E success ding.
      Plays when a key is wrong and error sound is enabled. */
-  function errorSound() {
-    if (!soundOption('errorSound', false)) return;
+  function errorSound(force) {
+    if (!force && !soundOption('errorSound', false)) return;
     tone(180, 0.12, 'triangle', null);
   }
 
@@ -141,14 +141,14 @@
    * @param {Element} [zone]
    * @returns {string} the message used
    */
-  function encourage(zone) {
+  function encourage(zone, forceSound) {
     var msg = randomPick('feedback.encourage');
     if (zone) {
       zone.textContent = msg;
       zone.classList.remove('success');
       zone.classList.add('encourage');
     }
-    errorSound();
+    errorSound(forceSound);
     return msg;
   }
 

@@ -8,8 +8,9 @@
 A free, static, single-purpose web app that teaches touch-typing on the
 **physical computer keyboard**: finger placement, letter-by-letter lessons
 in a fixed order, a words game (including the person's own name), a
-number-pad game, an "all keys" challenge, and a free-writing mode that
-reads back what was typed.
+number-pad game, an "all keys" challenge, a free-writing mode that
+reads back what was typed, and a dictation mode that speaks random
+letters for the learner to type.
 
 Teclatlon is part of Apptonomia, a broader occupational-therapy
 activity suite, where this used to be one activity among many. It keeps
@@ -63,7 +64,7 @@ difficulty.
    and speed across the whole keyboard, not just the home row or the
    letters introduced in a single lesson. Per-activity design choices
    (placement, step-by-step lessons, words, numbers, all-keys
-   challenge, free writing) must add up to that coverage; a lesson
+   challenge, free writing, dictation) must add up to that coverage; a lesson
    that only ever drills the new letters it introduces is incomplete.
    See [`technical.md` §"Sequence-game engine"](technical.md) for
    the runtime hook (`buildLessonReview` in `app.js`) that appends a

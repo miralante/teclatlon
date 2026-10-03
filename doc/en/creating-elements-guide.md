@@ -40,8 +40,7 @@ behaviour is fixed and consumes whatever the data file has.
 If you genuinely need a new mode (e.g. a "speed drill" or a
 "rhythm game"), that's an engineering change, not a content
 change — discuss it with the build role before opening a PR, and
-be aware that adding a mode means breaking the "six fixed modes"
-shape that the home grid documents.
+keep the home-grid catalogue and both language string files in sync.
 
 ### 2.2 Lesson length and pacing
 
