@@ -84,14 +84,12 @@
   state.options.metrics = !!state.options.metrics;
   state.options.errorSound = !!state.options.errorSound;
   state.options.showFingerText = state.options.showFingerText === undefined ? true : !!state.options.showFingerText;
-  /* Rest reminder interval (minutes). The default and the allowed values
+  /* Rest reminder interval (minutes). The default and the allowed range
      live in feedback.js, the module that owns the notice, so the panel
-     and the countdown can't drift apart. Anything unknown (a value from
-     an older version, or a hand-edited localStorage) falls back to the
-     default. */
-  if (App.feedback.REST_CHOICES.indexOf(Number(state.options.restMinutes)) === -1) {
-    state.options.restMinutes = App.feedback.DEFAULT_REST_MINUTES;
-  }
+     and the countdown can't drift apart. Anything unusable (a value from
+     an older version, or a hand-edited localStorage) is normalised
+     there, and out-of-range numbers are pulled back into the range. */
+  state.options.restMinutes = App.feedback.normaliseRestMinutes(state.options.restMinutes);
   state.goal = state.goal || { accuracyMin: null, speedMin: null };
   state.achievements = state.achievements || {};
 
@@ -426,10 +424,20 @@
       var guide = $(sel);
       if (guide) guide.classList.toggle('hidden', !state.options.showFingerText);
     });
-    /* The rest-reminder <select> keeps its own "selected" state, so
-       sync the value instead of aria-pressed. */
-    var restSel = $('#restMinutesSelect');
-    if (restSel) restSel.value = String(state.options.restMinutes);
+    /* The rest-reminder number box keeps its own value, so sync it
+       instead of aria-pressed. Writing it here is also what shows a
+       clamped or corrected number back to the person, and what parks
+       the ▲/▼ pair at the ends of the range: at the top there is
+       nothing left to add, at the bottom nothing left to take off. */
+    var restInput = $('#restMinutesInput');
+    if (restInput) {
+      var restValue = state.options.restMinutes;
+      restInput.value = String(restValue);
+      var restUp = $('#restMinutesUp');
+      var restDown = $('#restMinutesDown');
+      if (restUp) restUp.disabled = restValue >= App.feedback.REST_MAX;
+      if (restDown) restDown.disabled = restValue <= App.feedback.REST_MIN;
+    }
     updateLiveMetrics();
   }
 
@@ -1668,17 +1676,48 @@
     }
   }());
 
-  /* ---------- Rest reminder select: same native 'change' contract ---------- */
+  /* ---------- Rest reminder number box ---------- */
+  /* A number box, not a menu, so any whole number of minutes goes.
+     It is read on 'change' and not on 'input': that is the moment the
+     number is finished (leaving the field, pressing an arrow, or
+     Enter), so a half-typed "1" on the way to "15" is never stored and
+     never clamped under the person's fingers. An empty or nonsensical
+     field falls back to the interval already in use, and applyOptions
+     writes back whatever the normaliser decided, so the box always
+     shows a usable value. */
   (function () {
-    var restSel = $('#restMinutesSelect');
-    if (!restSel) return;
-    restSel.addEventListener('change', function () {
-      var value = Number(restSel.value);
-      if (App.feedback.REST_CHOICES.indexOf(value) === -1) return;
+    var restInput = $('#restMinutesInput');
+    if (!restInput) return;
+    restInput.addEventListener('change', function () {
+      var value = App.feedback.normaliseRestMinutes(restInput.value);
+      if (value === state.options.restMinutes) {
+        restInput.value = String(value);
+        return;
+      }
       state.options.restMinutes = value;
       save();
       applyOptions();
     });
+
+    /* The ▲/▼ pair. Each press is one minute and is saved straight
+       away, like the arrows of the native stepper would; stepping from
+       what is in the field (or from the interval in use when the field
+       is empty) and letting the normaliser clamp keeps both ways of
+       changing it on the same rule. */
+    function step(delta) {
+      var from = restInput.value === '' ? state.options.restMinutes : Number(restInput.value);
+      if (!isFinite(from)) from = state.options.restMinutes;
+      var value = App.feedback.normaliseRestMinutes(Math.round(from) + delta);
+      restInput.value = String(value);
+      if (value === state.options.restMinutes) return;
+      state.options.restMinutes = value;
+      save();
+      applyOptions();
+    }
+    var up = $('#restMinutesUp');
+    var down = $('#restMinutesDown');
+    if (up) up.addEventListener('click', function () { step(1); });
+    if (down) down.addEventListener('click', function () { step(-1); });
   }());
 
   /* ---------- Boot ---------- */

@@ -104,7 +104,7 @@ test.describe('Teclatlon — Aviso de descanso', () => {
 
     // Default interval is 20 minutes, shown in the settings panel.
     await page.locator('#btnOpenSettings').click();
-    await expect(page.locator('#restMinutesSelect')).toHaveValue('20');
+    await expect(page.locator('#restMinutesInput')).toHaveValue('20');
     await page.locator('#btnCloseSettings').click();
     expect((await savedOptions(page)).restMinutes).toBe(20);
 
@@ -160,7 +160,10 @@ test.describe('Teclatlon — Aviso de descanso', () => {
     const page = await openApp();
 
     await page.locator('#btnOpenSettings').click();
-    await page.locator('#restMinutesSelect').selectOption('45');
+    // 45 is not one of the values the old menu offered: the setting is a
+    // number box, so any whole number of minutes goes.
+    await page.locator('#restMinutesInput').fill('45');
+    await page.locator('#restMinutesInput').press('Tab');
     await page.locator('#btnCloseSettings').click();
     expect((await savedOptions(page)).restMinutes).toBe(45);
 
@@ -168,7 +171,7 @@ test.describe('Teclatlon — Aviso de descanso', () => {
     await page.reload();
     await expect(page.locator('#screenName')).toBeVisible();
     await page.locator('#btnOpenSettings').click();
-    await expect(page.locator('#restMinutesSelect')).toHaveValue('45');
+    await expect(page.locator('#restMinutesInput')).toHaveValue('45');
     await page.locator('#btnCloseSettings').click();
 
     await installClock(page);
@@ -187,5 +190,65 @@ test.describe('Teclatlon — Aviso de descanso', () => {
     await installClock(page);
     await simulateIdle(page, 120);
     expect(await celebrate(page)).not.toContain(rest);
+  });
+
+  test('la caja de minutos acepta cualquier número y sus flechas lo suben y bajan', async () => {
+    const page = await openApp();
+    await page.locator('#btnOpenSettings').click();
+    const box = page.locator('#restMinutesInput');
+
+    // A number box with a stepper, not a menu with a fixed list.
+    await expect(box).toHaveAttribute('type', 'number');
+    await expect(page.locator('#restMinutesSelect')).toHaveCount(0);
+
+    // The allowed range is the module's, and the box mirrors it.
+    const range = await page.evaluate(() => ({
+      min: App.feedback.REST_MIN,
+      max: App.feedback.REST_MAX,
+      def: App.feedback.DEFAULT_REST_MINUTES
+    }));
+    expect(await box.getAttribute('min')).toBe(String(range.min));
+    expect(await box.getAttribute('max')).toBe(String(range.max));
+
+    // Any whole number goes through, not only the ones a menu would offer.
+    await box.fill('37');
+    await box.press('Tab');
+    expect((await savedOptions(page)).restMinutes).toBe(37);
+    await expect(box).toHaveValue('37');
+
+    // The steppers move it a minute at a time and save each time.
+    await box.press('ArrowUp');
+    await box.press('ArrowUp');
+    expect((await savedOptions(page)).restMinutes).toBe(39);
+    await box.press('ArrowDown');
+    expect((await savedOptions(page)).restMinutes).toBe(38);
+
+    // The ▲/▼ pair is visible without focusing the box (the browser's own
+    // stepper only paints while it has the focus) and saves too.
+    await page.locator('#restMinutesUp').click();
+    expect((await savedOptions(page)).restMinutes).toBe(39);
+    await page.locator('#restMinutesDown').click();
+    expect((await savedOptions(page)).restMinutes).toBe(38);
+
+    // Out of range: pulled back to the nearest end, not thrown away.
+    await box.fill('9999');
+    await box.press('Tab');
+    await expect(box).toHaveValue(String(range.max));
+    expect((await savedOptions(page)).restMinutes).toBe(range.max);
+
+    await box.fill('0');
+    await box.press('Tab');
+    await expect(box).toHaveValue(String(range.min));
+    expect((await savedOptions(page)).restMinutes).toBe(range.min);
+
+    // At the ends of the range the matching arrow is parked.
+    await expect(page.locator('#restMinutesDown')).toBeDisabled();
+    await expect(page.locator('#restMinutesUp')).toBeEnabled();
+
+    // An emptied field goes back to the default, never left blank.
+    await box.fill('');
+    await box.press('Tab');
+    await expect(box).toHaveValue(String(range.def));
+    expect((await savedOptions(page)).restMinutes).toBe(range.def);
   });
 });

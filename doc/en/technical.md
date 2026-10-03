@@ -191,9 +191,9 @@ Interactions with the engine:
   rest reminder appears after that much practice. It lives in
   `feedback.js`, which owns both the countdown and the phrase
   (`celebrate()` appends it to the celebration when it is due), and the
-  settings panel only writes it: `DEFAULT_REST_MINUTES` (20) and
-  `REST_CHOICES` are exported from `App.feedback` so the two can't
-  disagree. See §2.6.
+  settings panel only writes it: `DEFAULT_REST_MINUTES` (20), the
+  `REST_MIN`/`REST_MAX` range and `normaliseRestMinutes()` are exported
+  from `App.feedback` so the two can't disagree. See §2.6.
 
 ### 2.3 `data.js` — keyboard layouts and practice content
 
@@ -366,15 +366,41 @@ doesn't depend on when a round happened to finish, and `restDue()`
 calls it once more before deciding, so a celebration that lands 3
 minutes after the last tick still sees the right total.
 
-The whole contract lives in `feedback.js`: `DEFAULT_REST_MINUTES`,
-`REST_CHOICES` (10/15/20/30/45/60) and the reminder itself. They're
-exported on `App.feedback` so `app.js` normalises
-`state.options.restMinutes` against that same list (any unknown value
-falls back to the default) and so the `<select id="restMinutesSelect">`
-in the settings panel can't offer a value the counter doesn't
-understand. Like any `<select>`, it fires `change` (not `click`), so it
-is wired with its own `change` listener, exactly like
-`#goalAccuracySelect` and `#goalSpeedSelect`.
+The whole contract lives in `feedback.js`: `DEFAULT_REST_MINUTES` (20), the
+`REST_MIN`/`REST_MAX` range (1 to 240 minutes) and the reminder itself. They
+are exported on `App.feedback` together with `normaliseRestMinutes()`, the
+single rule for what counts as a valid interval, and all three parties use
+that function: `app.js` when normalising what was saved, the panel when
+committing what was typed, and the counter when reading it. Anything
+unusable (an empty field, a half-typed value, something from an older
+version, a hand-edited `localStorage`) falls back to the default, and
+anything out of range is pulled to the nearest end instead of being thrown
+away.
+
+In the settings panel the control is a **text box with a number and
+arrows**, `<input type="number" id="restMinutesInput">`, not a dropdown:
+the person typing decides how many minutes they want, without being limited
+to a list that has no reason to include the number that suits them. The
+browser's own arrows (`step="1"`, one minute at a time) and the keyboard
+arrows do the same thing, and `min`/`max` mirror `REST_MIN`/`REST_MAX`. It
+is read on `change` and not on `input`, which is the moment the number is
+finished: that way a "1" on its way to being "15" is never saved and never
+clamped under the typist's fingers. `applyOptions()` writes back whatever
+the normaliser decided, so the box is never left empty or showing a number
+the counter would not understand.
+
+The visible arrows are two buttons of our own (`#restMinutesUp` and
+`#restMinutesDown`), not the native stepper: Chromium **only paints the
+stepper while the field has the focus**, so a box nobody had clicked yet had
+no arrows at all, which is exactly what makes the "pick up/down" useless.
+Each press is one minute and is saved straight away, starting from what is
+in the field (or from the interval in use when the field is empty).
+`applyOptions()` disables them at the ends of the range, and each carries
+its own `color` from the `--color-text` token because the `base.css` reset
+does not set one. The native stepper is not switched off; in `dark` and
+`contrast` it gets `color-scheme: dark`, because otherwise the browser paints
+it with its own dark grey, which disappears on `#1E2230` and on the pure
+black of high contrast.
 
 ### 2.7 The "all keys" challenge: three phases, none of them on screen
 

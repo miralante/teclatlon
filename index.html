@@ -156,9 +156,9 @@
 }
   </script>
 
-  <link rel="stylesheet" href="assets/css/tokens.css?v=teclatlon-v2">
+  <link rel="stylesheet" href="assets/css/tokens.css?v=teclatlon-v2b">
   <link rel="stylesheet" href="assets/css/base.css">
-  <link rel="stylesheet" href="assets/css/components.css"><link rel="stylesheet" href="assets/css/locale-picker.css?v=teclatlon-v3">  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="assets/css/components.css"><link rel="stylesheet" href="assets/css/locale-picker.css?v=teclatlon-v3b">  <link rel="stylesheet" href="styles.css">
       <!-- Pre-paint bootstrap (device gate + locale + saved accessibility
        settings). External file so the CSP can keep `script-src 'self'`
        without 'unsafe-inline'. The whole file is one synchronous IIFE
@@ -430,17 +430,25 @@
     <!-- Rest reminder: how long the practice timer runs before the
          "you've been going a while, you can rest" phrase joins the
          next celebration. The counter itself is per-session (it is
-         never saved), so it starts at zero every time the app opens. -->
+         never saved), so it starts at zero every time the app opens.
+
+         A number box, not a menu: the person says how long they want
+         to go, in any whole number of minutes, and the up/down arrows
+         move it one minute at a time. min/max mirror REST_MIN /
+         REST_MAX in feedback.js, which owns the countdown. The buttons
+         are there because the browser's own stepper only paints while
+         the field has the focus, so an unfocused box would have no
+         arrows at all; the keyboard arrows still work on the field. -->
     <div class="setting-row">
-      <label class="setting-label" for="restMinutesSelect" data-i18n="restMinutesLabel">⏸️ Aviso de descanso</label>
-      <select id="restMinutesSelect" class="setting-select" data-i18n-aria="restMinutesAria" aria-label="Elegir cada cuánto tiempo aparece el aviso de descanso">
-        <option value="10" data-i18n="restOption10">10 minutos</option>
-        <option value="15" data-i18n="restOption15">15 minutos</option>
-        <option value="20" data-i18n="restOption20">20 minutos</option>
-        <option value="30" data-i18n="restOption30">30 minutos</option>
-        <option value="45" data-i18n="restOption45">45 minutos</option>
-        <option value="60" data-i18n="restOption60">60 minutos</option>
-      </select>
+      <label class="setting-label" for="restMinutesInput" data-i18n="restMinutesLabel">⏸️ Aviso de descanso</label>
+      <div class="number-field">
+        <input id="restMinutesInput" class="setting-input" type="number" min="1" max="240" step="1" value="20" inputmode="numeric" autocomplete="off" data-i18n-aria="restMinutesAria" aria-label="Indicar cada cuántos minutos aparece el aviso de descanso">
+        <span class="stepper">
+          <button type="button" id="restMinutesUp" class="stepper-btn" data-i18n-aria="restMinutesUpAria" aria-label="Aumentar un minuto">▲</button>
+          <button type="button" id="restMinutesDown" class="stepper-btn" data-i18n-aria="restMinutesDownAria" aria-label="Reducir un minuto">▼</button>
+        </span>
+        <span class="number-unit" data-i18n="restMinutesUnit">min</span>
+      </div>
       <p class="help-text" data-i18n="restMinutesHelp">Cuando llevas este tiempo escribiendo, aparece un aviso para descansar. El contador vuelve a cero. Y el aviso aparece otra vez.</p>
     </div>
 

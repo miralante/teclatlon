@@ -186,14 +186,11 @@
        vive solo en esta sesión (nunca se guarda) y se reinicia cada
        vez que aparece el aviso. */
     "restMinutesLabel": "⏸️ Aviso de descanso",
-    "restMinutesAria": "Elegir cada cuánto tiempo aparece el aviso de descanso",
+    "restMinutesAria": "Indicar cada cuántos minutos aparece el aviso de descanso",
     "restMinutesHelp": "Cuando llevas este tiempo escribiendo, aparece un aviso para descansar. El contador vuelve a cero. Y el aviso aparece otra vez.",
-    "restOption10": "10 minutos",
-    "restOption15": "15 minutos",
-    "restOption20": "20 minutos",
-    "restOption30": "30 minutos",
-    "restOption45": "45 minutos",
-    "restOption60": "60 minutos",
+    "restMinutesUnit": "min",
+    "restMinutesUpAria": "Aumentar un minuto",
+    "restMinutesDownAria": "Reducir un minuto",
 
     "achievementsTitle": "⭐ Logros",
     "achievementsShow": "Ver logros",

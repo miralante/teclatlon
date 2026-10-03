@@ -199,9 +199,9 @@ partida. Interacciones con el motor:
   tiempo de práctica aparece el aviso de descanso. Vive en
   `feedback.js`, que es quien cuenta y quien muestra la frase
   (`celebrate()` la añade a la celebración cuando toca), y el panel de
-  ajustes solo la escribe: `DEFAULT_REST_MINUTES` (20) y `REST_CHOICES`
-  se exportan desde `App.feedback` para que ambos no puedan discrepar.
-  Ver §2.6.
+  ajustes solo la escribe: `DEFAULT_REST_MINUTES` (20), el rango
+  `REST_MIN`/`REST_MAX` y `normaliseRestMinutes()` se exportan desde
+  `App.feedback` para que ambos no puedan discrepar. Ver §2.6.
 
 ### 2.3 `data.js` — distribuciones de teclado y contenido de práctica
 
@@ -380,15 +380,39 @@ para que el contador no dependa de cuándo se termina una ronda, y
 celebración que llega 3 minutos después del último tick sigue viendo el
 total correcto.
 
-El contrato vive entero en `feedback.js`: `DEFAULT_REST_MINUTES`,
-`REST_CHOICES` (10/15/20/30/45/60) y el propio aviso. Se exportan en
-`App.feedback` para que `app.js` normalice `state.options.restMinutes`
-contra esa misma lista (cualquier valor desconocido vuelve al
-predeterminado) y para que el `<select id="restMinutesSelect">` del
-panel de ajustes no pueda ofrecer un valor que el contador no
-entiende. Como cualquier `<select>`, dispara `change` (no `click`), así
-que se cablea con un listener `change` propio, igual que
-`#goalAccuracySelect` y `#goalSpeedSelect`.
+El contrato vive entero en `feedback.js`: `DEFAULT_REST_MINUTES` (20), el
+rango `REST_MIN`/`REST_MAX` (1 a 240 minutos) y el propio aviso. Se
+exportan en `App.feedback` junto con `normaliseRestMinutes()`, la única
+regla que decide qué es un intervalo válido, y esa función la usan las tres
+parties: `app.js` al normalizar lo guardado, el panel al confirmar lo
+escrito y el propio contador al leerlo. Lo que no vale (campo vacío, valor
+a medio escribir, algo de una versión anterior o un `localStorage` tocado a
+mano) vuelve al predeterminado; lo que se sale del rango se acerca al
+extremo más cercano en vez de descartarse.
+
+En el panel de ajustes el control es una **caja de texto numérica con
+flechas**, `<input type="number" id="restMinutesInput">`, no un desplegable:
+quien escribe decide cuántos minutos quiere, sin estar limitado a una lista
+que no tiene por qué incluir lo que le sirve. Las flechas del navegador
+(`step="1"`, un minuto cada vez) y las flechas del teclado hacen lo mismo, y
+`min`/`max` reflejan `REST_MIN`/`REST_MAX`. Se lee en `change` y no en
+`input`, que es el momento en que el número está terminado: así un "1" a
+medias camino del "15" no se guarda ni se recorta bajo los dedos de quien
+escribe. `applyOptions()` reescribe el campo con lo que decida el
+normalizador, de modo que la caja nunca se queda vacía ni mostrando un
+número que el contador no vaya a entender.
+
+Las flechas visibles son dos botones propios (`#restMinutesUp` y
+`#restMinutesDown`), no el spinner nativo: Chromium **solo dibuja el spinner
+cuando el campo tiene el foco**, así que una caja sin pulsar se quedaba sin
+flechas, que es justo lo que hace inútil el "subir/bajar" que se pide. Cada
+pulsación es un minuto y se guarda al momento, desde lo que haya en el
+campo (o desde el intervalo en uso si está vacío). `applyOptions()` los
+desactiva en los extremos del rango, y llevan su propio `color` del token
+`--color-text` porque el reset de `base.css` no lo pone. El spinner nativo
+no se desactiva: en `dark` y `contrast` se le añade `color-scheme: dark`
+porque si no el navegador lo pinta con su gris oscuro, que desaparece sobre
+`#1E2230` y sobre el negro puro del alto contraste.
 
 ### 2.7 Reto "todas las teclas": tres fases, ninguna en pantalla
 

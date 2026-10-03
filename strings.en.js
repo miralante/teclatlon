@@ -185,14 +185,11 @@
        phrase joins the celebration. The timer lives in this session
        only (never saved) and resets every time the reminder shows. */
     "restMinutesLabel": "⏸️ Rest reminder",
-    "restMinutesAria": "Choose how often the rest reminder appears",
+    "restMinutesAria": "Type how many minutes pass before the rest reminder appears",
     "restMinutesHelp": "When you have typed for this long, a reminder to rest appears. The timer starts again. The reminder comes back later.",
-    "restOption10": "10 minutes",
-    "restOption15": "15 minutes",
-    "restOption20": "20 minutes",
-    "restOption30": "30 minutes",
-    "restOption45": "45 minutes",
-    "restOption60": "60 minutes",
+    "restMinutesUnit": "min",
+    "restMinutesUpAria": "Add one minute",
+    "restMinutesDownAria": "Take one minute off",
 
     "achievementsTitle": "⭐ Achievements",
     "achievementsShow": "Show achievements",

@@ -167,7 +167,8 @@ async function main() {
     assert.equal(await page.evaluate(() => window.__settingsTones), 3, 'al activar sonido de tecla debe sonar el aviso de éxito');
     await page.locator('#btnKeySound').click();
     await page.locator('#btnErrorSound').click();
-    await page.locator('#restMinutesSelect').selectOption('30');
+    await page.locator('#restMinutesInput').fill('30');
+    await page.locator('#restMinutesInput').press('Tab');
     await page.locator('#goalSettings').locator('summary').click();
     await page.locator('#goalSettings').locator('#goalAccuracySelect').selectOption('95');
     await page.locator('#goalSettings').locator('#goalSpeedSelect').selectOption('50');
@@ -212,7 +213,7 @@ async function main() {
     assert.equal(await page.locator('#screenName .keyboard .key').count(), extendedCount);
     assert.equal(await page.locator('#btnKeySound').getAttribute('aria-pressed'), 'false');
     assert.equal(await page.locator('#btnErrorSound').getAttribute('aria-pressed'), 'true');
-    assert.equal(await page.locator('#restMinutesSelect').inputValue(), '30');
+    assert.equal(await page.locator('#restMinutesInput').inputValue(), '30');
 
     // The locale picker uses the app's own language setting and text dictionary.
     await page.locator('#btnOpenSettings').click();

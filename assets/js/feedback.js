@@ -169,10 +169,15 @@
 
      The chosen interval is a user setting (state.options.restMinutes),
      read straight from localStorage the same way the sound options
-     above are read; the allowed values and the default are published
-     on App.feedback so app.js has a single source of truth. */
+     above are read; the default and the allowed range are published on
+     App.feedback so app.js has a single source of truth. */
   var DEFAULT_REST_MINUTES = 20;
-  var REST_CHOICES = [10, 15, 20, 30, 45, 60];
+  /* Any whole number of minutes is valid: the panel is a spin box, not
+     a menu, so there is no fixed list to pick from — only a range to
+     stay inside (1 minute … 4 hours), which the input's min/max and
+     its arrows mirror. */
+  var REST_MIN = 1;
+  var REST_MAX = 240;
   var IDLE_MS = 60 * 1000;   /* no key and no click for 1 min → not practising */
   var TICK_MS = 15 * 1000;   /* how often the counter adds the elapsed time */
 
@@ -187,12 +192,33 @@
   document.addEventListener('keydown', noteActivity, true);
   document.addEventListener('pointerdown', noteActivity, true);
 
+  /**
+   * The one rule for a rest interval: a whole number of minutes inside
+   * the range. Anything else (an empty field, a half-typed value, a
+   * number from an older version, a hand-edited localStorage) becomes
+   * the default, and out-of-range numbers are pulled back to the
+   * nearest end instead of being thrown away. Shared by the countdown
+   * below, by app.js when it normalises the saved setting, and by the
+   * panel when it commits what was typed.
+   * @param {number|string|null|undefined} value
+   * @returns {number} minutes, always usable
+   */
+  function normaliseRestMinutes(value) {
+    if (value === null || value === undefined || value === '') {
+      return DEFAULT_REST_MINUTES;
+    }
+    var minutes = Math.round(Number(value));
+    if (!isFinite(minutes)) return DEFAULT_REST_MINUTES;
+    if (minutes < REST_MIN) return REST_MIN;
+    if (minutes > REST_MAX) return REST_MAX;
+    return minutes;
+  }
+
   /** Configured reminder interval in minutes, or the default. */
   function restMinutes() {
     try {
       var data = window.App.storage && window.App.storage.get('keyboard');
-      var value = data && data.options ? Number(data.options.restMinutes) : NaN;
-      if (REST_CHOICES.indexOf(value) !== -1) return value;
+      if (data && data.options) return normaliseRestMinutes(data.options.restMinutes);
     } catch (e) { /* ignore */ }
     return DEFAULT_REST_MINUTES;
   }
@@ -256,8 +282,11 @@
     successSound: successSound,
     errorSound: errorSound,
     /* Rest-reminder contract, read by app.js so the settings panel and
-       the notice can never disagree on the default or the choices. */
+       the notice can never disagree on the default, the range or how an
+       out-of-range value is treated. */
     DEFAULT_REST_MINUTES: DEFAULT_REST_MINUTES,
-    REST_CHOICES: REST_CHOICES
+    REST_MIN: REST_MIN,
+    REST_MAX: REST_MAX,
+    normaliseRestMinutes: normaliseRestMinutes
   };
 })();

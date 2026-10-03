@@ -615,9 +615,8 @@
   padding: 6px 0;
 }
 
-/* ---- Settings selects (goals, rest reminder) ---- */
-.goal-select,
-.setting-select {
+/* ---- Settings selects (goals) ---- */
+.goal-select {
   width: 100%;
   padding: 6px 10px;
   border: 2px solid var(--color-border);
@@ -631,10 +630,102 @@
   -webkit-appearance: auto;
 }
 
-.goal-select:focus,
-.setting-select:focus {
+.goal-select:focus {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+/* ---- Settings number box (rest reminder) ----
+   The field itself. The native stepper is not switched off (the keyboard
+   arrows still step the number, and nothing else needs re-implementing),
+   but it is not the visible pick up/down: Chromium only paints it while
+   the field has the focus, so the ▲/▼ pair below carries that job. When
+   it does appear, its arrows are the browser's own dark grey, which
+   disappears on the #1E2230 surface of the dark theme and on the pure
+   black of high contrast; `color-scheme: dark` makes it paint them
+   light, which is what both of those themes need. */
+.setting-input {
+  padding: 6px 10px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--text-base);
+  font-family: inherit;
+  font-weight: 700;
+  text-align: center;
+}
+
+.setting-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+[data-theme="dark"] .setting-input,
+[data-theme="contrast"] .setting-input {
+  color-scheme: dark;
+}
+
+.number-field {
+  display: flex;
+  /* stretch, not centre: the ▲/▼ pair should be exactly as tall as the
+     box, so the two arrows are as easy to hit as the field itself. */
+  align-items: stretch;
+  gap: 8px;
+}
+
+.number-field .setting-input {
+  /* Fixed width, not 100%: this is a two-or-three digit number, and
+     a full-width box would pretend to be a text field. */
+  flex: 0 0 7rem;
+}
+
+.number-unit {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-text-soft);
+}
+
+/* The ▲/▼ pair. The browser's own stepper is not enough on its own:
+   Chromium only paints it while the field has the focus, so a box that
+   nobody has clicked yet shows no arrows at all. These two are always
+   there, take their colour from the theme tokens (so they read in dark
+   and high contrast too) and go disabled at the ends of the range. */
+.stepper {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 0 0 auto;
+}
+
+.stepper-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 0;
+  width: 36px;
+  padding: 0;
+  border: 2px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.stepper-btn:hover:not(:disabled) {
+  background: var(--accent-soft);
+}
+
+.stepper-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.stepper-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
 }
 
 /* ---- Achievements panel ---- */
