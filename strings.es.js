@@ -193,26 +193,6 @@
     "restOption20": "20 minutos",
     "restOption30": "30 minutos",
     "restOption45": "45 minutos",
-    "restOption60": "60 minutos",
-
-    "achievementsTitle": "⭐ Logros",
-    "achievementsShow": "Ver logros",
-    "achievementsHide": "Ocultar",
-    "achievementsHint": "Los logros se desbloquean automáticamente al practicar.",
-    "achievementFirstStar": "Primera estrella",
-    "achievementFirstStarDesc": "Consigue tu primera estrella de práctica.",
-    "achievementTenStars": "Diez estrellas",
-    "achievementTenStarsDesc": "Acumula diez estrellas de práctica.",
-    "achievementStreak3": "Racha de 3",
-    "achievementStreak3Desc": "Completa tres sesiones consecutivas con meta alcanzada.",
-    "achievementAllLessons": "Todas las lecciones",
-    "achievementAllLessonsDesc": "Completa al menos una lección de cada modo de juego.",
-    "achievementAllKeys": "Tecla a tecla",
-    "achievementAllKeysDesc": "Completa el reto de pulsar todas las teclas del teclado.",
-    "achievementPerfectRound": "Sesión perfecta",
-    "achievementPerfectRoundDesc": "Completa una sesión con 100 % de precisión y sin errores.",
-    "achievementLocked": "Bloqueado",
-    "achievementUnlocked": "Desbloqueado",
-    "achievementUnlockedAt": "Desbloqueado el {date}",
+    "restOption60": "60 minutos"
     }, 'es');
 })();

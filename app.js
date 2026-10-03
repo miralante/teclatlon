@@ -22,15 +22,10 @@
      selector-less by default. */
   var SCREENS_WITH_KEYBOARD = ['screenName', 'screenGame', 'screenFree'];
 
-  /* ---------- Achievements ---------- */
-  var ACHIEVEMENTS = [
-    { id: 'firstStar',    icon: '⭐', key: 'achievementFirstStar' },
-    { id: 'tenStars',     icon: '🌟', key: 'achievementTenStars' },
-    { id: 'streak3',      icon: '🔥', key: 'achievementStreak3' },
-    { id: 'allLessons',   icon: '🎓', key: 'achievementAllLessons' },
-    { id: 'allKeys',      icon: '🏆', key: 'achievementAllKeys' },
-    { id: 'perfectRound', icon: '💯', key: 'achievementPerfectRound' }
-  ];
+  /* Achievements: the catalog and the badge grid live in
+     assets/js/achievements.js and are shown on the "About the app"
+     page (about-app/, linked from the footer). This file only
+     unlocks them (achieve()). */
 
   /* ---------- State and progress ---------- */
   /* One-time migration from the legacy Spanish-keyed shape (nombre,
@@ -222,30 +217,6 @@
       else streak = 0;
     });
     if (streak >= 3) achieve('streak3');
-  }
-
-  /* Render the achievements panel inside the settings drawer. */
-  function renderAchievements() {
-    var container = $('#achievementsGrid');
-    if (!container) return;
-    container.innerHTML = '';
-    ACHIEVEMENTS.forEach(function (a) {
-      var unlocked = !!state.achievements[a.id];
-      var dateStr = unlocked ? new Date(state.achievements[a.id]).toLocaleDateString() : null;
-      var item = document.createElement('div');
-      item.className = 'achievement-badge' + (unlocked ? ' unlocked' : ' locked');
-      item.setAttribute('aria-label', App.i18n.t(a.key + 'Desc') + (unlocked ? '' : ' (' + App.i18n.t('achievementLocked') + ')'));
-      item.innerHTML =
-        '<span class="achievement-badge-icon">' + a.icon + '</span>' +
-        '<span class="achievement-badge-name">' + App.i18n.t(a.key) + '</span>' +
-        '<span class="achievement-badge-desc">' + App.i18n.t(a.key + 'Desc') + '</span>' +
-        '<span class="achievement-badge-status">' +
-          (unlocked
-            ? App.i18n.t('achievementUnlockedAt').replace('{date}', dateStr)
-            : App.i18n.t('achievementLocked')) +
-        '</span>';
-      container.appendChild(item);
-    });
   }
 
   /* ---------- Key data ---------- */
@@ -453,14 +424,11 @@
     });
     $('#btnOpenSettings').setAttribute('aria-expanded', 'true');
     $('#btnCloseSettings').focus();
-    /* Sync goal selects and show achievements */
+    /* Sync goal selects */
     var accSel = $('#goalAccuracySelect');
     var spdSel = $('#goalSpeedSelect');
     if (accSel) accSel.value = String(state.goal.accuracyMin || '0');
     if (spdSel) spdSel.value = String(state.goal.speedMin || '0');
-    var details = $('#achievementsSection');
-    if (details) details.open = true;
-    renderAchievements();
     applyOptions();
   }
 
@@ -536,17 +504,6 @@
       state.goal.speedMin = val2 === '0' ? 0 : parseInt(val2, 10);
       save();
       updateLiveMetrics();
-      return;
-    }
-
-    /* Achievements panel toggle — the <details> element handles open/close natively */
-    var btnToggleAchieve = e.target.closest('#btnToggleAchievements');
-    if (btnToggleAchieve) {
-      var details = $('#achievementsSection');
-      if (details) {
-        details.open = !details.open;
-        if (details.open) renderAchievements();
-      }
       return;
     }
   });

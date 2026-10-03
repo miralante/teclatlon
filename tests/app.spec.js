@@ -325,18 +325,19 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await expect(page.locator('#goalSpeedSelect')).toHaveValue('80');
   });
 
-  test('2.9 — logros: sección abre, cierra y muestra badges', async ({ page }) => {
+  test('2.9 — logros: el pie enlaza a "Sobre la app" antes de Configuración y muestra badges', async ({ page }) => {
     page = await openFreshApp();
-    await page.locator('#btnOpenSettings').click();
+    const footerLinks = page.locator('.app-footer a.footer-link');
+    await expect(footerLinks.nth(0)).toHaveAttribute('href', 'about-app/');
+    await expect(footerLinks.nth(1)).toHaveAttribute('href', 'config/');
+    await expect(page.locator('#achievementsSection')).toHaveCount(0);
 
-    await expect(page.locator('#achievementsSection')).toHaveAttribute('open', '');
-    await page.locator('#btnToggleAchievements').click();
-    await expect(page.locator('#achievementsSection')).not.toHaveAttribute('open');
-    await page.locator('#btnToggleAchievements').click();
-    await expect(page.locator('#achievementsSection')).toHaveAttribute('open', '');
-    // At least 1 badge exists
+    await footerLinks.nth(0).click();
+    await expect(page).toHaveURL(/about-app\/$/);
     const badges = page.locator('#achievementsGrid .achievement-badge');
-    await expect(badges).not.toHaveCount(0);
+    await expect(badges).toHaveCount(6);
+    await expect(page.locator('#achievementsGrid .achievement-badge.unlocked')).toHaveCount(0);
+    await expect(page.locator('#achievementsCount')).toContainText('0');
   });
 
   // -----------------------------------------------------------------

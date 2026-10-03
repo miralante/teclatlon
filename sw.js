@@ -5,7 +5,7 @@
    and bump VERSION so the activate step purges the old cache.
    See CLOUDFLARE.md �"Cache contract" for the full contract.
    ============================================================ */
-var VERSION = 'teclatlon-v73';
+var VERSION = 'teclatlon-v74';
 
 var FILES = [
   './index.html',
@@ -21,6 +21,11 @@ var FILES = [
   './config/styles.css',
   './config/strings.es.js',
   './config/strings.en.js',
+  './about-app/index.html',
+  './about-app/app.js',
+  './about-app/styles.css',
+  './about-app/strings.es.js',
+  './about-app/strings.en.js',
   /* legal/, about/ and team/ are standalone PWA pages. Each one is
      a real HTML route (not a SPA fragment); they share the app
      tokens / base / components CSS and the i18n + utils helpers,
@@ -55,6 +60,7 @@ var FILES = [
   './assets/js/tts.js',
   './assets/js/storage.js',
   './assets/js/feedback.js',
+  './assets/js/achievements.js',
   './assets/img/icono.svg'
 ];
 
