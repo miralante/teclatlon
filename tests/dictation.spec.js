@@ -36,7 +36,12 @@ async function openApp(options = {}) {
     window.speechSynthesis.cancel = () => { };
     window.speechSynthesis.speak = (u) => {
       window.__tts.calls.push(u.text);
-      setTimeout(() => { if (u.onend) { window.__tts.ends++; u.onend(); } }, 20);
+      /* A mute engine: it accepts the utterance and then never even
+         starts. This is the case the page cannot detect by looking at
+         the voice list, and the one a real machine hits. */
+      if (window.__tts.silent) return;
+      setTimeout(() => { if (u.onstart) u.onstart(); }, 5);
+      setTimeout(() => { if (u.onend) { window.__tts.ends++; u.onend(); } }, 25);
     };
   }, { withVoices: options.withVoices !== false });
   const page = await ctx.newPage();
@@ -176,6 +181,59 @@ test('a letter that is never read out loud does not lock the keyboard', async ()
   await page.waitForTimeout(5500);
   await page.keyboard.type(key);
   await expect(page.locator('#feedback')).toHaveClass(/success/, { timeout: 8000 });
+
+  await ctx.close();
+});
+
+test('a machine that lists voices but never speaks still shows the letter', async () => {
+  const { page, ctx } = await openApp();
+  /* The real-world case: a voice is installed, so the voice list is
+     not empty, but nothing ever comes out of the speakers. The only
+     signal is `onstart`, and when it never arrives the letter has to
+     come to the screen. */
+  await page.evaluate(() => { window.__tts.silent = true; });
+  await startDictation(page);
+
+  await expect(page.locator('#dictationFallback')).toBeVisible({ timeout: 6000 });
+  const letter = (await page.locator('#dictationLetter').textContent()).trim();
+  expect(letter).toMatch(/^[a-zñ]$/);
+
+  /* And the activity is still a real exercise. A mute engine also never
+     releases the between-letters lock, so the 6 s net is what frees the
+     keyboard here — which is exactly the path that has to work. */
+  await page.waitForTimeout(4000);
+  await page.keyboard.type(letter);
+  await expect(page.locator('#feedback')).toHaveClass(/success/, { timeout: 8000 });
+
+  await ctx.close();
+});
+
+test('the person decides whether the letter is shown, whatever the machine does', async () => {
+  const { page, ctx } = await openApp();
+  await startDictation(page);
+
+  /* Working audio: the letter stays off, and the toggle offers it. */
+  await expect(page.locator('#dictationFallback')).toBeHidden();
+  const btn = page.locator('#btnDictationShow');
+  await expect(btn).toHaveAttribute('aria-pressed', 'false');
+
+  await btn.click();
+  await expect(btn).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#dictationFallback')).toBeVisible();
+  expect((await page.locator('#dictationLetter').textContent()).trim()).toMatch(/^[a-zñ]$/);
+
+  /* Back off again. */
+  await btn.click();
+  await expect(btn).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.locator('#dictationFallback')).toBeHidden();
+
+  /* And the choice survives a reload, because it is a person, not a
+     session, who is being accommodated. */
+  await btn.click();
+  await page.reload();
+  await page.locator('#btnSkipName').click();
+  await page.locator('[data-mode="dictation"]').click();
+  await expect(page.locator('#btnDictationShow')).toHaveAttribute('aria-pressed', 'true');
 
   await ctx.close();
 });

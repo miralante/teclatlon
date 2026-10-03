@@ -84,6 +84,11 @@
   state.options.metrics = !!state.options.metrics;
   state.options.errorSound = !!state.options.errorSound;
   state.options.showFingerText = state.options.showFingerText === undefined ? true : !!state.options.showFingerText;
+  /* Dictation: show the letter on screen as well as (or instead of)
+     reading it out. Off by default, because hearing the letter is the
+     exercise; the app turns it on by itself whenever the machine has
+     not proved it can speak. */
+  state.options.showDictationLetter = state.options.showDictationLetter === undefined ? false : !!state.options.showDictationLetter;
   /* Rest reminder interval (minutes). The default and the allowed range
      live in feedback.js, the module that owns the notice, so the panel
      and the countdown can't drift apart. Anything unusable (a value from
@@ -128,7 +133,7 @@
   /* In-progress game. null outside screenGame.
      type 'seq': { cfg: { mode, title, steps, starKey, onFinish }, idx, pos, waiting }
      type 'challenge': { set: { ch: true } }
-     type 'dictation': { letters, letter, waiting, noVoice } */
+     type 'dictation': { letters, letter, waiting, audioDead } */
   var game = null;
   var dictationTimer = null;
   var dictationUnlock = null;
@@ -1283,10 +1288,13 @@
      even when it does not); this is the net for an utterance that dies
      silently, so it sits above that watchdog on purpose. */
   var DICTATION_UNLOCK_MS = 6000;
-  /* Chrome fills the voice list asynchronously, so a first "no voices"
-     reading is not proof of anything: poll briefly before giving up and
-     moving the letter onto the screen. */
-  var DICTATION_VOICE_POLL_MS = 900;
+  /* How long the engine gets to prove it actually starts talking before
+     the letter is put on screen. A voice list is not proof: a machine
+     can list voices and read nothing at all (muted output, wrong
+     device, a voice that fails silently), and the only signal the
+     platform gives is `onstart`. */
+  var DICTATION_START_GRACE_MS = 2500;
+  var dictationStartWatch = null;
 
   function dictationLetters() {
     return DATA.rows.reduce(function (letters, row) {
@@ -1302,26 +1310,22 @@
     if (!show) dictationLetter(null);
   }
 
-  /** Shows the current letter on screen, or hides it with no argument.
-      The letter is never shown while the machine can read it aloud: the
-      whole point of the mode is to ask for it by ear. */
+  /** Whether the letter has to be on screen right now. The one rule:
+      never hide the letter unless the machine has demonstrably spoken
+      and the person has not asked to see it. */
+  function dictationLetterOnScreen() {
+    return !!state.options.showDictationLetter || !!game.audioDead ||
+      !App.tts.hasVoice() || !App.tts.confirmed();
+  }
+
+  function dictationUpdateLetter() {
+    dictationLetter(dictationLetterOnScreen() ? game.letter : null);
+  }
+
+  /** Shows the current letter on screen, or hides it with no argument. */
   function dictationLetter(letter) {
     if (letter) $('#dictationLetter').textContent = letter;
     $('#dictationFallback').classList.toggle('hidden', !letter);
-  }
-
-  /** Reports whether this machine can read a letter out loud.
-      Resolves immediately when it can; waits out a short poll when the
-      voice list has not been filled in yet, so a late-loading voice is
-      not mistaken for a missing one. */
-  function dictationCanSpeak(done) {
-    var waited = 0;
-    (function poll() {
-      if (App.tts.hasVoice()) { done(true); return; }
-      waited += 100;
-      if (waited > DICTATION_VOICE_POLL_MS) { done(false); return; }
-      setTimeout(poll, 100);
-    })();
   }
 
   function speakDictationLetter(nextLetter) {
@@ -1331,23 +1335,45 @@
       game.letter = letters[Math.floor(Math.random() * letters.length)];
     }
     game.waiting = true;
-    dictationLetter(game.noVoice ? game.letter : null);
+    /* No voice to read with: there is nothing to wait for. */
+    if (!App.tts.hasVoice()) game.audioDead = true;
+    /* Put the letter up only when sound is known NOT to be coming — no
+       voice at all, or the engine already caught mute. While the engine
+       still has its chance to start, the letter stays off, so a machine
+       that works never flashes it. */
+    if (game.audioDead) dictationUpdateLetter();
     if (dictationUnlock) clearTimeout(dictationUnlock);
     dictationUnlock = setTimeout(function () {
       dictationUnlock = null;
       if (game && game.type === 'dictation') game.waiting = false;
     }, DICTATION_UNLOCK_MS);
+    if (dictationStartWatch) { clearTimeout(dictationStartWatch); dictationStartWatch = null; }
+    if (!game.audioDead) {
+      dictationStartWatch = setTimeout(function () {
+        dictationStartWatch = null;
+        if (game && game.type !== 'dictation') return;
+        /* The engine never even started. Stop waiting for a sound that
+           is not coming and show the letter instead. */
+        if (!App.tts.confirmed()) { game.audioDead = true; dictationUpdateLetter(); }
+      }, DICTATION_START_GRACE_MS);
+    }
     var name = App.i18n.t('dictationLetterNames.' + game.letter);
     var prompt = App.i18n.t('dictationPrompt').replace('{letter}', name);
     App.tts.speak(prompt, function () {
       if (game && game.type === 'dictation') game.waiting = false;
+    }, function () {
+      /* It started talking, so the sound is real after all: the letter
+         goes back off the screen. */
+      if (dictationStartWatch) { clearTimeout(dictationStartWatch); dictationStartWatch = null; }
+      if (game && game.type === 'dictation') { game.audioDead = false; dictationUpdateLetter(); }
     });
   }
 
   function playDictation() {
     if (dictationTimer) clearTimeout(dictationTimer);
     if (dictationUnlock) clearTimeout(dictationUnlock);
-    game = { type: 'dictation', letters: dictationLetters(), letter: null, waiting: true, noVoice: false };
+    if (dictationStartWatch) { clearTimeout(dictationStartWatch); dictationStartWatch = null; }
+    game = { type: 'dictation', letters: dictationLetters(), letter: null, waiting: true, audioDead: false };
     $('#gameTitle').textContent = App.i18n.t('modeDictationName');
     $('#gameInstruction').textContent = App.i18n.t('dictationInstruction');
     /* The card only ever holds the target and the challenge progress,
@@ -1364,13 +1390,7 @@
     startMetrics();
     updateLiveMetrics();
     showScreen('screenGame');
-    /* Ask first, then ask for the letter: with no voice to read it, the
-       letter goes on screen and the activity carries on all the same. */
-    dictationCanSpeak(function (canSpeak) {
-      if (!game || game.type !== 'dictation') return;
-      game.noVoice = !canSpeak;
-      speakDictationLetter(true);
-    });
+    speakDictationLetter(true);
   }
 
   function dictationKey(ch) {
@@ -1766,6 +1786,7 @@
     var mode = game && game.cfg ? game.cfg.mode : null;
     if (dictationTimer) clearTimeout(dictationTimer);
     if (dictationUnlock) clearTimeout(dictationUnlock);
+    if (dictationStartWatch) { clearTimeout(dictationStartWatch); dictationStartWatch = null; }
     if (App.tts) App.tts.stop();
     game = null;
     markTarget(null);
@@ -1780,6 +1801,23 @@
   $('#btnDictationAgain').addEventListener('click', function () {
     if (!game || game.type !== 'dictation') return;
     speakDictationLetter(false);
+  });
+
+  /* Show or hide the letter on screen. The app decides this by itself
+     when the machine has not proved it can speak, but the judgement
+     that matters is the person's: some people read better with the
+     letter in front of them, and no browser can tell us that. */
+  function renderDictationShowButton() {
+    var btn = $('#btnDictationShow');
+    var on = !!state.options.showDictationLetter;
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.textContent = App.i18n.t(on ? 'dictationHideLetter' : 'dictationShowLetter');
+  }
+  $('#btnDictationShow').addEventListener('click', function () {
+    state.options.showDictationLetter = !state.options.showDictationLetter;
+    save();
+    renderDictationShowButton();
+    if (game && game.type === 'dictation') dictationUpdateLetter();
   });
 
   if ($('#btnListenGame')) $('#btnListenGame').addEventListener('click', function () {
@@ -1906,6 +1944,9 @@
   renderRows($('#numpad'), DATA.numpad);
   renderKeyboards();
   applyOptions();
+  /* Its label is a state word, not static copy, so i18n.apply() on boot
+     gets it wrong for anyone who left the letter shown. */
+  renderDictationShowButton();
   if (systemThemeQuery) {
     var updateSystemTheme = function () {
       if (state.options.theme === 'auto') applyOptions();

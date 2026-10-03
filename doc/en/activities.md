@@ -95,14 +95,22 @@ mode rather than extras:
 3. **The keyboard is never locked waiting for a sound.** The pause
    between letters (`game.waiting`) is released when the reading ends,
    but also by a timer, so an utterance that dies silently cannot leave
-   the activity mute and stuck. And when the machine has **no voice
-   installed at all**, the letter moves from the speakers to the screen
-   and the activity keeps working.
+   the activity mute and stuck.
+4. **The letter is shown until the machine proves it can speak.** A
+   voice list proves nothing: a computer can have voices installed and
+   read nothing at all (muted output, wrong device, a voice that fails
+   silently). The only signal the platform gives is the `onstart`
+   event. So the letter is **not hidden** until the engine has managed
+   to start a single reading in this session, and if it cannot even do
+   that within 2.5 s the app stops waiting for sound and puts the
+   letter on screen. While the computer does read, the letter is not
+   shown: showing it would turn dictation into copying the letter,
+   which is not what the mode trains.
 
-While the machine can read the letter aloud it is **not shown on
-screen**: showing it would turn dictation into copying the letter, which
-is not what the mode trains. The on-screen letter is only the fallback
-for whoever cannot hear.
+There is also a **"👁 Show the letter"** button the person can press at
+any time. No browser can make that judgement for them: some people read
+better with the letter in front of them, and the app remembers the
+choice across sessions.
 
 ## 5. What is **not** an activity here
 

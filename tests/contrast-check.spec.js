@@ -178,10 +178,13 @@ test.describe('contraste de la pantalla de dictado', () => {
 
       const report = await page.evaluate(measure);
       const mine = report.filter((r) => r.inPanel);
-      /* 4 steps + title + note + letter + replay button. Counting them
-         keeps the check honest: a filter that quietly matches nothing
-         would report a green screen it never looked at. */
-      expect(mine.length, 'el panel de dictado debe tener todo su texto medido').toBe(8);
+      /* Every own-text element of the panel must be measured: the
+         numbered steps (counted from the DOM, so adding a step does not
+         make this stale), plus the title, the two buttons, the note and
+         the letter. A filter that quietly matches nothing would report
+         a green screen it never looked at. */
+      const steps = await page.locator('#dictationPanel li').count();
+      expect(mine.length, 'el panel de dictado debe tener todo su texto medido').toBe(steps + 5);
 
       console.log(`\n=== dictado, tema ${theme}: ${mine.length} textos ===`);
       mine.forEach((r) => console.log(

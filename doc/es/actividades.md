@@ -97,14 +97,22 @@ y las tres son parte del modo, no extras:
 3. **Nunca se bloquea el teclado esperando un sonido.** El bloqueo
    entre letras (`game.waiting`) lo libera el final de la lectura, pero
    también un temporizador, así que un utterance que muere en silencio
-   no deja la actividad muda y bloqueada. Y si el ordenador **no tiene
-   ninguna voz instalada**, la letra pasa de los altavoces a la
-   pantalla y la actividad sigue funcionando.
+   no deja la actividad muda y bloqueada.
+4. **La letra se enseña hasta que el ordenador demuestre que habla.**
+   Una lista de voces no es prueba de nada: un equipo puede tener
+   voces instaladas y no leer absolutamente nada (volumen mute, dispositivo
+   equivocado, una voz que falla en silencio). La única señal que da la
+   plataforma es el evento `onstart`. Así que la letra **no se oculta**
+   mientras el motor no haya conseguido empezar una lectura en esta
+   sesión, y si tampoco lo consigue en 2,5 s la app deja de esperar el
+   sonido y pone la letra en pantalla. Mientras el ordenador lee, la
+   letra no se enseña: mostrarla convertiría el dictado en copiar la
+   letra, que no es lo que entrena.
 
-Mientras el ordenador puede leer la letra, **no se muestra en
-pantalla**: enseñarla convertiría el dictado en copiar la letra, que no
-es lo que entrena. La letra en pantalla es solo el respaldo de quien no
-puede oír.
+Además hay un botón **"👁 Ver la letra"** que la persona puede pulsar
+cuando quiera. Esa decisión no la puede tomar ningún navegador: hay
+quien lee mejor con la letra delante, y la app lo recuerda entre
+sesiones.
 
 ## 5. Lo que **no** es una actividad aquí
 
