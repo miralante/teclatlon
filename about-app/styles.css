@@ -1,0 +1,72 @@
+/* Teclatlon — "About the app" page styles.
+   Reuses tokens/base/components (the badge grid lives in
+   ../assets/css/components.css). Only page layout here. */
+.about-app {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.5rem clamp(1rem, 4vw, 1.5rem) 4rem;
+}
+
+.cabecera-about-app {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.idioma-selector {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-lang {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.btn-lang[aria-pressed="true"] {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.entradilla {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.pila {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.achievements-grid {
+  list-style: none;
+  padding: 0;
+}
+
+.achievements-count {
+  font-weight: 700;
+  margin: 0.5rem 0 0;
+}
+
+.pie {
+  font-size: 0.85rem;
+  color: var(--color-text-soft);
+  text-align: center;
+}
+
+.pie-about-app {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}

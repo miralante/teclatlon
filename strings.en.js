@@ -192,26 +192,6 @@
     "restOption20": "20 minutes",
     "restOption30": "30 minutes",
     "restOption45": "45 minutes",
-    "restOption60": "60 minutes",
-
-    "achievementsTitle": "⭐ Achievements",
-    "achievementsShow": "Show achievements",
-    "achievementsHide": "Hide",
-    "achievementsHint": "Achievements are unlocked automatically while you practice.",
-    "achievementFirstStar": "First star",
-    "achievementFirstStarDesc": "Earn your first practice star.",
-    "achievementTenStars": "Ten stars",
-    "achievementTenStarsDesc": "Accumulate ten practice stars.",
-    "achievementStreak3": "3-session streak",
-    "achievementStreak3Desc": "Complete three consecutive sessions with goal met.",
-    "achievementAllLessons": "All lessons",
-    "achievementAllLessonsDesc": "Complete at least one lesson in every game mode.",
-    "achievementAllKeys": "Key by key",
-    "achievementAllKeysDesc": "Complete the all-keys challenge.",
-    "achievementPerfectRound": "Perfect session",
-    "achievementPerfectRoundDesc": "Complete a session with 100 % accuracy and no errors.",
-    "achievementLocked": "Locked",
-    "achievementUnlocked": "Unlocked",
-    "achievementUnlockedAt": "Unlocked on {date}",
+    "restOption60": "60 minutes"
     }, 'en');
 })();
