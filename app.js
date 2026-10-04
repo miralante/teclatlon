@@ -1329,8 +1329,10 @@
       if (game && game.type === 'dictation') game.waiting = false;
     }, DICTATION_UNLOCK_MS);
     var name = App.i18n.t('dictationLetterNames.' + game.letter);
-    var prompt = App.i18n.t('dictationPrompt').replace('{letter}', name);
-    App.tts.speak(prompt, function () {
+    /* The letter's name and nothing else. The panel already says which
+       letter it is and what to do with it, and a word around it is one
+       more thing to sit through before the exercise can start. */
+    App.tts.speak(name, function () {
       if (game && game.type === 'dictation') game.waiting = false;
     });
   }

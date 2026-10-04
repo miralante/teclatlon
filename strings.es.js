@@ -42,7 +42,6 @@
     "modeDictationName": "Dictado",
     "modeDictationDetail": "Escucha una letra y púlsala.",
     "dictationInstruction": "Escucha la letra y pulsa su tecla.",
-    "dictationPrompt": "Letra {letter}.",
     "dictationLetterNames": {"a":"a","b":"be","c":"ce","d":"de","e":"e","f":"efe","g":"ge","h":"hache","i":"i","j":"jota","k":"ka","l":"ele","m":"eme","n":"ene","ñ":"eñe","o":"o","p":"pe","q":"cu","r":"erre","s":"ese","t":"te","u":"u","v":"uve","w":"uve doble","x":"equis","y":"i griega","z":"zeta"},
     /* Dictation: what the activity is, and how to get the letter again.
        UNE 153101 easy read — one short sentence per step, everyday words. */

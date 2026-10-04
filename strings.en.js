@@ -42,7 +42,6 @@
     "modeDictationName": "Dictation",
     "modeDictationDetail": "Listen to a letter and press its key.",
     "dictationInstruction": "Listen to the letter and press its key.",
-    "dictationPrompt": "Letter {letter}.",
     "dictationLetterNames": {"a":"ay","b":"bee","c":"see","d":"dee","e":"ee","f":"ef","g":"gee","h":"aitch","i":"eye","j":"jay","k":"kay","l":"el","m":"em","n":"en","ñ":"enye","o":"oh","p":"pee","q":"cue","r":"ar","s":"ess","t":"tee","u":"you","v":"vee","w":"double you","x":"ex","y":"why","z":"zee"},
     /* Dictation: what the activity is, and how to get the letter again.
        UNE 153101 easy read — one short sentence per step, everyday words. */

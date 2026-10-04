@@ -67,16 +67,15 @@ function spoken(page) {
   return page.evaluate(() => window.__tts.calls.slice());
 }
 
-/** The key of the last letter asked for, read from the prompt the app
-    actually spoke ("Letra zeta." / "Letter a."), so the test never has
-    to guess which letter the random pick landed on. */
+/** The key of the last letter asked for, read from what the app actually
+    spoke. The spoken text IS the letter's name and nothing else, so it
+    is compared whole: stripping a prefix would break the two names that
+    contain a space ("uve doble", "i griega"). */
 function askedKey(page) {
   return page.evaluate(() => {
-    const last = window.__tts.calls[window.__tts.calls.length - 1];
-    if (!last) return null;
-    const name = last.replace(/^.*?\s/, '').replace(/\.$/, '');
+    const spokenName = (window.__tts.calls[window.__tts.calls.length - 1] || '').trim();
     for (const ch of 'abcdefghijklmnopqrstuvwxyzñ') {
-      if (App.i18n.t('dictationLetterNames.' + ch) === name) return ch;
+      if (App.i18n.t('dictationLetterNames.' + ch) === spokenName) return ch;
     }
     return null;
   });
@@ -246,6 +245,29 @@ test('a machine that lists voices but never speaks still shows the letter', asyn
     await pressLetter(page, letter);
     await expect(page.locator('#feedback')).toHaveClass(/success/, { timeout: 500 });
   }).toPass({ timeout: 15000 });
+
+  await ctx.close();
+});
+
+test('the app says the letter and nothing around it', async () => {
+  const { page, ctx } = await openApp();
+  await startDictation(page);
+
+  /* Exactly the letter's name: no "Letter" in front of it and no full
+     stop after it, because every extra word is another thing to sit
+     through before the exercise can start. */
+  const all = await spoken(page);
+  expect(all.length).toBe(1);
+  const name = all[0];
+  const names = await page.evaluate(() =>
+    [...'abcdefghijklmnopqrstuvwxyzñ'].map((c) => App.i18n.t('dictationLetterNames.' + c)));
+  expect(names, 'lo dicho debe ser exactamente un nombre de letra').toContain(name);
+  expect(name).not.toMatch(/[.!]/);
+  expect(name.toLowerCase()).not.toContain('letra');
+  expect(name.toLowerCase()).not.toContain('letter');
+
+  /* The panel is what names it, so the spoken form is bare. */
+  await expect(page.locator('#gameInstruction')).toHaveText('Escucha la letra y pulsa su tecla.');
 
   await ctx.close();
 });
