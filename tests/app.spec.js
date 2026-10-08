@@ -187,7 +187,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await expect.poll(() => page.evaluate(() => window.App.i18n.locale())).toBe('en');
   });
 
-  test('2.3 — cambia todos los temas (auto, light, dark, contrast)', async ({ page }) => {
+  test('2.3 — cambia todos los temas (light, dark, contrast)', async ({ page }) => {
     page = await openFreshApp();
     await page.locator('#btnOpenSettings').click();
 
@@ -204,16 +204,14 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
       expect(themePalette).not.toBe(lightPalette);
     }
 
-    // Auto follows the system preference and keeps doing so if it changes.
-    await page.emulateMedia({ colorScheme: 'dark' });
-    await page.locator('.btn-theme[data-theme="auto"]').click();
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-    await expect(page.locator('.btn-theme[data-theme="auto"]')).toHaveAttribute('aria-pressed', 'true');
+    // There is no "auto" to fall back on: the theme is set literally, so a
+    // system preference change must not repaint a page the person is on.
     await page.emulateMedia({ colorScheme: 'light' });
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'contrast');
+    await expect(page.locator('.btn-theme[data-theme="auto"]')).toHaveCount(0);
   });
 
-  test('2.3b — el tema auto sigue la preferencia del sistema al iniciar', async () => {
+  test('2.3b — un "auto" guardado en una versión antigua pasa a light', async () => {
     const context = await _browser.newContext({ colorScheme: 'dark' });
     _lastCtx = context;
     const page = await context.newPage();
@@ -223,9 +221,10 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
       }));
     });
     await page.goto(BASE);
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-    await expect.poll(() => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--color-bg').trim()))
-      .toBe('#14161E');
+    // Migrated, not resolved against prefers-color-scheme: the OS is dark
+    // here and the page must still be light.
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    await expect(page.locator('html')).not.toHaveAttribute('data-theme', 'dark');
   });
 
   test('2.4 — cambia todos los tamaños de texto (small, normal, large, huge)', async ({ page }) => {
@@ -628,8 +627,8 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
 
   test('9.2 — enlace Legal lleva a legal/', async ({ page }) => {
     page = await skipToMenu();
-    await page.locator('a.footer-link[href="legal/index.html"]').click();
-    await expect(page).toHaveURL(/legal\/index\.html$/);
+    await page.locator('a.footer-link[href="legal/"]').click();
+    await expect(page).toHaveURL(/legal\/(index\.html)?$/);
   });
 
   test('9.3 — botón borrar progreso funciona', async ({ page }) => {
