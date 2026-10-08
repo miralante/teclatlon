@@ -4,7 +4,10 @@
     "scripts": {
         "test:contrast": "powershell -ExecutionPolicy Bypass -File ..\\contrast\\check-contrast.ps1",
         "test:ui": "playwright test",
-        "test:ui:headed": "playwright test --headed"
+        "test:ui:headed": "playwright test --headed",
+            "test:sw-redirects": "node scripts/check-sw-redirects.js"
     },
-    "devDependencies": {}
+    "devDependencies": {
+        "@playwright/test": "^1.63.0"
+    }
 }

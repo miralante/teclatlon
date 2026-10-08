@@ -88,3 +88,11 @@ jobs:
 
       - name: Run real-browser UI suite
         run: npm run test:ui
+
+      - name: Run service-worker redirect check
+        # Serves the project through a server that reproduces Cloudflare's 307
+        # for every "/x.html" URL, then asserts Cache Storage holds no
+        # redirected entry and that navigation works offline. No other job
+        # here can see this: the static servers above serve the file directly,
+        # which is exactly why this defect shipped with every gate green.
+        run: npm run test:sw-redirects

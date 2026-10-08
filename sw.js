@@ -8,7 +8,7 @@
 var VERSION = 'teclatlon-v86';
 
 var FILES = [
-  './index.html',
+  './',
   './404.html',
   './manifest.json',
   './app.js',
@@ -16,7 +16,7 @@ var FILES = [
   './strings.es.js',
   './strings.en.js',
   './styles.css',
-  './config/index.html',
+  './config/',
   './config/app.js',
   './config/styles.css',
   './config/strings.es.js',
@@ -29,15 +29,15 @@ var FILES = [
      about/styles.css and team/styles.css (see the comment at the
      top of those files for how they used to be merged into a
      single assets/css/subpages.css under the SPA model). */
-  './legal/index.html',
+  './legal/',
   './legal/styles.css',
   './legal/strings.es.js',
   './legal/strings.en.js',
-  './about/index.html',
+  './about/',
   './about/styles.css',
   './about/strings.es.js',
   './about/strings.en.js',
-  './team/index.html',
+  './team/',
   './team/styles.css',
   './team/strings.es.js',
   './team/strings.en.js',
@@ -58,13 +58,30 @@ var FILES = [
   /* External scripts that used to be inline <script> blocks. The CSP is
      `script-src 'self'`, so they must stay external: locale-picker-config
      (settings: false keeps the accessibility gear out of the app's own
-     settings drawer), register-sw (the PWA) and subpage-lang (the
-     language buttons on about/, legal/ and team/). */
+     settings drawer) and register-sw (the PWA). */
   './assets/js/locale-picker-config.js',
   './assets/js/register-sw.js',
-  './assets/js/subpage-lang.js',
   './assets/img/icono.svg'
 ];
+
+/* Cloudflare answers EVERY "/x.html" URL with a 307 to its extensionless form
+   (/index.html -> /, /404.html -> /404, /offline.html -> /offline). fetch()
+   follows that redirect before we ever see it, so the response arrives with
+   status 200 AND redirected === true. The Cache API PRESERVES that flag across
+   a store/load round trip, so the entry is stored poisoned, and Chrome refuses
+   to hand such a response to a top-level navigation ("Response served by
+   service worker has redirections").
+
+   Rebuilding the response produces a brand-new object whose flag is false while
+   keeping body, status and headers. */
+function deRedirect(res) {
+  if (!res || !res.redirected) return res;
+  return new Response(res.body, {
+    status: res.status,
+    statusText: res.statusText,
+    headers: res.headers
+  });
+}
 
 self.addEventListener('install', function (event) {
   event.waitUntil(
@@ -75,11 +92,13 @@ self.addEventListener('install', function (event) {
          serve 0-byte responses for every asset). Put each file
          individually so a single missing/failing asset doesn't take
          the rest down. cache:'reload' skips the HTTP cache so the SW
-         always sees the latest server version during install. */
+         always sees the latest server version during install. The
+         response is de-redirected: an entry stored from a followed 307
+         would be unusable as a navigation response. */
       var failures = [];
       return Promise.all(FILES.map(function (a) {
         return fetch(new Request(a, { cache: 'reload' })).then(function (r) {
-          if (r && r.ok) return cache.put(a, r);
+          if (r && r.ok) return cache.put(a, deRedirect(r));
           failures.push(a + ' -> ' + (r ? r.status : 'no-response'));
           return null;
         }).catch(function (err) {
@@ -124,37 +143,39 @@ self.addEventListener('fetch', function (event) {
   event.respondWith(
     fetch(event.request).then(function (r) {
       /* Cache successful same-origin GET responses whose final body
-         is 200 (final: no Location header). Safari rejects a
-         top-level navigation served by the SW that carries a
-         Location header ("Response served by service worker has
-         redirections"), so we explicitly drop 3xx here and let the
-         browser follow the redirect normally. For navigations to
-         "/" specifically, also cache under "/index.html" so the
-         next offline open of the root URL finds a copy: Cloudflare
-         Pages issues a 307 for `/index.html -> /`, so we never get
-         a clean 200 to cache under that exact key otherwise. */
+         is 200. Note that fetch() has already followed any redirect by
+         the time we see it, so `status === 200` alone does NOT mean the
+         response is clean -- it can still carry redirected === true,
+         which the cache would then preserve and Chrome would refuse to
+         serve to a navigation. deRedirect() rebuilds it so the stored
+         copy is usable. For navigations to "/" specifically, also cache
+         under "/index.html" so the next offline open of the root URL
+         finds a copy: Cloudflare Pages issues a 307 for
+         `/index.html -> /`, so we never get a clean 200 to cache under
+         that exact key otherwise. That alias is deliberate and stores a
+         response fetched from "/", which is already redirect-free. */
       if (r && r.status === 200 && event.request.url.startsWith(self.location.origin)) {
-        var copy = r.clone();
         var key = event.request;
         if (event.request.mode === 'navigate') {
           var u = new URL(event.request.url);
           if (u.pathname === '/') key = new Request(self.location.origin + '/index.html');
         }
         caches.open(VERSION).then(function (cache) {
-          cache.put(key, copy);
+          cache.put(key, deRedirect(r.clone()));
         });
       }
-      return r;
+      return deRedirect(r);
     }).catch(function () {
       /* Offline / network failure: try the cache (under both the
          original key and, for navigations, the index.html alias),
          otherwise reply with a tiny inline HTML that stays at the
-         current URL. */
+         current URL. Cached entries may predate deRedirect, so
+         sanitise whatever comes back. */
       return caches.match(event.request).then(function (fromCache) {
-        if (fromCache) return fromCache;
+        if (fromCache) return deRedirect(fromCache);
         if (event.request.mode === 'navigate') {
           return caches.match('/index.html').then(function (alias) {
-            if (alias) return alias;
+            if (alias) return deRedirect(alias);
             return offlineResponse();
           });
         }
@@ -174,7 +195,7 @@ function offlineResponse() {
     '<h1>Sin conexi�n</h1>' +
     '<p>No hemos podido cargar esta p�gina. Comprueba tu conexi�n a ' +
     'Internet y vuelve a intentarlo.</p>' +
-    '<p><a href="./index.html">Volver a Teclatlon</a></p>' +
+    '<p><a href="./">Volver a Teclatlon</a></p>' +
     '</body></html>',
     { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
   );
