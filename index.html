@@ -158,7 +158,7 @@
 
   <link rel="stylesheet" href="assets/css/tokens.css?v=teclatlon-v2b">
   <link rel="stylesheet" href="assets/css/base.css">
-  <link rel="stylesheet" href="assets/css/components.css"><link rel="stylesheet" href="assets/css/locale-picker.css?v=teclatlon-v3b">  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="assets/css/components.css"><link rel="stylesheet" href="assets/css/locale-picker.css?v=teclatlon-v3baa">  <link rel="stylesheet" href="styles.css">
       <!-- Pre-paint bootstrap (device gate + locale + saved accessibility
        settings). External file so the CSP can keep `script-src 'self'`
        without 'unsafe-inline'. The whole file is one synchronous IIFE
@@ -189,7 +189,7 @@
   <div class="container suite-home">
     <header class="tool-header suite-header">
       <div class="tool-header-row">
-        <div class="suite-brand"><img src="assets/img/icono.svg" alt="" width="44" height="44"><div class="suite-brand-copy"><h1>Teclatlon</h1><p class="suite-attribution"><span data-i18n="suiteBy">Una app de</span> <a href="https://apptonomia.uk/">Apptonomia</a>.</p></div></div>
+        <div class="suite-brand"><img src="assets/img/icono.svg?v=teclatlon-vd6d39b14" alt="" width="44" height="44"><div class="suite-brand-copy"><h1>Teclatlon</h1><p class="suite-attribution"><span data-i18n="suiteBy">Una app de</span> <a href="https://apptonomia.uk/">Apptonomia</a>.</p></div></div>
         <div class="header-data suite-controls">
           <span class="stars" id="stars">⭐ 0</span>
           <!-- The practice clock, next to the stars because it is the same
@@ -399,7 +399,7 @@
     </section>
     <footer class="app-footer">
       <a href="config/" class="footer-link" data-i18n="core.config">Configuración</a>
-      <a href="legal/index.html" class="footer-link" data-i18n="core.dataProtection">Protección de datos</a>
+      <a href="legal/" class="footer-link" data-i18n="core.dataProtection">Protección de datos</a>
       <button type="button" class="btn btn-secondary btn-compact btn-clear-all" id="btnClearAll" data-i18n="btnClearProgress">🗑️ Borrar mi progreso</button>
     </footer>
   </div>
@@ -432,7 +432,6 @@
     <div class="setting-row">
       <span class="setting-label" data-i18n="themeLabel">Tema</span>
       <span class="text-group" role="group" data-i18n-aria="themeLabelAria" aria-label="Cambiar el tema claro, oscuro o alto contraste">
-        <button type="button" class="btn-icon btn-theme" data-theme="auto" data-i18n="themeLabelAuto">Auto</button>
         <button type="button" class="btn-icon btn-theme" data-theme="light" data-i18n="themeLabelLight">Claro</button>
         <button type="button" class="btn-icon btn-theme" data-theme="dark" data-i18n="themeLabelDark">Oscuro</button>
         <button type="button" class="btn-icon btn-theme" data-theme="contrast" data-i18n="themeLabelContrast">Contraste</button>
@@ -580,8 +579,8 @@
        External file: the CSP is `script-src 'self'`, so an inline
        <script> would be dropped in production and the component would
        fall back to its defaults. See assets/js/locale-picker-config.js. -->
-  <script src="assets/js/locale-picker-config.js?v=1"></script>
-  <script src="assets/js/locale-picker.js?v=teclatlon-v4" defer></script>
+  <script src="assets/js/locale-picker-config.js?v=1aa"></script>
+  <script src="assets/js/locale-picker.js?v=teclatlon-v4aaa" defer></script>
   <!-- SW registration, also external for the same CSP reason. Resolves
        the root sw.js from its own src, so it needs no path here. -->
   <script src="assets/js/register-sw.js?v=1"></script>

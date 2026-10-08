@@ -115,7 +115,6 @@
     "textSizeAdjustAria": "Aumentar o reducir el tamaño del texto",
     "themeLabel": "🌗 Tema",
     "themeLabelAria": "Cambiar el tema claro, oscuro o alto contraste",
-    "themeLabelAuto": "Tema: automático",
     "themeLabelLight": "Tema: claro",
     "themeLabelDark": "Tema: oscuro",
     "themeLabelContrast": "Tema: alto contraste",

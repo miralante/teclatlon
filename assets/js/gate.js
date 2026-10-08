@@ -141,14 +141,12 @@
     var hideNumpad = rawOptions.hideNumpad !== undefined ? rawOptions.hideNumpad : !!legacyFocus;
     var dimCelebration = rawOptions.dimCelebration !== undefined ? rawOptions.dimCelebration : !!legacyFocus;
     var html = document.documentElement;
-    /* Resolve "auto" before first paint so systems using dark mode
-       don't briefly show the light palette. app.js listens for later
-       prefers-color-scheme changes and keeps this resolved theme in
-       sync while the saved option remains "auto". */
+    /* Se pone el tema guardado antes del primer pintado para que la paleta
+       no baile. Ya no se resuelve "auto" contra el sistema: esa opción se
+       quitó y el tema por defecto es "light", así que un "auto" que
+       venga guardado cae en la rama de abajo y se pinta claro. */
     if (theme === 'dark' || theme === 'oscuro' || theme === 'contrast' || theme === 'contraste') {
       html.setAttribute('data-theme', theme === 'oscuro' ? 'dark' : (theme === 'contraste' ? 'contrast' : theme));
-    } else if (theme === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      html.setAttribute('data-theme', 'dark');
     } else {
       html.setAttribute('data-theme', 'light');
     }

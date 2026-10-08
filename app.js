@@ -54,9 +54,6 @@
   }
 
   var state = migrateLegacyState(App.storage.get(SLUG));
-  var systemThemeQuery = window.matchMedia
-    ? window.matchMedia('(prefers-color-scheme: dark)')
-    : null;
   state.name = typeof state.name === 'string' ? state.name : '';
   state.stars = state.stars || 0;
   state.completed = state.completed || {};
@@ -65,7 +62,7 @@
     state.options.keyboard = 'normal';
   }
   if (state.options.color !== 'fingers') state.options.color = 'hands';
-  if (['auto', 'light', 'dark', 'contrast'].indexOf(state.options.theme) === -1) state.options.theme = 'light';
+  if (['light', 'dark', 'contrast'].indexOf(state.options.theme) === -1) state.options.theme = 'light';
   if (['small', 'normal', 'large', 'huge'].indexOf(state.options.textSize) === -1) state.options.textSize = 'normal';
   /* Migrate legacy focusMode → 3 separate options. */
   if (state.options.focusMode !== undefined) {
@@ -398,10 +395,10 @@
      everything consistent once app.js has taken over. */
   function applyOptions() {
     var html = document.documentElement;
-    var activeTheme = state.options.theme === 'auto'
-      ? (systemThemeQuery && systemThemeQuery.matches ? 'dark' : 'light')
-      : state.options.theme;
-    html.setAttribute('data-theme', activeTheme);
+    /* El tema se pone tal cual: se quitó la opción "auto", que no fijaba
+       atributo y delegaba en prefers-color-scheme. El que venga
+       guardado migró a "light" más arriba, al no estar en la lista. */
+    html.setAttribute('data-theme', state.options.theme);
     if (state.options.textSize === 'normal') html.removeAttribute('data-text-size');
     else html.setAttribute('data-text-size', state.options.textSize);
     html.classList.toggle('hide-legend', state.options.hideLegend);
@@ -1775,7 +1772,7 @@
     state = {
       name: '', stars: 0, completed: {},
       options: {
-        keyboard: 'normal', color: 'hands', theme: 'auto', textSize: 'normal',
+        keyboard: 'normal', color: 'hands', theme: 'light', textSize: 'normal',
         hideLegend: false, hideNumpad: false, dimCelebration: false, keySound: true, metrics: false, errorSound: false,
         showTimer: false
       },
@@ -1984,13 +1981,9 @@
   renderRows($('#numpad'), DATA.numpad);
   renderKeyboards();
   applyOptions();
-  if (systemThemeQuery) {
-    var updateSystemTheme = function () {
-      if (state.options.theme === 'auto') applyOptions();
-    };
-    if (systemThemeQuery.addEventListener) systemThemeQuery.addEventListener('change', updateSystemTheme);
-    else if (systemThemeQuery.addListener) systemThemeQuery.addListener(updateSystemTheme);
-  }
+  /* Ya no hace falta escuchar prefers-color-scheme: solo servía para
+     repintar cuando el sistema pasaba a oscuro y el tema era "auto", y
+     ese tema ya no existe. */
   updateStars();
 
   /* Hash routing — supports direct navigation via URL hash
