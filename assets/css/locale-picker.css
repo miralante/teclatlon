@@ -24,6 +24,43 @@
   line-height: 1;
 }
 
+/* #locale-picker es el ancla del desplegable de idioma. El ⚙️ lo
+   inserta locale-picker.js como hermano justo detrás, de modo que los
+   dos controles comparten fila y el engranaje queda arriba a la derecha
+   cuando esa fila está alineada al final (que es lo que hace
+   .suite-controls en las apps de la suite). */
+#locale-picker + .locale-settings-trigger { margin-left: 2px; }
+
+/* Fila de controles base.
+   En las pantallas principales la fila vive dentro de `.suite-header` y
+   cada proyecto ya trae su propia regla
+   (`.suite-header .suite-controls { justify-content: flex-end }`), que
+   gana por especificidad y manda sobre ésta.
+
+   Las subpáginas (about, legal, team, config) NO usan `.suite-header`:
+   su cabecera es un bloque sin regla de alineación, así que sin esto el
+   engranaje caía pegado a la izquierda, arriba pero no a la derecha. */
+.suite-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+  gap: 6px;
+  margin: 0;
+}
+
+/* La barra de la presentación de Apptonomia (project/) ya es una fila de
+   controles compacta y sus botones son más pequeños que los de la
+   cabecera; sin esto el desplegable y el engranaje se veían desproporcionados
+   al lado de "Imprimir / PDF". */
+.deck-toolbar .suite-controls { gap: 4px; }
+.deck-toolbar .suite-controls button {
+  min-width: 34px;
+  min-height: 34px;
+  padding: 4px 8px;
+  font-size: 13px;
+}
+
 /* Botón trigger */
 .locale-picker-btn {
   display: inline-flex;
@@ -100,14 +137,29 @@
   transition: opacity 0.12s ease, transform 0.12s ease, visibility 0s;
 }
 
-/* A native settings drawer creates its own stacking context above the
-   backdrop. Keep the locale menu inside that drawer; right-aligning the
-   full-width panel row can otherwise place half the menu underneath the
-   backdrop, where it is visible but cannot receive pointer input. */
+/* Cuando la app coloca #locale-picker dentro de SU propio cajón de
+   ajustes (Teclatlon, con `settings: false`) la fila del desplegable
+   ocupa todo el ancho, y el panel alineado a la derecha se saldría de la
+   fila: la mitad queda bajo el fondo del cajón, visible pero sin recibir
+   el clic. Anclarlo a la izquierda lo mantiene dentro.
+
+   Este bloque lo tenía solo la copia de Teclatlon. Al unificar las ocho
+   copias del componente hubo que traerlo: sin él, el menú de idioma deja
+   de funcionar dentro del cajón nativo de Teclatlon. */
 .settings-drawer #locale-picker .locale-picker-panel {
   right: auto;
   left: 0;
 }
+
+/* Con `languageInDrawer` el desplegable se traslada al cajón COMPARTIDO y
+   pasa a ser su primera fila: el rótulo arriba y el desplegable debajo,
+   como las demás filas del cajón. La fila estira el contenedor a todo el
+   ancho y el panel se ancla a la izquierda —igual que dentro del cajón
+   propio de Teclatlon—, porque alineado a la derecha se saldría de la
+   fila y su mitad quedaría bajo el fondo del cajón: visible, pero sin
+   recibir el clic. */
+.locale-settings-language #locale-picker { width: 100%; }
+.locale-settings-drawer #locale-picker .locale-picker-panel { right: auto; left: 0; }
 
 /* Opciones */
 .locale-picker-panel li {
@@ -203,9 +255,10 @@
   border-left: 2px solid var(--color-border, var(--line, #D8D2C8));
   box-shadow: -10px 0 28px rgba(26, 26, 46, 0.18);
   transform: translateX(100%);
+  visibility: hidden;
   transition: transform 0.16s ease;
 }
-.locale-settings-drawer.is-open { transform: translateX(0); }
+.locale-settings-drawer.is-open { transform: translateX(0); visibility: visible; }
 .locale-settings-drawer-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .locale-settings-drawer h2 { margin: 0; font-size: 1.35em; }
 .locale-settings-close { min-width: 44px; min-height: 44px; border: 2px solid currentColor; border-radius: 10px; background: transparent; color: inherit; cursor: pointer; }
@@ -216,7 +269,6 @@
 .locale-settings-options button[aria-pressed="true"] { border-color: var(--lp-accent, var(--accent, #1B6CA8)); background: var(--accent-soft, #E3EEF6); }
 .locale-settings-check { display: flex; align-items: center; justify-content: space-between; min-height: 44px; }
 .locale-settings-check input { width: 24px; height: 24px; accent-color: var(--lp-accent, var(--accent, #1B6CA8)); }
-.locale-settings-more { color: inherit; font-weight: 700; text-underline-offset: 3px; }
 .locale-settings-help { margin: 0; color: var(--color-text-soft, var(--muted, #4A4A68)); font-size: 0.9em; }
 
 html[data-a11y-text="small"] { --text-scale: 0.9; --escala-texto: 0.9; }

@@ -14,13 +14,13 @@
   <link rel="stylesheet" href="../assets/css/base.css">
   <link rel="stylesheet" href="../assets/css/components.css">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../assets/css/locale-picker.css?v=teclatlon-v4aaa">
 </head>
 <body>
   <div class="container about">
     <header class="cabecera-about">
-      <div class="idioma-selector" role="group" aria-label="Elegir idioma">
-        <button type="button" class="btn-lang" id="btnLangEs" data-locale="es" aria-pressed="false">🇪🇸 Español</button>
-        <button type="button" class="btn-lang" id="btnLangEn" data-locale="en" aria-pressed="false">🇬🇧 English</button>
+      <div class="suite-controls">
+        <div id="locale-picker"></div>
       </div>
       <p class="aviso-ruta" data-i18n="routeNotice">Esta página no se enlaza desde la aplicación. Solo se llega escribiendo la dirección.</p>
       <img src="../assets/img/icono.svg?v=teclatlon-vd6d39b14" alt="" width="80" height="80" class="logo-about">
@@ -58,7 +58,11 @@
   <script src="../assets/js/i18n.js"></script>
   <script src="strings.es.js"></script>
   <script src="strings.en.js"></script>
-  <script src="../assets/js/subpage-lang.js?v=1"></script>
   <script src="../assets/js/register-sw.js?v=1"></script>
+<!-- Controles compartidos con la pantalla principal: el desplegable de idioma
+     y el ⚙️ de la cabecera, con su cajón de accesibilidad. Mismo ?v= que la
+     portada, para que las dos páginas compartan la copia en caché. -->
+<script src="../assets/js/locale-picker-config.js?v=1"></script>
+<script src="../assets/js/locale-picker.js?v=teclatlon-v4aaa" defer></script>
 </body>
 </html>
