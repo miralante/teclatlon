@@ -12,21 +12,21 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('../fonts/atkinson-hyperlegible-400.woff2') format('woff2');
+  src: url('../fonts/atkinson-hyperlegible-400.woff2?v=teclatlon-vd64ba838') format('woff2');
 }
 @font-face {
   font-family: 'Atkinson Hyperlegible';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('../fonts/atkinson-hyperlegible-700.woff2') format('woff2');
+  src: url('../fonts/atkinson-hyperlegible-700.woff2?v=teclatlon-v140e2bd2') format('woff2');
 }
 @font-face {
   font-family: 'Nunito';
   font-style: normal;
   font-weight: 400 800;
   font-display: swap;
-  src: url('../fonts/nunito-variable.woff2') format('woff2-variations');
+  src: url('../fonts/nunito-variable.woff2?v=teclatlon-vba344451') format('woff2-variations');
 }
 
 *, *::before, *::after {
