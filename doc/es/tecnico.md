@@ -202,6 +202,10 @@ partida. Interacciones con el motor:
   ajustes solo la escribe: `DEFAULT_REST_MINUTES` (20), el rango
   `REST_MIN`/`REST_MAX` y `normaliseRestMinutes()` se exportan desde
   `App.feedback` para que ambos no puedan discrepar. Ver §2.6.
+- `state.options.showTimer` (booleano, **`false` por defecto**) pinta esa
+  misma cuenta atrás en la cabecera. El número es de `feedback.js`
+  (`practiceSeconds()`); el panel solo decide si se ve. Ver §2.6, "Ver el
+  contador".
 
 ### 2.3 `data.js` — distribuciones de teclado y contenido de práctica
 
@@ -414,6 +418,44 @@ no se desactiva: en `dark` y `contrast` se le añade `color-scheme: dark`
 porque si no el navegador lo pinta con su gris oscuro, que desaparece sobre
 `#1E2230` y sobre el negro puro del alto contraste.
 
+#### Ver el contador: el reloj de la cabecera
+
+El aviso no dice el número que lleva detrás, así que quien quiera saber
+cuánto lleva no tiene forma de enterarse. El ajuste `⏱️ Ver el
+temporizador` lo pinta: **apagado por defecto**
+(`state.options.showTimer`), porque un reloj que nadie ha pedido es un reloj
+que la app le ha puesto delante.
+
+Va en la cabecera junto a `#stars`, porque ahí es donde la suite ya enseña
+"un dato sobre esta sesión", y en el panel de ajustes **debajo de la fila
+del aviso de descanso**, porque es el mismo contador visto del otro lado:
+el aviso decide cuándo hablar, el reloj enseña el número sobre el que se
+decide. Los dos se reinician a la vez.
+
+Deliberadamente **no es un segundo contador**. `App.feedback.practiceSeconds()`
+devuelve el mismo `restElapsed` sobre el que espera el aviso, pasando por el
+mismo `tick()`, así que los dos heredan gratis las mismas reglas: una
+pestaña oculta no lo mueve, un teclado quieto no lo mueve, y cuando el
+aviso salta y pone el contador a cero, el reloj vuelve a cero en el mismo
+instante. `practiceSeconds()` solo devuelve segundos enteros; quien lo llama
+vuelve a leerlo con su propio temporizador.
+
+En `app.js` el reloj son dos funciones que no deben separarse:
+`paintSessionTimer()` es dueña de lo que hay en pantalla (y, en la rama de
+"apagado", también de quitarlo), y `ensureTimerTicking()` decide si hay
+alguien preguntando que cambie. `ensureTimerTicking()` pinta **antes** de
+decidir, también cuando el ajuste está apagado: salir antes en ese camino
+deja el último número pintado, con la opción y el `aria-pressed` ya diciendo
+apagado. Apagar el ajuste además limpia el `setInterval` del todo, en vez
+de dejar un reloj corriendo detrás de un elemento oculto.
+
+El elemento es `role="timer"` con `aria-live="off"`: un número que cambia
+cada segundo no debe leerse en voz alta en cada cambio (WCAG 4.1.3), pero
+sí debe tener nombre, así que `app.js` escribe un `aria-label` desde
+`sessionTimerAria` junto al texto visible. Su color es
+`--color-text-soft`, no `--color-star`: la estrella es un logro y el reloj
+es información, y no debe leerse como un segundo premio en competencia.
+
 ### 2.7 Reto "todas las teclas": tres fases, ninguna en pantalla
 
 El reto barre el teclado completo tres veces (`CHALLENGE_PHASES = 3`),
@@ -436,6 +478,39 @@ da la ⭐ del modo y el logro `allKeys`, solo se llama tras la tercera.
 
 Si se cambia la vista del teclado a mitad de reto, `reapplyChallenge()`
 descarta `game.order` para que se reconstruya sobre el diseño nuevo.
+
+#### La barra de progreso es una hoja
+
+`.progress-bar` es la **barra compacta** de la suite: 6px de alto,
+`overflow: hidden`, `position: relative`, con un `.progress-fill` a rayas
+pegado a su borde izquierdo. En toda actividad de Calculia es una hoja que
+solo contiene el relleno y el `.progress-text` (oculto): nunca se usa como
+envoltorio de otros bloques, porque el alto y el desbordamiento son
+justamente su razón de ser.
+
+`#challengeZone` apuntaba antes al identificador de la propia barra y
+metía dentro `.challenge-stars` y `.progress-fill`. Eso metía las tres
+estrellas de 24px en una ventana de 6px: se recortaban enteras, y el
+relleno caía 44px más abajo de esa misma caja de 6px, así que el reto
+pintaba una raya gris vacía y no mostraba progreso ninguno. La forma ahora
+es:
+
+```html
+<div id="challengeZone" class="challenge-zone hidden">
+  <div class="challenge-stars" id="challengeStars"></div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="challengeFill"></div>
+    <span class="progress-text" id="challengeText">0 de 0</span>
+  </div>
+</div>
+```
+
+`.challenge-zone` es una columna flex con 8px de separación (que sustituye
+al `margin-bottom` de las estrellas), y `.progress-fill` lleva ya el
+`position: absolute; inset: 0 auto 0 0;` que la copia de Calculia sí tenía.
+`tests/timer-and-progress.spec.js` comprueba tanto la forma como su
+consecuencia, porque la forma sola volvería a pasar el día que alguien
+anidara otra vez el marcado.
 
 ### 2.8 Texto del dedo: se escribe siempre, se oculta la caja
 
@@ -767,15 +842,17 @@ la **plantilla**; las desviaciones se indican donde apliquen.
   <link rel="stylesheet" href="../assets/css/base.css">
   <link rel="stylesheet" href="../assets/css/components.css">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../assets/css/locale-picker.css?v=teclatlon-v4aa">
 </head>
 <body>
   <div class="container {legal|about}">
     <header class="cabecera-{legal|about}">
-      <div class="idioma-selector" role="group" aria-label="Elegir idioma">
-        <button type="button" class="btn-idioma" id="btnIdiomaEs"
-                data-locale="es" aria-pressed="false">🇪🇸 Español</button>
-        <button type="button" class="btn-idioma" id="btnIdiomaEn"
-                data-locale="en" aria-pressed="false">🇬🇧 English</button>
+      <!-- El idioma es un control de primer nivel de la cabecera, no un
+           subapartado del cajon de ajustes: el componente compartido se
+           monta dentro de .suite-controls y el engranaje se inserta el
+           solo, justo detras. No hay ningun boton de idioma en el HTML. -->
+      <div class="suite-controls">
+        <div id="locale-picker"></div>
       </div>
       <img src="../assets/img/icono.svg" alt="" width="80" height="80"
            class="logo-{legal|about}">
@@ -807,23 +884,13 @@ la **plantilla**; las desviaciones se indican donde apliquen.
   <script src="../assets/js/i18n.js"></script>
   <script src="strings.es.js"></script>
   <script src="strings.en.js"></script>
-  <script>
-    (function () {
-      'use strict';
-      function paintLanguageSelector() {
-        var active = App.i18n.locale();
-        document.getElementById('btnIdiomaEs')
-          .setAttribute('aria-pressed', String(active === 'es'));
-        document.getElementById('btnIdiomaEn')
-          .setAttribute('aria-pressed', String(active === 'en'));
-      }
-      document.getElementById('btnIdiomaEs')
-        .addEventListener('click', function () { App.i18n.setLocale('es'); });
-      document.getElementById('btnIdiomaEn')
-        .addEventListener('click', function () { App.i18n.setLocale('en'); });
-      paintLanguageSelector();
-    })();
-  </script>
+  <!-- El desplegable necesita su configuracion ANTES que el
+       componente. Los dos van diferidos, y los diferidos se ejecutan
+       en orden de documento, con listarlos en ese orden basta. El ?v=
+       no es opcional: los .js y .css se sirven immutable un ano, sin el
+       la pagina sirve la version vieja desde la cache. -->
+  <script src="../assets/js/locale-picker-config.js?v=teclatlon-v4aa"></script>
+  <script src="../assets/js/locale-picker.js?v=teclatlon-v4aa" defer></script>
   <script>
     /* Register the SW from this entry point so it is active for any
        later navigation, matching what the main index.html and the

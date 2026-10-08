@@ -91,7 +91,11 @@
   overflow: hidden;
 }
 
+/* Anchored to the left edge of the track, as in Calculia: the fill is a
+   bar laid over the track, not a block that happens to sit inside it. */
 .progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
   height: 100%;
   width: 0%;
   background: var(--accent);
@@ -114,12 +118,36 @@
   color: var(--color-star);
 }
 
+/* ---- Practice clock ---- */
+/* Same shape as .stars, because it sits beside it and is the same kind
+   of thing — one fact about this session. A different colour on purpose:
+   the star is an achievement, the clock is just information, and it
+   should not read as a second, competing reward. --color-text-soft
+   clears 7:1 on every one of the three themes. */
+.session-timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-text-soft);
+  white-space: nowrap;
+}
+
 /* ---- Challenge phase stars ---- */
+/* Wrapper for the challenge's stars + track. It exists so the stars stay
+   outside .progress-bar: the track is 6px tall with `overflow: hidden`
+   and would clip them away. The gap replaces the old margin-bottom. */
+.challenge-zone {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .challenge-stars {
   display: flex;
   justify-content: center;
   gap: 12px;
-  margin-bottom: 8px;
   font-size: 24px;
 }
 

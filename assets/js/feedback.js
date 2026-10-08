@@ -244,6 +244,25 @@
   }
 
   /**
+   * Practice time so far this session, in whole seconds.
+   *
+   * The visible clock (the "Ver el temporizador" setting in app.js) reads
+   * its number from here rather than counting on its own, so what the
+   * person sees and what the reminder waits on can never drift apart: it
+   * is the same `restElapsed`, and it goes through the same tick(), with
+   * the same rules about a hidden tab and an idle keyboard. It also means
+   * the clock follows the reminder for free — both restart at zero
+   * together when the reminder shows.
+   *
+   * Only whole seconds: the caller re-reads this on a timer of its own,
+   * so no precision is lost between calls.
+   */
+  function practiceSeconds() {
+    tick();
+    return Math.floor(restElapsed / 1000);
+  }
+
+  /**
    * Brief celebration screen (uses .celebration from components.css).
    * Creates the element if it doesn't exist. Hides itself after 2 s.
    * @param {string} message - e.g. 'Well done!'
@@ -287,6 +306,7 @@
     DEFAULT_REST_MINUTES: DEFAULT_REST_MINUTES,
     REST_MIN: REST_MIN,
     REST_MAX: REST_MAX,
-    normaliseRestMinutes: normaliseRestMinutes
+    normaliseRestMinutes: normaliseRestMinutes,
+    practiceSeconds: practiceSeconds
   };
 })();

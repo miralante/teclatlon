@@ -206,6 +206,17 @@
     "restMinutesUpAria": "Add one minute",
     "restMinutesDownAria": "Take one minute off",
 
+    /* Visible timer: the practice clock in the header. It reads the same
+       counter as the rest reminder (practice time, not wall-clock time),
+       so the two can never disagree. */
+    "showTimerLabel": "⏱️ Show the timer",
+    "showTimerLabelAria": "Turn the header practice clock on or off",
+    "showTimerLabelOn": "✅ Timer: visible",
+    "showTimerLabelOff": "⬜ Timer: hidden",
+    "showTimerHelp": "The header shows how long you have been typing. It only counts while you type: it does not move while the tab sits still.",
+    "sessionTimerValue": "⏱ {n} min",
+    "sessionTimerAria": "Practice time: {n} minutes",
+
     "achievementsTitle": "⭐ Achievements",
     "achievementsShow": "Show achievements",
     "achievementsHide": "Hide",

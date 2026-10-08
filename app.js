@@ -90,6 +90,9 @@
      an older version, or a hand-edited localStorage) is normalised
      there, and out-of-range numbers are pulled back into the range. */
   state.options.restMinutes = App.feedback.normaliseRestMinutes(state.options.restMinutes);
+  /* Practice clock in the header. Off by default: the clock is an extra
+     the person asks for, and until they ask there is nothing on screen. */
+  state.options.showTimer = !!state.options.showTimer;
   state.goal = state.goal || { accuracyMin: null, speedMin: null };
   state.achievements = state.achievements || {};
 
@@ -441,7 +444,56 @@
       if (restUp) restUp.disabled = restValue >= App.feedback.REST_MAX;
       if (restDown) restDown.disabled = restValue <= App.feedback.REST_MIN;
     }
+    updateSettingsButton('#btnShowTimer', 'showTimerLabel', state.options.showTimer);
+    ensureTimerTicking();
     updateLiveMetrics();
+  }
+
+  /* ---------- Practice clock (header) ---------- */
+  /* Two halves that must not drift apart: `updateSessionTimer()` paints
+     the number, and `ensureTimerTicking()` decides whether anything is
+     asking for it to change. Turning the setting off stops the interval
+     outright rather than leaving it running behind a hidden element —
+     a clock nobody can see is a clock that should not be running.
+
+     The seconds come from App.feedback.practiceSeconds(), the same
+     counter that decides when the rest reminder speaks, so the number on
+     screen is the number the reminder is waiting on. */
+  var timerIntervalId = null;
+
+  function paintSessionTimer() {
+    var el = $('#sessionTimer');
+    if (!el) return;
+    if (!state.options.showTimer) {
+      el.classList.add('hidden');
+      el.textContent = '';
+      el.removeAttribute('aria-label');
+      return;
+    }
+    var minutes = Math.floor(App.feedback.practiceSeconds() / 60);
+    el.classList.remove('hidden');
+    el.textContent = App.i18n.t('sessionTimerValue').replace('{n}', minutes);
+    el.setAttribute('aria-label',
+      App.i18n.t('sessionTimerAria').replace('{n}', minutes));
+  }
+
+  function ensureTimerTicking() {
+    /* Paint first, always — including when the setting is off, because
+       the "off" branch of paintSessionTimer() is what takes the clock off
+       the screen. Returning before it left the last number painted: the
+       option and aria-pressed said off while the header still showed the
+       clock, because only the way *up* had been implemented. */
+    paintSessionTimer();
+    if (!state.options.showTimer) {
+      if (timerIntervalId !== null) {
+        clearInterval(timerIntervalId);
+        timerIntervalId = null;
+      }
+      return;
+    }
+    if (timerIntervalId === null) {
+      timerIntervalId = setInterval(paintSessionTimer, 1000);
+    }
   }
 
   /* ---------- Settings side drawer ---------- */
@@ -533,6 +585,7 @@
     if (e.target.closest('#btnMetrics')) { state.options.metrics = !state.options.metrics; save(); applyOptions(); return; }
     if (e.target.closest('#btnErrorSound')) { state.options.errorSound = !state.options.errorSound; save(); applyOptions(); return; }
     if (e.target.closest('#btnFingerText')) { state.options.showFingerText = !state.options.showFingerText; save(); applyOptions(); return; }
+    if (e.target.closest('#btnShowTimer')) { state.options.showTimer = !state.options.showTimer; save(); applyOptions(); return; }
 
     /* Goal: accuracy selector */
     var goalAcc = e.target.closest('#goalAccuracySelect');
@@ -1723,7 +1776,8 @@
       name: '', stars: 0, completed: {},
       options: {
         keyboard: 'normal', color: 'hands', theme: 'auto', textSize: 'normal',
-        hideLegend: false, hideNumpad: false, dimCelebration: false, keySound: true, metrics: false, errorSound: false
+        hideLegend: false, hideNumpad: false, dimCelebration: false, keySound: true, metrics: false, errorSound: false,
+        showTimer: false
       },
       goal: { accuracyMin: 0, speedMin: 0 },
       achievements: {}

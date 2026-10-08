@@ -207,6 +207,17 @@
     "restMinutesUpAria": "Aumentar un minuto",
     "restMinutesDownAria": "Reducir un minuto",
 
+    /* Temporizador visible: el reloj de práctica de la cabecera. Lee el
+       mismo contador que el aviso de descanso (tiempo de práctica, no de
+       reloj), así que las dos cosas nunca se contradicen. */
+    "showTimerLabel": "⏱️ Ver el temporizador",
+    "showTimerLabelAria": "Activar o desactivar el reloj de práctica de la cabecera",
+    "showTimerLabelOn": "✅ Temporizador: visible",
+    "showTimerLabelOff": "⬜ Temporizador: oculto",
+    "showTimerHelp": "En la cabecera ves cuánto tiempo llevas escribiendo. Solo cuenta mientras escribes: si dejas la pestaña quieta, no avanza.",
+    "sessionTimerValue": "⏱ {n} min",
+    "sessionTimerAria": "Tiempo de práctica: {n} minutos",
+
     "achievementsTitle": "⭐ Logros",
     "achievementsShow": "Ver logros",
     "achievementsHide": "Ocultar",

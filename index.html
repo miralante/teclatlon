@@ -192,6 +192,13 @@
         <div class="suite-brand"><img src="assets/img/icono.svg" alt="" width="44" height="44"><div class="suite-brand-copy"><h1>Teclatlon</h1><p class="suite-attribution"><span data-i18n="suiteBy">Una app de</span> <a href="https://apptonomia.uk/">Apptonomia</a>.</p></div></div>
         <div class="header-data suite-controls">
           <span class="stars" id="stars">⭐ 0</span>
+          <!-- The practice clock, next to the stars because it is the same
+               kind of thing: something about this session. role="timer"
+               with aria-live="off" is deliberate — a number that moves
+               every second must not be read out on every change, but it
+               must still be reachable when the person asks for it. Its
+               label is written by app.js (sessionTimerAria). -->
+          <span class="session-timer hidden" id="sessionTimer" role="timer" aria-live="off"></span>
           <button type="button" class="btn-icon btn-open-settings" id="btnOpenSettings" aria-haspopup="dialog" aria-expanded="false" aria-controls="settingsDrawer" data-i18n-aria="openSettingsAria" aria-label="Ajustes">⚙️</button>
         </div>
       </div>
@@ -331,10 +338,20 @@
       </div>
       <div class="card centered" id="gameCard">
         <div id="targetZone" class="target-zone"></div>
-        <div id="challengeZone" class="progress-bar hidden">
+        <!-- The track is a leaf, exactly as in every Calculia activity
+             (<div class="progress-bar"> holding only the fill and the
+             text). It used to be this element instead, which put the
+             phase stars and the fill inside a 6px box with
+             `overflow: hidden`: the stars needed 36px and were clipped
+             away entirely, and the fill was pushed 44px down the same
+             6px window, so the challenge showed an empty grey strip and
+             no progress at all. The stars now live in the wrapper. -->
+        <div id="challengeZone" class="challenge-zone hidden">
           <div class="challenge-stars" id="challengeStars"></div>
-          <div class="progress-fill" id="challengeFill"></div>
-          <span class="progress-text" id="challengeText">0 de 0</span>
+          <div class="progress-bar">
+            <div class="progress-fill" id="challengeFill"></div>
+            <span class="progress-text" id="challengeText">0 de 0</span>
+          </div>
         </div>
       </div>
       <div class="feedback" id="feedback" aria-live="polite"></div>
@@ -485,6 +502,18 @@
         <span class="number-unit" data-i18n="restMinutesUnit">min</span>
       </div>
       <p class="help-text" data-i18n="restMinutesHelp">Cuando llevas este tiempo escribiendo, aparece un aviso para descansar. El contador vuelve a cero. Y el aviso aparece otra vez.</p>
+    </div>
+
+    <!-- The visible clock. It sits under the rest reminder because it is
+         the same counter seen from the other side: the reminder decides
+         when to speak, the clock shows the number that decision is made
+         on. Both restart together. Off by default — the timer is the
+         person's own choice, not something the app puts in front of
+         them. -->
+    <div class="setting-row">
+      <span class="setting-label" data-i18n="showTimerLabel">⏱️ Ver el temporizador</span>
+      <button type="button" id="btnShowTimer" class="btn-icon" aria-pressed="false" data-i18n-aria="showTimerLabelAria" aria-label="Activar o desactivar el reloj de práctica de la cabecera">⬜ Temporizador: oculto</button>
+      <p class="help-text" data-i18n="showTimerHelp">En la cabecera ves cuánto tiempo llevas escribiendo. Solo cuenta mientras escribes: si dejas la pestaña quieta, no avanza.</p>
     </div>
 
     <div class="setting-row">
