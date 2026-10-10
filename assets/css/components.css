@@ -81,14 +81,19 @@
   box-shadow: var(--shadow);
 }
 
-/* Ludia's compact progress track: informational, never a touch target. */
+/* Compact progress track: the bar floats without a surrounding box —
+   no background, no border, no border-radius. The fill carries its own
+   rounded end. The explicit width: 100% is required: without it the bar
+   collapses to a line with no width for children to percentage against,
+   so fill width: 29% computes to 0px even though the inline style is set. */
 .progress-bar {
   position: relative;
+  width: 100%;
   height: 6px;
-  background: var(--color-border);
+  background: transparent;
   border: 0;
-  border-radius: 4px;
-  overflow: hidden;
+  border-radius: 0;
+  overflow: visible;
 }
 
 /* Anchored to the left edge of the track, as in Calculia: the fill is a
@@ -100,7 +105,7 @@
   width: 0%;
   background: var(--accent);
   background-image: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.18) 0 3px, transparent 3px 6px);
-  border-radius: 4px;
+  border-radius: 3px;
   transition: width 0.4s ease;
 }
 
@@ -135,20 +140,21 @@
 }
 
 /* ---- Challenge phase stars ---- */
-/* Wrapper for the challenge's stars + track. It exists so the stars stay
-   outside .progress-bar: the track is 6px tall with `overflow: hidden`
-   and would clip them away. The gap replaces the old margin-bottom. */
+/* Horizontal layout: bar on the left, stars on the right. Stars are not
+   inside .progress-bar (the track is a leaf, and they would be clipped).
+   The track has no background or border — the fill floats on its own. */
 .challenge-zone {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
 }
 
 .challenge-stars {
   display: flex;
-  justify-content: center;
-  gap: 12px;
-  font-size: 24px;
+  align-items: center;
+  gap: 6px;
+  font-size: 20px;
 }
 
 .challenge-star {
@@ -489,30 +495,6 @@
 
 .stat.metric { background: var(--color-success-soft); border-color: var(--color-success); color: var(--color-success); }
 
-/* ---- Live metrics overlay (game screen) ---- */
-.live-metrics {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  font-size: var(--text-small);
-  font-weight: 700;
-  color: var(--color-text-soft);
-}
-
-.live-metrics-pills {
-  display: flex;
-  gap: var(--space);
-  justify-content: center;
-}
-
-.live-metrics .live-metric {
-  background: var(--color-surface);
-  border: 2px solid var(--color-border);
-  border-radius: 12px;
-  padding: 6px 12px;
-}
-
 /* ---- Avatar picker ---- */
 .avatar-grid {
   display: grid;
@@ -554,63 +536,6 @@
 }
 
 .avatar-current svg { width: 100%; height: 100%; }
-
-/* ---- Goal progress bars (inside #goalBars) ---- */
-.goal-bars {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-top: 6px;
-}
-
-.goal-bar-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.goal-bar-label {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--color-text-soft);
-  min-width: 60px;
-  text-align: right;
-  white-space: nowrap;
-}
-
-.goal-bar-wrap {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.goal-bar-track {
-  height: 6px;
-  background: var(--color-border);
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.goal-bar-fill {
-  height: 100%;
-  width: 0%;
-  background: var(--accent);
-  background-image: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.18) 0 3px, transparent 3px 6px);
-  border-radius: 4px;
-  transition: width 0.3s ease;
-}
-
-.goal-bar-fill.goal-met {
-  background: var(--color-success);
-  background-image: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.18) 0 3px, transparent 3px 6px);
-}
-
-.goal-bar-threshold {
-  font-size: 10px;
-  color: var(--color-text-soft);
-  line-height: 1;
-}
 
 /* ---- Settings collapsible section ---- */
 .settings-section {

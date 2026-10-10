@@ -119,20 +119,6 @@
     "themeLabelDark": "Tema: oscuro",
     "themeLabelContrast": "Tema: alto contraste",
 
-    /* Métricas: el producto no ha cerrado los detalles pero el botón
-       se queda visible (y apagado por defecto) para que la persona
-       usuaria lo encuentre y entienda que existe. La implementación
-       actual muestra precisión (%) y teclas por minuto en vivo. */
-    "metricsLabel": "📊 Métricas",
-    "metricsLabelAria": "Activar o desactivar las métricas de precisión y velocidad",
-    "metricsLabelOn": "✅ Métricas: encendidas",
-    "metricsLabelOff": "⬜ Métricas: apagadas",
-
-    "focusModeLabel": "🎯 Modo de concentración",
-    "focusModeLabelAria": "Activar o desactivar el modo de concentración",
-    "focusModeLabelOn": "✅ Modo de concentración: activado",
-    "focusModeLabelOff": "⬜ Modo de concentración: apagado",
-
     /* Sonido espacial: el tono de acierto suena por el lado (izquierda
        o derecha) de la tecla pulsada, para reforzar la posición de la
        mano sin depender de la vista. */
@@ -140,13 +126,6 @@
     "keySoundLabelAria": "Activar o desactivar el sonido de teclas",
     "keySoundLabelOn": "✅ Sonido de teclas: encendido",
     "keySoundLabelOff": "⬜ Sonido de teclas: apagado",
-
-    "accuracy": "Precisión: {n}%",
-    "accuracyShort": "Prec. {n}%",
-    "keysPerMinute": "PPM: {n}",
-    "keysPerMinuteShort": "{n} PPM",
-    "keysLabel": "Teclas: {n}",
-    "timeShort": "{n}s",
 
     "openSettingsAria": "Abrir ajustes",
     "closeSettingsAria": "Cerrar ajustes",
@@ -165,25 +144,6 @@
        (legal/strings.es.js, about/strings.es.js, team/strings.es.js).
        Anything that still needs /legal or /about copy reads it from
        those files, not from here. */
-
-    /* --- Goals & achievements ---------------------------------------
-       Mejoras #3 y #6. */
-    "goalSectionTitle": "🎯 Metas opcionales",
-    "goalSectionHelp": "Activa y elige una meta para cada sesión. Se muestra en la barra de progreso durante la práctica.",
-    "goalAccuracy": "Precisión mínima",
-    "goalAccuracyOff": "Sin meta",
-    "goalAccuracy90": "90 %",
-    "goalAccuracy95": "95 %",
-    "goalSpeed": "Velocidad mínima",
-    "goalSpeedOff": "Sin meta",
-    "goalSpeed30": "30 ppm",
-    "goalSpeed50": "50 ppm",
-    "goalSpeed80": "80 ppm",
-    "goalAccuracyBar": "Precisión",
-    "goalSpeedBar": "Velocidad",
-    "goalMet": "¡Meta alcanzada!",
-    "goalAccuracyMet": "Precisión ✔",
-    "goalSpeedMet": "Velocidad ✔",
 
     "errorSoundLabel": "Sonido de error",
     "errorSoundLabelAria": "Activar o desactivar el sonido de error",

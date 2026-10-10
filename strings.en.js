@@ -120,20 +120,6 @@
     "themeLabelDark": "Theme: dark",
     "themeLabelContrast": "Theme: high contrast",
 
-    /* Metrics: the product has not finalised the details, but the
-       toggle stays visible (off by default) so the user can find it.
-       The current implementation shows live accuracy (%) and keys
-       per minute. */
-    "metricsLabel": "📊 Metrics",
-    "metricsLabelAria": "Turn accuracy and speed metrics on or off",
-    "metricsLabelOn": "✅ Metrics: on",
-    "metricsLabelOff": "⬜ Metrics: off",
-
-    "focusModeLabel": "🎯 Focus mode",
-    "focusModeLabelAria": "Turn focus mode on or off",
-    "focusModeLabelOn": "✅ Focus mode: on",
-    "focusModeLabelOff": "⬜ Focus mode: off",
-
     /* Spatial sound: the success tone plays from the side (left or
        right) of the key that was pressed, reinforcing hand position
        without relying on sight. */
@@ -141,13 +127,6 @@
     "keySoundLabelAria": "Turn key sounds on or off",
     "keySoundLabelOn": "✅ Key sounds: on",
     "keySoundLabelOff": "⬜ Key sounds: off",
-
-    "accuracy": "Accuracy: {n}%",
-    "accuracyShort": "Acc. {n}%",
-    "keysPerMinute": "PPM: {n}",
-    "keysPerMinuteShort": "{n} PPM",
-    "keysLabel": "Keys: {n}",
-    "timeShort": "{n}s",
 
     "openSettingsAria": "Open settings",
     "closeSettingsAria": "Close settings",
@@ -165,25 +144,6 @@
        own strings.<locale>.js pair (legal/strings.en.js,
        about/strings.en.js, team/strings.en.js), so anything that needs
        /legal or /about copy reads it from those files, not from here. */
-
-    /* --- Goals & achievements ---------------------------------------
-       Improvements #3 and #6. */
-    "goalSectionTitle": "🎯 Optional goals",
-    "goalSectionHelp": "Enable and choose a target for each session. Displayed as a progress bar during practice.",
-    "goalAccuracy": "Minimum accuracy",
-    "goalAccuracyOff": "No goal",
-    "goalAccuracy90": "90 %",
-    "goalAccuracy95": "95 %",
-    "goalSpeed": "Minimum speed",
-    "goalSpeedOff": "No goal",
-    "goalSpeed30": "30 ppm",
-    "goalSpeed50": "50 ppm",
-    "goalSpeed80": "80 ppm",
-    "goalAccuracyBar": "Accuracy",
-    "goalSpeedBar": "Speed",
-    "goalMet": "Goal reached!",
-    "goalAccuracyMet": "Accuracy ✔",
-    "goalSpeedMet": "Speed ✔",
 
     "errorSoundLabel": "Error sound",
     "errorSoundLabelAria": "Enable or disable error sound",

@@ -46,7 +46,7 @@
       var o = raw.opciones;
       raw.options = {
         keyboard: o.teclado, color: o.color, theme: o.tema, textSize: o.texto,
-        focusMode: o.foco, keySound: o.espacial, metrics: o.metricas
+        focusMode: o.foco, keySound: o.espacial
       };
     }
     delete raw.nombre; delete raw.estrellas; delete raw.completado; delete raw.opciones;
@@ -78,7 +78,6 @@
   state.options.hideNumpad = !!state.options.hideNumpad;
   state.options.dimCelebration = !!state.options.dimCelebration;
   state.options.keySound = state.options.keySound === undefined ? true : !!state.options.keySound;
-  state.options.metrics = !!state.options.metrics;
   state.options.errorSound = !!state.options.errorSound;
   state.options.showFingerText = state.options.showFingerText === undefined ? true : !!state.options.showFingerText;
   /* Rest reminder interval (minutes). The default and the allowed range
@@ -90,7 +89,6 @@
   /* Practice clock in the header. Off by default: the clock is an extra
      the person asks for, and until they ask there is nothing on screen. */
   state.options.showTimer = !!state.options.showTimer;
-  state.goal = state.goal || { accuracyMin: null, speedMin: null };
   state.achievements = state.achievements || {};
 
   function readSuiteSounds() {
@@ -178,54 +176,6 @@
     if (state.achievements[id]) return;
     state.achievements[id] = Date.now();
     save();
-  }
-
-  /* Award a bonus star when a personal goal is met (e.g. precision goal). */
-  function bonusStar() {
-    state.stars += 1;
-    save();
-    updateStars();
-  }
-
-  /* Check end-of-round metrics against the active goal and award
-     a bonus star if it is met. Also updates achievement state. */
-  function checkGoal(cfg) {
-    var m = state.metrics;
-    if (!m || !m.keys) return;
-    var accuracy = Math.round((m.hits / m.keys) * 100);
-    var minutes = Math.max((Date.now() - m.startMs) / 60000, 1 / 60);
-    var kpm = Math.round(m.keys / minutes);
-    var goalMet = false;
-
-    if (state.goal.accuracyMin && accuracy >= state.goal.accuracyMin) goalMet = true;
-    if (state.goal.speedMin && kpm >= state.goal.speedMin) goalMet = true;
-
-    if (goalMet) {
-      bonusStar();
-      App.feedback.celebrate(App.i18n.t('goalMet'), null);
-    }
-
-    /* Achievement checks */
-    if (state.stars >= 1) achieve('firstStar');
-    if (state.stars >= 10) achieve('tenStars');
-    if (accuracy === 100) achieve('perfectRound');
-
-    /* allLessons: every lesson in the curriculum is completed */
-    var allLessons = lessons();
-    if (allLessons.length > 0 && allLessons.every(function (l) { return !!state.completed[l.id]; })) {
-      achieve('allLessons');
-    }
-
-    /* allKeys: awarded by updateChallenge() when the challenge is complete */
-    if (state.completed['allKeys']) achieve('allKeys');
-
-    /* streak3: three consecutive lesson completions */
-    var streak = 0;
-    allLessons.forEach(function (l) {
-      if (state.completed[l.id]) streak++;
-      else streak = 0;
-    });
-    if (streak >= 3) achieve('streak3');
   }
 
   /* Render the achievements panel inside the settings drawer. */
@@ -414,10 +364,7 @@
     updateSettingsButton('#btnHideLegend', 'hideLegendLabel', state.options.hideLegend);
     updateSettingsButton('#btnHideNumpad', 'hideNumpadLabel', state.options.hideNumpad);
     updateSettingsButton('#btnDimCelebration', 'dimCelebrationLabel', state.options.dimCelebration);
-    updateSettingsButton('#btnFocusMode', 'focusModeLabel', state.options.hideLegend &&
-      state.options.hideNumpad && state.options.dimCelebration);
     updateSettingsButton('#btnKeySound', 'keySoundLabel', state.options.keySound);
-    updateSettingsButton('#btnMetrics', 'metricsLabel', state.options.metrics);
     updateSettingsButton('#btnErrorSound', 'errorSoundLabel', state.options.errorSound);
     updateSettingsButton('#btnFingerText', 'fingerTextLabel', state.options.showFingerText);
     /* The finger text is rewritten on every key, so turning the setting
@@ -443,7 +390,6 @@
     }
     updateSettingsButton('#btnShowTimer', 'showTimerLabel', state.options.showTimer);
     ensureTimerTicking();
-    updateLiveMetrics();
   }
 
   /* ---------- Practice clock (header) ---------- */
@@ -517,14 +463,6 @@
     });
     $('#btnOpenSettings').setAttribute('aria-expanded', 'true');
     $('#btnCloseSettings').focus();
-    /* Sync goal selects and show achievements */
-    var accSel = $('#goalAccuracySelect');
-    var spdSel = $('#goalSpeedSelect');
-    if (accSel) accSel.value = String(state.goal.accuracyMin || '0');
-    if (spdSel) spdSel.value = String(state.goal.speedMin || '0');
-    var details = $('#achievementsSection');
-    if (details) details.open = true;
-    renderAchievements();
     applyOptions();
   }
 
@@ -571,49 +509,10 @@
     if (e.target.closest('#btnHideLegend')) { state.options.hideLegend = !state.options.hideLegend; save(); applyOptions(); return; }
     if (e.target.closest('#btnHideNumpad')) { state.options.hideNumpad = !state.options.hideNumpad; save(); applyOptions(); return; }
     if (e.target.closest('#btnDimCelebration')) { state.options.dimCelebration = !state.options.dimCelebration; save(); applyOptions(); return; }
-    if (e.target.closest('#btnFocusMode')) {
-      var focusOn = !(state.options.hideLegend && state.options.hideNumpad && state.options.dimCelebration);
-      state.options.hideLegend = focusOn;
-      state.options.hideNumpad = focusOn;
-      state.options.dimCelebration = focusOn;
-      save(); applyOptions(); return;
-    }
     if (e.target.closest('#btnKeySound')) { state.options.keySound = !state.options.keySound; save(); applyOptions(); return; }
-    if (e.target.closest('#btnMetrics')) { state.options.metrics = !state.options.metrics; save(); applyOptions(); return; }
     if (e.target.closest('#btnErrorSound')) { state.options.errorSound = !state.options.errorSound; save(); applyOptions(); return; }
     if (e.target.closest('#btnFingerText')) { state.options.showFingerText = !state.options.showFingerText; save(); applyOptions(); return; }
     if (e.target.closest('#btnShowTimer')) { state.options.showTimer = !state.options.showTimer; save(); applyOptions(); return; }
-
-    /* Goal: accuracy selector */
-    var goalAcc = e.target.closest('#goalAccuracySelect');
-    if (goalAcc) {
-      var val = goalAcc.value;
-      state.goal.accuracyMin = val === '0' ? 0 : parseInt(val, 10);
-      save();
-      updateLiveMetrics();
-      return;
-    }
-
-    /* Goal: speed selector */
-    var goalSpd = e.target.closest('#goalSpeedSelect');
-    if (goalSpd) {
-      var val2 = goalSpd.value;
-      state.goal.speedMin = val2 === '0' ? 0 : parseInt(val2, 10);
-      save();
-      updateLiveMetrics();
-      return;
-    }
-
-    /* Achievements panel toggle — the <details> element handles open/close natively */
-    var btnToggleAchieve = e.target.closest('#btnToggleAchievements');
-    if (btnToggleAchieve) {
-      var details = $('#achievementsSection');
-      if (details) {
-        details.open = !details.open;
-        if (details.open) renderAchievements();
-      }
-      return;
-    }
   });
 
   /* ---------- Live metrics (accuracy and speed) ---------- */
@@ -623,6 +522,7 @@
 
   function updateLiveMetrics() {
     var zone = $('#liveMetrics');
+    if (!zone) return;
     if (!state.options.metrics || !game || !state.metrics) {
       zone.classList.add('hidden');
       return;
@@ -633,58 +533,17 @@
     var minutes = Math.max((Date.now() - m.startMs) / 60000, 1 / 60);
     var kpm = Math.round(m.keys / minutes);
     zone.innerHTML = '';
-
-    /* Pill row (always shown when metrics are on) */
     var pills = document.createElement('div');
     pills.className = 'live-metrics-pills';
-
     var accPill = document.createElement('span');
     accPill.className = 'live-metric';
     accPill.textContent = App.i18n.t('accuracyShort').replace('{n}', accuracy);
     pills.appendChild(accPill);
-
     var spdPill = document.createElement('span');
     spdPill.className = 'live-metric';
     spdPill.textContent = App.i18n.t('keysPerMinuteShort').replace('{n}', kpm);
     pills.appendChild(spdPill);
     zone.appendChild(pills);
-
-    /* Goal progress bars — appended to the separate #goalBars zone */
-    var goalBarsEl = $('#goalBars');
-    goalBarsEl.innerHTML = '';
-    if (state.goal.accuracyMin || state.goal.speedMin) {
-      goalBarsEl.classList.remove('hidden');
-      if (state.goal.accuracyMin) {
-        var accFill = Math.min(100, Math.round((accuracy / state.goal.accuracyMin) * 100));
-        goalBarsEl.insertAdjacentHTML('beforeend',
-          '<div class="goal-bar-row">' +
-            '<span class="goal-bar-label">' + App.i18n.t('goalAccuracyBar') + '</span>' +
-            '<div class="goal-bar-wrap">' +
-              '<div class="goal-bar-track">' +
-                '<div class="goal-bar-fill' + (accuracy >= state.goal.accuracyMin ? ' goal-met' : '') + '" style="width:' + accFill + '%"></div>' +
-              '</div>' +
-              '<span class="goal-bar-threshold">' + accuracy + '% / ' + state.goal.accuracyMin + '%</span>' +
-            '</div>' +
-          '</div>'
-        );
-      }
-      if (state.goal.speedMin) {
-        var spdFill = Math.min(100, Math.round((kpm / state.goal.speedMin) * 100));
-        goalBarsEl.insertAdjacentHTML('beforeend',
-          '<div class="goal-bar-row">' +
-            '<span class="goal-bar-label">' + App.i18n.t('goalSpeedBar') + '</span>' +
-            '<div class="goal-bar-wrap">' +
-              '<div class="goal-bar-track">' +
-                '<div class="goal-bar-fill' + (kpm >= state.goal.speedMin ? ' goal-met' : '') + '" style="width:' + spdFill + '%"></div>' +
-              '</div>' +
-              '<span class="goal-bar-threshold">' + kpm + ' / ' + state.goal.speedMin + ' ppm</span>' +
-            '</div>' +
-          '</div>'
-        );
-      }
-    } else {
-      goalBarsEl.classList.add('hidden');
-    }
   }
 
   function keysOf(ch) {
@@ -897,7 +756,6 @@
     $('#guide').classList.remove('hidden');
     clearFeedback();
     startMetrics();
-    updateLiveMetrics();
     showScreen('screenGame');
     loadStep();
   }
@@ -1013,11 +871,9 @@
       if (ch === p.specialKey) {
         state.metrics.hits += 1;
         App.feedback.successSound(panOf(ch));
-        updateLiveMetrics();
         stepCompleted(ch);
       } else {
         state.metrics.misses += 1;
-        updateLiveMetrics();
         App.feedback.encourage($('#feedback'));
       }
       return;
@@ -1035,12 +891,10 @@
       App.feedback.successSound(panOf(ch));
       game.pos += 1;
       renderTarget();
-      updateLiveMetrics();
       if (game.pos >= seq.length) stepCompleted(ch);
       else updateGuide();
     } else {
       state.metrics.misses += 1;
-      updateLiveMetrics();
       keysOf(ch).forEach(function (t) {
         t.classList.add('miss');
         setTimeout(function () { t.classList.remove('miss'); }, 500);
@@ -1073,7 +927,18 @@
   function endSequence() {
     var cfg = game.cfg;
     game = null;
-    checkGoal(cfg);
+    /* Achievement checks that used to live inside checkGoal() */
+    var m = state.metrics;
+    if (m && m.keys) {
+      var accuracy = Math.round((m.hits / m.keys) * 100);
+      if (state.stars >= 1) achieve('firstStar');
+      if (state.stars >= 10) achieve('tenStars');
+      if (accuracy === 100) achieve('perfectRound');
+    }
+    var allLessons = lessons();
+    if (allLessons.length > 0 && allLessons.every(function (l) { return !!state.completed[l.id]; })) {
+      achieve('allLessons');
+    }
     award(cfg.starKey);
     /* Return to the mode list immediately so completion never leaves the
        learner stranded behind a browser-dependent celebration timer. The
@@ -1408,7 +1273,6 @@
     $('#guide').classList.add('hidden');
     clearFeedback();
     startMetrics();
-    updateLiveMetrics();
     showScreen('screenGame');
     renderDictationActions();
   }
@@ -1435,13 +1299,11 @@
       game.waiting = true;
       App.feedback.success($('#feedback'));
       App.feedback.successSound(null, true);
-      updateLiveMetrics();
       dictationTimer = setTimeout(function () { speakDictationLetter(true); }, 550);
     } else {
       state.metrics.misses += 1;
       game.waiting = true;
       App.feedback.encourage($('#feedback'), true);
-      updateLiveMetrics();
       dictationTimer = setTimeout(function () { speakDictationLetter(false); }, 300);
     }
   }
@@ -1474,7 +1336,6 @@
     markTarget(null);
     $$('.key.done').forEach(function (t) { t.classList.remove('done'); });
     startMetrics();
-    updateLiveMetrics();
     showScreen('screenGame');
     updateChallenge();
   }
@@ -1505,11 +1366,15 @@
     game.stars = CHALLENGE_PHASES;
     updateChallengeStars();
     game = null;
-    /* Check goal and achievements for the challenge round. The cfg
-       object is not available here (challenge doesn't use cfg), so
-       pass null — checkGoal() handles null gracefully. */
-    checkGoal(null);
     achieve('allKeys');
+    /* Achievement checks that used to live inside checkGoal() */
+    var m = state.metrics;
+    if (m && m.keys) {
+      if (state.stars >= 1) achieve('firstStar');
+      if (state.stars >= 10) achieve('tenStars');
+      var accuracy = Math.round((m.hits / m.keys) * 100);
+      if (accuracy === 100) achieve('perfectRound');
+    }
     award('allKeys');
     celebrateWithTransfer(goMenu);
   }
@@ -1523,7 +1388,6 @@
     game.set[ch] = true;
     state.metrics.keys += 1;
     state.metrics.hits += 1;
-    updateLiveMetrics();
     keysOf(ch).forEach(function (t) { t.classList.add('done'); });
     /* Quiet per-key ack: just the "ding" panned to that column.
        Avoids spamming success messages during the challenge but lets
@@ -1892,25 +1756,6 @@
   /* The main click handler above only catches click events, but native <select>
      elements fire 'change' (not 'click') when the user picks a new option.
      This listener ensures the goal selectors persist to localStorage. */
-  (function () {
-    var accSel = $('#goalAccuracySelect');
-    var spdSel = $('#goalSpeedSelect');
-    if (accSel) {
-      accSel.addEventListener('change', function () {
-        state.goal.accuracyMin = accSel.value === '0' ? 0 : parseInt(accSel.value, 10);
-        save();
-        updateLiveMetrics();
-      });
-    }
-    if (spdSel) {
-      spdSel.addEventListener('change', function () {
-        state.goal.speedMin = spdSel.value === '0' ? 0 : parseInt(spdSel.value, 10);
-        save();
-        updateLiveMetrics();
-      });
-    }
-  }());
-
   /* ---------- Rest reminder number box ---------- */
   /* A number box, not a menu, so any whole number of minutes goes.
      It is read on 'change' and not on 'input': that is the moment the

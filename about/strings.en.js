@@ -117,6 +117,22 @@
     "techItem6Text": "every piece of text lives in a file per language. Today Teclatlon is available in Spanish (Spain) and English.",
     "techItem7Label": "External dependencies: none",
     "techItem7Text": ", except for downloading the Atkinson Hyperlegible and Nunito typefaces (chosen for their high legibility).",
-    "techTitle": "How it is built"
+    "techTitle": "How it is built",
+    "achievementsTitle": "⭐ Your achievements",
+    "achievementsHint": "Achievements unlock automatically as you practise.",
+    "achievementFirstStar": "First star",
+    "achievementFirstStarDesc": "Earn your first practice star.",
+    "achievementTenStars": "Ten stars",
+    "achievementTenStarsDesc": "Accumulate ten practice stars.",
+    "achievementStreak3": "3-day streak",
+    "achievementStreak3Desc": "Complete three consecutive sessions with goal met.",
+    "achievementAllLessons": "All lessons",
+    "achievementAllLessonsDesc": "Complete at least one lesson in each game mode.",
+    "achievementAllKeys": "Key by key",
+    "achievementAllKeysDesc": "Complete the challenge of pressing every key on the keyboard.",
+    "achievementPerfectRound": "Perfect session",
+    "achievementPerfectRoundDesc": "Complete a session with 100 % accuracy and no mistakes.",
+    "achievementLocked": "Locked",
+    "achievementUnlockedAt": "Unlocked on {date}"
   }, "en");
 })();

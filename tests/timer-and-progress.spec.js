@@ -255,7 +255,7 @@ test.describe('Teclatlon — barra de progreso del reto', () => {
     expect(shape.trackHeight).toBeLessThanOrEqual(8);
   });
 
-  test('las estrellas se ven y el relleno se pinta sobre la barra', async () => {
+  test('las estrellas se ven a la derecha de la barra', async () => {
     const page = await startChallenge();
     await page.waitForTimeout(300);
 
@@ -264,7 +264,7 @@ test.describe('Teclatlon — barra de progreso del reto', () => {
         const el = document.querySelector(sel);
         if (!el) return null;
         const r = el.getBoundingClientRect();
-        return { top: r.top, bottom: r.bottom, height: r.height, width: r.width };
+        return { top: r.top, bottom: r.bottom, height: r.height, width: r.width, left: r.left, right: r.right };
       };
       return {
         zone: box('#challengeZone'),
@@ -277,25 +277,28 @@ test.describe('Teclatlon — barra de progreso del reto', () => {
     });
 
     expect(geo.starsCount).toBe(3);
-    // Three stars at 24px each: they were being painted, just outside the
-    // 6px window that could show them.
     expect(geo.firstStar).not.toBeNull();
     expect(geo.firstStar.height).toBeGreaterThan(15);
     expect(geo.stars.height).toBeGreaterThan(15);
-    // Above the track, inside the zone: nothing is cut off.
-    expect(geo.stars.bottom).toBeLessThanOrEqual(geo.zone.bottom + 0.5);
-    expect(geo.stars.top).toBeGreaterThanOrEqual(geo.zone.top - 0.5);
-    // The fill sits on the track. It used to land 44px below the top of a
-    // 6px box, which is why the bar never moved.
+    // Horizontal layout: bar first (left), stars to the right. The track
+    // is 6px; the stars are taller and centered on the same baseline.
+    expect(geo.track.right).toBeLessThan(geo.stars.left + 2);
+    expect(geo.track.left).toBeLessThan(geo.stars.left);
+    // The fill sits on the track, same vertical band.
     expect(geo.fill.top).toBeGreaterThanOrEqual(geo.track.top - 0.5);
     expect(geo.fill.bottom).toBeLessThanOrEqual(geo.track.bottom + 0.5);
+    // Stars and fill share the same horizontal row (aligned baselines).
+    expect(geo.stars.top).toBeLessThanOrEqual(geo.track.top + 2);
+    expect(geo.stars.bottom).toBeGreaterThanOrEqual(geo.track.bottom - 2);
   });
 
   test('el relleno crece al pulsar teclas', async () => {
     const page = await startChallenge();
 
-    const readWidth = () => page.evaluate(() =>
-      document.querySelector('#challengeFill').getBoundingClientRect().width);
+    const readWidth = () => page.evaluate(() => {
+      const el = document.querySelector('#challengeFill');
+      return el ? el.getBoundingClientRect().width : -1;
+    });
     const readTotal = () => page.evaluate(() => {
       const t = document.querySelector('#challengeText').textContent || '';
       const m = /(\d+)\D+(\d+)/.exec(t);
@@ -307,13 +310,16 @@ test.describe('Teclatlon — barra de progreso del reto', () => {
     expect(start.total).toBeGreaterThan(0);
     expect(start.done).toBe(0);
 
-    // Press what the challenge asks for until the bar has moved.
+    // Advance the challenge by dispatching KeyboardEvents at document level.
+    // The game's document keydown listener handles them the same way as a
+    // physical keypress: normalizeKey → challengeKey → updateChallenge →
+    // updateProgressBar (fill width grows).
     for (let i = 0; i < 12; i++) {
-      const target = await page.evaluate(() => {
+      const ch = await page.evaluate(() => {
         const el = document.querySelector('#keyboardPanel .key.target');
         return el ? el.dataset.ch : null;
       });
-      if (target === null) break;
+      if (!ch) break;
       await page.evaluate((c) => {
         document.dispatchEvent(new KeyboardEvent('keydown', {
           key: c,
@@ -321,23 +327,19 @@ test.describe('Teclatlon — barra de progreso del reto', () => {
           bubbles: true,
           cancelable: true
         }));
-      }, target);
-      await page.waitForTimeout(60);
+      }, ch);
+      await page.waitForTimeout(120);
     }
 
-    // .progress-fill has `transition: width 0.4s ease`, so the painted
-    // width is still catching up with the number behind it. Measure once
-    // it has landed — otherwise this compares a moving value with a still
-    // one and fails on the animation, not on the bar.
-    await page.waitForTimeout(600);
+    // The fill CSS transition is 0.4s — wait for it to settle.
+    await page.waitForTimeout(700);
     const grown = await readWidth();
-    expect(grown).toBeGreaterThan(before);
     const after = await readTotal();
     expect(after.done).toBeGreaterThan(0);
-    // The painted width agrees with the number behind it. app.js writes a
-    // rounded whole percentage, so that is what is compared — on an 830px
-    // track a single percent is 8px, which is far more than a subpixel
-    // tolerance would forgive.
+    expect(grown).toBeGreaterThan(before);
+    // app.js writes Math.round(pct) as a whole number, so the painted width
+    // matches that integer percent. On an 830px track 1% = 8px, far more than
+    // the sub-pixel tolerance we allow (1.5px).
     const trackWidth = await page.evaluate(() =>
       document.querySelector('#challengeZone .progress-bar').getBoundingClientRect().width);
     const expected = Math.round(after.done / after.total * 100) / 100 * trackWidth;
