@@ -94,9 +94,9 @@ const DATA = {
       { text: 'Look at the F key. It has a bump. You can feel it. Put your left index finger on it. Press it.', seq: 'f' },
       { text: 'Look at the J key. It also has a bump. Put your right index finger on it. Press it.', seq: 'j' },
       { text: 'Put your left hand on the A, S, D and F keys. One finger on each key. Press them in order.', seq: 'asdf' },
-      { text: 'Put your right hand on the J, K, L and Ñ keys. One finger on each key. Press them in order.', seq: 'jklñ' },
+      { text: 'Put your right hand on the J, K, L and ; keys. One finger on each key. Press them in order.', seq: 'jkl;' },
       { text: 'Your thumbs go on the long key at the bottom. It is the space bar. Press it.', seq: ' ' },
-      { text: 'Well done! Now all together. Press the keys in order.', seq: 'asdf jklñ' }
+      { text: 'Well done! Now all together. Press the keys in order.', seq: 'asdf jkl;' }
     ]
   },
 
@@ -162,9 +162,9 @@ const DATA = {
       { id: 'l3', title: 'S and L', intro: 'S goes with your left ring finger. L goes with your right ring finger.',
         keys: ['s', 'l'],
         steps: ['s', 'l', 'sl', 'ssll', 'slfj'] },
-      { id: 'l4', title: 'A and Ñ', intro: 'A goes with your left little finger. Ñ goes with your right little finger.',
-        keys: ['a', 'ñ'],
-        steps: ['a', 'ñ', 'añ', 'asdf', 'jklñ'] },
+      { id: 'l4', title: 'A and ;', intro: 'A goes with your left little finger. ; goes with your right little finger.',
+        keys: ['a', ';'],
+        steps: ['a', ';', 'a;', 'asdf', 'jkl;'] },
       { id: 'l5', title: 'The space bar', intro: 'The space bar is the long key at the bottom. Press it with your thumb.',
         keys: [' '],
         steps: ['f j', 'a s', 'ja ja', 'fa la'] },
@@ -182,7 +182,7 @@ const DATA = {
         steps: ['ftf', 'jyj', 'ty', 'tidy', 'tray'] },
       { id: 'l10', title: 'O and P', intro: 'Move up the ring and little fingers of your right hand.',
         keys: ['o', 'p'],
-        steps: ['lol', 'ñpñ', 'op', 'stop', 'pool'] },
+        steps: ['lol', ';p;', 'op', 'stop', 'pool'] },
       { id: 'l11', title: 'Q and W', intro: 'Move up the little and ring fingers of your left hand.',
         keys: ['q', 'w'],
         steps: ['aqa', 'sws', 'qw', 'quiet', 'water'] },
@@ -685,37 +685,71 @@ function specialKeyDef(id) {
   return { ch: id, finger: 'rp', decor: true, special: true, label: id, wide: 'media' };
 }
 
-DATA.layouts = {
-  /* Letters only, plus both Shift keys: the classic touch-typing
-     method needs Shift visible for the capitals lesson (see
-     DATA.lessons "Capitals"), even in this stripped-down view. No
-     Tab/Enter/Backspace here on purpose -- those aren't practiced
-     yet. */
-  simple: [
-    DATA.rows[0],
-    DATA.rows[1],
-    [decorativeKey('lp', 'media', 'shift')].concat(DATA.rows[2]).concat([decorativeKey('rp', 'media', 'shift')]),
-    DATA.rows[3]
-  ],
-
-  /* Full computer keyboard: numbers on top and function keys around
-     it (Tab, Shift, Enter, Backspace), like a real one. */
-  normal: [
-    DATA.numberRow.concat([decorativeKey('rp', 'media', 'backspace')]),
-    [decorativeKey('lp', 'media', 'tab')].concat(DATA.rows[0]),
-    [decorativeKey('lp', 'media', 'shift')].concat(DATA.rows[1]).concat([decorativeKey('rp', 'media', 'enter')]),
-    [decorativeKey('lp', 'media', 'shift')].concat(DATA.rows[2]).concat([decorativeKey('rp', 'media', 'shift')]),
-    DATA.rows[3]
-  ]
+/* Physical layouts: the same finger map, with the keys that differ
+   between the Spanish and the US keyboard. The Spanish one is the
+   DATA.numberRow / DATA.rows above. On the US keyboard the Ñ key is
+   a semicolon (same finger, right little finger) and the '/' takes
+   the place of the Spanish '-'. Chosen from the browser language, and
+   changeable in Settings (state.options.layout: 'es' | 'us'). */
+DATA.physical = {
+  es: { numberRow: DATA.numberRow, rows: DATA.rows },
+  us: {
+    numberRow: DATA.numberRow,
+    rows: [
+      DATA.rows[0],
+      DATA.rows[1].slice(0, 9).concat([{ ch: ';', finger: 'rp' }]),
+      DATA.rows[2].slice(0, 7).concat([
+        { ch: ',', finger: 'rm' }, { ch: '.', finger: 'rr' }, { ch: '/', finger: 'rp' }
+      ]),
+      DATA.rows[3]
+    ]
+  }
 };
 
-/* Extended: the normal keyboard, with an extra row on top for the
-   less frequent keys (Home/End/Page Up/Page Down/Delete — see the
-   "Special keys" lesson), and the number pad (DATA.numpad) shown
-   separately so the three can be practiced together. */
-DATA.layouts.extended = [
-  ['home', 'end', 'pageUp', 'pageDown', 'delete'].map(specialKeyDef)
-].concat(DATA.layouts.normal);
+/* Builds the selectable visual keyboards for one physical layout. */
+function buildLayouts(p) {
+  var layouts = {
+    /* Letters only, plus both Shift keys: the classic touch-typing
+       method needs Shift visible for the capitals lesson (see
+       DATA.lessons "Capitals"), even in this stripped-down view. No
+       Tab/Enter/Backspace here on purpose -- those aren't practiced
+       yet. */
+    simple: [
+      p.rows[0],
+      p.rows[1],
+      [decorativeKey('lp', 'media', 'shift')].concat(p.rows[2]).concat([decorativeKey('rp', 'media', 'shift')]),
+      p.rows[3]
+    ],
+
+    /* Full computer keyboard: numbers on top and function keys around
+       it (Tab, Shift, Enter, Backspace), like a real one. */
+    normal: [
+      p.numberRow.concat([decorativeKey('rp', 'media', 'backspace')]),
+      [decorativeKey('lp', 'media', 'tab')].concat(p.rows[0]),
+      [decorativeKey('lp', 'media', 'shift')].concat(p.rows[1]).concat([decorativeKey('rp', 'media', 'enter')]),
+      [decorativeKey('lp', 'media', 'shift')].concat(p.rows[2]).concat([decorativeKey('rp', 'media', 'shift')]),
+      p.rows[3]
+    ]
+  };
+
+  /* Extended: the normal keyboard, with an extra row on top for the
+     less frequent keys (Home/End/Page Up/Page Down/Delete — see the
+     "Special keys" lesson), and the number pad (DATA.numpad) shown
+     separately so the three can be practiced together. */
+  layouts.extended = [
+    ['home', 'end', 'pageUp', 'pageDown', 'delete'].map(specialKeyDef)
+  ].concat(layouts.normal);
+
+  return layouts;
+}
+
+DATA.layoutSets = {
+  es: buildLayouts(DATA.physical.es),
+  us: buildLayouts(DATA.physical.us)
+};
+
+/* Kept for the Spanish layout: older code reads DATA.layouts directly. */
+DATA.layouts = DATA.layoutSets.es;
 /* -------- Avatars (inline SVGs, no external assets) --------
    8 simple avatars in 2 hair colors × 2 expressions × 2 skin tones.
    String id + unified viewBox (0 0 64 64). */

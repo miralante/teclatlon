@@ -201,6 +201,14 @@ Interactions with the engine:
 
 ### 2.3 `data.js` — keyboard layouts and practice content
 
+- `DATA.physical`: the two physical layouts, `es` (the one below) and `us`
+  (US English keyboard: the `Ñ` key becomes `;` and `/` takes the place of
+  `-`). `state.options.layout` picks which one the app uses. With no saved
+  choice it follows the browser language (`en` → `us`). It is changed in
+  Settings → "Keyboard layout". The placement and lesson steps skip any step
+  that needs a key the active layout does not have.
+- `DATA.layoutSets` (`{ es, us }`): the visual keyboards of each layout;
+  `DATA.layouts` is the `es` one, kept for compatibility.
 - `DATA.rows` / `DATA.numberRow`: the physical Spanish keyboard layout
   (`{ ch, finger, wide?, bump?, label?, decor? }` per key). `finger` is
   hand (`l`/`r`) + finger (`p` pinky, `r` ring, `m` middle, `i` index),

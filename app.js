@@ -61,6 +61,12 @@
   if (!DATA.layouts[state.options.keyboard]) {
     state.options.keyboard = 'normal';
   }
+  /* Physical keyboard: 'es' (Spanish, with Ñ) or 'us' (English, with ;).
+     Until the person picks one in Settings it follows the browser
+     language, so an English browser gets the US keyboard. */
+  if (!DATA.physical[state.options.layout]) {
+    state.options.layout = (App.i18n && App.i18n.locale && App.i18n.locale() === 'en') ? 'us' : 'es';
+  }
   if (state.options.color !== 'fingers') state.options.color = 'hands';
   if (['light', 'dark', 'contrast'].indexOf(state.options.theme) === -1) state.options.theme = 'light';
   if (['small', 'normal', 'large', 'huge'].indexOf(state.options.textSize) === -1) state.options.textSize = 'normal';
@@ -203,8 +209,20 @@
   }
 
   /* ---------- Key data ---------- */
+  /* The physical keyboard in use ('es' or 'us', see DATA.physical). */
+  function physical() {
+    return DATA.physical[state.options.layout] || DATA.physical.es;
+  }
+
+  /* Number row first, then the letter rows, as the finger map reads them. */
+  function physicalRows() {
+    var p = physical();
+    return [p.numberRow].concat(p.rows);
+  }
+
   function visibleRows() {
-    return DATA.layouts[state.options.keyboard] || DATA.layouts.simple;
+    var set = DATA.layoutSets[state.options.layout] || DATA.layoutSets.es;
+    return set[state.options.keyboard] || set.simple;
   }
 
   function isExtended() {
@@ -227,16 +245,23 @@
      Spanish characters to the physical key that produces them -- there's
      no separate 'é' key, just 'e' composed with the dead accent key,
      the same idea as capitals collapsing onto their base letter via
-     Shift (see expectedBaseChar()). */
+     Shift (see expectedBaseChar()).
+     The tilde (U+0303) is kept on purpose: ñ is its own physical key
+     on the Spanish keyboard, next to L, not an accented n. Stripping it
+     made the guide light the N key and point at the middle finger for
+     a Ñ target, so pressing the real N was marked as an error. */
   function stripAccents(s) {
-    return (s && s.normalize) ? s.normalize('NFD').replace(/[̀-ͯ]/g, '') : s;
+    if (!s || !s.normalize) return s;
+    return s.normalize('NFD')
+      .replace(/[̀-ͯ]/g, function (mark) { return mark === '̃' ? mark : ''; })
+      .normalize('NFC');
   }
 
   function fingerOf(ch, inNumpad) {
     if (!ch) return null;
     if (ch === ' ') return 'th';
     if (inNumpad) return DATA.numpadFingers[ch] || null;
-    var rows = [DATA.numberRow].concat(DATA.rows);
+    var rows = physicalRows();
     for (var i = 0; i < rows.length; i++) {
       for (var j = 0; j < rows[i].length; j++) {
         if (rows[i][j].ch === ch) return rows[i][j].finger;
@@ -253,7 +278,7 @@
   function panOf(ch) {
     if (!ch) return 0;
     if (game && game.cfg && game.cfg.mode === 'numbers') return 0;
-    var rows = [DATA.numberRow].concat(DATA.rows);
+    var rows = physicalRows();
     for (var i = 0; i < rows.length; i++) {
       var typeable = rows[i].filter(function (k) { return !!k.ch; });
       if (typeable.length < 2) continue;
@@ -316,6 +341,9 @@
   function updateOptionsUI() {
     $$('.btn-keyboard').forEach(function (b) {
       b.setAttribute('aria-pressed', String(b.dataset.keyboard === state.options.keyboard));
+    });
+    $$('.btn-layout').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.layout === state.options.layout));
     });
     $$('.btn-color').forEach(function (b) {
       b.setAttribute('aria-pressed', String(b.dataset.color === state.options.color));
@@ -858,6 +886,9 @@
     var f = $('#feedback');
     f.textContent = '';
     f.className = 'feedback';
+    /* A layout change made during a round stays on screen until the round
+       ends, so it survives the clear between steps. */
+    if (game && game.layoutNotice) f.textContent = App.i18n.t('keyboardLayoutNextRound');
   }
 
   function gameKey(ch, shiftHeld) {
@@ -940,6 +971,15 @@
       achieve('allLessons');
     }
     award(cfg.starKey);
+    /* streak3: three lessons in a row in curriculum order. Checked after
+       award() so the lesson that was just finished counts. */
+    var run = 0;
+    var best = 0;
+    allLessons.forEach(function (l) {
+      run = state.completed[l.id] ? run + 1 : 0;
+      best = Math.max(best, run);
+    });
+    if (best >= 3) achieve('streak3');
     /* Return to the mode list immediately so completion never leaves the
        learner stranded behind a browser-dependent celebration timer. The
        celebration remains visible on the destination screen. */
@@ -951,7 +991,7 @@
   function playPosition() {
     startSequence({
       mode: 'placement', title: App.i18n.t('modePlacementName'),
-      steps: DATA.placement[App.i18n.locale()] || DATA.placement.es,
+      steps: keepStepsOnLayout(DATA.placement[App.i18n.locale()] || DATA.placement.es),
       starKey: 'placement', onFinish: goMenu
     });
   }
@@ -1004,9 +1044,29 @@
     });
     var review = buildLessonReview(l);
     if (review) steps.push(review);
+    steps = keepStepsOnLayout(steps);
     startSequence({
       mode: 'lesson', title: App.i18n.t('lessonTitle').replace('{title}', l.title),
       steps: steps, starKey: l.id, onFinish: goLessons
+    });
+  }
+
+  /* Drops the lesson or placement steps that need a key the active
+     physical keyboard does not have (the Ñ on a US keyboard, the ;
+     on a Spanish one), instead of asking for a key that can't be
+     pressed. Special-key steps always stay. */
+  function keepStepsOnLayout(steps) {
+    var chars = {};
+    physicalRows().forEach(function (row) {
+      row.forEach(function (k) { if (k.ch) chars[k.ch] = true; });
+    });
+    return steps.filter(function (p) {
+      if (isSpecialStep(p)) return true;
+      for (var i = 0; i < p.seq.length; i++) {
+        var c = p.seq[i];
+        if (c !== ' ' && !chars[c.toLowerCase()]) return false;
+      }
+      return true;
     });
   }
 
@@ -1200,7 +1260,7 @@
   var DICTATION_UNLOCK_MS = 6000;
 
   function dictationLetters() {
-    return DATA.rows.reduce(function (letters, row) {
+    return physical().rows.reduce(function (letters, row) {
       row.forEach(function (key) {
         if (key.ch && /^[a-zñ]$/i.test(key.ch)) letters.push(key.ch);
       });
@@ -1586,6 +1646,21 @@
       renderKeyboards();
       return;
     }
+    var bl = e.target.closest('.btn-layout');
+    if (bl) {
+      state.options.layout = bl.dataset.layout === 'us' ? 'us' : 'es';
+      save();
+      renderKeyboards();
+      /* Lesson, placement, words, numbers and dictation build their steps
+         or letters once, when the round starts, so the new keyboard only
+         applies from the next round. The all-keys challenge re-reads the
+         layout at once and needs no notice. */
+      if (game && (game.type === 'seq' || game.type === 'dictation')) {
+        game.layoutNotice = true;
+        $('#feedback').textContent = App.i18n.t('keyboardLayoutNextRound');
+      }
+      return;
+    }
     var bc = e.target.closest('.btn-color');
     if (bc) {
       state.options.color = bc.dataset.color === 'fingers' ? 'fingers' : 'hands';
@@ -1687,6 +1762,7 @@
     if (dictationUnlock) clearTimeout(dictationUnlock);
     if (App.tts) App.tts.stop();
     game = null;
+    clearFeedback();
     markTarget(null);
     if (mode === 'lesson') goLessons();
     else if (mode === 'template') goTemplates();

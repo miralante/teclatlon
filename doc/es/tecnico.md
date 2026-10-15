@@ -216,6 +216,15 @@ partida. Interacciones con el motor:
   `bump`: marca táctil (F, J, el 5 del numérico). `decor`: tecla
   decorativa sin `ch` (Tab, Mayús, Intro, Borrar) — da forma al teclado
   pero nunca es objetivo de un ejercicio.
+- `DATA.physical`: las dos distribuciones físicas, `es` (la de arriba) y
+  `us` (teclado inglés de EE. UU.: la `Ñ` pasa a ser `;` y el `/` ocupa el
+  sitio del `-`). `state.options.layout` elige cuál usa la app. Si no hay
+  elección guardada, sigue el idioma del navegador (`en` → `us`). Se cambia
+  en Ajustes → «Distribución del teclado». Las pruebas de posición y
+  lecciones saltan los pasos que piden una tecla que la distribución activa
+  no tiene.
+- `DATA.layoutSets` (`{ es, us }`): los teclados visuales de cada distribución;
+  `DATA.layouts` es el de `es` por compatibilidad.
 - `DATA.layouts`: los teclados visuales seleccionables —
   `simple` (letras y las dos teclas Mayús — necesarias para que
   la lección de mayúsculas tenga una tecla Mayús que señalar incluso en

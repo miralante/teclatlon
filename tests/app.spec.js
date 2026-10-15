@@ -245,7 +245,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
       .toBe(expectedFontSizes.normal);
   });
 
-  test('2.5 — toggles: focus mode, sonido teclas, métricas, sonido error', async ({ page }) => {
+  test('2.5 — toggles: leyenda, numérico, celebración, sonido teclas y error', async ({ page }) => {
     page = await openFreshApp();
     await page.locator('#btnOpenSettings').click();
     await page.waitForTimeout(300); // wait for drawer animation to complete
@@ -300,18 +300,6 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await expect(page.locator('#btnDimCelebration')).toHaveAttribute('aria-pressed', 'true');
     await page.locator('#btnDimCelebration').click();
 
-    // Focus mode enables/disables the three focus settings together.
-    await page.evaluate(() => document.querySelector('#btnFocusMode').click());
-    await expect(page.locator('#btnFocusMode')).toHaveAttribute('aria-pressed', 'true');
-    await expect(page.locator('html')).toHaveClass(/hide-legend/);
-    await expect(page.locator('html')).toHaveClass(/hide-numpad/);
-    await expect(page.locator('html')).toHaveClass(/dim-celebration/);
-    await page.evaluate(() => document.querySelector('#btnFocusMode').click());
-    await expect(page.locator('#btnFocusMode')).toHaveAttribute('aria-pressed', 'false');
-    await expect(page.locator('html')).not.toHaveClass(/hide-legend/);
-    await expect(page.locator('html')).not.toHaveClass(/hide-numpad/);
-    await expect(page.locator('html')).not.toHaveClass(/dim-celebration/);
-
     // Key sound: toggle via JS and verify textContent changes
     await page.evaluate(() => document.querySelector('#btnKeySound').click());
     const afterFirst = await page.locator('#btnKeySound').textContent();
@@ -329,31 +317,6 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
       .toEqual({ success: true, error: false });
     await page.evaluate(() => App.feedback.successSound(0));
     await expect.poll(() => page.evaluate(() => window.__audioStarts)).toBe(2);
-
-    // Metrics (JS click for reliability)
-    // Inspect state before and after click by reading DOM directly
-    const beforeMetrics = await page.evaluate(() => {
-      return {
-        btnFocusMode: document.querySelector('#btnFocusMode')?.getAttribute('aria-pressed'),
-        btnKeySound: document.querySelector('#btnKeySound')?.getAttribute('aria-pressed'),
-        btnMetrics: document.querySelector('#btnMetrics')?.getAttribute('aria-pressed'),
-        btnErrorSound: document.querySelector('#btnErrorSound')?.getAttribute('aria-pressed'),
-        drawerHidden: document.querySelector('#settingsDrawer')?.hidden,
-      };
-    });
-    console.log('BEFORE metrics click:', JSON.stringify(beforeMetrics));
-    await page.evaluate(() => document.querySelector('#btnMetrics').click());
-    const afterMetrics = await page.evaluate(() => {
-      return { ariaPressed: document.querySelector('#btnMetrics')?.getAttribute('aria-pressed') };
-    });
-    console.log('AFTER metrics click:', JSON.stringify(afterMetrics));
-    // If still false, surface a clear error with the diagnostic info
-    if (afterMetrics.ariaPressed !== 'true') {
-      throw new Error(`btnMetrics aria-pressed did not change to 'true' after JS click. Before=${beforeMetrics.btnMetrics}, After=${afterMetrics.ariaPressed}. Diagnostic: ${JSON.stringify({beforeMetrics, afterMetrics})}`);
-    }
-    await expect(page.locator('#btnMetrics')).toHaveAttribute('aria-pressed', 'true');
-    await page.evaluate(() => document.querySelector('#btnMetrics').click());
-    await expect(page.locator('#btnMetrics')).toHaveAttribute('aria-pressed', 'false');
 
     // Error sound (JS click for reliability)
     await page.evaluate(() => document.querySelector('#btnErrorSound').click());
@@ -429,48 +392,10 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await expect(fingersButton).toHaveAttribute('aria-pressed', 'true');
   });
 
-  test('2.8 — metas: precisión y velocidad se guardan', async ({ page }) => {
-    page = await openFreshApp();
-    await page.locator('#btnOpenSettings').click();
-
-    await page.locator('#goalSettings summary').click();
-    await expect(page.locator('#goalSettings')).toHaveAttribute('open', '');
-    await expect(page.locator('#goalAccuracySelect')).toBeVisible();
-    await expect(page.locator('#goalSpeedSelect')).toBeVisible();
-    await page.locator('#goalAccuracySelect').selectOption('95');
-    await page.evaluate(() => document.querySelector('#goalAccuracySelect').dispatchEvent(new Event('change', { bubbles: true })));
-    await expect(page.locator('#goalAccuracySelect')).toHaveValue('95');
-    await page.locator('#goalSpeedSelect').selectOption('80');
-    await page.evaluate(() => document.querySelector('#goalSpeedSelect').dispatchEvent(new Event('change', { bubbles: true })));
-    await expect(page.locator('#goalSpeedSelect')).toHaveValue('80');
-
-    await page.locator('#btnCloseSettings').click();
-
-    // Reopen and verify persistence
-    await page.locator('#btnOpenSettings').click();
-    await expect(page.locator('#goalSettings')).toHaveAttribute('open', '');
-    await expect(page.locator('#goalAccuracySelect')).toHaveValue('95');
-    await expect(page.locator('#goalSpeedSelect')).toHaveValue('80');
-    await page.locator('#btnMetrics').click();
-    await page.locator('#btnCloseSettings').click();
-    await page.locator('#btnSkipName').click();
-    await page.locator('[data-mode="words"]').click();
-    await expect(page.locator('#screenGame')).toBeVisible();
-    await expect(page.locator('#goalBars .goal-bar-row')).toHaveCount(2);
-    await expect(page.locator('#goalBars')).toContainText('95%');
-    await expect(page.locator('#goalBars')).toContainText('80 ppm');
-  });
-
-  test('2.9 — logros: sección abre, cierra y muestra badges', async ({ page }) => {
-    page = await openFreshApp();
-    await page.locator('#btnOpenSettings').click();
-
-    await expect(page.locator('#achievementsSection')).toHaveAttribute('open', '');
-    await page.locator('#btnToggleAchievements').click();
-    await expect(page.locator('#achievementsSection')).not.toHaveAttribute('open');
-    await page.locator('#btnToggleAchievements').click();
-    await expect(page.locator('#achievementsSection')).toHaveAttribute('open', '');
-    // At least 1 badge exists
+  test('2.9 — logros: la página Sobre la App muestra las insignias', async ({ page }) => {
+    // Achievements moved out of the settings drawer into the About page.
+    await page.goto('/about/index.html');
+    await expect(page.locator('#achievementsGrid')).toBeAttached();
     const badges = page.locator('#achievementsGrid .achievement-badge');
     await expect(badges).not.toHaveCount(0);
   });
@@ -591,7 +516,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     page = await openFreshApp();
     await page.locator('#btnOpenSettings').click();
     await page.locator('.btn-theme[data-theme="dark"]').click();
-    await page.evaluate(() => document.querySelector('#btnFocusMode').click());
+    await page.locator('.btn-layout[data-layout="us"]').click();
     await page.locator('#btnCloseSettings').click();
 
     // Navigate to menu so page is on the menu when reload happens
@@ -602,10 +527,10 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await page.waitForLoadState('domcontentloaded');
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 
-    // Verify focus mode is still on after reopening settings
+    // Verify the keyboard layout choice is still on after reopening settings
     await page.locator('#btnOpenSettings').click();
     await page.waitForTimeout(300); // wait for drawer animation to complete
-    await expect(page.locator('#btnFocusMode')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('.btn-layout[data-layout="us"]')).toHaveAttribute('aria-pressed', 'true');
   });
 
   test('8.2 — nombre de usuario persiste tras recargar', async ({ page }) => {
@@ -619,10 +544,10 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
   // -----------------------------------------------------------------
   // 9. FOOTER LINKS AND DATA
   // -----------------------------------------------------------------
-  test('9.1 — enlace Configuración lleva a config/', async ({ page }) => {
+  test('9.1 — enlace Sobre la App lleva a about/', async ({ page }) => {
     page = await skipToMenu();
-    await page.locator('a.footer-link[href="config/"]').click();
-    await expect(page).toHaveURL(/config\/(index\.html)?$/);
+    await page.locator('a.footer-link[href="about/"]').click();
+    await expect(page).toHaveURL(/about\/(index\.html)?$/);
   });
 
   test('9.2 — enlace Legal lleva a legal/', async ({ page }) => {
@@ -1143,55 +1068,6 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
   });
 
   // -----------------------------------------------------------------
-  // 22. GOALS — goal bars visible during gameplay
-  // -----------------------------------------------------------------
-  test('22 — barra de meta visible durante el juego', async ({ page }) => {
-    // Use addInitScript BEFORE goto so the app boots with the correct name,
-    // which causes goMenu() to be called on boot (state.name = 'Test').
-    await page.addInitScript(() => {
-      localStorage.setItem('teclatlon:keyboard', JSON.stringify({
-        name: 'Test',
-        options: { lang: 'es', theme: 'dark', metrics: true },
-        goal: { accuracyMin: 90, speedMin: 30 }
-      }));
-    });
-    await page.goto('/');
-    await expect(page.locator('#screenMenu')).toBeVisible();
-
-    await page.locator('[data-mode="words"]').click();
-    await expect(page.locator('#screenGame')).toBeVisible();
-    await expect(page.locator('#goalBars')).toBeVisible();
-  });
-
-  // -----------------------------------------------------------------
-  // 23. LIVE METRICS — visible during game when enabled
-  // -----------------------------------------------------------------
-  test('23 — métricas en vivo visibles con opción activada', async ({ page }) => {
-    page = await openFreshApp();
-    await page.locator('#btnOpenSettings').click();
-    await page.evaluate(() => document.querySelector('#btnMetrics').click()); // toggle on
-    await expect(page.locator('#btnMetrics')).toHaveAttribute('aria-pressed', 'true');
-    await page.locator('#btnCloseSettings').click();
-
-    await page.locator('#btnSkipName').click();
-    await expect(page.locator('#screenMenu')).toBeVisible();
-
-    await page.locator('[data-mode="lessons"]').click();
-    await page.locator('#lessonsList .btn-lesson:not(.locked)').first().click();
-    await expect(page.locator('#screenGame')).toBeVisible();
-
-    await expect(page.locator('#liveMetrics')).toBeVisible();
-    // Accuracy (Prec.) and speed (PPM) values shown.
-    await expect(page.locator('#liveMetrics')).toContainText(/%|PPM/i);
-
-    // Switching the option off during the activity removes the live metrics.
-    await page.locator('#btnOpenSettings').click();
-    await page.locator('#btnMetrics').click();
-    await page.locator('#btnCloseSettings').click();
-    await expect(page.locator('#liveMetrics')).toBeHidden();
-  });
-
-  // -----------------------------------------------------------------
   // 24. SPECIAL KEYS — Home/Delete in lesson 17
   // -----------------------------------------------------------------
   test('24 — teclas especiales Home/Delete completan paso en lección 17', async ({ page }) => {
@@ -1420,7 +1296,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await expect(page.locator('#screenMenu')).toBeVisible();
 
     const enTitles = [
-      'F and J', 'D and K', 'S and L', 'A and Ñ', 'The space bar',
+      'F and J', 'D and K', 'S and L', 'A and ;', 'The space bar',
       'G and H', 'E and I', 'R and U', 'T and Y', 'O and P',
       'Q and W', 'N and M', 'C, V and B', 'Z and X', 'Short sentences',
       'Capitals', 'Special keys'
