@@ -36,9 +36,9 @@ Cada tema tiene una fuente canónica: producto en `SPEC.md`, cuestiones técnica
   Solo importa bumpearlo para que el usuario offline vea la versión
   actualizada cuando no tenga red.
 - **Sube `VERSION` en cada commit que toque un archivo cacheado.**
-  Misma regla que Calculia y Apptonomia, por homogeneidad, aunque
-  en Teclatlon (network-first) el impacto es solo offline. Mantenemos
-  la regla uniforme en los tres proyectos para que la directriz sea
+  Misma regla en todos los proyectos PWA del suite. Las personas en línea
+  reciben siempre la copia del servidor, así que el impacto es solo offline.
+  Mantenemos la regla uniforme en todos los proyectos para que la directriz sea
   de una línea y el agente nunca tenga que razonar caso por caso
   sobre la estrategia del SW. Coste de subir: un entero. Coste de no
   subirlo: el usuario offline queda atrapado en la versión vieja para

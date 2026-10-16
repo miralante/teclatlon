@@ -83,11 +83,13 @@
 /sw.js
   Cache-Control: public, max-age=0, must-revalidate
 
+# js and css carry no ?v= token here, so they are revalidated on every use
+# (a 304 when nothing moved) instead of a 5-minute private cache.
 /*.js
-  Cache-Control: public, max-age=300
+  Cache-Control: no-cache, must-revalidate
 
 /*.css
-  Cache-Control: public, max-age=300
+  Cache-Control: no-cache, must-revalidate
 
 /*.png
   Cache-Control: public, max-age=31536000, immutable

@@ -78,7 +78,7 @@ location.
 | Activity creation guide | [`doc/en/creating-activities-guide.md`](doc/en/creating-activities-guide.md) ↔ [`doc/es/guia-crear-actividades.md`](doc/es/guia-crear-actividades.md) |
 | Coverage and therapeutic guidance | [`doc/en/team.md`](doc/en/team.md) ↔ [`doc/es/equipo.md`](doc/es/equipo.md) |
 | Roadmap and closed product decisions | Git only: every PR leaves a message; reconstruct with `git log`. |
-| Cloudflare deploy / cache contract (network-first vs cache-first SW) | [`CLOUDFLARE.md`](CLOUDFLARE.md) |
+| Cloudflare deploy / service worker cache contract (network-first with cache fallback) | [`CLOUDFLARE.md`](CLOUDFLARE.md) |
 | Internationalization (App.i18n core, formatting, recipe to add a third language) | [`doc/en/I18N.md`](doc/en/I18N.md) ↔ [`doc/es/I18N.md`](doc/es/I18N.md) |
 | Human contribution flow | [`CONTRIBUTING.md`](CONTRIBUTING.md) ↔ [`CONTRIBUTING.es.md`](CONTRIBUTING.es.md) |
 | AI agent operational flow | `CLAUDE.md` (this file) |
@@ -242,8 +242,7 @@ must stay brief, operational, and stable.
 This project ships a service worker. **Behavior**: `sw.js` is
 **network-first, cache-fallback** — every request goes to the
 network first; on offline (or any other failure), the SW serves the
-file from the cache. (Different from the rest of the suite, which
-is cache-first; see the "For comparison" note below.)
+file from the cache. Every PWA sibling of the suite uses this same strategy.
 
 **The cache is silent and persistent**. Even though network-first
 means the user normally gets the latest file, the **SW itself**
@@ -273,13 +272,9 @@ Bump liberally rather than conservatively. Full contract:
 [`CLOUDFLARE.md`](CLOUDFLARE.md) § "Cache contract". This rule is
 also the source of §A.2.3 step 2.
 
-> **For comparison**: in the cache-first SWs of Calculia and
-> Apptonomia the bump matters in both **online** and offline
-> (their `fetch` returns the cached response before trying the
-> network). In Teclatlon's network-first SW the bump only affects
-> offline — but we keep the same rule in all three projects to
-> keep the directive homogeneous and avoid case-by-case reasoning
-> in CI.
+> **Note**: online clients always fetch the server copy, so the bump matters
+> for the offline copy. We keep the same rule in every project so the
+> directive is homogeneous and CI can enforce it without per-project reasoning.
 
 ### B.2 Language policy
 

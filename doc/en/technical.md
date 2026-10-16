@@ -35,9 +35,9 @@ Each subject has one canonical source: product in `SPEC.md`, technical matters i
   Solo importa bumpearlo para que el usuario offline vea la versión
   actualizada cuando no tenga red.
 - **Bump `VERSION` on every committed change to a cached file.**
-  Same rule as Calculia and Apptonomia for homogeneity, even though
-  Teclatlon's network-first SW makes the impact offline-only. We keep
-  the rule uniform across all three projects so the directive is
+  Same rule in every PWA sibling of the suite. Online clients fetch the
+  server copy, so the impact is offline-only. We keep
+  the rule uniform across all projects so the directive is
   one-line and the agent never has to reason about SW strategy per
   project. Cost of bumping: one integer. Cost of skipping it: an
   offline user is stuck on the old version forever, because the
