@@ -97,6 +97,13 @@
   state.options.showTimer = !!state.options.showTimer;
   state.achievements = state.achievements || {};
 
+  /* Activities finished in THIS page load. Only the ⭐ badges and the
+     "done" counts read it: a new session starts with a clean board so
+     nobody thinks an activity is already finished and skips it. It is
+     deliberately not saved. `state.completed` still holds the permanent
+     record, because it unlocks the next lesson and awards the star. */
+  var doneThisSession = {};
+
   function readSuiteSounds() {
     try {
       var saved = JSON.parse(localStorage.getItem('miralante:sounds') || 'null');
@@ -169,6 +176,7 @@
   }
 
   function award(key) {
+    doneThisSession[key] = true;
     if (!state.completed[key]) {
       state.completed[key] = true;
       state.stars += 1;
@@ -678,15 +686,15 @@
       ? App.i18n.t('greetingWithName').replace('{name}', capitalize(state.name))
       : App.i18n.t('greetingHello');
     var allLessons = lessons();
-    var done = allLessons.filter(function (l) { return state.completed[l.id]; }).length;
+    var done = allLessons.filter(function (l) { return doneThisSession[l.id]; }).length;
     var allTemplates = templates();
-    var doneTemplates = allTemplates.filter(function (p) { return state.completed['template_' + p.id]; }).length;
+    var doneTemplates = allTemplates.filter(function (p) { return doneThisSession['template_' + p.id]; }).length;
     $$('.mode-card').forEach(function (t) {
       var badge = t.querySelector('.done');
       var m = t.dataset.mode;
       if (m === 'lessons') badge.textContent = done > 0 ? App.i18n.t('doneOfTotal').replace('{done}', done).replace('{total}', allLessons.length) : '';
       else if (m === 'templates') badge.textContent = doneTemplates > 0 ? App.i18n.t('doneOfTotal').replace('{done}', doneTemplates).replace('{total}', allTemplates.length) : '';
-      else badge.textContent = state.completed[m] ? '⭐' : '';
+      else badge.textContent = doneThisSession[m] ? '⭐' : '';
     });
     updateStars();
   }
@@ -697,7 +705,7 @@
     var allLessons = lessons();
     allLessons.forEach(function (l, i) {
       var unlocked = i === 0 || !!state.completed[allLessons[i - 1].id];
-      var done = !!state.completed[l.id];
+      var done = !!doneThisSession[l.id];
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'btn-lesson' + (done ? ' done' : '') + (!unlocked ? ' locked' : '');
@@ -728,7 +736,7 @@
     var container = $('#templatesList');
     container.innerHTML = '';
     templates().forEach(function (p, i) {
-      var done = !!state.completed['template_' + p.id];
+      var done = !!doneThisSession['template_' + p.id];
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'btn-lesson' + (done ? ' done' : '');
@@ -1708,6 +1716,7 @@
     }
     confirmingClear = false;
     App.storage.remove(SLUG);
+    doneThisSession = {};
     state = {
       name: '', stars: 0, completed: {},
       options: {

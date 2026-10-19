@@ -179,9 +179,12 @@ Interactions with the engine:
   initialised on every game start, updated by `gameKey` /
   `challengeKey`, and surfaced as live accuracy (%) and keys-per-minute
   when `state.options.metrics` is true.
-- `award(key)` marks a mode as completed (an id that becomes `true`
-  in `state.completed`); this is what lights up that mode's ⭐ in the
-  menu.
+- `award(key)` marks a mode as completed: it records the id in
+  `state.completed` (persistent; unlocks the next lesson, and the star
+  is awarded only the first time) and in `doneThisSession` (in memory,
+  lost on reload). The menu's ⭐ marks and "done X of Y" counts read
+  `doneThisSession`, so every new session starts with a clean board and
+  nobody thinks an activity is already finished.
 - `feedback.success(zone, pan)` accepts an optional stereo pan. The
   caller computes it from the column of the key
   (`App.utils.columnOf` + `App.utils.panOfColumn`, or `panOf` in

@@ -187,9 +187,12 @@ partida. Interacciones con el motor:
   reinicia en cada partida, lo actualizan `gameKey` / `challengeKey`,
   y se muestra como precisión (%) y teclas por minuto en vivo cuando
   `state.options.metrics` vale `true`.
-- `award(key)` marca un modo como completado (id que pasa a `true`
-  en `state.completed`); es lo que enciende la ⭐ de ese modo en el
-  menú.
+- `award(key)` marca un modo como completado: lo anota en
+  `state.completed` (persistente; desbloquea la lección siguiente y da
+  la estrella solo la primera vez) y en `doneThisSession` (en memoria,
+  se pierde al recargar). Son las ⭐ y los contadores «hechas X de Y»
+  del menú los que leen `doneThisSession`, así que cada sesión nueva
+  empieza sin marcas y nadie cree que una actividad ya está hecha.
 - `feedback.success(zone, pan)` acepta un paneo estéreo opcional. Lo
   calcula el llamador desde la columna de la tecla
   (`App.utils.columnOf` + `App.utils.panOfColumn`, o `panOf` en
