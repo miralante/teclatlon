@@ -96,6 +96,7 @@ var jsFiles = fs.readdirSync(ROOT, { withFileTypes: true })
   .filter(function (e) { return e.isFile() && e.name.endsWith('.js'); })
   .map(function (e) { return path.join(ROOT, e.name); })
   .concat(listJs(path.join(ROOT, 'assets', 'js')))
+  .concat(listJs(path.join(ROOT, 'js')))
   .concat(listJs(path.join(ROOT, 'legal')))
   .concat(listJs(path.join(ROOT, 'scripts')));
 
@@ -209,12 +210,21 @@ if (!filesMatch) {
     .replace(/\/\/.*$/gm, '');
   var re = /'([^']+)'/g;
   var m;
+  var listed = {};
   while ((m = re.exec(body)) !== null) {
+    listed[m[1]] = true;
     var full = path.join(ROOT, m[1].replace(/^\.\//, ''));
     if (!fs.existsSync(full)) {
       failures.push('sw.js: FILES lists ' + m[1] + ' but it does not exist on disk');
     }
   }
+  /* Every module in js/ is part of the app shell: a file that is loaded by
+     index.html but missing from FILES would work online and break offline. */
+  listJs(path.join(ROOT, 'js')).forEach(function (file) {
+    checks += 1;
+    var p = './' + rel(file);
+    if (!listed[p]) failures.push('sw.js: FILES is missing ' + p + ' (js/ module loaded by index.html)');
+  });
 }
 
 /* --- 4. manifest.json icons exist --- */
@@ -451,6 +461,10 @@ var usedRoot = extractHtmlKeys(path.join(ROOT, 'index.html'))
   .concat(extractJsI18nCalls(path.join(ROOT, 'app.js')))
   .concat(extractJsI18nCalls(path.join(ROOT, 'data.js')));
 listJs(path.join(ROOT, 'assets', 'js')).forEach(function (file) {
+  usedRoot = usedRoot.concat(extractJsI18nCalls(file));
+});
+/* The app.js split: the i18n calls moved to js/*.js and must still be checked. */
+listJs(path.join(ROOT, 'js')).forEach(function (file) {
   usedRoot = usedRoot.concat(extractJsI18nCalls(file));
 });
 

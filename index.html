@@ -538,6 +538,19 @@
   <script src="strings.es.js"></script>
   <script src="strings.en.js"></script>
   <script src="data.js"></script>
+  <!-- Client logic, split from app.js into classic-script modules. Order
+       matters for load-time code only: core first (it creates
+       window.Teclatlon.store), app.js last (it boots the app). -->
+  <script src="js/core.js"></script>
+  <script src="js/keyboard-view.js"></script>
+  <script src="js/settings.js"></script>
+  <script src="js/sequence.js"></script>
+  <script src="js/practice-sets.js"></script>
+  <script src="js/modes.js"></script>
+  <script src="js/dictation.js"></script>
+  <script src="js/challenge.js"></script>
+  <script src="js/keyboard-input.js"></script>
+  <script src="js/menu.js"></script>
   <script src="app.js"></script>
   <!-- Locale picker config (must run BEFORE assets/js/locale-picker.js).
        External file: the CSP is `script-src 'self'`, so an inline

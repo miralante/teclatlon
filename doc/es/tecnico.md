@@ -94,7 +94,18 @@ de publicar un cambio en `app.js`, `index.html` o `styles.css`.
 ```
 teclatlon/
 ├── index.html          # La app en sí — sin landing page separada
-├── app.js               # Solo lógica
+├── app.js               # Arranque: cablea botones sueltos y arranca la app (§2.2)
+├── js/                  # Lógica de la app, en módulos clásicos (§2.2)
+│   ├── core.js          #   estado compartido, progreso, datos de teclado
+│   ├── keyboard-view.js #   teclado visual y guía de manos
+│   ├── settings.js      #   panel de ajustes, reloj y aviso de descanso
+│   ├── sequence.js      #   motor de secuencias (rondas guiadas)
+│   ├── practice-sets.js #   selección de palabras (funciones puras)
+│   ├── modes.js         #   modos de secuencia (colocación, lecciones, …)
+│   ├── dictation.js     #   dictado
+│   ├── challenge.js     #   reto «todas las teclas»
+│   ├── keyboard-input.js#   entrada física (keydown/keyup)
+│   └── menu.js          #   menú, lecciones, textos, nombre y libre
 ├── data.js               # Distribuciones de teclado neutrales al idioma +
 │                          # contenido de práctica por idioma (lecciones,
 │                          # palabras, pasos del numérico)
@@ -135,7 +146,10 @@ el botón inline "🗑️ Borrar mi progreso" en `index.html`.
 
 Se carga en este orden exacto (ver `index.html`): `utils.js` →
 `i18n.js` → `tts.js` → `storage.js` → `feedback.js` → `strings.es.js` →
-`strings.en.js` → `data.js` → `app.js`. `i18n.js` debe cargar antes que
+`strings.en.js` → `data.js` → `js/core.js` → `js/keyboard-view.js` →
+`js/settings.js` → `js/sequence.js` → `js/practice-sets.js` → `js/modes.js` →
+`js/dictation.js` → `js/challenge.js` → `js/keyboard-input.js` →
+`js/menu.js` → `app.js`. `i18n.js` debe cargar antes que
 `tts.js`/`feedback.js`, que leen el idioma activo.
 
 Este núcleo se migró desde Apptonomia y se **recortó a propósito** a lo
@@ -160,16 +174,44 @@ que esta única actividad realmente usa:
 No vuelvas a añadir nada de lo anterior sin una necesidad concreta: se
 recortó a propósito, no por descuido.
 
-### 2.2 `app.js` — IIFE único
+### 2.2 Lógica de la app: `js/` y `app.js` — scripts clásicos
 
-Contiene toda la app cliente: cambio de pantallas (`SCREENS`), el motor
-de secuencias (`startSequence`/`gameKey`/`stepCompleted`) usado
-por "coloca los dedos", lecciones, palabras y el numérico, el reto de
-"todas las teclas" (`playChallenge`/`challengeKey`), el SVG de guía de manos, el
-renderizador del teclado visual, y los listeners de `keydown`/`keyup`
-físicos que impulsan cada modo de juego. No hay ruta de pulsar-para-
-escribir: el teclado en pantalla solo *refleja* pulsaciones
-(`flashKey`), nunca las origina.
+La lógica vive en `js/*.js`: once módulos cargados con etiquetas
+`<script>` normales (sin ES modules, para que funcione desde `file://`).
+Cada módulo es un IIFE que recibe el espacio compartido `window.Teclatlon`
+(`T`):
+
+- `T.store` (`S`) guarda el estado mutable: `state`, `game`,
+  `doneThisSession` y los temporizadores del dictado. Los módulos lo leen y
+  escriben siempre como `S.game`, `S.state`…, para que una reasignación sea
+  visible en todos.
+- Cada módulo publica en `T` solo lo que usan los demás (`T.save`,
+  `T.startSequence`…). Las llamadas entre módulos se resuelven al ejecutarse
+  (`T.fn()`), así que el orden de carga solo importa para el código que corre
+  al cargar. El orden está en `index.html`; `app.js` se carga el último.
+- `app.js` no define lógica de juego: cablea los botones que no pertenecen a
+  un modo concreto (nombre, borrar progreso, menú, salir, idioma) y arranca la app.
+
+Dónde vive cada función:
+
+| Módulo | Contenido |
+|---|---|
+| `core.js` | `SCREENS`, `state` y migración de datos antiguos, `save`/`award`/`achieve`, `showScreen`, `physical`/`physicalRows`/`visibleRows`/`typeableKeys`, `stripAccents`, `lessons()`/`templates()` |
+| `keyboard-view.js` | `renderKeyboards`, `renderRows`, `createKey`, `fingerOf`, `panOf`, `keysOf`, `flashKey`, `markTarget`, `handsSVG`, `renderHands` |
+| `settings.js` | `applyOptions`, panel de ajustes (`openSettings`/`closeSettings`), reloj de práctica, aviso de descanso |
+| `sequence.js` | `startSequence`, `loadStep`, `renderTarget`, `updateGuide`, `gameKey`, `stepCompleted`, `endSequence`, métricas |
+| `practice-sets.js` | `seqFitsLayout`, `scoreSeq`, `pickWordSet`: funciones puras, sin DOM ni estado |
+| `modes.js` | `playPosition`, `playLesson`, `buildLessonReview`, `keepStepsOnLayout`, `playWords`, `playTemplate`, `playNumbers` |
+| `dictation.js` | `playDictation`, `dictationKey`, `speakDictationLetter` |
+| `challenge.js` | `playChallenge`, `challengeKey`, `updateChallenge`, `challengeGuide`, `endChallenge` |
+| `keyboard-input.js` | `keydown`/`keyup` físicos, `normalizeKey`, botones de teclado, distribución y color |
+| `menu.js` | `renderMenu`, `renderLessons`, `renderTemplates`, `goMenu`/`goLessons`/`goTemplates`/`goName`/`goFree` |
+| `app.js` | Nombre, borrar progreso, menú de modos, salir de partida, botones de dictado, texto libre, idioma, arranque y `routeHash` |
+
+El teclado en pantalla solo *refleja* pulsaciones (`flashKey`); no hay ruta
+de pulsar-para-escribir. Las referencias a `app.js` de las subsecciones
+siguientes deben leerse con esta tabla: la función citada vive en el módulo
+que indica.
 
 El panel de ajustes (`#settingsDrawer`, un desplegable lateral que se
 abre con el icono de engranaje `#btnOpenSettings` de la cabecera — ver

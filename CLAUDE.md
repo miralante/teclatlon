@@ -137,9 +137,11 @@ Quick orientation: this is a single-activity app, not a multi-tool
 suite like Apptonomia — there is no landing page, no per-tool
 routing, and no `/settings/` hidden route (progress reset lives
 inline in `index.html`, the "🗑️ Borrar mi progreso" button).
-`index.html` is the app itself. `app.js` is a single IIFE holding
-the whole client app (screens, the sequence-game engine, the "all
-keys" challenge, physical `keydown` handling). `data.js` holds
+`index.html` is the app itself. The client logic lives in `js/*.js`
+(classic scripts sharing `window.Teclatlon`: core state, keyboard view,
+sequence engine, modes, dictation, challenge, physical input, menu),
+and `app.js` only wires the loose buttons and boots the app; the
+function-to-module table is in `technical.md` §2.2. `data.js` holds
 locale-neutral keyboard layouts and per-locale practice content
 (lessons, words, number-pad steps). `strings.es.js` / `strings.en.js`
 are UI copy only, loaded unconditionally (both files always load;

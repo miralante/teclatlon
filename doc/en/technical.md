@@ -89,7 +89,18 @@ manually in a real browser before landing a change to `app.js`,
 ```
 teclatlon/
 ├── index.html          # The app itself — no separate landing page
-├── app.js               # Logic only
+├── app.js               # Boot: wires the loose buttons and starts the app (§2.2)
+├── js/                  # Client logic, as classic-script modules (§2.2)
+│   ├── core.js          #   shared state, progress, keyboard layout data
+│   ├── keyboard-view.js #   on-screen keyboard and hand guide
+│   ├── settings.js      #   settings drawer, practice clock, rest reminder
+│   ├── sequence.js      #   sequence engine (guided rounds)
+│   ├── practice-sets.js #   word-set selection (pure functions)
+│   ├── modes.js         #   sequence modes (placement, lessons, …)
+│   ├── dictation.js     #   dictation
+│   ├── challenge.js     #   "all keys" challenge
+│   ├── keyboard-input.js#   physical input (keydown/keyup)
+│   └── menu.js          #   menu, lessons, templates, name and free screens
 ├── data.js               # Locale-neutral keyboard layouts + per-locale
 │                          # practice content (lessons, words, numpad steps)
 ├── strings.es.js         # Spanish UI text
@@ -129,7 +140,10 @@ is no `/settings/` hidden route either: progress reset is the inline
 
 Loaded in this exact order (see `index.html`): `utils.js` → `i18n.js` →
 `tts.js` → `storage.js` → `feedback.js` → `strings.es.js` →
-`strings.en.js` → `data.js` → `app.js`. `i18n.js` must load before
+`strings.en.js` → `data.js` → `js/core.js` → `js/keyboard-view.js` →
+`js/settings.js` → `js/sequence.js` → `js/practice-sets.js` → `js/modes.js` →
+`js/dictation.js` → `js/challenge.js` → `js/keyboard-input.js` →
+`js/menu.js` → `app.js`. `i18n.js` must load before
 `tts.js`/`feedback.js`, which read the active language.
 
 This core was ported from Apptonomia and **deliberately trimmed** to
@@ -153,16 +167,44 @@ what this single activity actually uses:
 Don't re-add any of the above without a concrete need; they were cut on
 purpose, not missed.
 
-### 2.2 `app.js` — single IIFE
+### 2.2 Client logic: `js/` and `app.js` — classic scripts
 
-Holds the whole client app: screen switching (`SCREENS`), the
-sequence-game engine (`startSequence`/`gameKey`/`stepCompleted`)
-used by "place your fingers", lessons, words and the number pad, the
-"all keys" challenge (`playChallenge`/`challengeKey`), the hand-guide SVG, the
-visual keyboard renderer, and the physical `keydown`/`keyup` listeners
-that drive every game mode. There is no click-to-type path: the on-screen
-keyboard only ever *reflects* key presses (`flashKey`), it never
-originates them.
+The logic lives in ten `js/*.js` modules, loaded with plain
+`<script>` tags (no ES modules, so the app still runs from `file://`).
+Each module is an IIFE that receives the shared namespace
+`window.Teclatlon` (`T`):
+
+- `T.store` (`S`) holds the mutable state: `state`, `game`,
+  `doneThisSession` and the dictation timers. Modules always read and
+  write it as `S.game`, `S.state`…, so a reassignment is seen everywhere.
+- Each module publishes to `T` only what other modules use (`T.save`,
+  `T.startSequence`…). Cross-module calls resolve when they run (`T.fn()`),
+  so load order only matters for code that runs at load time. The order is
+  set in `index.html`; `app.js` loads last.
+- `app.js` holds no game logic: it wires the buttons that do not belong to a
+  single mode (name, reset progress, menu, leave a round, language) and boots
+  the app.
+
+Where each part lives:
+
+| Module | Contents |
+|---|---|
+| `core.js` | `SCREENS`, `state` and legacy-data migration, `save`/`award`/`achieve`, `showScreen`, `physical`/`physicalRows`/`visibleRows`/`typeableKeys`, `stripAccents`, `lessons()`/`templates()` |
+| `keyboard-view.js` | `renderKeyboards`, `renderRows`, `createKey`, `fingerOf`, `panOf`, `keysOf`, `flashKey`, `markTarget`, `handsSVG`, `renderHands` |
+| `settings.js` | `applyOptions`, the settings drawer (`openSettings`/`closeSettings`), the practice clock, the rest reminder |
+| `sequence.js` | `startSequence`, `loadStep`, `renderTarget`, `updateGuide`, `gameKey`, `stepCompleted`, `endSequence`, metrics |
+| `practice-sets.js` | `seqFitsLayout`, `scoreSeq`, `pickWordSet`: pure functions, no DOM or state |
+| `modes.js` | `playPosition`, `playLesson`, `buildLessonReview`, `keepStepsOnLayout`, `playWords`, `playTemplate`, `playNumbers` |
+| `dictation.js` | `playDictation`, `dictationKey`, `speakDictationLetter` |
+| `challenge.js` | `playChallenge`, `challengeKey`, `updateChallenge`, `challengeGuide`, `endChallenge` |
+| `keyboard-input.js` | physical `keydown`/`keyup`, `normalizeKey`, keyboard, layout and colour buttons |
+| `menu.js` | `renderMenu`, `renderLessons`, `renderTemplates`, `goMenu`/`goLessons`/`goTemplates`/`goName`/`goFree` |
+| `app.js` | Name, reset progress, mode menu, leave a round, dictation buttons, free writing, language, boot and `routeHash` |
+
+The on-screen keyboard only ever *reflects* key presses (`flashKey`);
+there is no click-to-type path. References to `app.js` in the sections
+below should be read with this table: the function named lives in the
+module it lists.
 
 The settings panel (`#settingsDrawer`, a lateral drawer opened from the
 `#btnOpenSettings` gear icon in the header — see SPEC.md §4.1) is read
