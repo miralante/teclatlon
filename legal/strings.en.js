@@ -16,7 +16,7 @@
     "dataItem2Label": "Chosen language",
     "dataItem2Text": "so you don’t have to choose it again every time you open the app.",
     "dataItem3Label": "Accessibility and gameplay settings",
-    "dataItem3Text": "text size, theme, focus mode, easy read, and other panel settings.",
+    "dataItem3Text": "text size, theme, hidden screen elements, sounds and other panel settings.",
     "dataP1": "Teclatlon works without accounts, cookies or analytics: we don’t know who you are or how you use the application.",
     "dataP2": "The only thing that gets saved lives in your browser’s localStorage, on your own device, and is never sent to any server:",
     "dataP3": "We never save: name, passwords, free text typed in, unique personal identifiers, failures, time taken, number of attempts, comparisons with other people, or detailed usage histories.",

@@ -23,7 +23,7 @@
     textSize: 'Tamaño de texto: {size}',
 
     personalDataTitle: 'Borrar los datos de la persona',
-    personalDataIntro: 'Borra el nombre guardado, el tamaño del texto, el tema visual y el modo foco.',
+    personalDataIntro: 'Borra el nombre guardado, el tamaño del texto, el tema visual y los demás ajustes.',
     personalDataKeeps: 'Se conservan',
     btnResetPersonal: 'Borrar mis datos personales',
     confirmResetPersonal: 'Toca otra vez para confirmar',

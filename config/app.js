@@ -2,8 +2,8 @@
    Teclatlon — Settings (hidden route)
    View/reset what's saved in localStorage. Two actions:
    - "Reset the person's data": clears the saved name and
-     the visual preferences (textSize, theme, focusMode,
-     keySound, color, keyboard layout). Stars and
+     the visual preferences (textSize, theme, hideLegend,
+     hideNumpad, dimCelebration, keySound, color, keyboard layout). Stars and
      completed lessons are kept.
    - "Reset the whole app": clears every key under the
      'teclatlon:' prefix (equivalent to opening the app
@@ -24,11 +24,13 @@
       stars: 0,
       completed: {},
       options: {
-        keyboard: 'simple',
+        keyboard: 'normal',
         color: 'hands',
         theme: 'light',
         textSize: 'normal',
-        focusMode: false,
+        hideLegend: false,
+        hideNumpad: false,
+        dimCelebration: false,
         keySound: true,
         metrics: false
       }
@@ -48,7 +50,7 @@
       ? Object.keys(data.completed).length
       : 0;
     var lessonsText = App.i18n.t('lessonsCompleted').replace('{n}', String(completedCount));
-    var layoutText = App.i18n.t('keyboardLayout').replace('{layout}', opts.keyboard || 'simple');
+    var layoutText = App.i18n.t('keyboardLayout').replace('{layout}', opts.keyboard || 'normal');
     var sizeText = App.i18n.t('textSize').replace('{size}', opts.textSize || 'normal');
 
     var items = [

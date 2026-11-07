@@ -22,7 +22,7 @@
     textSize: 'Text size: {size}',
 
     personalDataTitle: "Clear the person's data",
-    personalDataIntro: 'Clears the saved name, the text size, the visual theme and the focus mode.',
+    personalDataIntro: 'Clears the saved name, the text size, the visual theme and the other settings.',
     personalDataKeeps: 'Kept',
     btnResetPersonal: "Clear my personal data",
     confirmResetPersonal: 'Tap again to confirm',

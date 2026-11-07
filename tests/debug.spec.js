@@ -21,7 +21,9 @@ async function openFreshApp() {
   return newPage;
 }
 
-test('debug metrics state after opening settings', async ({ page }) => {
+// PENDING: live metrics are not implemented yet (#btnMetrics does not exist).
+// Re-enable when the metrics UI ships; see js/sequence.js.
+test.fixme('debug metrics state after opening settings', async ({ page }) => {
   page = await openFreshApp();
 
   // Check button BEFORE opening settings

@@ -216,10 +216,11 @@ the top of the physical `keydown` listener (see below), ahead of the
 game-input handling, since the drawer can be opened mid-game.
 Interactions with the engine:
 
-- `state.metrics` (keys / hits / misses / startMs) is
-  initialised on every game start, updated by `gameKey` /
-  `challengeKey`, and surfaced as live accuracy (%) and keys-per-minute
-  when `state.options.metrics` is true.
+- `state.metrics` (keys / hits / misses / startMs) is initialised on every
+  game start and updated by `gameKey`, `challengeKey` and dictation.
+  **Not shown yet:** `updateLiveMetrics()` is never called and `#liveMetrics`
+  does not exist, so no live accuracy or keys-per-minute appears. See
+  *Kept-for-later code* in §2.9.
 - `award(key)` marks a mode as completed: it records the id in
   `state.completed` (persistent; unlocks the next lesson, and the star
   is awarded only the first time) and in `doneThisSession` (in memory,
@@ -229,8 +230,9 @@ Interactions with the engine:
 - `feedback.success(zone, pan)` accepts an optional stereo pan. The
   caller computes it from the column of the key
   (`App.utils.columnOf` + `App.utils.panOfColumn`, or `panOf` in
-  `js/keyboard-view.js`); the audio feedback only routes through `StereoPannerNode`
-  when `state.options.spatialSound` is true.
+  `js/keyboard-view.js`). The tone is routed through `StereoPannerNode`
+  whenever `state.options.keySound` is true; there is no separate
+  spatial-sound option.
 - `state.options.restMinutes` (a number of minutes) sets how often the
   rest reminder appears after that much practice. It lives in
   `feedback.js`, which owns both the countdown and the phrase
@@ -353,9 +355,9 @@ DOM element.
 
 ### 2.5 Computer-only gate and pre-paint i18n bootstrap
 
-The `<head>` of `index.html` ships a tiny inline `<script>`, with no
-dependencies and synchronous, that runs **before the first paint** and
-does two things:
+The `<head>` of `index.html` loads `assets/js/gate.js`, a small external
+script with no dependencies and synchronous (external so the CSP can keep
+`script-src 'self'`). It runs **before the first paint** and does two things:
 
 1. **Picks the UI language** from `navigator.languages` (first 2-letter
    prefix in `SUPPORTED = ['es', 'en']`, fallback `es`) and applies it
@@ -375,13 +377,12 @@ does two things:
 
 The same script also reads `localStorage['teclatlon:keyboard']`
 directly (same key `assets/js/storage.js` writes, wrapped in the same
-try/catch pattern for private-mode safety) and applies
-`options.theme`/`.textSize`/`.focusMode` to `<html>` before first
-paint — otherwise the page would flash the default theme/text-size/
-font for a moment before `app.js#applyOptions()` runs on
-`DOMContentLoaded`. Focus mode targets `html.focus-mode` (not
-`body.focus-mode`) specifically so this pre-paint script can set it
-before `<body>` exists.
+try/catch pattern for private-mode safety) and applies the theme, the text
+size and the three hide/dim flags (`hide-legend`, `hide-numpad`,
+`dim-celebration`) to `<html>` before first paint. A legacy `focusMode`
+setting is mapped to those three flags. Without this the page would flash
+the default look for a moment before `js/settings.js#applyOptions()` runs
+on `DOMContentLoaded`.
 
 The HTML carries a static overlay at the top of `<body>`
 (`#mobileBlock`) with `hidden`, the `data-i18n` keys
@@ -727,6 +728,12 @@ in `sw.js`'s `FILES` exists on disk, every `js/` module is listed in `FILES`
 (otherwise the app would work online and fail offline), and every `manifest.json`
 icon exists. CI (`.github/workflows/validate.yml`) runs the same
 command on every push and pull request.
+
+Colour contrast and CSS tokens are not checked from this repo. The Miralante
+suite measures them from its `contrast/` folder (outside teclatlon) with
+`run-all.ps1` and `check-tokens.ps1`, which cover all 8 projects at once.
+They are not in CI, they write into `sinonimia/` and free port 4173, so run
+them only from the suite, never through `npm`.
 
 Not yet automated (manual before shipping a change): a real-browser
 walk through the name screen, each game mode (lessons, words, number

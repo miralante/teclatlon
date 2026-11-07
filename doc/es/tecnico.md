@@ -224,10 +224,11 @@ principio del listener `keydown` físico (ver más abajo), antes de la
 lógica de juego, porque el desplegable se puede abrir en mitad de una
 partida. Interacciones con el motor:
 
-- `state.metrics` (keys / hits / misses / startMs) se
-  reinicia en cada partida, lo actualizan `gameKey` / `challengeKey`,
-  y se muestra como precisión (%) y teclas por minuto en vivo cuando
-  `state.options.metrics` vale `true`.
+- `state.metrics` (keys / hits / misses / startMs) se reinicia en cada
+  partida y lo actualizan `gameKey`, `challengeKey` y el dictado.
+  **No se muestra todavía:** `updateLiveMetrics()` nunca se llama y
+  `#liveMetrics` no existe, así que no aparece precisión ni teclas por
+  minuto en vivo. Ver *Código en reserva* en §2.9.
 - `award(key)` marca un modo como completado: lo anota en
   `state.completed` (persistente; desbloquea la lección siguiente y da
   la estrella solo la primera vez) y en `doneThisSession` (en memoria,
@@ -237,8 +238,9 @@ partida. Interacciones con el motor:
 - `feedback.success(zone, pan)` acepta un paneo estéreo opcional. Lo
   calcula el llamador desde la columna de la tecla
   (`App.utils.columnOf` + `App.utils.panOfColumn`, o `panOf` en
-  `js/keyboard-view.js`); el audio solo pasa por `StereoPannerNode` cuando
-  `state.options.spatialSound` vale `true`.
+  `js/keyboard-view.js`). El tono pasa por `StereoPannerNode` siempre que
+  `state.options.keySound` vale `true`; no hay una opción aparte de sonido
+  espacial.
 - `state.options.restMinutes` (número de minutos) elige cada cuánto
   tiempo de práctica aparece el aviso de descanso. Vive en
   `feedback.js`, que es quien cuenta y quien muestra la frase
@@ -367,8 +369,9 @@ DOM dedicado.
 
 ### 2.5 Gate "solo ordenador" y bootstrap pre-paint de i18n
 
-El `<head>` de `index.html` incluye un `<script>` inline, sin
-dependencias y síncrono, que se ejecuta **antes del primer paint** y
+El `<head>` de `index.html` carga `assets/js/gate.js`, un script externo
+pequeño, sin dependencias y síncrono (externo para que la CSP pueda
+mantener `script-src 'self'`). Se ejecuta **antes del primer paint** y
 hace dos cosas:
 
 1. **Elige el idioma de la interfaz** desde `navigator.languages`
@@ -389,13 +392,12 @@ hace dos cosas:
 Este mismo script también lee `localStorage['teclatlon:keyboard']`
 directamente (la misma clave que escribe `assets/js/storage.js`,
 envuelta en el mismo patrón try/catch por si el modo privado falla) y
-aplica `options.theme`/`.textSize`/`.focusMode` a `<html>` antes
-del primer paint — si no, la página parpadearía con el tema/tamaño de
-texto/tipografía por defecto un instante antes de que
-`js/settings.js#applyOptions()` se ejecute en `DOMContentLoaded`. El modo
-foco usa el selector `html.focus-mode` (no `body.focus-mode`)
-precisamente para que este script pre-paint pueda activarlo antes de
-que exista el `<body>`.
+aplica a `<html>`, antes del primer paint, el tema, el tamaño de texto y
+los tres indicadores de ocultar/atenuar (`hide-legend`, `hide-numpad`,
+`dim-celebration`). Un ajuste `focusMode` antiguo se traduce a esos tres
+indicadores. Sin esto, la página parpadearía con el aspecto por defecto un
+instante antes de que `js/settings.js#applyOptions()` se ejecute en
+`DOMContentLoaded`.
 
 El HTML lleva al inicio del `<body>` un overlay estático
 (`#mobileBlock`) con `hidden`, los textos `data-i18n` (`computerOnly`,
@@ -753,6 +755,12 @@ node scripts/check.js
 que cada icono de `manifest.json` exista. La CI
 (`.github/workflows/validate.yml`) ejecuta el mismo comando en cada
 push y pull request.
+
+El contraste de color y los tokens CSS no se comprueban desde este repo. Los
+mide la suite Miralante, en su carpeta `contrast/` (fuera de teclatlon) con
+`run-all.ps1` y `check-tokens.ps1`, que recorren los 8 proyectos a la vez.
+No están en el CI y escriben en `sinonimia/` y liberan el puerto 4173, así que
+se ejecutan solo desde la suite, nunca desde `npm`.
 
 Aún no automatizado (comprobación manual antes de publicar un cambio):
 recorrido real por el navegador de la pantalla de nombre, cada modo de

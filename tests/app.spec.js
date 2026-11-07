@@ -1116,7 +1116,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     // Pre-complete all 17 lessons so that:
     // 1. goMenu() is called on boot (name='Tester')
     // 2. The streak3 condition (streak >= 3) is satisfied regardless of the
-    //    endSequence ordering (checkGoal runs before award() adds current lesson).
+    //    endSequence ordering (the achievement checks in endSequence run before award() adds the current lesson).
     //    With all lessons pre-completed, streak iterates l1→l17 and reaches 3 at l3,
     //    firing achieve('streak3') on app load.
     await page.addInitScript(() => {
@@ -1173,7 +1173,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     // Pre-complete all 17 lessons so that:
     // 1. goMenu() is called on boot (name='Tester')
     // 2. The allLessons condition (all 17 in completed) is satisfied regardless of
-    //    the endSequence ordering (checkGoal runs before award() adds current lesson).
+    //    the endSequence ordering (the achievement checks in endSequence run before award() adds the current lesson).
     //    With all lessons pre-completed, allLessons.every() is true on app load,
     //    firing achieve('allLessons') immediately.
     await page.addInitScript(() => {

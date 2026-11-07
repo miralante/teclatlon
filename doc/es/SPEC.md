@@ -207,8 +207,9 @@ quien la usa) sin nombrar públicamente un grupo clínico.
 ## 5.1 Panel de accesibilidad y juego (no negociable)
 
 Toda la configuración de la app vive en `state.options` (localStorage)
-y se aplica en arranque (`applyOptions()` en `js/settings.js`). Por defecto
-todo está apagado: cada persona decide qué le ayuda.
+y se aplica en arranque (`applyOptions()` en `js/settings.js`). Las
+opciones de ayuda están apagadas por defecto, salvo el sonido de tecla y el
+texto del dedo, que empiezan encendidos: cada persona decide qué le ayuda.
 
 El panel es un desplegable lateral (`#settingsDrawer`), que se abre desde
 un icono de engranaje (`#btnOpenSettings`) en la cabecera — accesible
@@ -219,22 +220,36 @@ abierto (ver [`tecnico.md` §2.2](tecnico.md)).
 
 - **Tamaño del texto**: `chico` (18 px), `normal` (20 px), `grande`
   (24 px), `enorme` (30 px). Ajusta la variable `--texto-base`.
-- **Tema**: `claro` (por defecto), `auto` (sigue `prefers-color-scheme`),
-  `oscuro`, `contraste` (alto contraste forzado, apto para poca visión).
-- **Modo foco**: oculta la guía de manos y la leyenda. El teclado
-  visual con la tecla objetivo iluminada se queda: es la pista
-  principal del ejercicio.
-- **Sonido espacial**: panea la nota de acierto por la columna de la
-  tecla (StereoPannerNode). Apagado por defecto para no saturar.
+- **Tema**: `claro` (por defecto), `oscuro`, `contraste` (alto contraste
+  forzado, apto para poca visión).
+- **Ocultar la leyenda**, **ocultar el teclado numérico** y **atenuar la
+  celebración**: quitan un elemento de la pantalla para reducir
+  distracciones. Apagadas por defecto; cada una es una clase en `<html>`
+  (`hide-legend`, `hide-numpad`, `dim-celebration`), así que se pueden
+  combinar. El teclado visual con la tecla objetivo iluminada se queda
+  siempre: es la pista principal del ejercicio.
+- **Sonido de tecla** (encendido por defecto): suena al acertar, con
+  paneo estéreo por la columna de la tecla (StereoPannerNode).
+  **Sonido de error** (apagado por defecto): suena al fallar.
+- **Texto del dedo** (encendido por defecto): la frase que nombra el dedo
+  bajo la guía de manos. Apagado, esa caja se oculta.
+- **Aviso de descanso**: minutos de práctica entre avisos (20 por defecto,
+  de 1 a 240). Ver [`tecnico.md` §2.6](tecnico.md).
+- **Ver el temporizador**: reloj de práctica en la cabecera. Apagado por
+  defecto.
+- **Vista del teclado** (simple, normal, extendido), **distribución del
+  teclado físico** (español o inglés; por defecto, según el idioma del
+  navegador) y **color** (manos o dedos).
 - **Vibración**: retirada. `navigator.vibrate()` solo funciona en
   dispositivos táctiles y Teclatlon es solo para el teclado físico
   del ordenador (ver §2).
 - **Tipografía para dislexia**: retirada. No había tipografía
   empaquetada y la opción caía en silencio (la Atkinson Hyperlegible
   por defecto ya es legible).
-- **Métricas**: muestra precisión (%) y PPM en vivo durante la
-  partida. Apagadas por defecto. La definición fina del producto
-  está todavía pendiente; el ajuste se queda visible y apagado.
+- **Métricas**: pendientes de implementar. El panel no tiene ajuste para
+  ellas todavía. El juego ya cuenta aciertos y fallos por dentro, y el
+  código queda preparado para la función (ver
+  [`tecnico.md` §2.2](tecnico.md)).
 
 Ver `legal/index.html` para qué datos se guardan exactamente.
 

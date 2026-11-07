@@ -202,8 +202,9 @@ surfaces is neither necessary nor respectful of the audience —
 ## 5.1 Accessibility & game settings panel (mandatory)
 
 Every configuration lives in `state.options` (localStorage) and is
-applied at startup (`applyOptions()` in `js/settings.js`). Everything is off
-by default: each person decides what helps them.
+applied at startup (`applyOptions()` in `js/settings.js`). The help
+options are off by default, except key sound and finger text, which start
+on: each person decides what helps them.
 
 The panel is a lateral drawer (`#settingsDrawer`), opened from a gear
 icon (`#btnOpenSettings`) in the header — reachable from every screen,
@@ -213,21 +214,33 @@ open (see [`technical.md` §2.2](technical.md)).
 
 - **Text size**: `small` (18 px), `normal` (20 px), `large` (24 px),
   `huge` (30 px). Adjusts the `--texto-base` variable.
-- **Theme**: `light` (default), `auto` (follows `prefers-color-scheme`),
-  `dark`, `contrast` (forced high contrast for low vision).
-- **Focus mode**: hides the hand guide and the keyboard legend. The
-  visual keyboard with the highlighted target key stays: it is the
-  primary cue of the exercise.
-- **Spatial sound**: pans the success tone by the column of the key
-  (StereoPannerNode). Off by default to avoid noise.
+- **Theme**: `light` (default), `dark`, `contrast` (forced high contrast
+  for low vision).
+- **Hide the keyboard legend**, **hide the number pad** and **dim the
+  celebration**: each one removes one distraction from the screen. Off by
+  default; each is a class on `<html>` (`hide-legend`, `hide-numpad`,
+  `dim-celebration`), so they can be combined. The visual keyboard with
+  the highlighted target key always stays: it is the primary cue of the
+  exercise.
+- **Key sound** (on by default): a tone on each correct key, panned by
+  the column of the key (StereoPannerNode). **Error sound** (off by
+  default): a tone on each mistake.
+- **Finger text** (on by default): the sentence that names the finger
+  under the hand guide. When off, that box is hidden.
+- **Rest reminder**: practice minutes between reminders (20 by default,
+  from 1 to 240). See [`technical.md` §2.6](technical.md).
+- **Show timer**: the practice clock in the header. Off by default.
+- **Keyboard view** (simple, normal, extended), **physical keyboard
+  layout** (Spanish or English; follows the browser language by default)
+  and **hand colours** (hands or fingers).
 - **Vibration**: removed. `navigator.vibrate()` only fires on touch
   devices, and Teclatlon is computer-only (see §2).
 - **Dyslexia-friendly font**: removed. No font was bundled and the
   toggle fell back silently (Atkinson Hyperlegible is already the
   legible default).
-- **Metrics**: live accuracy (%) and PPM during the game. Off by
-  default. The product has not finalised the exact definition yet;
-  the toggle stays visible and off.
+- **Metrics**: not implemented yet. The panel has no setting for it. The
+  game already counts hits and misses internally, and the code is kept
+  ready for the feature (see [`technical.md` §2.2](technical.md)).
 
 See `legal/index.html` for the exact data items saved.
 

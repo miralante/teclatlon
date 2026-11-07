@@ -16,7 +16,7 @@
     "dataItem2Label": "Idioma elegido",
     "dataItem2Text": "para no tener que elegirlo de nuevo cada vez que abres la aplicación.",
     "dataItem3Label": "Ajustes de accesibilidad y juego",
-    "dataItem3Text": "tamaño del texto, tema, modo foco, lectura fácil y otros ajustes del panel.",
+    "dataItem3Text": "tamaño del texto, tema, elementos ocultos de la pantalla, sonidos y otros ajustes del panel.",
     "dataP1": "Teclatlon funciona sin cuentas, sin cookies y sin analítica: no sabemos quién eres ni cómo usas la aplicación.",
     "dataP2": "Lo único que se guarda vive en el localStorage de tu navegador, en tu propio dispositivo, y nunca se envía a ningún servidor:",
     "dataP3": "Nunca guardamos: nombre, contraseñas, texto libre escrito, identificadores personales únicos, fallos, tiempo empleado, número de intentos, comparaciones con otras personas ni historiales de uso detallados.",
