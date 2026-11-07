@@ -185,9 +185,9 @@
   T.renderRows($('#numpad'), DATA.numpad);
   T.renderKeyboards();
   T.applyOptions();
-  /* Ya no hace falta escuchar prefers-color-scheme: solo servía para
-     repintar cuando el sistema pasaba a oscuro y el tema era "auto", y
-     ese tema ya no existe. */
+  /* No need to listen to prefers-color-scheme any more: it only repainted
+     when the system switched to dark with the "auto" theme, and that theme
+     no longer exists. */
   T.updateStars();
 
   /* Hash routing — supports direct navigation via URL hash

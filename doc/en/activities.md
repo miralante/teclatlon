@@ -27,7 +27,7 @@ session or lesson list that matches it.
 | **Numbers (number-pad game)** | Number-pad practice with the right-hand home position. | [`technical.md`](technical.md) §"Numbers mode". |
 | **All keys** | Mixed practice that exercises the **complete** keyboard of the currently selected layout — every letter, every number when the layout shows them, the space bar, and every punctuation key. | [`SPEC.md`](SPEC.md) §3.7. |
 | **Free writing** | Free text + read-aloud of what was typed. | [`technical.md`](technical.md) §"Free writing mode". |
-| **Dictation** | Hears a randomly chosen letter and asks the learner to press it on the physical keyboard. The on-screen keyboard and hand guide stay hidden; correct and incorrect answers have distinct sounds. The screen explains what the activity is and offers to hear the letter again. | `playDictation()` in `app.js`. |
+| **Dictation** | Hears a randomly chosen letter and asks the learner to press it on the physical keyboard. The on-screen keyboard and hand guide stay hidden; correct and incorrect answers have distinct sounds. The screen explains what the activity is and offers to hear the letter again. | `playDictation()` in `js/dictation.js`. |
 
 Each mode is intentionally short and replayable. There is no
 "level completed" gate that locks the next mode — the learner can

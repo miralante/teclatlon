@@ -73,7 +73,7 @@ técnica expresada con dificultad.
    deben sumar esa cobertura; una lección que solo ejercita las
    letras nuevas que introduce está incompleta. Ver
    [`tecnico.md` §"Motor del juego de secuencia"](tecnico.md) para
-   el gancho en tiempo de ejecución (`buildLessonReview` en `app.js`)
+   el gancho en tiempo de ejecución (`buildLessonReview` en `js/modes.js`)
    que añade un paso de repaso al final de cada lección para que la
    cobertura acumulada se aplique al jugar.8. **Comunicación persuasiva al servicio del aprendizaje** (lista cerrada
    en §3.7 más abajo) — Teclatlon es una herramienta de práctica, no
@@ -207,7 +207,7 @@ quien la usa) sin nombrar públicamente un grupo clínico.
 ## 5.1 Panel de accesibilidad y juego (no negociable)
 
 Toda la configuración de la app vive en `state.options` (localStorage)
-y se aplica en arranque (`applyOptions()` en `app.js`). Por defecto
+y se aplica en arranque (`applyOptions()` en `js/settings.js`). Por defecto
 todo está apagado: cada persona decide qué le ayuda.
 
 El panel es un desplegable lateral (`#settingsDrawer`), que se abre desde

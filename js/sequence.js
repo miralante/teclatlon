@@ -12,20 +12,20 @@
   var $$ = App.utils.$$;
 
   /* ---------- Live metrics (accuracy and speed) ---------- */
-  /* Preparado, todavía sin UI. Se mantiene a propósito para la función
-     futura de métricas en vivo (aciertos % y teclas por minuto):
-       - S.state.metrics se rellena en cada juego (startMetrics, gameKey,
-         dictation.js, challenge.js) aunque nada lo muestre todavía.
-       - updateLiveMetrics() pinta en #liveMetrics, que hoy no existe en
-         index.html, y nadie la llama. Al activarla, hay que llamarla
-         desde startSequence y gameKey.
-       - Falta: el elemento #liveMetrics, un botón #btnMetrics en el
-         cajón de ajustes (state.options.metrics ya existe, por defecto
-         false), y los estilos .live-metrics-pills / .live-metric.
-       - Las cadenas accuracyShort y keysPerMinuteShort ya están en
-         strings.es.js y strings.en.js.
-     Los tests debug.spec.js y scripts/ui-smoke.js esperan esos
-     elementos; fallarán hasta que se implemente la UI. */
+  /* Prepared, but no UI yet. Kept on purpose for the future live-metrics
+     feature (accuracy % and keys per minute):
+       - S.state.metrics is filled in every game (startMetrics, gameKey,
+         dictation.js, challenge.js) even though nothing shows it yet.
+       - updateLiveMetrics() paints into #liveMetrics, which does not exist
+         in index.html today, and nothing calls it. To activate it, call it
+         from startSequence and gameKey.
+       - Still missing: the #liveMetrics element, a #btnMetrics button in
+         the settings drawer (state.options.metrics already exists, default
+         false), and the .live-metrics-pills / .live-metric styles.
+       - The accuracyShort and keysPerMinuteShort strings already exist in
+         strings.es.js and strings.en.js.
+     The tests debug.spec.js and scripts/ui-smoke.js expect those elements
+     and will fail until the UI is implemented. */
   function startMetrics() {
     S.state.metrics = { keys: 0, hits: 0, misses: 0, startMs: Date.now() };
   }

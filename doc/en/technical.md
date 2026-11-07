@@ -80,7 +80,7 @@ The on-screen keyboard, hand guide and physical `keydown` handling must
 work on Chromium, Firefox and WebKit (Safari) on desktop — this is a
 desktop-only app, so mobile/touch emulation is out of scope. Verify
 manually in a real browser before landing a change to `app.js`,
-`index.html`, or `styles.css`.
+a `js/` module, `index.html`, or `styles.css`.
 
 ---
 
@@ -202,9 +202,8 @@ Where each part lives:
 | `app.js` | Name, reset progress, mode menu, leave a round, dictation buttons, free writing, language, boot and `routeHash` |
 
 The on-screen keyboard only ever *reflects* key presses (`flashKey`);
-there is no click-to-type path. References to `app.js` in the sections
-below should be read with this table: the function named lives in the
-module it lists.
+there is no click-to-type path. The functions named in the sections
+below live in the module this table lists.
 
 The settings panel (`#settingsDrawer`, a lateral drawer opened from the
 `#btnOpenSettings` gear icon in the header — see SPEC.md §4.1) is read
@@ -230,7 +229,7 @@ Interactions with the engine:
 - `feedback.success(zone, pan)` accepts an optional stereo pan. The
   caller computes it from the column of the key
   (`App.utils.columnOf` + `App.utils.panOfColumn`, or `panOf` in
-  `app.js`); the audio feedback only routes through `StereoPannerNode`
+  `js/keyboard-view.js`); the audio feedback only routes through `StereoPannerNode`
   when `state.options.spatialSound` is true.
 - `state.options.restMinutes` (a number of minutes) sets how often the
   rest reminder appears after that much practice. It lives in
@@ -291,7 +290,7 @@ normalized (lowercase) pressed key against `seq[pos].toLowerCase()`
 and additionally requires `shiftHeld` (the keydown's `e.shiftKey`) only
 when `seq[pos]` is itself uppercase — a lowercase step never checks
 Shift state, so accidentally holding it doesn't count as a mistake.
-`oppositeShiftSide(finger)` in `app.js` encodes the standard
+`oppositeShiftSide(finger)` in `js/keyboard-view.js` encodes the standard
 touch-typing convention (hold Shift with the pinky on the side
 *opposite* the letter's hand); `handsSVG`/`renderHands` highlight that
 second finger at reduced opacity (`.finger.active-shift`) alongside the
@@ -300,7 +299,7 @@ primary finger, and `#guideText` appends a sentence naming it.
 **Special keys (Home/End/Page Up/Page Down/Delete):** a lesson step
 can be `{ specialKey: 'home' }` instead of `{ seq: '...' }` — see the
 `l17`/"Special keys" lesson and
-`isSpecialStep(p)` in `app.js`. These keys don't type a character, so
+`isSpecialStep(p)` in `js/sequence.js`. These keys don't type a character, so
 the step completes in one shot on the right keydown instead of walking
 a `seq` index, and — since no consistent finger convention exists for
 them — the hand-guide finger highlight is skipped entirely
@@ -320,7 +319,7 @@ the internal ids used everywhere else (`data-ch`, `specialKey`,
 full real-world writing task (an email, a letter…) instead of a single
 word or drill sentence. Unlike `DATA.lessons`, these are **not**
 gated behind a linear unlock chain (see `renderTemplates()` in
-`app.js`): every entry is always open, since they're independent
+`js/menu.js`): every entry is always open, since they're independent
 practice texts, not a graded curriculum. `lines` is the text split
 into short lines; `playTemplate(p)` turns each line into one
 sequence-engine step (`{ seq: line }`), the same mechanism a lesson's
@@ -332,7 +331,7 @@ arrays in `data.js`; keep `lines` to characters the layout models
 (lowercase letters, `ñ`, the punctuation in `DATA.rows`: `,` `.` `-`,
 uppercase letters via Shift — see lesson "Capitals" — and Spanish
 accented vowels á/é/í/ó/ú, which are correct orthography and expected
-in real Spanish writing). `expectedBaseChar()` in `app.js` strips the
+in real Spanish writing). `expectedBaseChar()` in `js/sequence.js` strips the
 accent before looking up the finger/on-screen key, since there's no
 separate `é` key — just `e` composed with the dead accent key, the
 same idea as a capital resolving to its base letter. Still avoid `¡`,
@@ -345,7 +344,8 @@ unique and stable — it's reused as the completion/progress key
 
 Every completion (a lesson, the words game, the number pad, or the "all
 keys" challenge) appends `App.i18n.t('transferMessage')` to the closing
-celebration message (`celebrateWithTransfer()` in `app.js`) — a short
+celebration message (in the challenge, `celebrateWithTransfer()` in `js/challenge.js`; in the
+other modes, `endSequence()` in `js/sequence.js`) — a short
 line connecting the exercise to writing real messages on a real
 computer. This activity has no separate "round complete" screen, so the
 line lives in the celebration overlay text itself, not in a dedicated
@@ -427,7 +427,7 @@ The whole contract lives in `feedback.js`: `DEFAULT_REST_MINUTES` (20), the
 `REST_MIN`/`REST_MAX` range (1 to 240 minutes) and the reminder itself. They
 are exported on `App.feedback` together with `normaliseRestMinutes()`, the
 single rule for what counts as a valid interval, and all three parties use
-that function: `app.js` when normalising what was saved, the panel when
+that function: `js/core.js` when normalising what was saved, the panel when
 committing what was typed, and the counter when reading it. Anything
 unusable (an empty field, a half-typed value, something from an older
 version, a hand-edited `localStorage`) falls back to the default, and
@@ -480,7 +480,7 @@ fires and zeroes the counter, the clock is back at zero in the same instant.
 `practiceSeconds()` only ever returns whole seconds; the caller re-reads it
 on a timer of its own.
 
-In `app.js` the clock is two functions that must not drift apart:
+In `js/settings.js` the clock is two functions that must not drift apart:
 `paintSessionTimer()` owns what is on screen (and, on the "off" branch,
 takes it off again), and `ensureTimerTicking()` decides whether anything is
 asking for it to change. `ensureTimerTicking()` paints **before** it decides,
@@ -491,7 +491,7 @@ leaving a clock running behind a hidden element.
 
 The element is `role="timer"` with `aria-live="off"`: a number that moves
 every second must not be read out on every change (WCAG 4.1.3), but it must
-still carry a name, so `app.js` writes an `aria-label` from
+still carry a name, so `js/settings.js` writes an `aria-label` from
 `sessionTimerAria` alongside the visible text. Its colour is
 `--color-text-soft`, not `--color-star`: the star is an achievement and the
 clock is information, and it should not read as a second, competing reward.
@@ -564,6 +564,90 @@ changes, so the effect is immediate instead of waiting for the next key.
 
 ---
 
+### 2.9 Coding conventions for `js/` and `app.js`
+
+These rules keep the module split readable. They come from the code as it
+is: if one stops holding, fix the rule or the code, not both halfway.
+
+**Shape of a module.** Every file in `js/` starts with a header comment
+(purpose, a pointer to this section, how it shares state) and is a single
+strict-mode IIFE that receives `window.Teclatlon`:
+
+```js
+(function (T) {
+  'use strict';
+  var S = T.store;
+  var $ = App.utils.$;
+  var $$ = App.utils.$$;
+  // ... module functions ...
+  T.publicName = publicName;   // only what other modules or app.js use
+})(window.Teclatlon);
+```
+
+Only `core.js` creates the shared space (`T.store`); the others receive it.
+The `S`, `$` and `$$` aliases are declared only when the module uses them.
+
+**Style.** ES5: `var`, `function`, single quotes; no `const`, `let`, arrow
+functions or template strings. This is the same style as the rest of the
+shared base (`assets/js/`). No ES modules and no bundler: the app must work
+from `file://`.
+
+**State.**
+
+- Always read and write through `S` (`S.state`, `S.game`). Do not keep a
+  reference to `S.state` in a module variable: a reassignment would leave
+  it stale.
+- Reassign `S.state` in only two places: the boot migration (`core.js`) and
+  the "Clear my progress" reset (`app.js`). Everywhere else, change fields.
+- After changing `S.state`, call `T.save()`. `award` and `achieve` already
+  save on their own.
+- If another module must be able to cancel a timer (for example, when
+  leaving a round), store it on `S` (`S.dictationTimer`). A timer used only
+  by its own module stays local, like the practice clock (`timerIntervalId`
+  in `settings.js`).
+
+**Dependencies between modules.**
+
+- Call another module as `T.name(...)` at run time, never at load time.
+  That way the `<script>` order only matters for code that runs on load.
+- Anything one module calls on another must be exported on `T`. Before you
+  remove or rename an export, search for `T.name` in `js/` and `app.js`.
+  `scripts/check.js` does not check this.
+- Code that runs on load (wiring listeners and buttons) may use `App.*`,
+  `DATA` and the modules before it in `index.html`. `app.js` is always last.
+- There is one entry point for the physical keyboard: only
+  `keyboard-input.js` listens to the document's `keydown`/`keyup`, and it
+  forwards each press to `T.gameKey`, `T.challengeKey` or `T.dictationKey`,
+  depending on the active mode.
+
+**Text and DOM.**
+
+- Visible text comes only from `App.i18n.t('key')`, with
+  `.replace('{n}', value)` for placeholders. Every key exists in both
+  `strings.*.js` files (§3).
+- Screens change through `T.showScreen(id)`. Showing or hiding an element
+  uses the `hidden` class (`classList.toggle`), not `style.display`.
+- `innerHTML` receives only fixed markup or empty strings (the challenge
+  stars, the hands SVG). Never user-supplied text: use `textContent` for
+  that.
+
+**Comments.** In English, like the rest of the code (`CLAUDE.md` §B.2).
+
+**Kept-for-later code.** Live metrics (`startMetrics`, `updateLiveMetrics`,
+`state.metrics`) are kept on purpose for a future feature. The comment in
+`sequence.js` lists what is still needed to switch them on. Before you
+remove code that looks unused, check whether it is on that list.
+
+**Adding a new module.**
+
+1. Create `js/<name>.js` with the header and IIFE above.
+2. Add `<script src="js/<name>.js"></script>` in `index.html`, after its
+   dependencies and before `app.js`.
+3. Add the path to `FILES` in `sw.js` and bump `VERSION`.
+4. Run `node scripts/check.js`. It checks the syntax and that the path is in
+   `FILES`.
+5. Update the §2.2 table and the §2 tree.
+
 ## 3. Internationalization
 
 Multilingual architecture shipped today with the **base pair**
@@ -581,7 +665,7 @@ Same multi-file pattern as Apptonomia: `strings.es.js` and
 `App.i18n.register(dict, 'es' | 'en')`; both files always load (see
 `index.html`), and `App.i18n.locale()` decides which is active.
 `scripts/check.js` checks key parity between the two files (root app and
-`legal/`). Brace placeholders (`'{n} times'`) are substituted in `app.js`
+`legal/`). Brace placeholders (`'{n} times'`) are substituted in the `js/` modules and `app.js`
 with `.replace('{n}', value)`.
 
 Common keys already registered in `core.*` in `assets/js/i18n.js` (don't
@@ -639,7 +723,8 @@ node scripts/check.js
 
 `scripts/check.js` checks: every `.js` file parses, `strings.es.js` /
 `strings.en.js` have matching keys (root app and `legal/`), every path
-in `sw.js`'s `FILES` exists on disk, and every `manifest.json`
+in `sw.js`'s `FILES` exists on disk, every `js/` module is listed in `FILES`
+(otherwise the app would work online and fail offline), and every `manifest.json`
 icon exists. CI (`.github/workflows/validate.yml`) runs the same
 command on every push and pull request.
 
@@ -1018,7 +1103,7 @@ in §2.1 above are the canonical rationale).
 | `i18n.js` | `App.i18n.{locale, setLocale, lang, register, t, pick, apply, SUPPORTED, DEFAULT_LOCALE, LABEL, FLAG}` | every page |
 | `tts.js` | `App.tts.speak` | only pages that read aloud (most do) |
 | `storage.js` | `App.storage.{get, set, remove}` | only pages that read or write `localStorage` (`index.html`, `config/`) |
-| `feedback.js` | `App.feedback.{success, encourage, celebrate}` | only the activity's `app.js` |
+| `feedback.js` | `App.feedback.{success, encourage, celebrate}` | only the activity's code (`js/` and `app.js`) |
 
 The load order is `utils.js → i18n.js → tts.js → storage.js →
 feedback.js → strings.<locale>.js → data.js → app.js`. `i18n.js`

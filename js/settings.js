@@ -31,9 +31,9 @@
      everything consistent once app.js has taken over. */
   function applyOptions() {
     var html = document.documentElement;
-    /* El tema se pone tal cual: se quitó la opción "auto", que no fijaba
-       atributo y delegaba en prefers-color-scheme. El que venga
-       guardado migró a "light" más arriba, al no estar en la lista. */
+    /* The theme is applied as stored. The "auto" option was removed: it set
+       no attribute and deferred to prefers-color-scheme. A saved "auto" was
+       migrated to "light" in core.js, because it is not in the list. */
     html.setAttribute('data-theme', S.state.options.theme);
     if (S.state.options.textSize === 'normal') html.removeAttribute('data-text-size');
     else html.setAttribute('data-text-size', S.state.options.textSize);

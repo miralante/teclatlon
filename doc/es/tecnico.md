@@ -85,7 +85,7 @@ El teclado en pantalla, la guía de manos y la gestión de `keydown` físico
 deben funcionar en Chromium, Firefox y WebKit (Safari) en escritorio —
 esta es una app solo de escritorio, así que la emulación táctil/móvil
 queda fuera de alcance. Verifica manualmente en un navegador real antes
-de publicar un cambio en `app.js`, `index.html` o `styles.css`.
+de publicar un cambio en `app.js`, en un módulo de `js/`, en `index.html` o en `styles.css`.
 
 ---
 
@@ -209,9 +209,8 @@ Dónde vive cada función:
 | `app.js` | Nombre, borrar progreso, menú de modos, salir de partida, botones de dictado, texto libre, idioma, arranque y `routeHash` |
 
 El teclado en pantalla solo *refleja* pulsaciones (`flashKey`); no hay ruta
-de pulsar-para-escribir. Las referencias a `app.js` de las subsecciones
-siguientes deben leerse con esta tabla: la función citada vive en el módulo
-que indica.
+de pulsar-para-escribir. Las funciones citadas en las subsecciones
+siguientes viven en el módulo que indica esta tabla.
 
 El panel de ajustes (`#settingsDrawer`, un desplegable lateral que se
 abre con el icono de engranaje `#btnOpenSettings` de la cabecera — ver
@@ -238,7 +237,7 @@ partida. Interacciones con el motor:
 - `feedback.success(zone, pan)` acepta un paneo estéreo opcional. Lo
   calcula el llamador desde la columna de la tecla
   (`App.utils.columnOf` + `App.utils.panOfColumn`, o `panOf` en
-  `app.js`); el audio solo pasa por `StereoPannerNode` cuando
+  `js/keyboard-view.js`); el audio solo pasa por `StereoPannerNode` cuando
   `state.options.spatialSound` vale `true`.
 - `state.options.restMinutes` (número de minutos) elige cada cuánto
   tiempo de práctica aparece el aviso de descanso. Vive en
@@ -301,7 +300,7 @@ tecla pulsada normalizada (en minúscula) contra `seq[pos].toLowerCase()`
 y además exige `shiftHeld` (el `e.shiftKey` del keydown) solo cuando
 `seq[pos]` es en sí mayúscula — un paso en minúscula nunca comprueba
 el estado de Mayús, así que mantenerla pulsada por accidente no cuenta
-como fallo. `oppositeShiftSide(finger)` en `app.js` codifica la
+como fallo. `oppositeShiftSide(finger)` en `js/keyboard-view.js` codifica la
 convención estándar de mecanografía (pulsar Mayús con el meñique del
 lado *contrario* al de la mano de la letra); `handsSVG`/`renderHands`
 resaltan ese segundo dedo con menor opacidad (`.finger.active-shift`)
@@ -310,7 +309,7 @@ junto al dedo principal, y `#guideText` añade una frase que lo nombra.
 **Teclas especiales (Inicio/Fin/Re Pág/Av Pág/Supr):** un paso de
 lección puede ser `{ specialKey: 'home' }` en vez de `{ seq: '...' }`
 — ver la lección `l17`/"Special keys" y
-`isSpecialStep(p)` en `app.js`. Estas teclas no escriben un carácter,
+`isSpecialStep(p)` en `js/sequence.js`. Estas teclas no escriben un carácter,
 así que el paso se completa de una vez con el keydown correcto en
 lugar de recorrer un índice de `seq` — y, como no existe una
 convención de dedo consistente para ellas, el resaltado de dedo de la
@@ -331,7 +330,7 @@ puedan apuntarlas, pero `special: true` las mantiene fuera del reto de
 tarea de escritura real y completa (un correo, una carta…) en vez de
 una sola palabra o frase de práctica. A diferencia de `DATA.lessons`,
 estas **no** están encadenadas en un desbloqueo lineal (ver
-`renderTemplates()` en `app.js`): cada entrada está siempre abierta,
+`renderTemplates()` en `js/menu.js`): cada entrada está siempre abierta,
 porque son textos de práctica independientes, no un currículo
 graduado. `lines` es el texto dividido en líneas cortas;
 `playTemplate(p)` convierte cada línea en un paso del motor de
@@ -346,7 +345,7 @@ en `data.js`; mantén `lines` a caracteres que el teclado modela
 mayúsculas con Shift — ver la lección "Mayúsculas" — y vocales
 acentuadas del español á/é/í/ó/ú, que son ortografía correcta y se
 esperan en un texto real en español). `expectedBaseChar()` en
-`app.js` quita el acento antes de buscar el dedo/tecla en pantalla,
+`js/sequence.js` quita el acento antes de buscar el dedo/tecla en pantalla,
 ya que no hay una tecla `é` aparte — es la `e` compuesta con la tecla
 muerta del acento, la misma idea que una mayúscula resolviendo a su
 letra base. Evita igualmente `¡`, `¿`, `!` y `?`: a diferencia de los
@@ -358,8 +357,9 @@ reutiliza como clave de finalización/progreso (`'template_' + id`).
 
 Cada finalización (una lección, el juego de palabras, el numérico o el
 reto de "todas las teclas") añade `App.i18n.t('transferMessage')` al
-mensaje de celebración de cierre (`celebrateWithTransfer()` en
-`app.js`) — una frase corta que conecta el ejercicio con escribir
+mensaje de celebración de cierre (en el reto, `celebrateWithTransfer()` en
+`js/challenge.js`; en el resto de modos, `endSequence()` en `js/sequence.js`) —
+una frase corta que conecta el ejercicio con escribir
 mensajes reales en un ordenador real. Esta actividad no tiene una
 pantalla separada de "ronda completada", así que la frase vive en el
 propio texto de la superposición de celebración, no en un elemento del
@@ -392,7 +392,7 @@ envuelta en el mismo patrón try/catch por si el modo privado falla) y
 aplica `options.theme`/`.textSize`/`.focusMode` a `<html>` antes
 del primer paint — si no, la página parpadearía con el tema/tamaño de
 texto/tipografía por defecto un instante antes de que
-`app.js#applyOptions()` se ejecute en `DOMContentLoaded`. El modo
+`js/settings.js#applyOptions()` se ejecute en `DOMContentLoaded`. El modo
 foco usa el selector `html.focus-mode` (no `body.focus-mode`)
 precisamente para que este script pre-paint pueda activarlo antes de
 que exista el `<body>`.
@@ -442,7 +442,7 @@ El contrato vive entero en `feedback.js`: `DEFAULT_REST_MINUTES` (20), el
 rango `REST_MIN`/`REST_MAX` (1 a 240 minutos) y el propio aviso. Se
 exportan en `App.feedback` junto con `normaliseRestMinutes()`, la única
 regla que decide qué es un intervalo válido, y esa función la usan las tres
-parties: `app.js` al normalizar lo guardado, el panel al confirmar lo
+parties: `js/core.js` al normalizar lo guardado, el panel al confirmar lo
 escrito y el propio contador al leerlo. Lo que no vale (campo vacío, valor
 a medio escribir, algo de una versión anterior o un `localStorage` tocado a
 mano) vuelve al predeterminado; lo que se sale del rango se acerca al
@@ -494,7 +494,7 @@ aviso salta y pone el contador a cero, el reloj vuelve a cero en el mismo
 instante. `practiceSeconds()` solo devuelve segundos enteros; quien lo llama
 vuelve a leerlo con su propio temporizador.
 
-En `app.js` el reloj son dos funciones que no deben separarse:
+En `js/settings.js` el reloj son dos funciones que no deben separarse:
 `paintSessionTimer()` es dueña de lo que hay en pantalla (y, en la rama de
 "apagado", también de quitarlo), y `ensureTimerTicking()` decide si hay
 alguien preguntando que cambie. `ensureTimerTicking()` pinta **antes** de
@@ -505,7 +505,7 @@ de dejar un reloj corriendo detrás de un elemento oculto.
 
 El elemento es `role="timer"` con `aria-live="off"`: un número que cambia
 cada segundo no debe leerse en voz alta en cada cambio (WCAG 4.1.3), pero
-sí debe tener nombre, así que `app.js` escribe un `aria-label` desde
+sí debe tener nombre, así que `js/settings.js` escribe un `aria-label` desde
 `sessionTimerAria` junto al texto visible. Su color es
 `--color-text-soft`, no `--color-star`: la estrella es un logro y el reloj
 es información, y no debe leerse como un segundo premio en competencia.
@@ -579,6 +579,97 @@ siguiente pulsación.
 
 ---
 
+### 2.9 Convenciones de código de `js/` y `app.js`
+
+Estas reglas mantienen legible la división en módulos. Salen del código
+real: si una deja de cumplirse, corrige la regla o el código, no las dos
+cosas a medias.
+
+**Forma de un módulo.** Cada archivo de `js/` empieza con la cabecera de
+comentario (propósito, referencia a esta sección, cómo comparte estado) y
+es un único IIFE en modo estricto que recibe `window.Teclatlon`:
+
+```js
+(function (T) {
+  'use strict';
+  var S = T.store;
+  var $ = App.utils.$;
+  var $$ = App.utils.$$;
+  // ... funciones del módulo ...
+  T.nombrePublico = nombrePublico;   // solo lo que usan otros módulos o app.js
+})(window.Teclatlon);
+```
+
+Solo `core.js` crea el espacio compartido (`T.store`); los demás lo
+reciben. Los alias `S`, `$` y `$$` se declaran únicamente si el módulo
+los usa.
+
+**Estilo.** ES5: `var`, `function`, comillas simples; sin `const`, `let`,
+funciones flecha ni plantillas de cadena. Es el mismo estilo que el resto
+de la base (`assets/js/`). Sin ES modules ni bundler: la app debe funcionar
+desde `file://`.
+
+**Estado.**
+
+- Lee y escribe siempre a través de `S` (`S.state`, `S.game`). No guardes
+  una referencia a `S.state` en una variable del módulo: una reasignación
+  la dejaría obsoleta.
+- Reasigna `S.state` solo en dos sitios: la migración de arranque
+  (`core.js`) y el reset de «Borrar mi progreso» (`app.js`). En el resto de
+  casos, modifica campos.
+- Tras cambiar `S.state` llama a `T.save()`. `award` y `achieve` ya guardan
+  por su cuenta.
+- Si otro módulo debe poder cancelar un temporizador (por ejemplo, salir de
+  una partida), guárdalo en `S` (`S.dictationTimer`). Un temporizador que
+  solo usa su propio módulo se queda local, como el reloj de práctica
+  (`timerIntervalId` en `settings.js`).
+
+**Dependencias entre módulos.**
+
+- Llama a otro módulo como `T.nombre(...)` en el momento de ejecutarse, no
+  al cargar. Así el orden de los `<script>` solo importa para el código que
+  corre al cargar.
+- Todo lo que llame otro módulo tiene que estar exportado en `T`. Antes de
+  quitar o renombrar un export, busca `T.nombre` en `js/` y `app.js`.
+  `scripts/check.js` no lo comprueba.
+- El código que corre al cargar (cablear listeners y botones) puede usar
+  `App.*`, `DATA` y los módulos anteriores en el orden de `index.html`.
+  `app.js` siempre es el último.
+- La entrada del teclado físico es única: solo `keyboard-input.js` escucha
+  `keydown`/`keyup` del documento y reenvía cada pulsación a `T.gameKey`,
+  `T.challengeKey` o `T.dictationKey`, según el modo activo.
+
+**Textos y DOM.**
+
+- Los textos visibles salen solo de `App.i18n.t('clave')`, con
+  `.replace('{n}', valor)` para los placeholders. Cada clave existe en los
+  dos `strings.*.js` (§3).
+- Las pantallas se cambian con `T.showScreen(id)`. Mostrar u ocultar un
+  elemento se hace con la clase `hidden` (`classList.toggle`), no con
+  `style.display`.
+- `innerHTML` solo recibe marcado fijo o cadenas vacías (las estrellas del
+  reto, el SVG de las manos). Nunca texto que venga del usuario: para eso,
+  `textContent`.
+
+**Comentarios.** En inglés, igual que el resto del código (§B.2 de
+`CLAUDE.md`).
+
+**Código en reserva.** Las métricas en vivo (`startMetrics`,
+`updateLiveMetrics`, `state.metrics`) se conservan a propósito para una
+función futura. El comentario de `sequence.js` dice qué falta para
+activarlas. Antes de quitar código que parezca sin uso, mira si está en esa
+lista.
+
+**Añadir un módulo nuevo.**
+
+1. Crea `js/<nombre>.js` con la cabecera y el IIFE de arriba.
+2. Añade `<script src="js/<nombre>.js"></script>` en `index.html`, después
+   de sus dependencias y antes de `app.js`.
+3. Añade la ruta a `FILES` en `sw.js` y sube `VERSION`.
+4. Ejecuta `node scripts/check.js`. Comprueba la sintaxis y que la ruta esté
+   en `FILES`.
+5. Actualiza la tabla de §2.2 y el árbol de §2.
+
 ## 3. Internacionalización
 
 Arquitectura multilingüe que sale al mercado con el **par base**
@@ -596,7 +687,7 @@ Mismo patrón multi-archivo que Apptonomia: `strings.es.js` y
 (ver `index.html`), y `App.i18n.locale()` decide cuál está activo.
 `scripts/check.js` comprueba la paridad de claves entre ambos archivos
 (la app raíz y `legal/`). Los placeholders entre llaves (`'{n} veces'`)
-se sustituyen en `app.js` con `.replace('{n}', valor)`.
+se sustituyen en el código de `js/` y `app.js` con `.replace('{n}', valor)`.
 
 Claves comunes ya registradas en `core.*` en `assets/js/i18n.js` (no las
 redefinas en `strings.<locale>.js`): `back`, `understood`, `listen`,
@@ -657,7 +748,8 @@ node scripts/check.js
 
 `scripts/check.js` comprueba: que cada archivo `.js` sea válido, que
 `strings.es.js` y `strings.en.js` tengan las mismas claves (app raíz y
-`legal/`), que cada ruta de `FILES` en `sw.js` exista en disco, y
+`legal/`), que cada ruta de `FILES` en `sw.js` exista en disco, que cada módulo de
+`js/` esté en `FILES` (si no, funcionaría online y fallaría sin conexión), y
 que cada icono de `manifest.json` exista. La CI
 (`.github/workflows/validate.yml`) ejecuta el mismo comando en cada
 push y pull request.
@@ -1049,7 +1141,7 @@ justificación canónica).
 | `i18n.js` | `App.i18n.{locale, setLocale, lang, register, t, pick, apply, SUPPORTED, DEFAULT_LOCALE, LABEL, FLAG}` | cada página |
 | `tts.js` | `App.tts.speak` | solo páginas que leen en voz alta (la mayoría) |
 | `storage.js` | `App.storage.{get, set, remove}` | solo páginas que leen o escriben `localStorage` (`index.html`, `config/`) |
-| `feedback.js` | `App.feedback.{success, encourage, celebrate}` | solo el `app.js` de la actividad |
+| `feedback.js` | `App.feedback.{success, encourage, celebrate}` | solo el código de la actividad (`js/` y `app.js`) |
 
 El orden de carga es `utils.js → i18n.js → tts.js → storage.js →
 feedback.js → strings.<locale>.js → data.js → app.js`. `i18n.js`

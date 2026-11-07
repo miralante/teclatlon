@@ -67,7 +67,7 @@ difficulty.
    challenge, free writing, dictation) must add up to that coverage; a lesson
    that only ever drills the new letters it introduces is incomplete.
    See [`technical.md` §"Sequence-game engine"](technical.md) for
-   the runtime hook (`buildLessonReview` in `app.js`) that appends a
+   the runtime hook (`buildLessonReview` in `js/modes.js`) that appends a
    review step at the end of each lesson so the accumulated coverage
    is enforced at play time.
 8. **Persuasive communication in service of learning** (closed list
@@ -202,7 +202,7 @@ surfaces is neither necessary nor respectful of the audience —
 ## 5.1 Accessibility & game settings panel (mandatory)
 
 Every configuration lives in `state.options` (localStorage) and is
-applied at startup (`applyOptions()` in `app.js`). Everything is off
+applied at startup (`applyOptions()` in `js/settings.js`). Everything is off
 by default: each person decides what helps them.
 
 The panel is a lateral drawer (`#settingsDrawer`), opened from a gear
