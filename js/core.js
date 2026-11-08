@@ -139,7 +139,13 @@
   }
 
   function updateStars() {
-    $('#stars').textContent = '⭐ ' + S.state.stars;
+    var starsEl = $('#stars');
+    starsEl.textContent = '⭐ ' + S.state.stars;
+    // Achievements (every 10) and the next goal (ends in 5): one engine for the suite.
+    window.MiralanteStars.goal(starsEl, S.state.stars, {
+      reached: App.i18n.t('starsReached'),
+      goal: App.i18n.t('starsGoal')
+    });
   }
 
   function award(key) {

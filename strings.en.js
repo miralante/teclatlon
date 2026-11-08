@@ -69,6 +69,8 @@
     "freeAreaAria": "Type anything you like here",
     "freeAreaPlaceholder": "Type here...",
     "wellDone": "Well done!",
+    "starsReached": "You already have {n} stars",
+    "starsGoal": "Go for {n} stars",
     "wellDoneWithName": "Well done, {name}!",
     "typeYourName": "Type your name.",
     "typeTheWord": "Type the word.",

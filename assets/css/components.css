@@ -123,6 +123,13 @@
   color: var(--color-star);
 }
 
+/* Next goal under the stars counter (stars-engine.js). */
+.stars-goal {
+  display: block;
+  font-size: 0.9em;
+  font-weight: 600;
+}
+
 /* ---- Practice clock ---- */
 /* Same shape as .stars, because it sits beside it and is the same kind
    of thing — one fact about this session. A different colour on purpose:

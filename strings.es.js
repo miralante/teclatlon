@@ -69,6 +69,8 @@
     "freeAreaAria": "Escribe aquí lo que quieras",
     "freeAreaPlaceholder": "Escribe aquí...",
     "wellDone": "¡Muy bien!",
+    "starsReached": "Ya tienes {n} estrellas",
+    "starsGoal": "A por las {n} estrellas",
     "wellDoneWithName": "¡Muy bien, {name}!",
     "typeYourName": "Escribe tu nombre.",
     "typeTheWord": "Escribe la palabra.",
