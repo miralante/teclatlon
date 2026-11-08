@@ -1,0 +1,21 @@
+# .gitattributes — line endings and binary files.
+#
+# Text files are stored and served with LF, whatever the machine's
+# core.autocrlf setting, so every checkout (Windows, Linux, CI) produces the
+# same bytes. Asset tokens (?v=) depend on those bytes, which is why this
+# matches calculia and memofun. Images and fonts are marked binary so git
+# never rewrites their bytes.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.pdf binary
+*.zip binary
