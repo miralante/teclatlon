@@ -60,6 +60,21 @@ The typing workspace may remain desktop-oriented because Teclatlon requires
 a physical keyboard; its mobile gate is intentional. Check 320px, 375px,
 768px and desktop for every other layout.
 
+## Shared components: one definition (suite-wide)
+
+A component that several pages or activities use is defined once, in the
+app's shared stylesheet, and never copied into a page's own stylesheet. A
+page's own stylesheet holds only what is specific to it (a picture, a grid,
+a symbol). Copies drift apart without anybody noticing: the same control ends
+up in a different place on each page, and every copy is valid CSS, so no check
+fails. A component used by two pages moves to the shared sheet in the same
+change. This app keeps its shared stylesheet in `assets/css/components.css`.
+
+Where an app has a shared component, it documents it in its design guide and
+guards it with a check. Calculia is the reference: the explanation carousel
+and the test sheet live in `assets/css/components.css` (`doc/en/design.md`
+§3.3–3.4), and `scripts/checks/design.js` (check 18) fails on a second copy.
+
 ## Block A — Workflow
 
 ### A.1 Canonical sources
