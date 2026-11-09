@@ -1,215 +1,101 @@
-﻿/* ==========================================================================
-   Teclatlon — Subpages (/legal and /about) stylesheet
-   Consolidated from the previous standalone legal/styles.css and
-   about/styles.css after the SPA merge on 2026-09. Rules are scoped
-   by the .legal-page / .legal-page ancestor selectors so they don't
-   collide with the main app's selectors (which used the same class
-   names by accident — .cabecera-* was reused on the landing page).
+/* ==========================================================================
+   Suite legal/ stylesheet — plantilla canónica (Apptonomia). Protección de datos.
 
-   Tokens come from assets/css/tokens.css. Adding new rules: prefer
-   the existing token palette; do not introduce hardcoded colours.
+   Derivada de la hoja About (doc/templates/about/styles.css): misma estructura,
+   mismas variables --about-* (se llaman así por compatibilidad), con el ámbito
+   .legal y las clases header-legal / logo-legal. Idéntica en las apps que
+   tienen Protección de datos (legal/styles.css). Cambia aquí y copia a las apps.
    ========================================================================== */
 
+.legal {
+  --about-bg: var(--color-bg, var(--color-fondo, #FAF7F2));
+  --about-surface: var(--color-surface, var(--color-superficie, #FFFFFF));
+  --about-text: var(--color-text, var(--color-texto, #1A1A2E));
+  --about-text-soft: var(--color-text-soft, var(--color-texto-suave, #4A4A68));
+  --about-border: var(--color-border, var(--color-borde, #D8D2C8));
+  --about-focus: var(--color-focus, var(--color-foco, #1B6CA8));
+  --about-accent: var(--accent, var(--acento, #2E7D32));
+  --about-radius: var(--radius, var(--radio, 16px));
+  --about-space: var(--space, var(--espacio, 16px));
+  --about-small: var(--text-small, var(--texto-pequeno, 1rem));
+  --about-base: var(--text-base, var(--texto-base, 1.2rem));
+  --about-large: var(--text-large, var(--texto-grande, 1.6rem));
+  --about-title: var(--text-title, var(--texto-titulo, 2.4rem));
+  max-width: 880px;
+}
 
-/* ----- legal ----------------------------------------------------------- */
-
-.legal-page { max-width: 880px; }
-
-.legal-page .cabecera { padding: var(--space-large) 0 var(--space-large); text-align: center; }
-.legal-page .cabecera h1 {
-  font-size: var(--text-title);
-  margin: 8px 0 0;
+/* Cabecera tipo manifiesto ------------------------------------------------- */
+.legal .header-legal { padding: 24px 0 var(--about-space); text-align: center; }
+.legal .header-legal h1 {
+  font-size: var(--about-title);
+  margin: 12px 0 0;
   letter-spacing: -0.02em;
 }
-.legal-page .lema {
-  font-size: var(--text-large);
+.legal .header-legal .tagline {
+  font-size: var(--about-large);
   font-weight: 700;
-  color: var(--color-text-soft);
+  color: var(--about-text-soft);
   margin: 8px 0 0;
 }
-.legal-page .entradilla {
-  font-size: var(--text-base);
+.legal .header-legal .lead {
+  font-size: var(--about-base);
   max-width: 640px;
-  margin: var(--space) auto 0;
-  color: var(--color-text);
+  margin: var(--about-space) auto 0;
+  color: var(--about-text);
 }
-.legal-page .logo { margin-top: 8px; }
-
-.legal-page .indice {
-  display: flex; flex-wrap: wrap; gap: 8px;
-  justify-content: center; margin-top: var(--space);
-}
-.legal-page .indice a {
-  padding: 10px var(--space); border-radius: var(--radius);
-  background: var(--color-surface); border: 2px solid var(--color-border);
-  color: var(--color-text); text-decoration: none;
-  font-size: var(--text-small); font-weight: 700;
-}
-.legal-page .indice a:hover,
-.legal-page .indice a:focus { border-color: var(--color-focus); }
-
-.legal-page section { padding: var(--space-large); }
-.legal-page section h2 { margin-bottom: 12px; }
-.legal-page section ul { padding-left: var(--space-large); }
-.legal-page section li { margin-bottom: 8px; }
-.legal-page section code {
-  background: var(--color-bg); padding: 2px 6px; border-radius: 6px;
-  font-size: 0.95em; border: 1px solid var(--color-border);
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
-}
-
-.legal-page .pie {
-  display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space);
-  padding: var(--space-large) 0 40px;
-}
-
-@media (max-width: 640px) {
-  .legal-page .cabecera h1 { font-size: 2em; }
-  .legal-page .lema { font-size: 1.2em; }
-  .legal-page section { padding: var(--space); }
-}
-
-
-/* ----- about ----------------------------------------------------------- */
-
-.legal-page { max-width: 880px; }
-
-.legal-page .cabecera { padding: var(--space-large) 0 var(--space-large); text-align: center; }
-.legal-page .cabecera h1 {
-  font-size: var(--text-title);
-  margin: 8px 0 0;
-  letter-spacing: -0.02em;
-}
-.legal-page .lema {
-  font-size: var(--text-large);
+.legal .eyebrow {
+  font-size: var(--about-small);
   font-weight: 700;
-  color: var(--color-text-soft);
-  margin: 8px 0 0;
+  color: var(--about-text-soft);
+  margin: 0;
 }
-.legal-page .entradilla {
-  font-size: var(--text-base);
-  max-width: 640px;
-  margin: var(--space) auto 0;
-  color: var(--color-text);
-}
-.legal-page .logo { margin-top: 8px; }
+.legal .logo-legal { margin-top: 8px; font-size: 64px; line-height: 1; }
+.legal img.logo-legal { width: 80px; height: 80px; }
 
-.legal-page .aviso-ruta {
-  display: inline-block; padding: 8px var(--space);
-  background: var(--accent-soft); color: var(--color-text);
-  border: 2px solid var(--accent); border-radius: var(--radius);
-  font-size: var(--text-small); font-weight: 700;
-  margin-bottom: var(--space);
+.legal .aviso-ruta {
+  display: inline-block; padding: 8px 16px;
+  background: var(--about-surface); color: var(--about-text);
+  border: 2px solid var(--about-focus); border-radius: var(--about-radius);
+  font-size: var(--about-small); font-weight: 700;
+  margin-bottom: var(--about-space);
 }
 
-.legal-page .indice {
-  display: flex; flex-wrap: wrap; gap: 8px;
-  justify-content: center; margin-top: var(--space);
+/* Índice de la página ------------------------------------------------------ */
+.legal .indice { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: var(--about-space); }
+.legal .indice a {
+  padding: 10px 16px; border-radius: var(--about-radius);
+  background: var(--about-surface); border: 2px solid var(--about-border);
+  color: var(--about-text); text-decoration: none;
+  font-size: var(--about-small); font-weight: 700;
 }
-.legal-page .indice a {
-  padding: 10px var(--space); border-radius: var(--radius);
-  background: var(--color-surface); border: 2px solid var(--color-border);
-  color: var(--color-text); text-decoration: none;
-  font-size: var(--text-small); font-weight: 700;
-}
-.legal-page .indice a:hover,
-.legal-page .indice a:focus { border-color: var(--color-focus); }
+.legal .indice a:hover, .legal .indice a:focus { border-color: var(--about-focus); }
 
-.legal-page section { padding: var(--space-large); }
-.legal-page section h2 { margin-bottom: 12px; }
-.legal-page section ul { padding-left: var(--space-large); }
-.legal-page section li { margin-bottom: 8px; }
-.legal-page section em { color: var(--color-text-soft); }
-.legal-page section code {
-  background: var(--color-bg); padding: 2px 6px; border-radius: 6px;
-  font-size: 0.95em; border: 1px solid var(--color-border);
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+/* Secciones como cards ----------------------------------------------------- */
+.legal section { padding: var(--about-space); margin-bottom: 24px; }
+.legal section h2 { margin-bottom: 12px; }
+.legal section ul, .legal section ol { padding-left: 24px; }
+.legal section li { margin-bottom: 8px; }
+.legal section em { color: var(--about-text-soft); }
+.legal section code {
+  background: var(--about-bg); padding: 2px 6px; border-radius: 6px;
+  font-size: 0.95em; border: 1px solid var(--about-border);
 }
 
-.legal-page .principios-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: var(--space);
-}
-.legal-page .principio {
-  border-left: 8px solid var(--acento, var(--accent));
-  padding: var(--space-large);
-  background: var(--color-surface);
-  border-radius: var(--radius);
-  border-top: 1px solid var(--color-border);
-  border-right: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
-}
-.legal-page .principio h3 { color: var(--acento, var(--accent)); margin-bottom: 8px; }
-.legal-page .principio p { color: var(--color-text); }
+/* Listas propias de la app (Cómo se usa, Para quién es, Temas) ------------- */
+.legal .pasos { margin: 0; padding-left: 24px; display: grid; gap: 12px; }
+.legal .pasos h3 { font-size: inherit; margin: 0 0 4px; }
+.legal .pasos p { margin: 0; }
+.legal .lista { margin: 0; padding-left: 24px; display: grid; gap: 8px; }
 
-.legal-page .areas-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--space);
-  margin-top: var(--space);
-}
-.legal-page .area {
-  padding: var(--space-large);
-  border-left: 8px solid var(--acento, var(--accent));
-  background: var(--color-surface);
-  border-radius: var(--radius);
-  border-top: 1px solid var(--color-border);
-  border-right: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
-}
-.legal-page .area h3 { color: var(--acento, var(--accent)); margin-bottom: 6px; font-size: 1.1em; }
-.legal-page .area p { color: var(--color-text); margin-bottom: 4px; }
-.legal-page .area-cifra {
-  margin-top: 12px;
-  font-weight: 700;
-  color: var(--color-text-soft);
-}
-.legal-page .nota-cifras {
-  margin-top: var(--space);
-  text-align: center;
-  color: var(--color-text-soft);
-  font-size: var(--text-small);
+/* Footer -------------------------------------------------------------------- */
+.legal .pie-about {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: var(--about-space);
+  padding: var(--about-space) 0 40px;
 }
 
-.legal-page .siblings-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: var(--space);
-  margin-top: var(--space);
-}
-.legal-page .sibling {
-  display: flex;
-  align-items: center;
-  gap: var(--space);
-  padding: var(--space);
-  background: var(--color-surface);
-  border: 3px solid var(--color-border);
-  border-radius: var(--radius);
-  text-decoration: none;
-  color: var(--color-text);
-  transition: border-color 0.15s ease, transform 0.15s ease;
-}
-.legal-page .sibling:hover,
-.legal-page .sibling:focus-visible {
-  border-color: var(--accent);
-  transform: scale(1.02);
-}
-.legal-page .sibling .picto { font-size: 36px; flex-shrink: 0; }
-.legal-page .sibling-texto { display: flex; flex-direction: column; gap: 2px; flex: 1; }
-.legal-page .sibling .nombre { font-weight: 800; color: var(--accent); }
-.legal-page .sibling .detalle { font-size: var(--text-small); color: var(--color-text-soft); }
-.legal-page .sibling .flecha-externa { font-size: 1.2em; color: var(--color-text-soft); flex-shrink: 0; }
-
-.legal-page .pie {
-  display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space);
-  padding: var(--space-large) 0 40px;
-}
-
+/* Móvil --------------------------------------------------------------------- */
 @media (max-width: 640px) {
-  .legal-page .cabecera h1 { font-size: 2em; }
-  .legal-page .lema { font-size: 1.2em; }
-  .legal-page section { padding: var(--space); }
-  .legal-page .principios-grid,
-  .legal-page .areas-grid { grid-template-columns: 1fr; }
+  .legal .header-legal h1 { font-size: 2em; }
+  .legal .header-legal .tagline { font-size: 1.2em; }
+  .legal section { padding: var(--about-space); }
 }

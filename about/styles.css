@@ -1,215 +1,184 @@
-﻿/* ==========================================================================
-   Teclatlon — Subpages (/legal and /about) stylesheet
-   Consolidated from the previous standalone legal/styles.css and
-   about/styles.css after the SPA merge on 2026-09. Rules are scoped
-   by the .about-page / .about-page ancestor selectors so they don't
-   collide with the main app's selectors (which used the same class
-   names by accident — .cabecera-* was reused on the landing page).
+/* ==========================================================================
+   Suite about/ stylesheet — plantilla canónica (Apptonomia)
 
-   Tokens come from assets/css/tokens.css. Adding new rules: prefer
-   the existing token palette; do not introduce hardcoded colours.
+   Esta hoja es IDÉNTICA en todas las apps de la suite: se copia tal cual a
+   <app>/about/styles.css. No la edites dentro de una app: cambia la plantilla
+   y cópiala a todas (scripts/check-about-css.js avisa si hay desvío).
+
+   Vocabulario: solo variables --about-* (abajo). Cada app define sus tokens
+   en assets/css/tokens.css con nombres EN (--color-text, --space…) o ES
+   (--color-texto, --espacio…); la cadena de fallback toma el primero que
+   exista y, si ninguno, un valor de respaldo. Nada de hex fijos fuera de
+   esos respaldos.
+
+   Clases estándar del About (todas las apps): container.about, header-about
+   (.tagline, .lead, .logo-about, .aviso-ruta, .eyebrow opcional), nav.indice,
+   main.stack > section.card, .principios-grid > .principio[style="--acento…"],
+   .areas-grid > .area (.area-cifra), .nota-cifras, .pasos, .lista,
+   .siblings-grid > a.sibling (.picto, .sibling-texto > .nombre + .detalle,
+   .flecha-externa), footer.pie-about.
    ========================================================================== */
 
+.about {
+  --about-bg: var(--color-bg, var(--color-fondo, #FAF7F2));
+  --about-surface: var(--color-surface, var(--color-superficie, #FFFFFF));
+  --about-text: var(--color-text, var(--color-texto, #1A1A2E));
+  --about-text-soft: var(--color-text-soft, var(--color-texto-suave, #4A4A68));
+  --about-border: var(--color-border, var(--color-borde, #D8D2C8));
+  --about-focus: var(--color-focus, var(--color-foco, #1B6CA8));
+  --about-accent: var(--accent, var(--acento, #2E7D32));
+  --about-radius: var(--radius, var(--radio, 16px));
+  --about-space: var(--space, var(--espacio, 16px));
+  --about-small: var(--text-small, var(--texto-pequeno, 1rem));
+  --about-base: var(--text-base, var(--texto-base, 1.2rem));
+  --about-large: var(--text-large, var(--texto-grande, 1.6rem));
+  --about-title: var(--text-title, var(--texto-titulo, 2.4rem));
+  max-width: 880px;
+}
 
-/* ----- legal ----------------------------------------------------------- */
-
-.about-page { max-width: 880px; }
-
-.about-page .cabecera { padding: var(--space-large) 0 var(--space-large); text-align: center; }
-.about-page .cabecera h1 {
-  font-size: var(--text-title);
-  margin: 8px 0 0;
+/* Cabecera tipo manifiesto ------------------------------------------------- */
+.about .header-about { padding: 24px 0 var(--about-space); text-align: center; }
+.about .header-about h1 {
+  font-size: var(--about-title);
+  margin: 12px 0 0;
   letter-spacing: -0.02em;
 }
-.about-page .lema {
-  font-size: var(--text-large);
+.about .header-about .tagline {
+  font-size: var(--about-large);
   font-weight: 700;
-  color: var(--color-text-soft);
+  color: var(--about-text-soft);
   margin: 8px 0 0;
 }
-.about-page .entradilla {
-  font-size: var(--text-base);
+.about .header-about .lead {
+  font-size: var(--about-base);
   max-width: 640px;
-  margin: var(--space) auto 0;
-  color: var(--color-text);
+  margin: var(--about-space) auto 0;
+  color: var(--about-text);
 }
-.about-page .logo { margin-top: 8px; }
-
-.about-page .indice {
-  display: flex; flex-wrap: wrap; gap: 8px;
-  justify-content: center; margin-top: var(--space);
-}
-.about-page .indice a {
-  padding: 10px var(--space); border-radius: var(--radius);
-  background: var(--color-surface); border: 2px solid var(--color-border);
-  color: var(--color-text); text-decoration: none;
-  font-size: var(--text-small); font-weight: 700;
-}
-.about-page .indice a:hover,
-.about-page .indice a:focus { border-color: var(--color-focus); }
-
-.about-page section { padding: var(--space-large); }
-.about-page section h2 { margin-bottom: 12px; }
-.about-page section ul { padding-left: var(--space-large); }
-.about-page section li { margin-bottom: 8px; }
-.about-page section code {
-  background: var(--color-bg); padding: 2px 6px; border-radius: 6px;
-  font-size: 0.95em; border: 1px solid var(--color-border);
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
-}
-
-.about-page .pie {
-  display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space);
-  padding: var(--space-large) 0 40px;
-}
-
-@media (max-width: 640px) {
-  .about-page .cabecera h1 { font-size: 2em; }
-  .about-page .lema { font-size: 1.2em; }
-  .about-page section { padding: var(--space); }
-}
-
-
-/* ----- about ----------------------------------------------------------- */
-
-.about-page { max-width: 880px; }
-
-.about-page .cabecera { padding: var(--space-large) 0 var(--space-large); text-align: center; }
-.about-page .cabecera h1 {
-  font-size: var(--text-title);
-  margin: 8px 0 0;
-  letter-spacing: -0.02em;
-}
-.about-page .lema {
-  font-size: var(--text-large);
+.about .eyebrow {
+  font-size: var(--about-small);
   font-weight: 700;
-  color: var(--color-text-soft);
-  margin: 8px 0 0;
+  color: var(--about-text-soft);
+  margin: 0;
 }
-.about-page .entradilla {
-  font-size: var(--text-base);
-  max-width: 640px;
-  margin: var(--space) auto 0;
-  color: var(--color-text);
-}
-.about-page .logo { margin-top: 8px; }
+.about .logo-about { margin-top: 8px; font-size: 64px; line-height: 1; }
+.about img.logo-about { width: 80px; height: 80px; }
 
-.about-page .aviso-ruta {
-  display: inline-block; padding: 8px var(--space);
-  background: var(--accent-soft); color: var(--color-text);
-  border: 2px solid var(--accent); border-radius: var(--radius);
-  font-size: var(--text-small); font-weight: 700;
-  margin-bottom: var(--space);
+.about .aviso-ruta {
+  display: inline-block; padding: 8px 16px;
+  background: var(--about-surface); color: var(--about-text);
+  border: 2px solid var(--about-focus); border-radius: var(--about-radius);
+  font-size: var(--about-small); font-weight: 700;
+  margin-bottom: var(--about-space);
 }
 
-.about-page .indice {
-  display: flex; flex-wrap: wrap; gap: 8px;
-  justify-content: center; margin-top: var(--space);
+/* Índice de la página ------------------------------------------------------ */
+.about .indice { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: var(--about-space); }
+.about .indice a {
+  padding: 10px 16px; border-radius: var(--about-radius);
+  background: var(--about-surface); border: 2px solid var(--about-border);
+  color: var(--about-text); text-decoration: none;
+  font-size: var(--about-small); font-weight: 700;
 }
-.about-page .indice a {
-  padding: 10px var(--space); border-radius: var(--radius);
-  background: var(--color-surface); border: 2px solid var(--color-border);
-  color: var(--color-text); text-decoration: none;
-  font-size: var(--text-small); font-weight: 700;
-}
-.about-page .indice a:hover,
-.about-page .indice a:focus { border-color: var(--color-focus); }
+.about .indice a:hover, .about .indice a:focus { border-color: var(--about-focus); }
 
-.about-page section { padding: var(--space-large); }
-.about-page section h2 { margin-bottom: 12px; }
-.about-page section ul { padding-left: var(--space-large); }
-.about-page section li { margin-bottom: 8px; }
-.about-page section em { color: var(--color-text-soft); }
-.about-page section code {
-  background: var(--color-bg); padding: 2px 6px; border-radius: 6px;
-  font-size: 0.95em; border: 1px solid var(--color-border);
-  font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+/* Secciones como cards ----------------------------------------------------- */
+.about section { padding: var(--about-space); margin-bottom: 24px; }
+.about section h2 { margin-bottom: 12px; }
+.about section ul, .about section ol { padding-left: 24px; }
+.about section li { margin-bottom: 8px; }
+.about section em { color: var(--about-text-soft); }
+.about section code {
+  background: var(--about-bg); padding: 2px 6px; border-radius: 6px;
+  font-size: 0.95em; border: 1px solid var(--about-border);
 }
 
-.about-page .principios-grid {
+/* Listas propias de la app (Cómo se usa, Para quién es, Temas) ------------- */
+.about .pasos { margin: 0; padding-left: 24px; display: grid; gap: 12px; }
+.about .pasos h3 { font-size: inherit; margin: 0 0 4px; }
+.about .pasos p { margin: 0; }
+.about .lista { margin: 0; padding-left: 24px; display: grid; gap: 8px; }
+
+/* Grid de principios ------------------------------------------------------- */
+.about .principios-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: var(--space);
+  gap: var(--about-space);
 }
-.about-page .principio {
-  border-left: 8px solid var(--acento, var(--accent));
-  padding: var(--space-large);
-  background: var(--color-surface);
-  border-radius: var(--radius);
-  border-top: 1px solid var(--color-border);
-  border-right: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
+.about .principio {
+  border-left: 8px solid var(--acento, var(--about-accent));
+  padding: var(--about-space);
+  background: var(--about-surface);
+  border-radius: var(--about-radius);
 }
-.about-page .principio h3 { color: var(--acento, var(--accent)); margin-bottom: 8px; }
-.about-page .principio p { color: var(--color-text); }
+.about .principio h3 { color: var(--acento, var(--about-accent)); margin-bottom: 8px; }
+.about .principio p { color: var(--about-text); }
 
-.about-page .areas-grid {
+/* Grid de áreas de trabajo ------------------------------------------------- */
+.about .areas-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--space);
-  margin-top: var(--space);
+  gap: var(--about-space);
+  margin-top: var(--about-space);
 }
-.about-page .area {
-  padding: var(--space-large);
-  border-left: 8px solid var(--acento, var(--accent));
-  background: var(--color-surface);
-  border-radius: var(--radius);
-  border-top: 1px solid var(--color-border);
-  border-right: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
+.about .area {
+  padding: var(--about-space);
+  border-left: 8px solid var(--acento, var(--about-accent));
+  background: var(--about-surface);
+  border-radius: var(--about-radius);
+  border-top: 1px solid var(--about-border);
+  border-right: 1px solid var(--about-border);
+  border-bottom: 1px solid var(--about-border);
 }
-.about-page .area h3 { color: var(--acento, var(--accent)); margin-bottom: 6px; font-size: 1.1em; }
-.about-page .area p { color: var(--color-text); margin-bottom: 4px; }
-.about-page .area-cifra {
-  margin-top: 12px;
-  font-weight: 700;
-  color: var(--color-text-soft);
-}
-.about-page .nota-cifras {
-  margin-top: var(--space);
+.about .area h3 { color: var(--acento, var(--about-accent)); margin-bottom: 6px; font-size: 1.1em; }
+.about .area p { color: var(--about-text); margin-bottom: 4px; }
+.about .area-cifra { margin-top: 12px; font-weight: 700; color: var(--about-text-soft); }
+.about .nota-cifras {
+  margin-top: var(--about-space);
   text-align: center;
-  color: var(--color-text-soft);
-  font-size: var(--text-small);
+  color: var(--about-text-soft);
+  font-size: var(--about-small);
 }
 
-.about-page .siblings-grid {
+/* Grid de proyectos hermanos ----------------------------------------------- */
+.about .siblings-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: var(--space);
-  margin-top: var(--space);
+  gap: var(--about-space);
+  margin-top: var(--about-space);
 }
-.about-page .sibling {
+.about .sibling {
   display: flex;
   align-items: center;
-  gap: var(--space);
-  padding: var(--space);
-  background: var(--color-surface);
-  border: 3px solid var(--color-border);
-  border-radius: var(--radius);
+  gap: var(--about-space);
+  padding: var(--about-space);
+  background: var(--about-surface);
+  border: 3px solid var(--about-border);
+  border-radius: var(--about-radius);
   text-decoration: none;
-  color: var(--color-text);
+  color: var(--about-text);
   transition: border-color 0.15s ease, transform 0.15s ease;
 }
-.about-page .sibling:hover,
-.about-page .sibling:focus-visible {
-  border-color: var(--accent);
+.about .sibling:hover, .about .sibling:focus-visible {
+  border-color: var(--about-focus);
   transform: scale(1.02);
 }
-.about-page .sibling .picto { font-size: 36px; flex-shrink: 0; }
-.about-page .sibling-texto { display: flex; flex-direction: column; gap: 2px; flex: 1; }
-.about-page .sibling .nombre { font-weight: 800; color: var(--accent); }
-.about-page .sibling .detalle { font-size: var(--text-small); color: var(--color-text-soft); }
-.about-page .sibling .flecha-externa { font-size: 1.2em; color: var(--color-text-soft); flex-shrink: 0; }
+.about .sibling .picto { font-size: 36px; flex-shrink: 0; }
+.about .sibling-texto { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.about .sibling .nombre { font-weight: 800; color: var(--about-focus); }
+.about .sibling .detalle { font-size: var(--about-small); color: var(--about-text-soft); }
+.about .sibling .flecha-externa { font-size: 1.2em; color: var(--about-text-soft); flex-shrink: 0; }
 
-.about-page .pie {
-  display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space);
-  padding: var(--space-large) 0 40px;
+/* Footer -------------------------------------------------------------------- */
+.about .pie-about {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: var(--about-space);
+  padding: var(--about-space) 0 40px;
 }
 
+/* Móvil --------------------------------------------------------------------- */
 @media (max-width: 640px) {
-  .about-page .cabecera h1 { font-size: 2em; }
-  .about-page .lema { font-size: 1.2em; }
-  .about-page section { padding: var(--space); }
-  .about-page .principios-grid,
-  .about-page .areas-grid { grid-template-columns: 1fr; }
+  .about .header-about h1 { font-size: 2em; }
+  .about .header-about .tagline { font-size: 1.2em; }
+  .about section { padding: var(--about-space); }
+  .about .principios-grid, .about .areas-grid, .about .siblings-grid { grid-template-columns: 1fr; }
 }

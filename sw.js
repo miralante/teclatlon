@@ -5,7 +5,7 @@
    and bump VERSION so the activate step purges the old cache.
    See CLOUDFLARE.md �"Cache contract" for the full contract.
    ============================================================ */
-var VERSION = 'teclatlon-v100';
+var VERSION = 'teclatlon-v108';
 
 var FILES = [
   './',
@@ -31,14 +31,14 @@ var FILES = [
   './config/styles.css',
   './config/strings.es.js',
   './config/strings.en.js',
-  /* legal/, about/ and team/ are standalone PWA pages. Each one is
+  /* legal/ and about/ are standalone PWA pages. Each one is
      a real HTML route (not a SPA fragment); they share the app
      tokens / base / components CSS and the i18n + utils helpers,
      and each ships its own strings pair. The page-specific rules
-     for these three live next to them, in legal/styles.css,
-     about/styles.css and team/styles.css (see the comment at the
-     top of those files for how they used to be merged into a
-     single assets/css/subpages.css under the SPA model). */
+     for these two live next to them, in legal/styles.css and
+     about/styles.css (see the comment at the top of those files
+     for how they used to be merged into a single
+     assets/css/subpages.css under the SPA model). */
   './legal/',
   './legal/styles.css',
   './legal/strings.es.js',
@@ -47,10 +47,6 @@ var FILES = [
   './about/styles.css',
   './about/strings.es.js',
   './about/strings.en.js',
-  './team/',
-  './team/styles.css',
-  './team/strings.es.js',
-  './team/strings.en.js',
   './assets/css/tokens.css',
   './assets/css/base.css',
   './assets/css/components.css',
