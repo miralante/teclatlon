@@ -52,7 +52,6 @@
     "collaborateTitle": "Cómo ayudar",
     "footerActivities": "Ir a la aplicación",
     "footerDataProtection": "Protección de datos",
-    "footerTeamGuide": "Quiénes la hacen",
     "footerSettings": "Ajustes",
     "lead1": "Teclatlon es una ",
     "lead2": " pensada para que cualquier persona, con o sin experiencia previa, aprenda a escribir con los diez dedos, sin presión y con respeto a su privacidad.",

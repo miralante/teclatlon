@@ -6,7 +6,7 @@
    (navigator.serviceWorker.controller stayed null in production).
 
    One file serves every route. The SW URL is resolved from this script's
-   own src, so /, /about/, /legal/, /team/, /config/ and /404.html all
+   own src, so /, /about/, /legal/, /config/ and /404.html all
    reach the same root sw.js without a per-page relative path. */
 (function () {
   'use strict';

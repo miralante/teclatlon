@@ -52,7 +52,6 @@
     "collaborateTitle": "How to help",
     "footerActivities": "Go to the app",
     "footerDataProtection": "Data protection",
-    "footerTeamGuide": "Who builds it",
     "footerSettings": "Settings",
     "lead1": "Teclatlon is a ",
     "lead2": " built so anyone, with or without prior experience, can learn to type with all ten fingers, without pressure and with respect for their privacy.",

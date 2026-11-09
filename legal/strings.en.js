@@ -24,7 +24,6 @@
     "dataTitle": "What we save and why",
     "footerActivities": "Go to the app",
     "footerAbout": "About this project",
-    "footerTeamGuide": "Who builds it",
     "footerSettings": "Settings",
     "lead": "Teclatlon does not ask for your personal data. Everything it saves lives only on this device. Here we explain, in detail, what we save and why.",
     "minorsP1": "Teclatlon is designed to be used autonomously by anyone, regardless of age or abilities, including those who are just starting to use a physical keyboard.",

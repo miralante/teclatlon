@@ -24,7 +24,6 @@
     "dataTitle": "Qué guardamos y por qué",
     "footerActivities": "Ir a la aplicación",
     "footerAbout": "Sobre este proyecto",
-    "footerTeamGuide": "Quiénes la hacen",
     "footerSettings": "Ajustes",
     "lead": "Teclatlon no pide tus datos personales. Todo lo que guarda vive únicamente en este dispositivo. Aquí explicamos, en detalle, qué guardamos y por qué.",
     "minorsP1": "Teclatlon está pensada para que la use de forma autónoma cualquier persona, sin importar su edad ni sus capacidades, incluidos quienes están empezando a usar el teclado físico por primera vez.",

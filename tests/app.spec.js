@@ -545,10 +545,9 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
   // -----------------------------------------------------------------
   // 9. FOOTER LINKS AND DATA
   // -----------------------------------------------------------------
-  test('9.1 — enlace Sobre la App lleva a about/', async ({ page }) => {
+  test('9.1 — enlace Sobre la App apunta a apptonomia.uk/about/', async ({ page }) => {
     page = await skipToMenu();
-    await page.locator('a.footer-link[href="about/"]').click();
-    await expect(page).toHaveURL(/about\/(index\.html)?$/);
+    await expect(page.locator('a.footer-link[href="https://apptonomia.uk/about/"]')).toHaveCount(1);
   });
 
   test('9.2 — enlace Legal lleva a legal/', async ({ page }) => {

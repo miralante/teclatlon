@@ -915,7 +915,6 @@ Every app exposes the same five folders:
     styles.css
     strings.es.js
     strings.en.js
-  team/                   # Hidden route: who builds it
     index.html
     styles.css
     strings.es.js
@@ -997,8 +996,6 @@ the **template**; deviations are called out where they apply.
          data-i18n="footerDataProtection">Protección de datos</a>
       <a class="btn btn-secundario" href="../about/"
          data-i18n="footerAbout">Sobre este proyecto</a>
-      <a class="btn btn-secundario" href="../team/"
-         data-i18n="footerTeamGuide">Quiénes la hacen</a>
       <a class="btn btn-secundario" href="../config/"
          data-i18n="footerSettings">Ajustes</a>
     </footer>
@@ -1068,7 +1065,6 @@ key parity between locales.
     /* …more keys… */
     footerActivities: 'Ir a la aplicación',
     footerAbout: 'Sobre este proyecto',
-    footerTeamGuide: 'Quiénes la hacen',
     footerSettings: 'Ajustes'
   }, 'es');
 })();
