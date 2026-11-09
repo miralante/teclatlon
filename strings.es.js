@@ -71,6 +71,7 @@
     "wellDone": "¡Muy bien!",
     "starsReached": "Ya tienes {n} estrellas",
     "starsGoal": "A por las {n} estrellas",
+    "starEarned": "¡Has conseguido una estrella!",
     "wellDoneWithName": "¡Muy bien, {name}!",
     "typeYourName": "Escribe tu nombre.",
     "typeTheWord": "Escribe la palabra.",

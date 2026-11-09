@@ -46,6 +46,7 @@
     if (focused && focused.tagName === 'BUTTON' && (e.key === ' ' || e.key === 'Enter' || e.key === 'Spacebar')) return;
     var ch = normalizeKey(e.key);
     if (!ch) return;
+    T.notePress(ch);
     T.flashKey(T.stripAccents(ch), true);
     if (focused && (focused.tagName === 'INPUT' || focused.tagName === 'TEXTAREA')) return;
     if (!S.game) return;

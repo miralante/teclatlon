@@ -71,6 +71,7 @@
     "wellDone": "Well done!",
     "starsReached": "You already have {n} stars",
     "starsGoal": "Go for {n} stars",
+    "starEarned": "You earned a star!",
     "wellDoneWithName": "Well done, {name}!",
     "typeYourName": "Type your name.",
     "typeTheWord": "Type the word.",

@@ -287,11 +287,16 @@
     }
     layer.querySelector('.message').textContent = message;
     layer.classList.remove('hidden');
-    var duration = (window.App.utils && window.App.utils.reducedMotion()) ? 1200 : 2000;
+    /* Timed by length so a long closing message (name, transfer line,
+       star progress) can actually be read. Returns the time it stays up,
+       so a caller with its own fallback timer can wait for it. */
+    var reduced = !!(window.App.utils && window.App.utils.reducedMotion());
+    var duration = Math.min(10000, (reduced ? 2500 : 3000) + String(message).length * 60);
     setTimeout(function () {
       layer.classList.add('hidden');
       if (after) after();
     }, duration);
+    return duration;
   }
 
   window.App.feedback = {

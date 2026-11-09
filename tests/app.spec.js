@@ -392,12 +392,13 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await expect(fingersButton).toHaveAttribute('aria-pressed', 'true');
   });
 
-  test('2.9 — logros: la página Sobre la App muestra las insignias', async ({ page }) => {
-    // Achievements moved out of the settings drawer into the About page.
+  test('2.9 — Sobre la App carga sin la sección de logros', async ({ page }) => {
+    // The achievements section left the About page (about/index.html has no
+    // #logros block and about/about.js is gone). About must still load and
+    // show its technical section, and must not render an empty badge grid.
     await page.goto('/about/index.html');
-    await expect(page.locator('#achievementsGrid')).toBeAttached();
-    const badges = page.locator('#achievementsGrid .achievement-badge');
-    await expect(badges).not.toHaveCount(0);
+    await expect(page.locator('h2[data-i18n="techTitle"]')).toBeAttached();
+    await expect(page.locator('#achievementsGrid')).toHaveCount(0);
   });
 
   // -----------------------------------------------------------------

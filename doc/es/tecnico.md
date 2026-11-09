@@ -365,7 +365,13 @@ una frase corta que conecta el ejercicio con escribir
 mensajes reales en un ordenador real. Esta actividad no tiene una
 pantalla separada de "ronda completada", así que la frase vive en el
 propio texto de la superposición de celebración, no en un elemento del
-DOM dedicado.
+DOM dedicado. La línea de estrellas de cierre (`T.starClosing(earned)` en
+`js/core.js`) se añade en cada finalización, no solo cuando la estrella es
+nueva: siempre muestra las estrellas que hay y la siguiente meta, con la
+frase "¡Has conseguido una estrella!" delante cuando se acaba de ganar una.
+`feedback.celebrate()` mantiene la superposición el tiempo que dura el
+mensaje (hasta 10 s) y devuelve ese tiempo, para que el texto de cierre
+dé tiempo a leerlo.
 
 ### 2.5 Gate "solo ordenador" y bootstrap pre-paint de i18n
 

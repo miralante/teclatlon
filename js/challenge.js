@@ -22,10 +22,11 @@
       completed = true;
       if (after) after();
     }
-    App.feedback.celebrate(T.finalMessage() + ' ' + App.i18n.t('transferMessage') + (earned ? ' ' + T.starLine() : ''), finish);
+    var shown = App.feedback.celebrate(T.finalMessage() + ' ' + App.i18n.t('transferMessage') + ' ' + T.starClosing(earned), finish);
     /* Keep navigation reliable if a browser suppresses the celebration
-       timer while a special-key event is being dispatched. */
-    setTimeout(finish, 2300);
+       timer while a special-key event is being dispatched. The fallback
+       waits as long as the message stays up, so it never cuts it short. */
+    setTimeout(finish, shown + 500);
   }
 
   /* ---------- Challenge: all keys ---------- */

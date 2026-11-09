@@ -136,20 +136,36 @@
     return finger.charAt(0) === 'l' ? 'rp' : 'lp';
   }
 
+  /* Space bar: the thumb to light is the one of the hand OPPOSITE the
+     hand that made the last keystroke. 'lth'/'rth' name a single thumb
+     in the hand guide; 'th' (both thumbs) is the fallback before any key
+     has been pressed. */
+  function notePress(ch) {
+    var f = fingerOf(T.stripAccents(ch));
+    if (!f || f === 'th') return;
+    S.lastHand = f.charAt(0) === 'l' ? 'l' : 'r';
+  }
+
+  function thumbFor() {
+    if (S.lastHand === 'l') return 'rth';
+    if (S.lastHand === 'r') return 'lth';
+    return 'th';
+  }
+
   /* ---------- Hand guide ---------- */
   function handsSVG(active, activeShift) {
     function finger(f, x, y, h) {
       var classes = 'finger f-' + f + (active === f ? ' active' : '') + (activeShift === f ? ' active-shift' : '');
       return '<rect class="' + classes + '" x="' + x + '" y="' + y + '" width="32" height="' + h + '" rx="15"/>';
     }
-    function thumb(x) {
-      var act = (active === 'th') ? ' active' : '';
+    function thumb(x, side) {
+      var act = (active === 'th' || active === side + 'th') ? ' active' : '';
       return '<rect class="finger f-th' + act + '" x="' + x + '" y="112" width="42" height="28" rx="14"/>';
     }
     return '<svg viewBox="0 0 405 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
       finger('lp', 0, 48, 60) + finger('lr', 38, 26, 82) + finger('lm', 76, 16, 92) + finger('li', 114, 26, 82) +
-      '<rect class="palm" x="0" y="96" width="146" height="70" rx="22"/>' + thumb(147) +
-      thumb(216) + finger('ri', 259, 26, 82) + finger('rm', 297, 16, 92) + finger('rr', 335, 26, 82) + finger('rp', 373, 48, 60) +
+      '<rect class="palm" x="0" y="96" width="146" height="70" rx="22"/>' + thumb(147, 'l') +
+      thumb(216, 'r') + finger('ri', 259, 26, 82) + finger('rm', 297, 16, 92) + finger('rr', 335, 26, 82) + finger('rp', 373, 48, 60) +
       '<rect class="palm" x="259" y="96" width="146" height="70" rx="22"/>' +
       '<text x="73" y="192">' + App.i18n.t('leftLabel') + '</text>' +
       '<text x="332" y="192">' + App.i18n.t('rightLabel') + '</text>' +
@@ -157,7 +173,7 @@
   }
 
   function renderHands(finger, shiftFinger) {
-    $('#handsSvg').innerHTML = handsSVG(finger, shiftFinger);
+    $('#handsSvg').innerHTML = handsSVG(finger === 'th' ? thumbFor() : finger, shiftFinger);
     var text;
     if (finger === 'th') text = App.i18n.t('thumbText');
     else if (finger) {
@@ -173,6 +189,8 @@
 
   T.fingerOf = fingerOf;
   T.flashKey = flashKey;
+  T.notePress = notePress;
+  T.thumbFor = thumbFor;
   T.handsSVG = handsSVG;
   T.keysOf = keysOf;
   T.markTarget = markTarget;

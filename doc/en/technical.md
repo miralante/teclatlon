@@ -351,7 +351,12 @@ other modes, `endSequence()` in `js/sequence.js`) — a short
 line connecting the exercise to writing real messages on a real
 computer. This activity has no separate "round complete" screen, so the
 line lives in the celebration overlay text itself, not in a dedicated
-DOM element.
+DOM element. The closing star text (`T.starClosing(earned)` in `js/core.js`)
+is appended on every completion, not only when a star is new: it always
+shows the stars so far and the next goal, with a "You earned a star!"
+sentence first when one was just won. `feedback.celebrate()` keeps the
+overlay up for a time proportional to the message length (up to 10 s) and
+returns that time, so the closing text can be read.
 
 ### 2.5 Computer-only gate and pre-paint i18n bootstrap
 

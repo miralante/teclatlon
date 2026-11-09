@@ -279,7 +279,7 @@
        learner stranded behind a browser-dependent celebration timer. The
        celebration remains visible on the destination screen. */
     if (cfg.onFinish) cfg.onFinish();
-    App.feedback.celebrate(T.finalMessage() + ' ' + App.i18n.t('transferMessage') + (earned ? ' ' + T.starLine() : ''));
+    App.feedback.celebrate(T.finalMessage() + ' ' + App.i18n.t('transferMessage') + ' ' + T.starClosing(earned));
   }
 
   T.clearFeedback = clearFeedback;
