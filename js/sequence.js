@@ -265,7 +265,7 @@
     if (allLessons.length > 0 && allLessons.every(function (l) { return !!S.state.completed[l.id]; })) {
       T.achieve('allLessons');
     }
-    T.award(cfg.starKey);
+    var earned = T.award(cfg.starKey);
     /* streak3: three lessons in a row in curriculum order. Checked after
        award() so the lesson that was just finished counts. */
     var run = 0;
@@ -279,7 +279,7 @@
        learner stranded behind a browser-dependent celebration timer. The
        celebration remains visible on the destination screen. */
     if (cfg.onFinish) cfg.onFinish();
-    App.feedback.celebrate(T.finalMessage() + ' ' + App.i18n.t('transferMessage'));
+    App.feedback.celebrate(T.finalMessage() + ' ' + App.i18n.t('transferMessage') + (earned ? ' ' + T.starLine() : ''));
   }
 
   T.clearFeedback = clearFeedback;

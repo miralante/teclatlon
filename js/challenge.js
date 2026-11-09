@@ -15,14 +15,14 @@
      exercise to writing real messages on a real computer. Appended to
      the celebration overlay itself, since this activity has no
      separate "round complete" screen to hold it. */
-  function celebrateWithTransfer(after) {
+  function celebrateWithTransfer(after, earned) {
     var completed = false;
     function finish() {
       if (completed) return;
       completed = true;
       if (after) after();
     }
-    App.feedback.celebrate(T.finalMessage() + ' ' + App.i18n.t('transferMessage'), finish);
+    App.feedback.celebrate(T.finalMessage() + ' ' + App.i18n.t('transferMessage') + (earned ? ' ' + T.starLine() : ''), finish);
     /* Keep navigation reliable if a browser suppresses the celebration
        timer while a special-key event is being dispatched. */
     setTimeout(finish, 2300);
@@ -95,8 +95,8 @@
       var accuracy = Math.round((m.hits / m.keys) * 100);
       if (accuracy === 100) T.achieve('perfectRound');
     }
-    T.award('allKeys');
-    celebrateWithTransfer(T.goMenu);
+    var earned = T.award('allKeys');
+    celebrateWithTransfer(T.goMenu, earned);
   }
 
   function challengeKey(ch) {

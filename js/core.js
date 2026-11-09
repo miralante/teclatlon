@@ -139,15 +139,19 @@
   }
 
   function updateStars() {
-    var starsEl = $('#stars');
-    starsEl.textContent = '⭐ ' + S.state.stars;
-    // Achievements (every 10) and the next goal (ends in 5): one engine for the suite.
-    window.MiralanteStars.goal(starsEl, S.state.stars, {
+    $('#stars').textContent = '⭐ ' + S.state.stars;
+  }
+
+  /* "Ya tienes X estrellas · A por las Y estrellas" (stars-engine.js). It goes
+     with the star message when a star is earned, not in the header. */
+  function starLine() {
+    return window.MiralanteStars.line(S.state.stars, {
       reached: App.i18n.t('starsReached'),
       goal: App.i18n.t('starsGoal')
     });
   }
 
+  /* Returns true when this award earned a star (a lesson or challenge is only starred once). */
   function award(key) {
     S.doneThisSession[key] = true;
     if (!S.state.completed[key]) {
@@ -155,7 +159,9 @@
       S.state.stars += 1;
       save();
       updateStars();
+      return true;
     }
+    return false;
   }
 
   /* Unlock an achievement once (idempotent). Stores the unlock timestamp. */
@@ -238,6 +244,7 @@
   T.physicalRows = physicalRows;
   T.save = save;
   T.showScreen = showScreen;
+  T.starLine = starLine;
   T.stripAccents = stripAccents;
   T.templates = templates;
   T.typeableKeys = typeableKeys;
