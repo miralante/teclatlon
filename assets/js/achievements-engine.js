@@ -30,14 +30,6 @@
      board.notify(el, ids)       writes one neutral line into `el` (aria-live) for
                                  the ids given, using the 'achievementNew' text with
                                  {name} replaced. Does nothing when ids is empty.
-     board.render(el)            fills `el` with the badge grid: one <li> per
-                                 catalogue item (.achievement-badge.locked|.unlocked
-                                 with .achievement-badge-icon/-name/-desc/-status).
-                                 Texts: nameKey, descKey, 'achievementUnlockedAt'
-                                 ({date}) and 'achievementLocked'. The styles are
-                                 NOT in this file: each app defines .achievements-grid
-                                 and .achievement-badge* once in its shared stylesheet.
-     options.locale              optional BCP 47 tag for the unlock date.
    ========================================================================== */
 (function (root) {
   'use strict';
@@ -99,48 +91,11 @@
       }).join(' ');
     }
 
-    function render(el) {
-      if (!el) return;
-      var done = unlocked();
-      el.textContent = '';
-      catalog.forEach(function (item) {
-        var isUnlocked = !!done[item.id];
-        var li = document.createElement('li');
-        li.className = 'achievement-badge ' + (isUnlocked ? 'unlocked' : 'locked');
-
-        var icon = document.createElement('span');
-        icon.className = 'achievement-badge-icon';
-        icon.setAttribute('aria-hidden', 'true');
-        icon.textContent = item.icon;
-
-        var name = document.createElement('span');
-        name.className = 'achievement-badge-name';
-        name.textContent = t(item.nameKey);
-
-        var desc = document.createElement('span');
-        desc.className = 'achievement-badge-desc';
-        desc.textContent = t(item.descKey);
-
-        var status = document.createElement('span');
-        status.className = 'achievement-badge-status';
-        status.textContent = isUnlocked
-          ? t('achievementUnlockedAt').replace('{date}', new Date(done[item.id]).toLocaleDateString(options.locale))
-          : t('achievementLocked');
-
-        li.appendChild(icon);
-        li.appendChild(name);
-        li.appendChild(desc);
-        li.appendChild(status);
-        el.appendChild(li);
-      });
-    }
-
     return {
       list: catalog,
       unlocked: unlocked,
       evaluate: evaluate,
-      notify: notify,
-      render: render
+      notify: notify
     };
   }
 
