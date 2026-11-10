@@ -120,6 +120,11 @@
     function end() {
       if (finished) return;
       finished = true;
+      /* A reading that was superseded by a newer speak() or stopped by
+         stop() has no say any more. Its late onerror/onend (the browser
+         reports the cancel asynchronously) must not clear the watchdog
+         of the reading that replaced it, nor release the caller. */
+      if (mine !== seq) return;
       clearWatchdog();
       done();
     }

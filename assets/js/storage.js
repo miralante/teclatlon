@@ -19,7 +19,11 @@
   function get(id) {
     try {
       var raw = localStorage.getItem(PREFIX + id);
-      return raw ? JSON.parse(raw) : {};
+      var data = raw ? JSON.parse(raw) : null;
+      /* Only an object is progress. A stored "null", a number or a string
+         would otherwise reach the callers, which read fields off it at
+         boot and fail before the app can start. */
+      return data && typeof data === 'object' && !Array.isArray(data) ? data : {};
     } catch (e) {
       return {};
     }

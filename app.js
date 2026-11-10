@@ -46,17 +46,11 @@
     }
     confirmingClear = false;
     App.storage.remove(T.SLUG);
+    /* The unlocked logros live under their own key ('teclatlon:achievements',
+       see assets/js/achievements.js). They are progress too, so they go. */
+    App.storage.remove('achievements');
     S.doneThisSession = {};
-    S.state = {
-      name: '', stars: 0, completed: {},
-      options: {
-        keyboard: 'normal', color: 'hands', theme: 'light', textSize: 'normal',
-        hideLegend: false, hideNumpad: false, dimCelebration: false, keySound: true, metrics: false, errorSound: false,
-        showTimer: false
-      },
-      goal: { accuracyMin: 0, speedMin: 0 },
-      achievements: {}
-    };
+    S.state = T.freshState();
     T.save();
     btn.textContent = App.i18n.t('btnClearProgress');
     $('#inputName').value = '';
@@ -199,7 +193,9 @@
     if (h === 'screenTemplates' || h === 'templates')  { T.goTemplates(); return true; }
     if (h === 'screenName' || h === 'name')             { T.goName(); return true; }
     if (h === 'screenFree' || h === 'free')              { T.goFree(); return true; }
-    if (h === 'screenGame' || h === 'game')              { return true; } // game needs active sequence
+    /* A game only exists while it runs, so a deep link to one has nothing
+       to show: go to the menu instead of leaving every screen hidden. */
+    if (h === 'screenGame' || h === 'game')              { T.goMenu(); return true; }
     return false;
   }
 

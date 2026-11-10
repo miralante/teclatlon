@@ -1,9 +1,9 @@
 /* ============================================================
-   Teclatlon � Service Worker
+   Teclatlon — Service Worker
    Network-first, cache-fallback strategy for the app shell
    (works offline). When adding new files: add them to FILES
    and bump VERSION so the activate step purges the old cache.
-   See CLOUDFLARE.md �"Cache contract" for the full contract.
+   See CLOUDFLARE.md §"Cache contract" for the full contract.
    ============================================================ */
 var VERSION = 'teclatlon-v120';
 
@@ -195,16 +195,22 @@ self.addEventListener('fetch', function (event) {
 });
 
 function offlineResponse() {
+  /* The page follows the browser language, the same rule as the app:
+     Spanish for es-*, English for everything else. */
+  var nav = (typeof self !== 'undefined' && self.navigator) || {};
+  var lang = String(nav.language || 'en').slice(0, 2).toLowerCase() === 'es' ? 'es' : 'en';
+  var copy = lang === 'es'
+    ? { title: 'Sin conexión', text: 'No hemos podido cargar esta página. Comprueba tu conexión a Internet y vuelve a intentarlo.', back: 'Volver a Teclatlon' }
+    : { title: 'No connection', text: 'We could not load this page. Check your Internet connection and try again.', back: 'Back to Teclatlon' };
   return new Response(
-    '<!doctype html><html lang="es"><head><meta charset="utf-8">' +
+    '<!doctype html><html lang="' + lang + '"><head><meta charset="utf-8">' +
     '<meta name="viewport" content="width=device-width,initial-scale=1">' +
-    '<title>Sin conexi�n</title><style>body{font-family:system-ui,sans-serif;' +
+    '<title>' + copy.title + '</title><style>body{font-family:system-ui,sans-serif;' +
     'margin:2rem auto;max-width:32rem;padding:0 1rem;line-height:1.5}' +
     'a{color:#1d4ed8}</style></head><body>' +
-    '<h1>Sin conexi�n</h1>' +
-    '<p>No hemos podido cargar esta p�gina. Comprueba tu conexi�n a ' +
-    'Internet y vuelve a intentarlo.</p>' +
-    '<p><a href="./">Volver a Teclatlon</a></p>' +
+    '<h1>' + copy.title + '</h1>' +
+    '<p>' + copy.text + '</p>' +
+    '<p><a href="./">' + copy.back + '</a></p>' +
     '</body></html>',
     { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
   );

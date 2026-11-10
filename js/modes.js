@@ -160,10 +160,41 @@
     });
   }
 
-  function playTemplate(p) {
-    var steps = p.lines.map(function (line) {
-      return { text: App.i18n.t('templateInstruction'), seq: line };
+  /* A template line is typeable when every letter in it is a key of the
+     active layout. Accented vowels are not keys of either layout: on the
+     Spanish layout they come from the dead accent key over the base
+     letter, so they count as that letter there; on the US layout they
+     cannot be typed. Punctuation is ASCII and is typed the same way on
+     both layouts, so it is not checked. */
+  function templateLineFits(line, chars, spanish) {
+    var lower = line.toLowerCase();
+    for (var i = 0; i < lower.length; i++) {
+      var c = lower.charAt(i);
+      if (c === ' ' || c.charCodeAt(0) < 128) continue;
+      if (chars[c]) continue;
+      if (spanish && chars[T.stripAccents(c)]) continue;
+      return false;
+    }
+    return true;
+  }
+
+  /* The lines of a template the active keyboard can type, as steps. A
+     Spanish text on the US keyboard keeps only its plain lines instead of
+     becoming impossible to finish. */
+  function templateSteps(p) {
+    var chars = {};
+    T.physicalRows().forEach(function (row) {
+      row.forEach(function (k) { if (k.ch) chars[k.ch] = true; });
     });
+    var spanish = S.state.options.layout === 'es';
+    return p.lines
+      .filter(function (line) { return templateLineFits(line, chars, spanish); })
+      .map(function (line) { return { text: App.i18n.t('templateInstruction'), seq: line }; });
+  }
+
+  function playTemplate(p) {
+    var steps = templateSteps(p);
+    if (!steps.length) return;
     T.startSequence({
       mode: 'template', title: p.title,
       steps: steps, starKey: 'template_' + p.id, onFinish: T.goTemplates
@@ -183,4 +214,5 @@
   T.playPosition = playPosition;
   T.playTemplate = playTemplate;
   T.playWords = playWords;
+  T.templateSteps = templateSteps;
 })(window.Teclatlon);

@@ -112,6 +112,8 @@
 
   function resetEverything() {
     App.storage.remove(SLUG);
+    /* Unlocked logros are stored under their own key, see assets/js/achievements.js. */
+    App.storage.remove('achievements');
     var f = $('#feedbackTodo');
     if (f) {
       f.textContent = App.i18n.t('feedbackResetAllDone');

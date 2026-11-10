@@ -68,6 +68,9 @@
   }
 
   function startSequence(cfg) {
+    /* Nothing to type means nothing to start: loadStep() needs a current
+       step, and an empty list would fail as soon as the screen opens. */
+    if (!cfg.steps || !cfg.steps.length) return;
     S.game = { type: 'seq', cfg: cfg, idx: 0, pos: 0, waiting: false };
     $('#gameTitle').textContent = cfg.title;
     var inNumpad = cfg.mode === 'numbers';

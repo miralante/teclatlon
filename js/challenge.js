@@ -67,6 +67,10 @@
     S.game.set = {};
     /* New phase, new order (left→right / right→left / shuffled). */
     S.game.order = null;
+    /* Keys pressed during the pause are ignored (see challengeKey): the
+       new phase has not been shown yet, so a press there would count
+       toward a key the learner has not seen asked for. */
+    S.game.pausing = true;
     $$('.key.done').forEach(function (t) { t.classList.remove('done'); });
     /* Light up the star for the phase just finished right away: the
        learner has to see it before the next phase starts, and the
@@ -75,6 +79,8 @@
     /* Brief feedback before continuing */
     App.feedback.success($('#feedback'));
     setTimeout(function () {
+      if (!S.game || S.game.type !== 'challenge') return;
+      S.game.pausing = false;
       T.clearFeedback();
       updateChallenge();
     }, 800);
@@ -95,6 +101,7 @@
   }
 
   function challengeKey(ch) {
+    if (S.game.pausing) return;
     var typeable = T.typeableKeys(T.visibleRows());
     if (!typeable[ch] || S.game.set[ch]) return;
     /* Only accept the key if it is the current expected target. */

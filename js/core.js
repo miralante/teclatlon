@@ -37,6 +37,24 @@
     return raw;
   }
 
+  /* The state a brand-new player starts from. "Borrar mi progreso" uses
+     it too, so a reset and a first run can never disagree on a default
+     (the rest interval, the finger-text switch, the physical layout). */
+  function freshState() {
+    return {
+      name: '', stars: 0, completed: {},
+      options: {
+        keyboard: 'normal', color: 'hands', theme: 'light', textSize: 'normal',
+        layout: (App.i18n && App.i18n.locale && App.i18n.locale() === 'en') ? 'us' : 'es',
+        hideLegend: false, hideNumpad: false, dimCelebration: false, keySound: true,
+        errorSound: false, metrics: false, showTimer: false, showFingerText: true,
+        restMinutes: App.feedback.DEFAULT_REST_MINUTES
+      },
+      goal: { accuracyMin: 0, speedMin: 0 },
+      achievements: {}
+    };
+  }
+
   S.state = migrateLegacyState(App.storage.get(SLUG));
   S.state.name = typeof S.state.name === 'string' ? S.state.name : '';
   S.state.stars = S.state.stars || 0;
@@ -237,6 +255,7 @@
   T.award = award;
   T.capitalize = capitalize;
   T.finalMessage = finalMessage;
+  T.freshState = freshState;
   T.isExtended = isExtended;
   T.lessons = lessons;
   T.physical = physical;

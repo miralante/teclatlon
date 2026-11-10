@@ -915,14 +915,15 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
   test('18 — logro firstStar se desbloquea al obtener primera estrella', async ({ page }) => {
     page = await skipToMenu();
 
-    // Directly award a star and set firstStar achievement via localStorage.
+    // Finishing an activity with the first star unlocks firstStar. This is the
+    // same call the activities make when they end (sequence.js, challenge.js).
     await page.evaluate(() => {
-      localStorage.setItem('teclatlon:keyboard', JSON.stringify({ stars: 1, completed: {}, achievements: { firstStar: Date.now() }, options: {}, goal: {}, name: '' }));
+      App.achievements.onActivityFinished({ state: { stars: 1, completed: {} }, lessons: [], perfect: false });
     });
 
     const achievement = await page.evaluate(() => {
-      const raw = localStorage.getItem('teclatlon:keyboard');
-      return raw ? JSON.parse(raw).achievements : {};
+      const raw = localStorage.getItem('teclatlon:achievements');
+      return raw ? JSON.parse(raw) : {};
     });
     expect(achievement.firstStar).toBeGreaterThan(0);
   });
@@ -960,8 +961,8 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await expect(page.locator('#screenLessons')).toBeVisible({ timeout: 20000 });
 
     const achievement = await page.evaluate(() => {
-      const raw = localStorage.getItem('teclatlon:keyboard');
-      return raw ? JSON.parse(raw).achievements : {};
+      const raw = localStorage.getItem('teclatlon:achievements');
+      return raw ? JSON.parse(raw) : {};
     });
     expect(achievement.perfectRound).toBeGreaterThan(0);
   });
@@ -1112,7 +1113,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
   // -----------------------------------------------------------------
   // 25. ACHIEVEMENT — streak3 (3 consecutive lessons)
   // -----------------------------------------------------------------
-  test('25 — logro streak3 al completar 3 lecciones seguidas', async ({ page }) => {
+  test('25 — completar 3 lecciones seguidas no registra logro de racha', async ({ page }) => {
     // Pre-complete all 17 lessons so that:
     // 1. goMenu() is called on boot (name='Tester')
     // 2. The streak3 condition (streak >= 3) is satisfied regardless of the
@@ -1158,12 +1159,13 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     }
     await expect(page.locator('#screenLessons')).toBeVisible({ timeout: 20000 });
 
-    // Verify streak3 achievement was saved (set on app load when streak hit 3).
+    // The suite has no streak achievement (assets/js/achievements.js: "no streaks"),
+    // so three lessons in a row must not record one.
     const achievement = await page.evaluate(() => {
-      const raw = localStorage.getItem('teclatlon:keyboard');
-      return raw ? JSON.parse(raw).achievements : {};
+      const raw = localStorage.getItem('teclatlon:achievements');
+      return raw ? JSON.parse(raw) : {};
     });
-    expect(achievement.streak3).toBeGreaterThan(0);
+    expect(achievement.streak3).toBeUndefined();
   });
 
   // -----------------------------------------------------------------
@@ -1205,8 +1207,8 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
 
     // Verify allLessons achievement was saved (set on app load when all 17 were complete).
     const achievement = await page.evaluate(() => {
-      const raw = localStorage.getItem('teclatlon:keyboard');
-      return raw ? JSON.parse(raw).achievements : {};
+      const raw = localStorage.getItem('teclatlon:achievements');
+      return raw ? JSON.parse(raw) : {};
     });
     expect(achievement.allLessons).toBeGreaterThan(0);
   });

@@ -89,9 +89,12 @@
     container.innerHTML = '';
     T.templates().forEach(function (p, i) {
       var done = !!S.doneThisSession['template_' + p.id];
+      /* A template with no line the active keyboard can type cannot be
+         finished, so it is shown as unavailable rather than started. */
+      var playable = T.templateSteps(p).length > 0;
       var b = document.createElement('button');
       b.type = 'button';
-      b.className = 'btn-lesson' + (done ? ' done' : '');
+      b.className = 'btn-lesson' + (done ? ' done' : '') + (playable ? '' : ' locked');
       var num = document.createElement('span');
       num.className = 'num';
       num.textContent = String(i + 1);
@@ -100,9 +103,13 @@
       titleEl.textContent = p.title;
       var statusEl = document.createElement('span');
       statusEl.setAttribute('aria-hidden', 'true');
-      statusEl.textContent = done ? '⭐' : '';
+      statusEl.textContent = done ? '⭐' : (playable ? '' : '🔒');
       b.appendChild(num); b.appendChild(titleEl); b.appendChild(statusEl);
-      b.addEventListener('click', function () { T.playTemplate(p); });
+      if (playable) {
+        b.addEventListener('click', function () { T.playTemplate(p); });
+      } else {
+        b.disabled = true;
+      }
       container.appendChild(b);
     });
   }
