@@ -253,28 +253,10 @@
   function endSequence() {
     var cfg = S.game.cfg;
     S.game = null;
-    /* Achievement checks that used to live inside checkGoal() */
     var m = S.state.metrics;
-    if (m && m.keys) {
-      var accuracy = Math.round((m.hits / m.keys) * 100);
-      if (S.state.stars >= 1) T.achieve('firstStar');
-      if (S.state.stars >= 10) T.achieve('tenStars');
-      if (accuracy === 100) T.achieve('perfectRound');
-    }
-    var allLessons = T.lessons();
-    if (allLessons.length > 0 && allLessons.every(function (l) { return !!S.state.completed[l.id]; })) {
-      T.achieve('allLessons');
-    }
     var earned = T.award(cfg.starKey);
-    /* streak3: three lessons in a row in curriculum order. Checked after
-       award() so the lesson that was just finished counts. */
-    var run = 0;
-    var best = 0;
-    allLessons.forEach(function (l) {
-      run = S.state.completed[l.id] ? run + 1 : 0;
-      best = Math.max(best, run);
-    });
-    if (best >= 3) T.achieve('streak3');
+    var acc = m && m.keys ? Math.round((m.hits / m.keys) * 100) : 0;
+    App.achievements.onActivityFinished({ state: S.state, lessons: T.lessons().map(function (l) { return l.id; }), perfect: acc === 100 });
     /* Return to the mode list immediately so completion never leaves the
        learner stranded behind a browser-dependent celebration timer. The
        celebration remains visible on the destination screen. */

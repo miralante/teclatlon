@@ -87,16 +87,10 @@
     S.game.stars = CHALLENGE_PHASES;
     updateChallengeStars();
     S.game = null;
-    T.achieve('allKeys');
-    /* Achievement checks that used to live inside checkGoal() */
     var m = S.state.metrics;
-    if (m && m.keys) {
-      if (S.state.stars >= 1) T.achieve('firstStar');
-      if (S.state.stars >= 10) T.achieve('tenStars');
-      var accuracy = Math.round((m.hits / m.keys) * 100);
-      if (accuracy === 100) T.achieve('perfectRound');
-    }
     var earned = T.award('allKeys');
+    var acc = m && m.keys ? Math.round((m.hits / m.keys) * 100) : 0;
+    App.achievements.onActivityFinished({ state: S.state, lessons: T.lessons().map(function (l) { return l.id; }), perfect: acc === 100, allKeys: true });
     celebrateWithTransfer(T.goMenu, earned);
   }
 

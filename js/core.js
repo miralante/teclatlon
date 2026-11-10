@@ -79,7 +79,6 @@
   /* Practice clock in the header. Off by default: the clock is an extra
      the person asks for, and until they ask there is nothing on screen. */
   S.state.options.showTimer = !!S.state.options.showTimer;
-  S.state.achievements = S.state.achievements || {};
 
   /* Activities finished in THIS page load. Only the ⭐ badges and the
      "done" counts read it: a new session starts with a clean board so
@@ -172,13 +171,6 @@
     return false;
   }
 
-  /* Unlock an achievement once (idempotent). Stores the unlock timestamp. */
-  function achieve(id) {
-    if (S.state.achievements[id]) return;
-    S.state.achievements[id] = Date.now();
-    save();
-  }
-
   /* ---------- Key data ---------- */
   /* The physical keyboard in use ('es' or 'us', see DATA.physical). */
   function physical() {
@@ -242,7 +234,6 @@
   function templates() { return DATA.templates[App.i18n.locale()] || DATA.templates.es; }
 
   T.SLUG = SLUG;
-  T.achieve = achieve;
   T.award = award;
   T.capitalize = capitalize;
   T.finalMessage = finalMessage;
