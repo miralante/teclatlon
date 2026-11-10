@@ -2,7 +2,7 @@
    Inject the suite-pattern block (currently §8 of
    doc/en/technical.md and doc/es/tecnico.md in teclatlon) into
    the equivalent technical docs of every other app of the
-   Miralante suite.
+   Apptonomia suite.
 
    - Apptonomia is skipped (no doc/en/technical.md in that repo).
    - The block is appended as the new last top-level section.

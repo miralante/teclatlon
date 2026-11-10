@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Miralante achievements engine. ONE definition for every suite app that
+   Apptonomia achievements engine. ONE definition for every suite app that
    gives achievements ("logros").
 
    Canonical source: apptonomia/scripts/suite/achievements-engine.js

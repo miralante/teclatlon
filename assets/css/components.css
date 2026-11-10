@@ -740,7 +740,7 @@
 }
 
 /* suite:answer-round:begin
-   Miralante answer round, styles. ONE definition for every suite app.
+   Apptonomia answer round, styles. ONE definition for every suite app.
    Canonical source: apptonomia/scripts/suite/answer-round.css. The block between
    the markers is copied byte for byte into each app's shared stylesheet by
    apptonomia/scripts/sync-answer-round.js. Never edit a copy by hand. */
@@ -755,7 +755,7 @@ button.bloqueada {
 /* suite:answer-round:end */
 
 /* suite:reward-screen:begin
-   Miralante closing screen of an activity, styles. ONE definition for every suite app.
+   Apptonomia closing screen of an activity, styles. ONE definition for every suite app.
    Canonical source: apptonomia/scripts/suite/reward-screen.css. Copied byte for byte
    into each app's shared stylesheet by apptonomia/scripts/sync-answer-round.js.
    Never edit a copy by hand. */
@@ -771,7 +771,7 @@ button.bloqueada {
 /* suite:reward-screen:end */
 
 /* suite:celebrate:begin
-   Miralante closing celebration, styles. ONE definition for every suite app.
+   Apptonomia closing celebration, styles. ONE definition for every suite app.
    Canonical source: apptonomia/scripts/suite/celebrate.css. Copied byte for byte
    into each app's shared stylesheet by apptonomia/scripts/sync-answer-round.js.
    Never edit a copy by hand. */

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Miralante stars engine. ONE definition for every suite app.
+   Apptonomia stars engine. ONE definition for every suite app.
 
    Canonical source: apptonomia/scripts/suite/stars-engine.js
    Copies: assets/js/stars-engine.js (calculia, memofun, routime, teclatlon)
@@ -13,7 +13,7 @@
      - The next goal ("a por") is the nearest number above the total that
        ends in 5: 5, 15, 25... The text says "a por las XX estrellas".
 
-   API (window.MiralanteStars):
+   API (window.ApptonomiaStars):
      goalFor(total)                  next goal above total, always ends in 5
      milestoneFor(total)             last achievement reached (0 if none)
      crossedMilestone(prev, next)    achievement reached going prev -> next, or 0
@@ -91,6 +91,6 @@
     goal: goal
   };
 
-  root.MiralanteStars = api;
+  root.ApptonomiaStars = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);

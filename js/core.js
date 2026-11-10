@@ -144,7 +144,7 @@
   /* "Ya tienes X estrellas · A por las Y estrellas" (stars-engine.js). It goes
      with the star message when a star is earned, not in the header. */
   function starLine() {
-    return window.MiralanteStars.line(S.state.stars, {
+    return window.ApptonomiaStars.line(S.state.stars, {
       reached: App.i18n.t('starsReached'),
       goal: App.i18n.t('starsGoal')
     });
