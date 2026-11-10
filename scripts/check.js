@@ -586,8 +586,8 @@ var fileSizeExcluded = ['.git', 'node_modules', '.claude', 'graphify-out', 'grap
    shared locale picker fell back to its defaults, ignored `settings: false`
    and rendered a second ⚙️ settings drawer inside the app's own settings
    drawer, repeating text size, contrast and sounds. The same mistake
-   disabled the service worker and the language buttons on about/,
-   legal/ and team/.
+   disabled the service worker and the language buttons on about/ and
+   legal/.
 
    Non-executable data blocks (`<script type="application/ld+json">`, the
    JSON-LD in index.html) are allowed: CSP does not apply to them. */

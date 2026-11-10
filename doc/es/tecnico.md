@@ -807,7 +807,7 @@ Las otras apps de la suite:
 
 - **Apptonomia** (la referencia, hub-and-spoke, y además portal de la
   suite): `tools/<slug>/` por actividad (~60), landing en `site/`,
-  `settings/`, `about/`, `team/`, `content/`, `legal/` compartido.
+  `settings/`, `about/`, `content/`, `legal/` compartido.
 - **Calculia** (hub-and-spoke, un solo dominio): el más cercano en
   forma a Apptonomia, reducido a 12 actividades de cálculo / lógica
   en dos bloques.
@@ -840,7 +840,7 @@ Las otras apps de la suite:
 | `tools/<slug>/` por actividad | ❌ recortado | ❌ recortado | ✅ (~60) | ✅ (12) | ❌ |
 | Landing en `site/` | ❌ recortado (ninguna) | ❌ recortado | ✅ | ✅ | ❌ |
 | `settings/` (ruta oculta) | ❌ recortado (el reset está inline en `index.html`) | ✅ | ✅ | ✅ | ❌ |
-| `about/`, `team/`, `content/` | ❌ recortado (ninguno) | ❌ recortado | ✅ | ❌ | ❌ (solo `about/`) |
+| `about/`, `content/` | ❌ recortado (ninguno) | ❌ recortado | ✅ | ❌ | ❌ (solo `about/`) |
 | `legal/` (página de protección de datos) | ✅ | ✅ | ✅ | ✅ | ❌ |
 | `assets/css/{tokens,base,components}.css` | ✅ | ✅ | ✅ | ✅ | ❌ (plano `css/styles.css`) |
 | `assets/fonts/` (Atkinson + Nunito) | ✅ | ✅ | ✅ | ✅ | ❌ |
@@ -911,7 +911,7 @@ esqueleto mínimo:
    routing SPA**, ni cambio de vista en la misma página, ni
    `pushState`. Cada página se recarga al entrar; la
    navegación entre páginas es un clic normal en un `<a>`.
-3. Las rutas ocultas (`about/`, `team/`, `legal/`, `config/`)
+3. Las rutas ocultas (`about/`, `legal/`, `config/`)
    comparten la misma forma: `index.html` + `styles.css` + par
    `strings.<locale>.js`, con **interlinking en el pie** para
    que cualquiera de ellas esté a un clic de cualquier otra.
@@ -1073,7 +1073,7 @@ la **plantilla**; las desviaciones se indican donde apliquen.
   `team-page`). Sin prefijos ancestro `.sp-*` (eran residuo
   de la fusión SPA, retirado en 2026-09; ver `git log`).
 - El pie es **siempre** los mismos cinco enlaces (en el mismo
-  orden) en `about/`, `team/` y `legal/`. `config/` tiene un
+  orden) en `about/` y `legal/`. `config/` tiene un
   pie reducido que solo vuelve a la SPA. La raíz de la app
   (`index.html`) **no** renderiza este pie (tiene su propio
   pie con el botón de reset y el enlace a protección de datos
@@ -1188,7 +1188,7 @@ var FILES = [
   './legal/styles.css',
   './legal/strings.es.js',
   './legal/strings.en.js',
-  /* …about/, team/, config/ igual… */
+  /* …about/, config/ igual… */
   './assets/css/tokens.css',
   './assets/css/base.css',
   './assets/css/components.css',
@@ -1224,7 +1224,7 @@ también falla.
 Cada página standalone también ejecuta
 `navigator.serviceWorker.register('../sw.js')` desde su
 script inline, así una visita directa a `/legal/`,
-`/about/` o `/team/` prima el SW para la raíz de la SPA del
+`/about/` prima el SW para la raíz de la SPA del
 mismo modo que hace `index.html`.
 
 ### 8.4 Invariantes de i18n
@@ -1240,7 +1240,7 @@ esta lista estén actualizados:
    inline que elige el locale antes del primer paint — ver
    §2.5 arriba).
 4. `strings.<locale>.js` y cada par `strings.<locale>.js`
-   por carpeta (`legal/`, `about/`, `team/`, `config/`).
+   por carpeta (`legal/`, `about/`, `config/`).
 5. `data.js`: cada array dividido por locale
    (`DATA.lessons.<locale>`, `DATA.words.<locale>`,
    `DATA.templates.<locale>`, `DATA.numpadSteps.<locale>`).
@@ -1263,7 +1263,7 @@ de usar uno de estos, para y vuelve a leer esta sección".
 
 - **Sin SPA / sin `pushState` / sin secciones `view-*`.**
   Cada página es su propia URL. No fusionar `legal/`,
-  `about/`, `team/` dentro de `index.html` como secciones
+  `about/` dentro de `index.html` como secciones
   ocultas, ni siquiera con un redirect shim. Se intentó en
   2026-09 (`spa: merge`) y se revirtió en la misma release;
   ver `git log` para las lecciones aprendidas. La
@@ -1326,7 +1326,7 @@ manual:
 - `/legal/` carga con el h1, lema y pie localizados; el
   selector de idioma cambia `lang`, `document.title` y cada
   texto `data-i18n` sin parpadeo de valores antiguos.
-- `/about/` y `/team/` igual; sus enlaces del pie navegan
+- `/about/` igual; sus enlaces del pie navegan
   entre ellos y a `/legal/` y `/config/` sin recargas
   antes de que el SW se prime.
 - `/config/` lista el estado guardado y sus dos botones de

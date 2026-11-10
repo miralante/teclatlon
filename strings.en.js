@@ -140,10 +140,10 @@
     "computerOnlySuggestion": "Open this page on a laptop or a PC. If your phone has a physical keyboard, pair it over Bluetooth or USB.",
 
     /* --- /legal and /about (English mirror) ----------------------------
-       Same note as in strings.es.js: the legal / about / team text moved
+       Same note as in strings.es.js: the legal / about text moved
        out of this root dictionary in 2026-09. Each page now ships its
        own strings.<locale>.js pair (legal/strings.en.js,
-       about/strings.en.js, team/strings.en.js), so anything that needs
+       about/strings.en.js), so anything that needs
        /legal or /about copy reads it from those files, not from here. */
 
     "errorSoundLabel": "Error sound",

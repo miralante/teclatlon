@@ -139,10 +139,10 @@
     "computerOnlySuggestion": "Abre esta página desde un portátil o un PC. Si tu móvil tiene un teclado físico, conéctalo por Bluetooth o USB.",
 
     /* --- /legal and /about -------------------------------------------
-       The legal/about/team text moved out of this root dictionary in
+       The legal/about text moved out of this root dictionary in
        2026-09 when Teclatlon de-merged its SPA. Each of those pages is
        now a real PWA route with its own strings.<locale>.js pair
-       (legal/strings.es.js, about/strings.es.js, team/strings.es.js).
+       (legal/strings.es.js, about/strings.es.js).
        Anything that still needs /legal or /about copy reads it from
        those files, not from here. */
 
