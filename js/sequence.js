@@ -128,7 +128,10 @@
       zone.appendChild(pill);
       return;
     }
-    var seq = p.seq;
+    /* A step may carry a `display` form of the same length as `seq` (the
+       typed name, shown with a capital first letter). Matching still uses
+       `seq`, so the display never changes what key the player must press. */
+    var seq = p.display || p.seq;
     zone.setAttribute('aria-label', App.i18n.t('typeAria').replace('{seq}', seq));
     var target = zone;
     for (var i = 0; i < seq.length; i++) {

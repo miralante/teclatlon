@@ -125,7 +125,14 @@
       var plainName = T.stripAccents(S.state.name.toLowerCase());
       if (T.seqFitsLayout(plainName, target)) {
         nameSeq = plainName;
-        steps.push({ text: App.i18n.t('typeYourName'), seq: plainName });
+        /* The name is shown with its first letter capitalised, as a name
+           is written, even when it was saved in lowercase. Only the
+           display changes: `seq` stays lowercase so the player is not
+           asked to press Shift. The uppercase form is kept only when it is
+           still one character, so the display and `seq` line up. */
+        var firstUpper = plainName.charAt(0).toUpperCase();
+        var displayName = firstUpper.length === 1 ? firstUpper + plainName.slice(1) : plainName;
+        steps.push({ text: App.i18n.t('typeYourName'), seq: plainName, display: displayName });
       }
     }
 
