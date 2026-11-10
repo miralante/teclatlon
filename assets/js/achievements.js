@@ -64,7 +64,7 @@
       test: function (p) { return p.allKeys === true; } }
   ];
 
-  var board = window.MiralanteAchievements.create({
+  var board = window.ApptonomiaAchievements.create({
     storageKey: 'teclatlon:achievements',
     catalog: CATALOG,
     t: function (key) { return App.i18n.t(key); }

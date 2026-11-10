@@ -18,7 +18,7 @@
    Each app keeps its own catalogue (rules and text keys) and passes it in.
    The engine never contains app-specific rules or words.
 
-   API (window.MiralanteAchievements):
+   API (window.ApptonomiaAchievements):
      create(options) -> board
        options.storageKey  localStorage key for { id: timestamp }
        options.catalog     [{ id, icon, nameKey, descKey, test(progress) -> boolean }]
@@ -144,5 +144,5 @@
     };
   }
 
-  root.MiralanteAchievements = { create: create };
+  root.ApptonomiaAchievements = { create: create };
 })(typeof window !== 'undefined' ? window : this);
