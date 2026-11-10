@@ -98,7 +98,7 @@ Restablecer el progreso es destructivo y requiere confirmación.
 
 ## 8. Cambiar idioma
 
-Abre el menú de idioma desde la cabecera (icono del globo 🌐).
+Abre el ⚙️ de la cabecera: el idioma está en la primera fila del cajón.
 Disponibles: **Español (predeterminado)** e **Inglés**. Cada idioma
 tiene su propio diseño de teclado y su propia lista de palabras.
 Consulta [`I18N.md`](I18N.md) para ver cómo añadir un nuevo idioma.

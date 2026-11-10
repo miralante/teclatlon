@@ -205,8 +205,8 @@ The on-screen keyboard only ever *reflects* key presses (`flashKey`);
 there is no click-to-type path. The functions named in the sections
 below live in the module this table lists.
 
-The settings panel (`#settingsDrawer`, a lateral drawer opened from the
-`#btnOpenSettings` gear icon in the header — see SPEC.md §4.1) is read
+The settings panel (`#accessibility-settings`, a lateral drawer opened from the
+`.locale-settings-trigger` gear icon in the header — see SPEC.md §4.1) is read
 from `state.options` and applied by `applyOptions()`, called at
 boot and after every toggle. `openSettings()`/`closeSettings()` handle
 the open/close animation, backdrop click and focus management
@@ -681,7 +681,7 @@ redefine them in `strings.<locale>.js`): `back`, `understood`, `listen`,
 The active language still defaults to the browser-detected one
 (`i18n.js#detect`, mirrored pre-paint in `index.html` — see §2.5), but
 it can be overridden manually: the "Idioma" row in the settings panel
-(`#settingsDrawer`, `.btn-language` buttons, wired in `app.js`) and the
+(`#accessibility-settings`, `.btn-language` buttons, wired in `app.js`) and the
 explicit selector in `legal/index.html` (`#btnLangEs`/`#btnLangEn`)
 call `App.i18n.setLocale('es' | 'en')`. `setLocale` persists the choice
 to `localStorage` (`teclatlon:locale`, read by `i18n.js#locale()` ahead

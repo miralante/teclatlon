@@ -28,9 +28,9 @@ test.describe('teclado US según el idioma del navegador', () => {
 
   test('cambiar de teclado en mitad de una ronda avisa de que se usará en la siguiente', async ({ page }) => {
     await openPlacement(page);
-    await page.locator('#btnOpenSettings').click();
+    await page.locator('.locale-settings-trigger').click();
     await page.locator('.btn-layout[data-layout="es"]').click();
-    await page.locator('#btnCloseSettings').click();
+    await page.locator('#accessibility-settings [data-settings-close]').click();
     const notice = 'The new keyboard will be used in the next round.';
     await expect(page.locator('#feedback')).toHaveText(notice);
 
@@ -47,10 +47,10 @@ test.describe('teclado US según el idioma del navegador', () => {
     await page.locator('#btnExitGame').click();
     await expect(page.locator('#screenMenu')).toBeVisible();
 
-    await page.locator('#btnOpenSettings').click();
+    await page.locator('.locale-settings-trigger').click();
     await page.locator('.btn-layout[data-layout="es"]').click();
     await expect(page.locator('.btn-layout[data-layout="es"]')).toHaveAttribute('aria-pressed', 'true');
-    await page.locator('#btnCloseSettings').click();
+    await page.locator('#accessibility-settings [data-settings-close]').click();
 
     await page.locator('[data-mode="placement"]').click();
     await expect(page.locator('#screenGame')).toBeVisible();

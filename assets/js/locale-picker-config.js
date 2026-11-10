@@ -1,27 +1,19 @@
 /* Teclatlon · locale picker config.
 
-   This object used to live in an inline <script> in index.html. The
-   production CSP is `script-src 'self'` (see _headers) and inline
-   scripts are NOT executable there, so the browser threw the whole
-   config away and locale-picker.js fell back to its defaults:
-   `settings: false` never arrived, so ENABLE_SETTINGS evaluated to true
-   and the component rendered a SECOND ⚙️ settings drawer inside the
-   app's own settings drawer, repeating text size, contrast and sounds
-   that index.html already offers. Nothing caught it: the preview server
-   (scripts/ui-server.js) sent no CSP, so the bug only existed in
-   production.
+   Teclatlon uses the suite's shared gear and drawer. The language is the first
+   row of that drawer; the app's own rows (text size, theme, sounds, keyboard,
+   rest reminder...) live in #settingsExtra and are moved into the drawer by the
+   component. standardRows:false keeps the shared size, theme and contrast rows
+   out, because Teclatlon has its own (four text sizes, theme buttons).
 
-   Keep it external. Load it BEFORE assets/js/locale-picker.js.
-   Teclatlon stores strings next to index.html (not under assets/js/),
-   so path: 'strings'. storageKey must match the one assets/js/i18n.js
-   writes to localStorage ('teclatlon:locale'). */
+   Must load BEFORE assets/js/locale-picker.js. Teclatlon stores strings next to
+   index.html, so path: 'strings'. storageKey matches assets/js/i18n.js. */
 window.LocalePickerConfig = {
   storageKey: 'teclatlon:locale',
   path: 'strings',
   defaultLocale: 'en',
-  /* Teclatlon's own settings drawer is the only settings UI: the app
-     already offers text size, theme/high contrast, key sound and error
-     sound. Opt out of the shared accessibility drawer so the options
-     cannot be duplicated inside it. */
-  settings: false
+  languageInDrawer: true,
+  standardRows: false,
+  extraRowsId: 'settingsExtra',
+  soundSettings: false
 };

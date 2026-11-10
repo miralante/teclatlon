@@ -212,8 +212,8 @@ El teclado en pantalla solo *refleja* pulsaciones (`flashKey`); no hay ruta
 de pulsar-para-escribir. Las funciones citadas en las subsecciones
 siguientes viven en el módulo que indica esta tabla.
 
-El panel de ajustes (`#settingsDrawer`, un desplegable lateral que se
-abre con el icono de engranaje `#btnOpenSettings` de la cabecera — ver
+El panel de ajustes (`#accessibility-settings`, un desplegable lateral que se
+abre con el icono de engranaje `.locale-settings-trigger` de la cabecera — ver
 SPEC.md §4.1) se lee de `state.options` y se aplica con
 `applyOptions()`, llamada al arrancar y tras cada cambio.
 `openSettings()`/`closeSettings()` gestionan la animación de
@@ -704,7 +704,7 @@ redefinas en `strings.<locale>.js`): `back`, `understood`, `listen`,
 El idioma activo sigue eligiéndose por defecto según el navegador
 (`i18n.js#detect`, reflejado antes del primer pintado en `index.html`
 — ver §2.5), pero se puede cambiar a mano: la fila "Idioma" del panel
-de ajustes (`#settingsDrawer`, botones `.btn-language`, cableados en
+de ajustes (`#accessibility-settings`, botones `.btn-language`, cableados en
 `app.js`) y el selector explícito de `legal/index.html`
 (`#btnLangEs`/`#btnLangEn`) llaman a `App.i18n.setLocale('es' | 'en')`.
 `setLocale` guarda la elección en `localStorage` (`teclatlon:locale`,
@@ -1006,10 +1006,7 @@ la **plantilla**; las desviaciones se indican donde apliquen.
 <body>
   <div class="container {legal|about}">
     <header class="cabecera-{legal|about}">
-      <!-- El idioma es un control de primer nivel de la cabecera, no un
-           subapartado del cajon de ajustes: el componente compartido se
-           monta dentro de .suite-controls y el engranaje se inserta el
-           solo, justo detras. No hay ningun boton de idioma en el HTML. -->
+      <!-- El idioma vive dentro del cajon del engranaje, como primera fila: el componente compartido lo mueve alli. En la cabecera solo queda el engranaje. No hay ningun boton de idioma en el HTML. -->
       <div class="suite-controls">
         <div id="locale-picker"></div>
       </div>
@@ -1377,7 +1374,7 @@ La cabecera principal sigue el modelo de Memofun: icono de 44px (32px por
 debajo de 650px), título Nunito de 28px (22px en móvil), atribución a la suite
 y controles alineados. Usa un margen interior vertical de 8px y separa las
 filas 6px. El texto secundario tiene peso normal y el contador de estrellas
-es compacto. Los botones de idioma de la cabecera muestran nombres completos en escritorio
+es compacto. El desplegable de idioma, dentro del cajón del engranaje, muestra nombres completos en escritorio
 y ES/EN en móvil, con nombres accesibles completos. Teclatlon conserva sus
 controles de teclado y ajustes; Enroca conserva navegación y ajustes. Estos
 estilos de cabecera no cambian los controles de las actividades.

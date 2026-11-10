@@ -34,14 +34,14 @@ test.fixme('debug metrics state after opening settings', async ({ page }) => {
   console.log('BEFORE OPENING SETTINGS:', JSON.stringify(beforeOpen, null, 2));
 
   // Open settings like test 2.5 does
-  await page.locator('#btnOpenSettings').click();
+  await page.locator('.locale-settings-trigger').click();
   await page.waitForTimeout(500);
 
   // Check button right after opening settings, before any click
   const afterOpen = await page.evaluate(() => ({
     btnMetricsAria: document.querySelector('#btnMetrics') ? document.querySelector('#btnMetrics').getAttribute('aria-pressed') : null,
     btnMetricsText: document.querySelector('#btnMetrics') ? document.querySelector('#btnMetrics').textContent : null,
-    settingsDrawerVisible: !document.querySelector('#settingsDrawer').hidden,
+    settingsDrawerVisible: !document.querySelector('#accessibility-settings').hidden,
   }));
   console.log('AFTER OPENING SETTINGS:', JSON.stringify(afterOpen, null, 2));
 

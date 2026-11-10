@@ -38,20 +38,15 @@
    no se traduce a la locale activa, porque entonces perdería
    identidad visual al cambiar.
 
-   Cabecera: DOS controles y ninguno dentro del otro.
-     · el desplegable de idioma, siempre visible en #locale-picker;
-     · el ⚙️, su hermano inmediato a la derecha, que abre el cajón de
-       accesibilidad (tema, tamaño de letra, alto contraste y, si la app
-       tiene sonido, sus interruptores).
-   El idioma NO vive dentro del cajón: llegar al idioma cuesta un clic,
-   no dos. Es el modelo de Teclatlon, donde la app trae su propio cajón
-   y este componente se limita al desplegable (`settings: false`).
+   Cabecera: el ⚙️ es el único control fijo. Abre el cajón de ajustes:
+   idioma, tema, tamaño de letra, alto contraste y, si la app tiene sonido,
+   sus interruptores. El idioma vive dentro del cajón, como primera fila, en
+   las siete apps que usan este componente, así que hay un solo sitio donde
+   cambiar preferencias. Es el modelo de la suite y lo activa
+   `languageInDrawer: true`.
 
-   `languageInDrawer: true` invierte esa decisión para una app concreta:
-   el desplegable se MUEVE al cajón compartido como primera fila y el ⚙️
-   se queda solo en la cabecera. Es lo que hace Apptonomia, en la que el
-   propio ⚙️ ES la configuración. Las demás apps siguen con el modelo de
-   cabecera, que es el que construye este componente por defecto.
+   Teclatlon trae su propio cajón (`settings: false`): el componente no lo
+   construye, solo monta el desplegable dentro del cajón de la app.
 
    El cajón NO lleva enlace "Más ajustes": cada proyecto tiene su propia
    ruta de ajustes en su navegación, y un segundo acceso al mismo sitio
@@ -79,6 +74,13 @@
   var ON_CHANGE = cfg.onChange || null; // callback custom si no usa App.i18n
   var DEFAULT_LOCALE = cfg.defaultLocale || 'en';
   var ENABLE_SETTINGS = cfg.settings !== false;
+  /* standardRows: false leaves the drawer to the app for its own accessibility
+     controls (text size, theme, contrast). It is only for apps that also set
+     soundSettings: false. extraRowsId: id of a container in the app markup whose
+     rows are moved into the drawer after the standard ones, keeping their ids
+     and listeners. Neither option changes the drawer for apps that omit them. */
+  var STANDARD_ROWS = cfg.standardRows !== false;
+  var EXTRA_ROWS_ID = cfg.extraRowsId || null;
   /* `languageInDrawer: true` deja el desplegable DENTRO del cajón
      compartido, como su primera fila, y el ⚙️ solo en la cabecera. Por
      defecto (false) el idioma se queda en #locale-picker, junto al ⚙️,
@@ -307,6 +309,7 @@
   }
 
   function applySettings() {
+    if (!STANDARD_ROWS) return;
     var html = document.documentElement;
     if (baseRootFontSize === null) baseRootFontSize = parseFloat(window.getComputedStyle(html).fontSize) || 16;
     html.setAttribute('data-a11y-text', settingsState.textSize);
@@ -332,7 +335,6 @@
       html.style.removeProperty('--text-scale');
       html.style.removeProperty('--escala-texto');
     }
-    html.classList.toggle('high-contrast', settingsState.contrast && cfg.legacyContrastClass === true);
     applyTheme();
   }
 
@@ -344,6 +346,7 @@
        tiene fila de idioma y no hay nada que traducir. */
     var languageLabel = drawer.querySelector('[data-settings-language-label]');
     if (languageLabel) languageLabel.textContent = copy.language;
+    if (!STANDARD_ROWS) return;
     drawer.querySelector('[data-settings-size-label]').textContent = copy.textSize;
     drawer.querySelector('[data-settings-theme-label]').textContent = copy.theme;
     drawer.querySelector('[data-settings-theme-light]').textContent = copy.themeLight;
@@ -474,6 +477,23 @@
         '<p class="locale-settings-help" data-settings-help></p>' +
       '</div>';
 
+    /* Without the standard rows, drop their markup from the drawer. */
+    if (!STANDARD_ROWS) {
+      ['[data-settings-theme-label]', '[data-settings-size-label]', '[data-settings-contrast-label]', '[data-settings-help]']
+        .forEach(function (sel) {
+          var el = drawer.querySelector(sel);
+          if (el) (el.closest('.locale-settings-row') || el).remove();
+        });
+    }
+    /* Move the app's own rows into the drawer body (ids and listeners survive a move). */
+    if (EXTRA_ROWS_ID) {
+      var extraRows = document.getElementById(EXTRA_ROWS_ID);
+      var drawerBody = drawer.querySelector('.locale-settings-drawer-body');
+      if (extraRows && drawerBody) {
+        while (extraRows.firstChild) drawerBody.appendChild(extraRows.firstChild);
+        extraRows.remove();
+      }
+    }
     document.body.appendChild(backdrop);
     document.body.appendChild(drawer);
     if (LANGUAGE_IN_DRAWER && headerLocalePicker) {
@@ -521,7 +541,8 @@
         saveSettings(); applySettings(); renderSettings(drawer);
       });
     });
-    drawer.querySelector('[data-settings-contrast]').addEventListener('change', function (event) {
+    var contrastBox = drawer.querySelector('[data-settings-contrast]');
+    if (contrastBox) contrastBox.addEventListener('change', function (event) {
       settingsState.contrast = event.target.checked;
       saveSettings(); applySettings(); renderSettings(drawer);
     });

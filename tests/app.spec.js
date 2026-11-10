@@ -145,20 +145,20 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
   // -----------------------------------------------------------------
   test('2.1 — abre y cierra el drawer de ajustes', async ({ page }) => {
     page = await openFreshApp();
-    await expect(page.locator('#btnOpenSettings')).toHaveAttribute('aria-expanded', 'false');
-    await page.locator('#btnOpenSettings').click();
-    await expect(page.locator('#settingsDrawer')).toBeVisible();
-    await expect(page.locator('#settingsDrawer')).toHaveAttribute('role', 'dialog');
-    await expect(page.locator('#btnOpenSettings')).toHaveAttribute('aria-expanded', 'true');
-    await page.locator('#btnCloseSettings').click();
-    await expect(page.locator('#settingsDrawer')).toBeHidden();
-    await expect(page.locator('#btnOpenSettings')).toHaveAttribute('aria-expanded', 'false');
+    await expect(page.locator('.locale-settings-trigger')).toHaveAttribute('aria-expanded', 'false');
+    await page.locator('.locale-settings-trigger').click();
+    await expect(page.locator('#accessibility-settings')).toBeVisible();
+    await expect(page.locator('#accessibility-settings')).toHaveAttribute('role', 'dialog');
+    await expect(page.locator('.locale-settings-trigger')).toHaveAttribute('aria-expanded', 'true');
+    await page.locator('#accessibility-settings [data-settings-close]').click();
+    await expect(page.locator('#accessibility-settings')).toBeHidden();
+    await expect(page.locator('.locale-settings-trigger')).toHaveAttribute('aria-expanded', 'false');
   });
 
   test('2.2 — cambia idioma de ES a EN y vuelve a ES', async ({ page }) => {
     page = await openFreshApp();
-    await page.locator('#btnOpenSettings').click();
-    await expect(page.locator('#settingsDrawer')).toBeVisible();
+    await page.locator('.locale-settings-trigger').click();
+    await expect(page.locator('#accessibility-settings')).toBeVisible();
 
     // Open the language dropdown, then select EN
     await page.locator('.locale-picker-btn').click();
@@ -167,7 +167,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await expect(page.locator('#greeting')).toContainText('Hi!'); // EN greeting
 
     // EN → ES (drawer closes + page reloads after setLocale; reopen first)
-    await page.locator('#btnOpenSettings').click();
+    await page.locator('.locale-settings-trigger').click();
     await page.locator('.locale-picker-btn').click();
     await expect(page.locator('[data-locale="es"]')).toBeVisible();
     await page.evaluate(() => document.querySelector('[data-locale="es"]').dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true })));
@@ -180,7 +180,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     const page = await context.newPage();
     await context.addInitScript(() => localStorage.clear());
     await page.goto(BASE);
-    await page.locator('#btnOpenSettings').click();
+    await page.locator('.locale-settings-trigger').click();
     await expect(page.locator('.locale-picker-btn')).toBeVisible();
     await expect(page.locator('.locale-picker-current')).toHaveText('EN');
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
@@ -189,7 +189,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
 
   test('2.3 — cambia todos los temas (light, dark, contrast)', async ({ page }) => {
     page = await openFreshApp();
-    await page.locator('#btnOpenSettings').click();
+    await page.locator('.locale-settings-trigger').click();
 
     const palette = () => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--color-bg').trim());
     await page.locator('.btn-theme[data-theme="light"]').click();
@@ -229,7 +229,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
 
   test('2.4 — cambia todos los tamaños de texto (small, normal, large, huge)', async ({ page }) => {
     page = await openFreshApp();
-    await page.locator('#btnOpenSettings').click();
+    await page.locator('.locale-settings-trigger').click();
 
     const expectedFontSizes = { small: 18, normal: 20, large: 24, huge: 30 };
     for (const size of ['small', 'large', 'huge']) {
@@ -247,7 +247,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
 
   test('2.5 — toggles: leyenda, numérico, celebración, sonido teclas y error', async ({ page }) => {
     page = await openFreshApp();
-    await page.locator('#btnOpenSettings').click();
+    await page.locator('.locale-settings-trigger').click();
     await page.waitForTimeout(300); // wait for drawer animation to complete
     await page.evaluate(() => {
       window.__audioStarts = 0;
@@ -335,7 +335,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
 
   test('2.6 — vista del teclado: simple, normal, extended', async ({ page }) => {
     page = await openFreshApp();
-    await page.locator('#btnOpenSettings').click();
+    await page.locator('.locale-settings-trigger').click();
 
     await page.locator('.btn-keyboard[data-keyboard="simple"]').click();
     await expect(page.locator('.btn-keyboard[data-keyboard="simple"]')).toHaveAttribute('aria-pressed', 'true');
@@ -353,7 +353,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
 
   test('2.7 — colores del teclado: manos y dedos', async ({ page }) => {
     page = await openFreshApp();
-    await page.locator('#btnOpenSettings').click();
+    await page.locator('.locale-settings-trigger').click();
 
     const keyboard = page.locator('#screenName .keyboard');
     const handsButton = page.locator('.btn-color[data-color="hands"]');
@@ -387,7 +387,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
 
     await fingersButton.click();
     await page.reload();
-    await page.locator('#btnOpenSettings').click();
+    await page.locator('.locale-settings-trigger').click();
     await expect(keyboard).toHaveClass(/color-fingers/);
     await expect(fingersButton).toHaveAttribute('aria-pressed', 'true');
   });
@@ -515,10 +515,10 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
   // -----------------------------------------------------------------
   test('8.1 — ajustes persisten tras recargar la página', async ({ page }) => {
     page = await openFreshApp();
-    await page.locator('#btnOpenSettings').click();
+    await page.locator('.locale-settings-trigger').click();
     await page.locator('.btn-theme[data-theme="dark"]').click();
     await page.locator('.btn-layout[data-layout="us"]').click();
-    await page.locator('#btnCloseSettings').click();
+    await page.locator('#accessibility-settings [data-settings-close]').click();
 
     // Navigate to menu so page is on the menu when reload happens
     await page.locator('#btnSkipName').click();
@@ -529,7 +529,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 
     // Verify the keyboard layout choice is still on after reopening settings
-    await page.locator('#btnOpenSettings').click();
+    await page.locator('.locale-settings-trigger').click();
     await page.waitForTimeout(300); // wait for drawer animation to complete
     await expect(page.locator('.btn-layout[data-layout="us"]')).toHaveAttribute('aria-pressed', 'true');
   });
@@ -611,8 +611,8 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await expect(page.locator('#screenFree')).toBeVisible({ timeout: 5000 });
     await page.locator('#freeArea').fill('Prueba');
     await page.locator('#btnExitFree').click();
-    await page.locator('#btnOpenSettings').click();
-    await page.locator('#btnCloseSettings').click();
+    await page.locator('.locale-settings-trigger').click();
+    await page.locator('#accessibility-settings [data-settings-close]').click();
 
     await waitForAsyncErrors(page);
     expect(errors.pageErrors).toEqual([]);
@@ -623,7 +623,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     const errors = await collectBrowserErrors(page);
 
     page = await openFreshApp();
-    await page.locator('#btnOpenSettings').click();
+    await page.locator('.locale-settings-trigger').click();
     await page.locator('.locale-picker-btn').click();
     await expect(page.locator('[data-locale="en"]')).toBeVisible();
     await page.evaluate(() => document.querySelector('[data-locale="en"]').dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true })));
@@ -1218,12 +1218,12 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
   // -----------------------------------------------------------------
   test('27 — Escape cierra el drawer de ajustes', async ({ page }) => {
     page = await openFreshApp();
-    await page.locator('#btnOpenSettings').click();
-    await expect(page.locator('#settingsDrawer')).toBeVisible();
+    await page.locator('.locale-settings-trigger').click();
+    await expect(page.locator('#accessibility-settings')).toBeVisible();
 
     await page.keyboard.press('Escape');
-    await expect(page.locator('#settingsDrawer')).toBeHidden();
-    await expect(page.locator('#btnOpenSettings')).toHaveAttribute('aria-expanded', 'false');
+    await expect(page.locator('#accessibility-settings')).toBeHidden();
+    await expect(page.locator('.locale-settings-trigger')).toHaveAttribute('aria-expanded', 'false');
   });
 
   // -----------------------------------------------------------------
@@ -1231,12 +1231,12 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
   // -----------------------------------------------------------------
   test('28 — hacer clic en el backdrop cierra el drawer', async ({ page }) => {
     page = await openFreshApp();
-    await page.locator('#btnOpenSettings').click();
-    await expect(page.locator('#settingsDrawer')).toBeVisible();
+    await page.locator('.locale-settings-trigger').click();
+    await expect(page.locator('#accessibility-settings')).toBeVisible();
 
-    await page.locator('#settingsBackdrop').click();
-    await expect(page.locator('#settingsDrawer')).toBeHidden();
-    await expect(page.locator('#btnOpenSettings')).toHaveAttribute('aria-expanded', 'false');
+    await page.locator('.locale-settings-backdrop').click();
+    await expect(page.locator('#accessibility-settings')).toBeHidden();
+    await expect(page.locator('.locale-settings-trigger')).toHaveAttribute('aria-expanded', 'false');
   });
 
   // -----------------------------------------------------------------
@@ -1288,7 +1288,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
   // -----------------------------------------------------------------
   test('31 — títulos de lecciones coinciden con locale EN', async ({ page }) => {
     page = await openFreshApp();
-    await page.locator('#btnOpenSettings').click();
+    await page.locator('.locale-settings-trigger').click();
     await page.locator('.locale-picker-btn').click();
     await expect(page.locator('[data-locale="en"]')).toBeVisible();
     await page.evaluate(() => document.querySelector('[data-locale="en"]').dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true })));

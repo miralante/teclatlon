@@ -103,9 +103,9 @@ test.describe('Teclatlon — Aviso de descanso', () => {
     await installClock(page);
 
     // Default interval is 20 minutes, shown in the settings panel.
-    await page.locator('#btnOpenSettings').click();
+    await page.locator('.locale-settings-trigger').click();
     await expect(page.locator('#restMinutesInput')).toHaveValue('20');
-    await page.locator('#btnCloseSettings').click();
+    await page.locator('#accessibility-settings [data-settings-close]').click();
     expect((await savedOptions(page)).restMinutes).toBe(20);
 
     const rest = await restText(page);
@@ -159,20 +159,20 @@ test.describe('Teclatlon — Aviso de descanso', () => {
   test('el intervalo se cambia en ajustes y el tiempo sin escribir no cuenta', async () => {
     const page = await openApp();
 
-    await page.locator('#btnOpenSettings').click();
+    await page.locator('.locale-settings-trigger').click();
     // 45 is not one of the values the old menu offered: the setting is a
     // number box, so any whole number of minutes goes.
     await page.locator('#restMinutesInput').fill('45');
     await page.locator('#restMinutesInput').press('Tab');
-    await page.locator('#btnCloseSettings').click();
+    await page.locator('#accessibility-settings [data-settings-close]').click();
     expect((await savedOptions(page)).restMinutes).toBe(45);
 
     // The choice survives a reload.
     await page.reload();
     await expect(page.locator('#screenName')).toBeVisible();
-    await page.locator('#btnOpenSettings').click();
+    await page.locator('.locale-settings-trigger').click();
     await expect(page.locator('#restMinutesInput')).toHaveValue('45');
-    await page.locator('#btnCloseSettings').click();
+    await page.locator('#accessibility-settings [data-settings-close]').click();
 
     await installClock(page);
     const rest = await restText(page);
@@ -194,7 +194,7 @@ test.describe('Teclatlon — Aviso de descanso', () => {
 
   test('la caja de minutos acepta cualquier número y sus flechas lo suben y bajan', async () => {
     const page = await openApp();
-    await page.locator('#btnOpenSettings').click();
+    await page.locator('.locale-settings-trigger').click();
     const box = page.locator('#restMinutesInput');
 
     // A number box with a stepper, not a menu with a fixed list.

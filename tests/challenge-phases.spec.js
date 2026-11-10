@@ -170,17 +170,17 @@ test.describe('Teclatlon — reto de todas las teclas', () => {
     expect(shown).not.toBe('');
 
     // Off: hidden, without having to press anything else.
-    await page.locator('#btnOpenSettings').click();
+    await page.locator('.locale-settings-trigger').click();
     await page.evaluate(() => document.querySelector('#btnFingerText').click());
-    await page.locator('#btnCloseSettings').click();
+    await page.locator('#accessibility-settings [data-settings-close]').click();
     await expect(page.locator('#guideText')).toBeHidden();
     expect(await page.evaluate(() =>
       JSON.parse(localStorage.getItem('teclatlon:keyboard')).options.showFingerText)).toBe(false);
 
     // On again: the same sentence comes back.
-    await page.locator('#btnOpenSettings').click();
+    await page.locator('.locale-settings-trigger').click();
     await page.evaluate(() => document.querySelector('#btnFingerText').click());
-    await page.locator('#btnCloseSettings').click();
+    await page.locator('#accessibility-settings [data-settings-close]').click();
     await expect(page.locator('#guideText')).toBeVisible();
     expect((await page.locator('#guideText').textContent()).trim()).toBe(shown);
   });

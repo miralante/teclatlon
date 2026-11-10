@@ -81,9 +81,9 @@ async function main() {
     const keyCount = await visibleKeyboard.count();
     assert.ok(keyCount > 0, 'el teclado visual debe contener teclas visibles');
 
-    const settingsButton = page.locator('#btnOpenSettings');
+    const settingsButton = page.locator('.locale-settings-trigger');
     await settingsButton.click();
-    const drawer = page.locator('#settingsDrawer');
+    const drawer = page.locator('#accessibility-settings');
     await drawer.waitFor({ state: 'visible' });
     assert.equal(await settingsButton.getAttribute('aria-expanded'), 'true');
     assert.equal(await drawer.getAttribute('role'), 'dialog');
@@ -195,7 +195,7 @@ async function main() {
     // PENDING (goals): assert.equal(persisted.goal.accuracyMin, 95);
     // PENDING (goals): assert.equal(persisted.goal.speedMin, 50);
 
-    await page.locator('#btnCloseSettings').click();
+    await page.locator('#accessibility-settings [data-settings-close]').click();
     await drawer.waitFor({ state: 'hidden' });
     assert.equal(await settingsButton.getAttribute('aria-expanded'), 'false');
 
@@ -223,8 +223,8 @@ async function main() {
     assert.equal(await page.locator('#restMinutesInput').inputValue(), '30');
 
     // The locale picker uses the app's own language setting and text dictionary.
-    await page.locator('#btnOpenSettings').click();
-    await page.waitForFunction(() => getComputedStyle(document.querySelector('#settingsDrawer')).transform === 'matrix(1, 0, 0, 1, 0, 0)');
+    await page.locator('.locale-settings-trigger').click();
+    await page.waitForFunction(() => getComputedStyle(document.querySelector('#accessibility-settings')).transform === 'matrix(1, 0, 0, 1, 0, 0)');
     await page.locator('#locale-picker .locale-picker-btn').click();
     await page.locator('#locale-picker .locale-picker-panel').waitFor({ state: 'visible' });
     await page.locator('#locale-picker .locale-picker-panel li[data-locale="en"]').click();

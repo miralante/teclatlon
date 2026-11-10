@@ -199,7 +199,7 @@
                must still be reachable when the person asks for it. Its
                label is written by app.js (sessionTimerAria). -->
           <span class="session-timer hidden" id="sessionTimer" role="timer" aria-live="off"></span>
-          <button type="button" class="btn-icon btn-open-settings" id="btnOpenSettings" aria-haspopup="dialog" aria-expanded="false" aria-controls="settingsDrawer" data-i18n-aria="openSettingsAria" aria-label="Ajustes">⚙️</button>
+          <div id="locale-picker"></div>
         </div>
       </div>
     </header>
@@ -400,21 +400,7 @@
     </footer>
   </div>
 
-  <div id="settingsBackdrop" class="drawer-backdrop" hidden></div>
-  <aside id="settingsDrawer" class="settings-drawer settings-panel stack" role="dialog" aria-modal="true" aria-labelledby="settingsPanelTitle" hidden>
-    <div class="row drawer-header">
-      <h3 id="settingsPanelTitle" data-i18n="settingsHeader">Ajustes</h3>
-      <button type="button" class="btn-icon btn-close-settings" id="btnCloseSettings" data-i18n-aria="closeSettingsAria" aria-label="Cerrar ajustes">✕</button>
-    </div>
-    <p class="instruction" data-i18n="settingsPanel">Ajustes de accesibilidad y juego</p>
-
-    <div class="setting-row">
-      <span class="setting-label" data-i18n="languageLabel">🌐 Idioma</span>
-      <span class="text-group" role="group" id="languageGroup" data-i18n-aria="languageLabelAria" aria-label="Elegir idioma">
-        <div id="locale-picker"></div>
-      </span>
-    </div>
-
+  <div id="settingsExtra">
     <div class="setting-row">
       <span class="setting-label" data-i18n="textSizeAria">Tamaño del texto</span>
       <span class="text-group" role="group" data-i18n-aria="textSizeAdjustAria" aria-label="Aumentar o reducir el tamaño del texto">
@@ -528,7 +514,7 @@
     </div>
 
     <p class="help-text" data-i18n="settingsHelp">Estos ajustes se guardan en este dispositivo.</p>
-  </aside>
+  </div>
 
   <script src="assets/js/utils.js"></script>
   <script src="assets/js/i18n.js?v=2"></script>

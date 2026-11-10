@@ -89,10 +89,10 @@ async function simulateIdle(page, minutes) {
 
 /** Open the ⚙️ drawer, flip #btnShowTimer, close it again. */
 async function toggleTimer(page) {
-  await page.locator('#btnOpenSettings').click();
+  await page.locator('.locale-settings-trigger').click();
   await expect(page.locator('#btnShowTimer')).toBeVisible();
   await page.locator('#btnShowTimer').click();
-  await page.locator('#btnCloseSettings').click();
+  await page.locator('#accessibility-settings [data-settings-close]').click();
 }
 
 /** Minutes currently painted in the header clock, or null when hidden. */
@@ -167,10 +167,10 @@ test.describe('Teclatlon — Temporizador de práctica', () => {
     await installClock(page);
 
     // A one-minute interval, so the reminder fires while the test runs.
-    await page.locator('#btnOpenSettings').click();
+    await page.locator('.locale-settings-trigger').click();
     await page.locator('#restMinutesInput').fill('1');
     await page.locator('#restMinutesInput').dispatchEvent('change');
-    await page.locator('#btnCloseSettings').click();
+    await page.locator('#accessibility-settings [data-settings-close]').click();
     await toggleTimer(page);
 
     // Past the interval, so the next celebration carries the reminder and

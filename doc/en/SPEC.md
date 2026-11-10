@@ -206,8 +206,8 @@ applied at startup (`applyOptions()` in `js/settings.js`). The help
 options are off by default, except key sound and finger text, which start
 on: each person decides what helps them.
 
-The panel is a lateral drawer (`#settingsDrawer`), opened from a gear
-icon (`#btnOpenSettings`) in the header — reachable from every screen,
+The panel is a lateral drawer (`#accessibility-settings`), opened from a gear
+icon (`.locale-settings-trigger`) in the header — reachable from every screen,
 not just at first run. It closes via its own close button, a click on
 the backdrop, or <kbd>Escape</kbd>, and traps <kbd>Tab</kbd> focus while
 open (see [`technical.md` §2.2](technical.md)).

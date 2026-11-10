@@ -125,43 +125,24 @@
     }
   }
 
-  /* ---------- Settings side drawer ---------- */
-  var settingsTrigger = null;
-
+  /* ---------- Settings drawer ----------
+     The gear, the drawer, its focus and its Escape key come from the shared
+     accessibility component (assets/js/locale-picker.js). This file keeps the
+     app's own rows working and the small API the keyboard handler uses. */
+  var DRAWER_ID = 'accessibility-settings';
   function focusableSettingsElements() {
-    return $$('#settingsDrawer button, #settingsDrawer [href], #settingsDrawer input, #settingsDrawer select, #settingsDrawer textarea')
+    return $$('#' + DRAWER_ID + ' button, #' + DRAWER_ID + ' [href], #' + DRAWER_ID + ' input, #' + DRAWER_ID + ' select, #' + DRAWER_ID + ' textarea')
       .filter(function (el) { return !el.disabled; });
   }
 
   function settingsOpen() {
-    return !$('#settingsDrawer').hidden;
-  }
-
-  function openSettings() {
-    settingsTrigger = document.activeElement;
-    var backdrop = $('#settingsBackdrop');
-    var drawer = $('#settingsDrawer');
-    backdrop.hidden = false;
-    drawer.hidden = false;
-    requestAnimationFrame(function () {
-      backdrop.classList.add('visible');
-      drawer.classList.add('open');
-    });
-    $('#btnOpenSettings').setAttribute('aria-expanded', 'true');
-    $('#btnCloseSettings').focus();
-    applyOptions();
+    var drawer = document.getElementById(DRAWER_ID);
+    return !!drawer && !drawer.hidden;
   }
 
   function closeSettings() {
-    var backdrop = $('#settingsBackdrop');
-    var drawer = $('#settingsDrawer');
-    backdrop.classList.remove('visible');
-    drawer.classList.remove('open');
-    $('#btnOpenSettings').setAttribute('aria-expanded', 'false');
-    var hide = function () { backdrop.hidden = true; drawer.hidden = true; };
-    if (App.utils.reducedMotion()) hide();
-    else setTimeout(hide, 250);
-    if (settingsTrigger) settingsTrigger.focus();
+    var close = document.querySelector('#' + DRAWER_ID + ' [data-settings-close]');
+    if (close) close.click();
   }
 
   /* Keeps Tab/Shift+Tab cycling inside the open drawer (basic focus
@@ -182,9 +163,6 @@
   }
 
   document.addEventListener('click', function (e) {
-    if (e.target.closest('#btnOpenSettings')) { openSettings(); return; }
-    if (e.target.closest('#btnCloseSettings')) { closeSettings(); return; }
-    if (e.target === $('#settingsBackdrop')) { closeSettings(); return; }
 
     var bTextSize = e.target.closest('.btn-text-size');
     if (bTextSize) { S.state.options.textSize = bTextSize.dataset.textSize; T.save(); applyOptions(); return; }

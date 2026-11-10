@@ -211,8 +211,8 @@ y se aplica en arranque (`applyOptions()` en `js/settings.js`). Las
 opciones de ayuda están apagadas por defecto, salvo el sonido de tecla y el
 texto del dedo, que empiezan encendidos: cada persona decide qué le ayuda.
 
-El panel es un desplegable lateral (`#settingsDrawer`), que se abre desde
-un icono de engranaje (`#btnOpenSettings`) en la cabecera — accesible
+El panel es un desplegable lateral (`#accessibility-settings`), que se abre desde
+un icono de engranaje (`.locale-settings-trigger`) en la cabecera — accesible
 desde cualquier pantalla, no solo al arrancar por primera vez. Se cierra
 con su propio botón de cierre, al pulsar el fondo oscurecido o con
 <kbd>Escape</kbd>, y atrapa el foco de <kbd>Tab</kbd> mientras está
