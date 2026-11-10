@@ -3,7 +3,7 @@
    gives achievements ("logros").
 
    Canonical source: apptonomia/scripts/suite/achievements-engine.js
-   Copies: assets/js/achievements-engine.js (memofun, calculia, routime, teclatlon)
+   Copies: assets/js/achievements-engine.js (calculia, memofun, okeymoney, routime, teclatlon)
            js/achievements-engine.js        (apptonomia/doc/templates)
    Keep every copy byte-identical: run `node apptonomia/scripts/sync-achievements-engine.js --apply`
    after editing this file. Never edit a copy by hand.
