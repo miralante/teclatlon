@@ -26,174 +26,204 @@
       <img src="../assets/img/icono.svg?v=teclatlon-vd6d39b14" alt="" width="80" height="80" class="logo-about">
       <h1>Teclatlon</h1>
       <p class="tagline" data-i18n="tagline">Una aplicación para la autonomía.</p>
-      <p class="lead"><span data-i18n="lead1">Teclatlon es una </span><strong data-i18n="leadStrong">aplicación web de mecanografía con teclado físico</strong><span data-i18n="lead2"> pensada para que cualquier persona pueda practicar a su propio ritmo, sin presión y con respeto a su privacidad.</span></p>
+      <p class="lead"><span data-i18n="lead1">Teclatlon es una </span><strong data-i18n="leadStrong">aplicación web de mecanografía con teclado físico</strong><span data-i18n="lead2"> pensada para que cualquier persona, con o sin experiencia previa, aprenda a escribir con los diez dedos, sin presión y con respeto a su privacidad.</span></p>
       <nav class="indice" aria-label="Índice de la presentación">
         <a href="#origen" data-i18n="navOrigin">El origen</a>
         <a href="#principios" data-i18n="navPrinciples">Los principios</a>
         <a href="#tecnologia" data-i18n="navTech">Cómo está hecha</a>
-        <a href="#areas" data-i18n="navAreas">Las áreas de trabajo</a>
-        <a href="#hermanos" data-i18n="navSiblings">Proyectos hermanos</a>
+        <a href="#especifico" data-i18n="navSpecific">Esta aplicación</a>
+        <a href="#hermanos" data-i18n="navSiblings">Las siete apps</a>
         <a href="#autoria" data-i18n="navAuthorship">Quiénes la hacen</a>
         <a href="#colaborar" data-i18n="navCollaborate">Cómo ayudar</a>
       </nav>
     </header>
       <main class="stack">
-        <section id="origen" class="card">
-          <h2 data-i18n="originTitle">El origen</h2>
-          <p><span data-i18n="originP1a">Teclatlon nace de una pregunta...</span> <em data-i18n="originP1em">¿qué pasa entre una sesión y la siguiente?</em></p>
-          <p data-i18n="originP2">...</p>
-          <p data-i18n="originP3">Esta aplicación es el resultado...</p>
-        </section>
-        <section id="principios" class="stack">
-          <h2 data-i18n="principlesTitle">Los principios que no negociamos</h2>
-          <p data-i18n="principlesIntro">Estas ideas están escritas primero en el código...</p>
-          <div class="principios-grid">
-            <article class="card principio" style="--acento: var(--accent);">
-              <h3 data-i18n="principleAutonomyTitle">🤲 Autonomía real</h3>
-              <p data-i18n="principleAutonomyText">...</p>
-            </article>
-            <article class="card principio" style="--acento: var(--color-encourage);">
-              <h3 data-i18n="principleNoPressureTitle">🚫 Sin presión</h3>
-              <p data-i18n="principleNoPressureText">...</p>
-            </article>
-            <article class="card principio" style="--acento: var(--color-finger-pinky);">
-              <h3 data-i18n="principlePrivacyTitle">🔒 Privacidad por defecto</h3>
-              <p data-i18n="principlePrivacyText">...</p>
-            </article>
-            <article class="card principio" style="--acento: var(--color-finger-middle);">
-              <h3 data-i18n="principleEasyReadTitle">📖 Lectura Fácil</h3>
-              <p data-i18n="principleEasyReadText">...</p>
-            </article>
-            <article class="card principio" style="--acento: var(--color-success);">
-              <h3 data-i18n="principleAccessibilityTitle">♿ Accesibilidad universal</h3>
-              <p data-i18n="principleAccessibilityText">...</p>
-            </article>
-            <article class="card principio" style="--acento: var(--color-hand-right);">
-              <h3 data-i18n="principleSoberTechTitle">🧱 Tecnología sobria</h3>
-              <p data-i18n="principleSoberTechText">...</p>
-            </article>
-          </div>
-        </section>
-        <section id="tecnologia" class="card">
-          <h2 data-i18n="techTitle">Cómo está hecha</h2>
-          <p><span data-i18n="techIntro1">Teclatlon es una aplicación web instalable (PWA)...</span> <strong data-i18n="techIntroStrong">5 páginas HTML estáticas</strong><span data-i18n="techIntro2">...</span></p>
-          <ul>
-            <li><strong data-i18n="techItem1Label">Sin servidor propio</strong>: <span data-i18n="techItem1Text">...</span></li>
-            <li><strong data-i18n="techItem2Label">Funciona sin conexión</strong>: <span data-i18n="techItem2Text">...</span></li>
-            <li><strong><span data-i18n="techItem3Label">Persistencia solo en</span> <code>localStorage</code></strong>: <span data-i18n="techItem3Text">...</span></li>
-            <li><strong data-i18n="techItem4Label">Sin frameworks ni build step</strong>: <span data-i18n="techItem4Text1">...</span> <code>file://</code><span data-i18n="techItem4Text2">...</span></li>
-            <li><strong data-i18n="techItem5Label">Código abierto (licencia MIT)</strong>: <span data-i18n="techItem5Text">...</span></li>
-            <li><strong data-i18n="techItem6Label">Internacionalización desde el inicio</strong>: <span data-i18n="techItem6Text">...</span></li>
-            <li><strong data-i18n="techItem7Label">Dependencias externas: ninguna</strong><span data-i18n="techItem7Text">...</span></li>
-          </ul>
-        </section>
-        <section id="areas" class="card">
-          <h2 data-i18n="areasTitle">Las áreas de trabajo</h2>
-          <p><span data-i18n="areasIntro1">Una sola herramienta...</span> <strong data-i18n="areasIntroStrong">seis bloques por mano y dedo</strong><span data-i18n="areasIntro2">...</span></p>
+
+      <section id="origen" class="card">
+        <h2 data-i18n="originTitle">El origen</h2>
+        <p><span data-i18n="originP1a">Teclatlon nace de una pregunta que se repite al final de cada sesión de apoyo: </span><em data-i18n="originP1em">¿qué pasa entre una sesión y la siguiente?</em></p>
+        <p data-i18n="originP2">La persona tipo practica con el profesional que la acompaña en la consulta, pero después está sola en casa, en el colegio o en su tiempo libre. Queríamos un conjunto de herramientas que respetase esa autonomía, que diese seguridad a las familias y que sirviese a ese profesional como complemento entre sesiones, no como sustituto.</p>
+        <p data-i18n="originP3">Teclatlon es una de las siete aplicaciones autónomas de la suite Apptonomia, todas en Lectura Fácil, todas accesibles, todas pensadas para que la persona usuaria pueda usarlas a su propio ritmo.</p>
+      </section>
+
+      <section id="principios" class="stack">
+        <h2 data-i18n="principlesTitle">Los principios que no negociamos</h2>
+        <p data-i18n="principlesIntro">Estas ideas están escritas primero en el código y después en los textos. Si una decisión las rompe, esa decisión está mal.</p>
+
+        <div class="principios-grid">
+          <article class="card principio" style="--acento: var(--accent);">
+            <h3 data-i18n="principleAutonomyTitle">🤲 Autonomía real</h3>
+            <p data-i18n="principleAutonomyText">La persona usuaria puede usar las aplicaciones sin un profesional al lado. Si necesita ayuda constante, algo no está bien resuelto.</p>
+          </article>
+
+          <article class="card principio" style="--acento: var(--color-encourage);">
+            <h3 data-i18n="principleNoPressureTitle">🚫 Sin presión</h3>
+            <p data-i18n="principleNoPressureText">Nada de cronómetros, ni "game over", ni puntuaciones negativas. El error se responde con ánimo y se puede reintentar sin límite.</p>
+          </article>
+
+          <article class="card principio" style="--acento: var(--color-finger-pinky);">
+            <h3 data-i18n="principlePrivacyTitle">🔒 Privacidad por defecto</h3>
+            <p data-i18n="principlePrivacyText">Sin registro, sin cookies, sin analítica, sin cuentas. Todo el progreso se guarda únicamente en el dispositivo de la persona.</p>
+          </article>
+
+          <article class="card principio" style="--acento: var(--color-finger-middle);">
+            <h3 data-i18n="principleEasyReadTitle">📖 Lectura Fácil</h3>
+            <p data-i18n="principleEasyReadText">Frases cortas, una idea por frase, vocabulario cotidiano. Cero tecnicismos en la interfaz que ve la persona usuaria.</p>
+          </article>
+
+          <article class="card principio" style="--acento: var(--color-success);">
+            <h3 data-i18n="principleAccessibilityTitle">♿ Accesibilidad universal</h3>
+            <p data-i18n="principleAccessibilityText">Botones grandes, alto contraste, audio solo cuando la gamificación o el diseño de la actividad lo requiera, navegación completa por teclado, y respeto al modo de pocas animaciones del sistema.</p>
+          </article>
+
+          <article class="card principio" style="--acento: var(--color-hand-right);">
+            <h3 data-i18n="principleSoberTechTitle">🧱 Tecnología sobria</h3>
+            <p data-i18n="principleSoberTechText">HTML, CSS y JavaScript sin frameworks. Funciona sin internet y se puede instalar como aplicación. Código abierto, en un repositorio público.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="tecnologia" class="card">
+        <h2 data-i18n="techTitle">Cómo está hecha</h2>
+        <p><span data-i18n="techIntro1">Teclatlon es una </span><strong data-i18n="techIntroStrong">aplicación web instalable (PWA)</strong><span data-i18n="techIntro2"> que forma parte de la suite Apptonomia. Tiene rutas ocultas para familias, profesionales y mantenimiento.</span></p>
+        <ul>
+          <li><strong data-i18n="techItem1Label">Sin servidor propio</strong>: <span data-i18n="techItem1Text">la aplicación es un conjunto de archivos servidos por un hosting estático. No hay backend, ni bases de datos, ni API propia.</span></li>
+          <li><strong data-i18n="techItem2Label">Funciona sin conexión</strong>: <span data-i18n="techItem2Text">una vez instaladas, abren aunque no haya internet gracias al service worker y al caché local de cada app.</span></li>
+          <li><strong><span data-i18n="techItem3Label">Persistencia solo en</span> <code>localStorage</code></strong>: <span data-i18n="techItem3Text">el progreso (estrellas, niveles completados, ajustes) vive en el navegador del dispositivo. Nunca se envía a ningún sitio.</span></li>
+          <li><strong data-i18n="techItem4Label">Sin frameworks ni build step</strong>: <span data-i18n="techItem4Text1">JavaScript clásico compatible con navegadores antiguos y con el protocolo</span> <code>file://</code><span data-i18n="techItem4Text2">. Pensado para que un técnico novel pueda leer y modificar una actividad sin sorpresas.</span></li>
+          <li><strong data-i18n="techItem5Label">Código abierto (licencia MIT)</strong>: <span data-i18n="techItem5Text">cualquiera puede leerlo, auditarlo y proponer mejoras. Las decisiones de producto están escritas en cada repositorio, no en presentaciones cerradas.</span></li>
+          <li><strong data-i18n="techItem6Label">Internacionalización desde el inicio</strong>: <span data-i18n="techItem6Text">cada texto vive en un archivo por idioma. Hoy la suite está disponible en español de España e inglés.</span></li>
+          <li><strong data-i18n="techItem7Label">Dependencias externas: ninguna</strong><span data-i18n="techItem7Text">, excepto la descarga de las fuentes tipográficas Atkinson Hyperlegible y Nunito (usadas por su alta legibilidad).</span></li>
+        </ul>
+      </section>
+
+      <section id="especifico" class="stack">
+        <h2 data-i18n="specificTitle">Esta aplicación</h2>
+
+      <section id="areas" class="card">
+          <h3 data-i18n="areasTitle">Las áreas de trabajo</h3>
+          <p><span data-i18n="areasIntro1">Una sola herramienta, pero la mecanografía se organiza en </span> <strong data-i18n="areasIntroStrong">seis bloques por mano y dedo</strong><span data-i18n="areasIntro2">, cada uno con su color identificativo en el teclado virtual. Cada lección trabaja un bloque, y la persona avanza a su ritmo: puede empezar por el índice y subir hasta escribir con los diez dedos.</span></p>
           <div class="areas-grid">
             <article class="area" style="--acento: var(--accent);">
               <h3 data-i18n="areaLeftHandTitle">✋ Mano izquierda</h3>
-              <p data-i18n="areaLeftHandText">...</p>
+              <p data-i18n="areaLeftHandText">Las cinco teclas que se escriben con la mano izquierda (y los pulgares para el espacio).</p>
               <p class="area-cifra" data-i18n="areaLeftHandCount">5 teclas</p>
             </article>
             <article class="area" style="--acento: var(--color-hand-right);">
               <h3 data-i18n="areaRightHandTitle">🤚 Mano derecha</h3>
-              <p data-i18n="areaRightHandText">...</p>
+              <p data-i18n="areaRightHandText">Las cinco teclas que se escriben con la mano derecha.</p>
               <p class="area-cifra" data-i18n="areaRightHandCount">5 teclas</p>
             </article>
             <article class="area" style="--acento: var(--color-finger-ring);">
               <h3 data-i18n="areaRingFingerTitle">💍 Dedo anular</h3>
-              <p data-i18n="areaRingFingerText">...</p>
+              <p data-i18n="areaRingFingerText">Las teclas que pulsan los dedos anulares (uno en cada mano).</p>
               <p class="area-cifra" data-i18n="areaRingFingerCount">2 teclas</p>
             </article>
             <article class="area" style="--acento: var(--color-finger-middle);">
               <h3 data-i18n="areaMiddleFingerTitle">🖕 Dedo corazón</h3>
-              <p data-i18n="areaMiddleFingerText">...</p>
+              <p data-i18n="areaMiddleFingerText">Las teclas que pulsan los dedos corazón (uno en cada mano).</p>
               <p class="area-cifra" data-i18n="areaMiddleFingerCount">2 teclas</p>
             </article>
             <article class="area" style="--acento: var(--color-finger-pinky);">
               <h3 data-i18n="areaPinkyTitle">🤞 Meñique</h3>
-              <p data-i18n="areaPinkyText">...</p>
+              <p data-i18n="areaPinkyText">Las teclas que pulsan los meñiques (uno en cada mano).</p>
               <p class="area-cifra" data-i18n="areaPinkyCount">2 teclas</p>
             </article>
             <article class="area" style="--acento: var(--color-encourage);">
               <h3 data-i18n="areaModesTitle">🎹 Modos de teclado</h3>
-              <p data-i18n="areaModesText">...</p>
+              <p data-i18n="areaModesText">Teclado simple, normal, extendido y con colores por dedo.</p>
               <p class="area-cifra" data-i18n="areaModesCount">4 modos</p>
             </article>
           </div>
-          <p class="nota-cifras"><span data-i18n="areasNote1">Total: </span><strong data-i18n="areasNoteStrong">1 herramienta, varias lecciones</strong><span data-i18n="areasNote2">...</span></p>
+          <p class="nota-cifras"><span data-i18n="areasNote1">Total: </span><strong data-i18n="areasNoteStrong">1 herramienta, varias lecciones</strong><span data-i18n="areasNote2">, organizadas para que la persona elija por interés, no por obligación. El orden del menú no es un itinerario: cada persona hace su propio camino.</span></p>
         </section>
-        <section id="hermanos" class="card">
-          <h2 data-i18n="siblingsTitle">Proyectos hermanos</h2>
-          <p data-i18n="siblingsIntro">Teclatlon es uno más de un pequeño grupo...</p>
-          <div class="siblings-grid">
-            <a class="sibling" href="https://routime.miralante.workers.dev" target="_blank" rel="noopener noreferrer">
-              <span class="picto" aria-hidden="true">🌿</span>
+
+      </section>
+
+      <section id="hermanos" class="card">
+        <h2 data-i18n="siblingsTitle">Las siete apps de la suite</h2>
+        <p data-i18n="siblingsIntro">Apptonomia es el portal de entrada a siete aplicaciones independientes, cada una con su propio dominio y su propio ritmo de desarrollo. Todas comparten la misma filosofía de accesibilidad y respeto a la privacidad.</p>
+        <div class="siblings-grid">
+          <a class="sibling" href="https://calculia.miralante.workers.dev" target="_blank" rel="noopener noreferrer">
+            <span class="picto" aria-hidden="true">🔢</span>
+            <span class="sibling-texto">
+              <span class="nombre" data-i18n="siblingCalculiaName">Calculia</span>
+              <span class="detalle" data-i18n="siblingCalculiaText">Cálculo y razonamiento lógico para el día a día.</span>
+            </span>
+            <span class="flecha-externa" aria-hidden="true">⇗</span>
+            <span class="sr-only" data-i18n="siblingLinkHint">Se abre en una pestaña nueva.</span>
+          </a>
+          <a class="sibling" href="https://memofun.miralante.workers.dev" target="_blank" rel="noopener noreferrer">
+            <span class="picto" aria-hidden="true">🧠</span>
+            <span class="sibling-texto">
+              <span class="nombre" data-i18n="siblingMemofunName">Memofun</span>
+              <span class="detalle" data-i18n="siblingMemofunText">Memoria y atención.</span>
+            </span>
+            <span class="flecha-externa" aria-hidden="true">⇗</span>
+            <span class="sr-only" data-i18n="siblingLinkHint">Se abre en una pestaña nueva.</span>
+          </a>
+          <a class="sibling" href="https://okeymoney.miralante.workers.dev" target="_blank" rel="noopener noreferrer">
+            <span class="picto" aria-hidden="true">💶</span>
+            <span class="sibling-texto">
+              <span class="nombre" data-i18n="siblingOkeymoneyName">Okeymoney</span>
+              <span class="detalle" data-i18n="siblingOkeymoneyText">Finanzas personales y autonomía cotidiana.</span>
+            </span>
+            <span class="flecha-externa" aria-hidden="true">⇗</span>
+            <span class="sr-only" data-i18n="siblingLinkHint">Se abre en una pestaña nueva.</span>
+          </a>
+          <a class="sibling" href="https://routime.miralante.workers.dev" target="_blank" rel="noopener noreferrer">
+            <span class="picto" aria-hidden="true">🌿</span>
+            <span class="sibling-texto">
+              <span class="nombre" data-i18n="siblingRoutimeName">Routime</span>
+              <span class="detalle" data-i18n="siblingRoutimeText">Rutinas y autonomía del día a día.</span>
+            </span>
+            <span class="flecha-externa" aria-hidden="true">⇗</span>
+            <span class="sr-only" data-i18n="siblingLinkHint">Se abre en una pestaña nueva.</span>
+          </a>
+          <a class="sibling" href="https://sinonimia.miralante.workers.dev" target="_blank" rel="noopener noreferrer">
+            <span class="picto" aria-hidden="true">📖</span>
+            <span class="sibling-texto">
+              <span class="nombre" data-i18n="siblingSinonimiaName">Sinonimia</span>
+              <span class="detalle" data-i18n="siblingSinonimiaText">Diccionario en lectura fácil.</span>
+            </span>
+            <span class="flecha-externa" aria-hidden="true">⇗</span>
+            <span class="sr-only" data-i18n="siblingLinkHint">Se abre en una pestaña nueva.</span>
+          </a>
+          <a class="sibling" href="https://ludia.apptonomia.uk/" target="_blank" rel="noopener noreferrer">
+              <span class="picto" aria-hidden="true">♟</span>
               <span class="sibling-texto">
-                <span class="nombre" data-i18n="siblingRoutimeName">Routime</span>
-                <span class="detalle" data-i18n="siblingRoutimeText">Rutinas y autonomía del día a día.</span>
+                <span class="nombre" data-i18n="siblingLudiaName">Ludia</span>
+                <span class="detalle" data-i18n="siblingLudiaText">Juegos adaptados: reglas, ejercicios y partidas a tu ritmo.</span>
               </span>
-              <span class="flecha-externa" aria-hidden="true">↗</span>
+              <span class="flecha-externa" aria-hidden="true">⇗</span>
               <span class="sr-only" data-i18n="siblingLinkHint">Se abre en una pestaña nueva.</span>
             </a>
-            <a class="sibling" href="https://calculia.miralante.workers.dev" target="_blank" rel="noopener noreferrer">
-              <span class="picto" aria-hidden="true">🔢</span>
-              <span class="sibling-texto">
-                <span class="nombre" data-i18n="siblingCalculiaName">Calculia</span>
-                <span class="detalle" data-i18n="siblingCalculiaText">Cálculo y razonamiento lógico.</span>
-              </span>
-              <span class="flecha-externa" aria-hidden="true">↗</span>
-              <span class="sr-only" data-i18n="siblingLinkHint">Se abre en una pestaña nueva.</span>
-            </a>
-            <a class="sibling" href="https://memofun.miralante.workers.dev" target="_blank" rel="noopener noreferrer">
-              <span class="picto" aria-hidden="true">🧠</span>
-              <span class="sibling-texto">
-                <span class="nombre" data-i18n="siblingMemofunName">Memofun</span>
-                <span class="detalle" data-i18n="siblingMemofunText">Memoria y atención.</span>
-              </span>
-              <span class="flecha-externa" aria-hidden="true">↗</span>
-              <span class="sr-only" data-i18n="siblingLinkHint">Se abre en una pestaña nueva.</span>
-            </a>
-            <a class="sibling" href="https://okeymoney.miralante.workers.dev" target="_blank" rel="noopener noreferrer">
-              <span class="picto" aria-hidden="true">💶</span>
-              <span class="sibling-texto">
-                <span class="nombre" data-i18n="siblingOkeymoneyName">Okeymoney</span>
-                <span class="detalle" data-i18n="siblingOkeymoneyText">Finanzas personales y autonomía cotidiana.</span>
-              </span>
-              <span class="flecha-externa" aria-hidden="true">↗</span>
-              <span class="sr-only" data-i18n="siblingLinkHint">Se abre en una pestaña nueva.</span>
-            </a>
-            <a class="sibling" href="https://sinonimia.miralante.workers.dev" target="_blank" rel="noopener noreferrer">
-              <span class="picto" aria-hidden="true">📖</span>
-              <span class="sibling-texto">
-                <span class="nombre" data-i18n="siblingSinonimiaName">Sinonimia</span>
-                <span class="detalle" data-i18n="siblingSinonimiaText">Diccionario en lectura fácil.</span>
-              </span>
-              <span class="flecha-externa" aria-hidden="true">↗</span>
-              <span class="sr-only" data-i18n="siblingLinkHint">Se abre en una pestaña nueva.</span>
-            </a>
-          </div>
-        </section>
-        <section id="autoria" class="card">
-          <h2 data-i18n="authorshipTitle">Quiénes la hacen</h2>
-          <p><span data-i18n="authorshipP1a">Teclatlon es una iniciativa de </span><strong>The Naked Frame</strong><span data-i18n="authorshipP1b">...</span></p>
-          <p data-i18n="authorshipP2">La aplicación se construye con la participación...</p>
-          <p data-i18n="authorshipP3">El código, el texto y las decisiones...</p>
-        </section>
-        <section id="colaborar" class="card">
-          <h2 data-i18n="collaborateTitle">Cómo ayudar</h2>
-          <p data-i18n="collaborateIntro">Teclatlon es un proyecto abierto...</p>
-          <ul>
-            <li><strong data-i18n="collaborateItem1Label">Probar y compartir feedback</strong>: <span data-i18n="collaborateItem1Text">...</span></li>
-            <li><strong data-i18n="collaborateItem2Label">Proponer lecciones</strong>: <span data-i18n="collaborateItem2Text">...</span></li>
-            <li><strong data-i18n="collaborateItem3Label">Revisar contenido</strong>: <span data-i18n="collaborateItem3Text">...</span></li>
-            <li><strong data-i18n="collaborateItem4Label">Contribuir código</strong>: <span data-i18n="collaborateItem4Text">...</span></li>
-            <li><strong data-i18n="collaborateItem5Label">Difundir</strong>: <span data-i18n="collaborateItem5Text">...</span></li>
-          </ul>
-          <p><span data-i18n="collaborateOutro1">Toda la documentación...</span> <code>CONTRIBUTING.md</code> <span data-i18n="collaborateOutro3">y</span> <code>doc/</code> <span data-i18n="collaborateOutro4">del repositorio.</span></p>
-        </section>
-      </main>
+        </div>
+      </section>
+
+      <section id="autoria" class="card">
+        <h2 data-i18n="authorshipTitle">Quiénes la hacen</h2>
+        <p><span data-i18n="authorshipP1a">Apptonomia y sus siete aplicaciones, entre ellas Teclatlon, son una iniciativa de </span><strong>The Naked Frame</strong><span data-i18n="authorshipP1b">, un estudio independiente que trabaja en proyectos abiertos con impacto social y educativo.</span></p>
+        <p data-i18n="authorshipP2">Las aplicaciones se construyen con la participación de personas tipo, familias, profesionales de apoyo y profesorado, que prueban cada cambio y revisan el contenido antes de que llegue a producción.</p>
+        <p data-i18n="authorshipP3">El código, el texto y las decisiones se publican en abierto para que cualquier persona o equipo pueda auditarlos, aprender de ellos y adaptarlos a otros contextos.</p>
+      </section>
+
+      <section id="colaborar" class="card">
+        <h2 data-i18n="collaborateTitle">Cómo ayudar</h2>
+        <p data-i18n="collaborateIntro">Apptonomia es un proyecto abierto. Hay formas de colaborar que no requieren programar:</p>
+        <ul>
+          <li><strong data-i18n="collaborateItem1Label">Probar y compartir feedback</strong>: <span data-i18n="collaborateItem1Text">las familias, profesionales y personas usuarias que prueban las aplicaciones y cuentan qué funciona y qué no, son la pieza clave del proyecto. Los errores de Lectura Fácil, los tonos poco amables y las actividades que cuesta entender se detectan usándolas.</span></li>
+          <li><strong data-i18n="collaborateItem2Label">Proponer actividades o contenido</strong>: <span data-i18n="collaborateItem2Text">si una habilidad no está cubierta o se trabaja de una forma mejorable, se puede proponer contenido nuevo. La descripción la valida un profesional antes de pasar a código.</span></li>
+          <li><strong data-i18n="collaborateItem3Label">Revisar contenido</strong>: <span data-i18n="collaborateItem3Text">traducciones, ejemplos culturalmente adecuados, explicaciones accesibles. La interfaz que ve la persona usuaria es en Lectura Fácil y se beneficia especialmente de ojos ajenos.</span></li>
+          <li><strong data-i18n="collaborateItem4Label">Contribuir código</strong>: <span data-i18n="collaborateItem4Text">los repositorios de la suite son públicos. Cambios pequeños (un icono, una traducción, una corrección de estilo) y grandes (actividades nuevas, accesibilidad, soporte para más idiomas) se aceptan siempre que respeten los principios del proyecto.</span></li>
+          <li><strong data-i18n="collaborateItem5Label">Difundir</strong>: <span data-i18n="collaborateItem5Text">contar que existe. Muchas familias, profesionales y centros no saben que hay herramientas como esta hasta que alguien se la enseña.</span></li>
+        </ul>
+        <p><span data-i18n="collaborateOutro1">Toda la documentación necesaria para empezar está en los archivos</span>
+          <code>CONTRIBUTING.md</code> <span data-i18n="collaborateOutro3">y</span> <code>doc/</code>
+          <span data-i18n="collaborateOutro4">de cada repositorio.</span></p>
+      </section>
+
+    </main>
 
     <footer class="pie-about">
       <a class="btn btn-secondary" href="../" data-i18n="footerActivities">Ir a la aplicación</a>
