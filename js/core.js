@@ -89,7 +89,7 @@
 
   function readSuiteSounds() {
     try {
-      var saved = JSON.parse(localStorage.getItem('miralante:sounds') || 'null');
+      var saved = JSON.parse(localStorage.getItem('apptonomia:sounds') || 'null');
       return saved && typeof saved === 'object' ? saved : null;
     } catch (e) { return null; }
   }
@@ -102,7 +102,7 @@
 
   function syncSuiteSounds() {
     try {
-      localStorage.setItem('miralante:sounds', JSON.stringify({
+      localStorage.setItem('apptonomia:sounds', JSON.stringify({
         success: S.state.options.keySound,
         error: S.state.options.errorSound
       }));

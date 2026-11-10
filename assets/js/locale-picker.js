@@ -85,7 +85,7 @@
      y llegar a él cuesta un clic en lugar de dos. */
   var LANGUAGE_IN_DRAWER = cfg.languageInDrawer === true;
   var SETTINGS_KEY = cfg.settingsStorageKey || (STORAGE_KEY + ':accessibility');
-  var SOUND_SETTINGS_KEY = cfg.soundStorageKey || 'miralante:sounds';
+  var SOUND_SETTINGS_KEY = cfg.soundStorageKey || 'apptonomia:sounds';
   var SOUND_SETTINGS_ENABLED = cfg.soundSettings !== false;
   var settingsState = null;
   var soundState = null;

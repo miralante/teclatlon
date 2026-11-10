@@ -304,7 +304,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await page.evaluate(() => document.querySelector('#btnKeySound').click());
     const afterFirst = await page.locator('#btnKeySound').textContent();
     expect(afterFirst).not.toBe('⌨️ Sonido de teclas');
-    await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('miralante:sounds'))))
+    await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('apptonomia:sounds'))))
       .toEqual({ success: false, error: false });
     await page.evaluate(() => {
       App.feedback.successSound(0);
@@ -313,7 +313,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await expect.poll(() => page.evaluate(() => window.__audioStarts)).toBe(0);
     await page.evaluate(() => document.querySelector('#btnKeySound').click());
     await expect(page.locator('#btnKeySound')).toHaveAttribute('aria-pressed', 'true');
-    await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('miralante:sounds'))))
+    await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('apptonomia:sounds'))))
       .toEqual({ success: true, error: false });
     await page.evaluate(() => App.feedback.successSound(0));
     await expect.poll(() => page.evaluate(() => window.__audioStarts)).toBe(2);
@@ -321,13 +321,13 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     // Error sound (JS click for reliability)
     await page.evaluate(() => document.querySelector('#btnErrorSound').click());
     await expect(page.locator('#btnErrorSound')).toHaveAttribute('aria-pressed', 'true');
-    await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('miralante:sounds'))))
+    await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('apptonomia:sounds'))))
       .toEqual({ success: true, error: true });
     await page.evaluate(() => App.feedback.errorSound());
     await expect.poll(() => page.evaluate(() => window.__audioStarts)).toBe(3);
     await page.evaluate(() => document.querySelector('#btnErrorSound').click());
     await expect(page.locator('#btnErrorSound')).toHaveAttribute('aria-pressed', 'false');
-    await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('miralante:sounds'))))
+    await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('apptonomia:sounds'))))
       .toEqual({ success: true, error: false });
     await page.evaluate(() => App.feedback.errorSound());
     await expect.poll(() => page.evaluate(() => window.__audioStarts)).toBe(3);

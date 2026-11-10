@@ -41,7 +41,7 @@
 
   function readSharedSound(key) {
     try {
-      var saved = JSON.parse(localStorage.getItem('miralante:sounds') || 'null');
+      var saved = JSON.parse(localStorage.getItem('apptonomia:sounds') || 'null');
       if (saved && typeof saved[key] === 'boolean') return saved[key];
     } catch (e) { /* ignore */ }
     return null;
