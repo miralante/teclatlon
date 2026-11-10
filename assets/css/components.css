@@ -200,33 +200,9 @@
 .feedback.success { color: var(--color-success); }
 .feedback.encourage { color: var(--color-encourage); }
 
-/* ---- Celebration (brief, <= 2 s) ---- */
-.celebration {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space);
-  background: rgba(250, 247, 242, 0.95);
-  z-index: 100;
-  text-align: center;
-  padding: var(--space);
-}
 
-.celebration.hidden { display: none; }
 
-.celebration .emoji {
-  font-size: 96px;
-  animation: celebrate 0.6s ease;
-}
 
-.celebration .message {
-  font-size: var(--text-title);
-  font-weight: 700;
-  color: var(--color-success);
-}
 
 @keyframes celebrate {
   0% { transform: scale(0.4); opacity: 0; }
@@ -762,3 +738,69 @@
 .btn-close-achievements:hover {
   background: var(--color-border);
 }
+
+/* suite:answer-round:begin
+   Miralante answer round, styles. ONE definition for every suite app.
+   Canonical source: apptonomia/scripts/suite/answer-round.css. The block between
+   the markers is copied byte for byte into each app's shared stylesheet by
+   apptonomia/scripts/sync-answer-round.js. Never edit a copy by hand. */
+.btn-entendido {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+button.bloqueada {
+  opacity: 0.6;
+}
+/* suite:answer-round:end */
+
+/* suite:reward-screen:begin
+   Miralante closing screen of an activity, styles. ONE definition for every suite app.
+   Canonical source: apptonomia/scripts/suite/reward-screen.css. Copied byte for byte
+   into each app's shared stylesheet by apptonomia/scripts/sync-answer-round.js.
+   Never edit a copy by hand. */
+.reward-stars {
+  display: inline-block;
+  font-weight: 700;
+  margin-inline-end: 0.5em;
+}
+
+.reward-summary {
+  display: inline;
+}
+/* suite:reward-screen:end */
+
+/* suite:celebrate:begin
+   Miralante closing celebration, styles. ONE definition for every suite app.
+   Canonical source: apptonomia/scripts/suite/celebrate.css. Copied byte for byte
+   into each app's shared stylesheet by apptonomia/scripts/sync-answer-round.js.
+   Never edit a copy by hand. */
+.celebration {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(250, 247, 242, 0.95);
+  z-index: 200;
+  text-align: center;
+}
+
+.celebration.hidden {
+  display: none;
+}
+
+.celebration .emoji {
+  font-size: 80px;
+  line-height: 1;
+}
+
+.celebration .message {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-acierto, var(--color-success, var(--exito, #1f6f43)));
+}
+/* suite:celebrate:end */
