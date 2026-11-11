@@ -19,9 +19,7 @@
 <body>
   <div class="container legal">
     <header class="header-legal">
-      <div class="suite-controls">
-        <div id="locale-picker"></div>
-      </div>
+      <div class="suite-controls" data-suite-header data-suite-brand="off"></div>
       <img src="../assets/img/icono.svg?v=teclatlon-vd6d39b14" alt="" width="72" height="72" class="logo-legal">
       <h1 data-i18n="pageTitle">Protección de datos</h1>
       <p class="tagline" data-i18n="tagline">Sin registro. Sin cookies. Sin analítica.</p>
@@ -71,11 +69,7 @@
 
     </main>
 
-    <footer class="pie-legal">
-      <a class="btn btn-secondary" href="../" data-i18n="footerActivities">Ir a la aplicación</a>
-      <a class="btn btn-secondary" href="https://apptonomia.uk/about/" data-i18n="footerAbout">Sobre este proyecto</a>
-      <a class="btn btn-secondary" href="../config/" data-i18n="footerSettings">Ajustes</a>
-    </footer>
+    <footer data-suite-footer data-suite-base="../" data-suite-settings></footer>
   </div>
 
   <script src="../assets/js/utils.js"></script>
@@ -88,5 +82,6 @@
      portada, para que las dos páginas compartan la copia en caché. -->
 <script src="../assets/js/locale-picker-config.js?v=1"></script>
 <script src="../assets/js/locale-picker.js?v=teclatlon-v4aaa" defer></script>
+  <script src="../assets/js/suite-chrome.js"></script>
 </body>
 </html>

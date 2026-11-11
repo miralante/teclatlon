@@ -813,3 +813,84 @@ button.bloqueada {
   text-align: center;
 }
 .achievement-notice:empty { display: none; }
+
+/* suite:suite-chrome:begin
+   Shared header and footer of every suite app, styles. ONE definition for the
+   whole suite. Canonical source: apptonomia/scripts/suite/suite-chrome.css. The
+   block between the markers is copied byte for byte into the app's shared
+   stylesheet by apptonomia/scripts/sync-suite-chrome.js. Never edit a copy by hand.
+
+   Touch targets are at least 44px. Everything wraps, so nothing scrolls sideways
+   at 320px. Colours come from the app's tokens, with a neutral fallback. */
+.suite-chrome-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding-block: 12px;
+}
+
+.suite-chrome-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.suite-chrome-mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--accent-soft, #e8f3ee);
+  font-weight: 800;
+}
+
+.suite-chrome-name {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.suite-chrome-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-inline-start: auto;
+}
+
+.suite-chrome-footer {
+  margin-block-start: 32px;
+  padding-block: 16px;
+  border-top: 1px solid var(--color-border, #d7dde0);
+}
+
+.suite-chrome-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.suite-chrome-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: 4px;
+  color: inherit;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 480px) {
+  .suite-chrome-header { padding-block: 8px; }
+  .suite-chrome-name { font-size: 1.1rem; }
+  .suite-chrome-controls { margin-inline-start: 0; width: 100%; justify-content: flex-start; }
+}
+/* suite:suite-chrome:end */
