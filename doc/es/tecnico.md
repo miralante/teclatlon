@@ -806,7 +806,7 @@ intencionadamente distinto.
 Las otras apps de la suite:
 
 - **Apptonomia** (la referencia, hub-and-spoke, y además portal de la
-  suite): `tools/<slug>/` por actividad (~60), landing en `site/`,
+  suite): `tools/<slug>/` por actividad (~60),
   `settings/`, `about/`, `content/`, `legal/` compartido.
 - **Calculia** (hub-and-spoke, un solo dominio): el más cercano en
   forma a Apptonomia, reducido a 12 actividades de cálculo / lógica
@@ -836,16 +836,16 @@ Las otras apps de la suite:
 
 | Archivo / carpeta | Teclatlon | Okeymoney | Apptonomia | Calculia | Sinonimia |
 |---|---|---|---|---|---|
-| `index.html` en raíz (single-activity) | ✅ | ✅ | ❌ (vive en `site/index.html`) | ❌ (`site/index.html`) | ✅ |
+| `index.html` en raíz (single-activity) | ✅ | ✅ | ✅ | ✅ | ✅ |
 | `tools/<slug>/` por actividad | ❌ recortado | ❌ recortado | ✅ (~60) | ✅ (12) | ❌ |
-| Landing en `site/` | ❌ recortado (ninguna) | ❌ recortado | ✅ | ✅ | ❌ |
+| Landing en `site/` | ❌ recortado (ninguna) | ❌ recortado | ❌ (ninguna) | ❌ (ninguna) | ❌ |
 | `settings/` (ruta oculta) | ❌ recortado (el reset está inline en `index.html`) | ✅ | ✅ | ✅ | ❌ |
 | `about/`, `content/` | ❌ recortado (ninguno) | ❌ recortado | ✅ | ❌ | ❌ (solo `about/`) |
 | `legal/` (página de protección de datos) | ✅ | ✅ | ✅ | ✅ | ❌ |
 | `assets/css/{tokens,base,components}.css` | ✅ | ✅ | ✅ | ✅ | ❌ (plano `css/styles.css`) |
 | `assets/fonts/` (Atkinson + Nunito) | ✅ | ✅ | ✅ | ✅ | ❌ |
 | `assets/img/icono.svg` | ✅ | ✅ | ✅ | ✅ | ✅ (`img/logo.svg`) |
-| `scripts/check.js` (sin deps, Node stdlib) | ✅ N-locales | ✅ N-locales | ✅ amplio (`tools/`, `site/`, …) | ✅ con catalog-parity lock | ❌ `scripts/validar.js` |
+| `scripts/check.js` (sin deps, Node stdlib) | ✅ N-locales | ✅ N-locales | ✅ amplio (`tools/`, …) | ✅ con catalog-parity lock | ❌ `scripts/validar.js` |
 | Idioma de identificadores en `check.js` | inglés | inglés | español (convención antigua) | inglés | español (archivo distinto) |
 | `sw.js` (PWA network-first con caché de respaldo) | ✅ | ✅ | ✅ | ✅ | ❌ |
 | `manifest.json` (un único icono SVG) | ✅ | ✅ | ✅ (también tenía PNG) | ✅ (solo SVG) | ❌ |
@@ -976,7 +976,7 @@ Cada app expone las mismas cinco carpetas:
 Las apps de una sola actividad (Teclatlon, Okeymoney) ponen el
 `index.html` en la raíz del repo. Las apps multi-actividad
 (Apptonomia, Calculia) ponen `tools/<slug>/index.html` por
-actividad y un landing `site/index.html`; las cuatro carpetas
+actividad ; las cuatro carpetas
 ocultas viven en la raíz del repo.
 
 #### 8.1.2 La concha HTML de una página standalone

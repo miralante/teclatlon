@@ -776,7 +776,7 @@ intentionally different.
 The other apps of the suite:
 
 - **Apptonomia** (the reference, hub-and-spoke): `tools/<slug>/` per
-  activity (~60), `site/` landing, `settings/`, `about/`,
+  activity (~60), `settings/`, `about/`,
   `content/`, `legals/` shared.
 - **Calculia** (hub-and-spoke, single domain): the closest in shape to
   Apptonomia, just narrowed to 12 math/logic activities in two
@@ -806,16 +806,16 @@ The other apps of the suite:
 
 | File / folder | Teclatlon | Okeymoney | Apptonomia | Calculia | Sinonimia |
 |---|---|---|---|---|---|
-| `index.html` at repo root (single-activity) | ✅ | ✅ | ❌ (lives at `site/index.html`) | ❌ (`site/index.html`) | ✅ |
+| `index.html` at repo root (single-activity) | ✅ | ✅ | ✅ | ✅ | ✅ |
 | `tools/<slug>/` per activity | ❌ trimmed | ❌ trimmed | ✅ (~60) | ✅ (12) | ❌ |
-| `site/` landing | ❌ trimmed (none) | ❌ trimmed | ✅ | ✅ | ❌ |
+| `site/` landing | ❌ trimmed (none) | ❌ trimmed | ❌ (none) | ❌ (none) | ❌ |
 | `settings/` (hidden route) | ❌ trimmed (reset is inline in `index.html`) | ✅ | ✅ | ✅ | ❌ |
 | `about/`, `content/` | ❌ trimmed (none) | ❌ trimmed | ✅ | ❌ | ❌ (`about/` only) |
 | `legal/` (data-protection page) | ✅ | ✅ | ✅ | ✅ | ❌ |
 | `assets/css/{tokens,base,components}.css` | ✅ | ✅ | ✅ | ✅ | ❌ (flat `css/styles.css`) |
 | `assets/fonts/` (Atkinson + Nunito) | ✅ | ✅ | ✅ | ✅ | ❌ |
 | `assets/img/icono.svg` | ✅ | ✅ | ✅ | ✅ | ✅ (`img/logo.svg`) |
-| `scripts/check.js` (no deps, Node stdlib) | ✅ N-locales | ✅ N-locales | ✅ sprawling (`tools/`, `site/`, …) | ✅ with catalog-parity lock | ❌ `scripts/validar.js` |
+| `scripts/check.js` (no deps, Node stdlib) | ✅ N-locales | ✅ N-locales | ✅ sprawling (`tools/`, …) | ✅ with catalog-parity lock | ❌ `scripts/validar.js` |
 | `scripts/check.js` identifier language | English | English | Spanish (older convention) | English | Spanish (different file) |
 | `sw.js` (network-first PWA with cache fallback) | ✅ | ✅ | ✅ | ✅ | ❌ |
 | `manifest.json` (single SVG icon) | ✅ | ✅ | ✅ (also had PNG raster) | ✅ (SVG only) | ❌ |
@@ -940,8 +940,7 @@ Every app exposes the same five folders:
 
 Single-activity apps (Teclatlon, Okeymoney) put `index.html` at
 the repo root. Multi-activity apps (Apptonomia, Calculia) put
-`tools/<slug>/index.html` per activity and a `site/index.html`
-landing page; the four hidden folders live at the repo root.
+`tools/<slug>/index.html` per activity; the four hidden folders live at the repo root.
 
 #### 8.1.2 The HTML shell of a standalone page
 

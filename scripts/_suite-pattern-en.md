@@ -94,8 +94,7 @@ Every app exposes the same five folders:
 
 Single-activity apps (Teclatlon, Okeymoney) put `index.html` at
 the repo root. Multi-activity apps (Apptonomia, Calculia) put
-`tools/<slug>/index.html` per activity and a `site/index.html`
-landing page; the four hidden folders live at the repo root.
+`tools/<slug>/index.html` per activity; the four hidden folders live at the repo root.
 
 #### 8.1.2 The HTML shell of a standalone page
 

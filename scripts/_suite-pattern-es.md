@@ -100,7 +100,7 @@ Cada app expone las mismas cinco carpetas:
 Las apps de una sola actividad (Teclatlon, Okeymoney) ponen el
 `index.html` en la raíz del repo. Las apps multi-actividad
 (Apptonomia, Calculia) ponen `tools/<slug>/index.html` por
-actividad y un landing `site/index.html`; las cuatro carpetas
+actividad ; las cuatro carpetas
 ocultas viven en la raíz del repo.
 
 #### 8.1.2 La concha HTML de una página standalone
