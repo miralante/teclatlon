@@ -62,6 +62,7 @@
   }
 
   function advanceChallengePhase() {
+    var game = S.game;
     S.game.stars += 1;
     S.game.phase += 1;
     S.game.set = {};
@@ -79,7 +80,7 @@
     /* Brief feedback before continuing */
     App.feedback.success($('#feedback'));
     setTimeout(function () {
-      if (!S.game || S.game.type !== 'challenge') return;
+      if (S.game !== game) return;
       S.game.pausing = false;
       T.clearFeedback();
       updateChallenge();
@@ -93,7 +94,7 @@
     S.game.stars = CHALLENGE_PHASES;
     updateChallengeStars();
     S.game = null;
-    var m = S.state.metrics;
+    var m = S.metrics;
     var earned = T.award('allKeys');
     var acc = m && m.keys ? Math.round((m.hits / m.keys) * 100) : 0;
     App.achievements.onActivityFinished({ state: S.state, lessons: T.lessons().map(function (l) { return l.id; }), perfect: acc === 100, allKeys: true });
@@ -106,10 +107,16 @@
     if (!typeable[ch] || S.game.set[ch]) return;
     /* Only accept the key if it is the current expected target. */
     var expected = nextPendingKey();
-    if (!expected || ch !== expected.ch) return;
+    if (!expected || ch !== expected.ch) {
+      /* A wrong typeable key is a miss for the round metrics only: no sound,
+         no mark, no pressure. Without it every all-keys round reads 100 %. */
+      S.metrics.keys += 1;
+      S.metrics.misses += 1;
+      return;
+    }
     S.game.set[ch] = true;
-    S.state.metrics.keys += 1;
-    S.state.metrics.hits += 1;
+    S.metrics.keys += 1;
+    S.metrics.hits += 1;
     T.keysOf(ch).forEach(function (t) { t.classList.add('done'); });
     /* Quiet per-key ack: just the "ding" panned to that column.
        Avoids spamming success messages during the challenge but lets

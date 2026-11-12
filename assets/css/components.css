@@ -826,31 +826,31 @@ button.bloqueada {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
-  padding-block: 12px;
+  gap: 8px;
+  padding-block: 4px;
 }
 
 .suite-chrome-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
 }
 
 .suite-chrome-mark {
   display: grid;
   place-items: center;
-  flex: 0 0 40px;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
   background: var(--accent-soft, #e8f3ee);
   font-weight: 800;
 }
 
 .suite-chrome-name {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.05rem;
   font-weight: 800;
   line-height: 1.2;
 }
@@ -889,8 +889,8 @@ button.bloqueada {
 }
 
 @media (max-width: 480px) {
-  .suite-chrome-header { padding-block: 8px; }
-  .suite-chrome-name { font-size: 1.1rem; }
-  .suite-chrome-controls { margin-inline-start: 0; width: 100%; justify-content: flex-start; }
+  .suite-chrome-header { padding-block: 2px; }
+  .suite-chrome-name { font-size: 1rem; }
+  .suite-chrome-controls { margin-inline-start: auto; }
 }
 /* suite:suite-chrome:end */

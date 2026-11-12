@@ -10,7 +10,6 @@
      <main> ... </main>
      <footer data-suite-footer
              data-suite-base="./"
-             data-suite-portal="https://apptonomia.uk/"
              data-suite-settings
              data-suite-contact="hello@apptonomia.uk"></footer>
 
@@ -23,21 +22,24 @@
        data-suite-brand    "off": draw only the locale picker, no app name (the page title names the app)
      footer:
        data-suite-base     relative path from the page to the app root (default "./")
-       data-suite-portal   absolute URL of the suite portal (default "https://apptonomia.uk/")
        data-suite-settings present: show a link to <base>config/
        data-suite-contact  e-mail address shown as a mailto: link (optional)
 
-   STRINGS (every app puts them in its own strings.<locale>.js, es and en):
-     core.chrome.appName   name of the app, shown in the header
-     core.chrome.portal    "back to the portal" link
-     core.chrome.about     link to <base>about/
+   STRINGS
+     core.chrome.appName   the app's name, shown in the header: each app
+                           defines it in its own locale files (es and en)
+      core.chrome.about     link to <base>about/
      core.chrome.legal     link to <base>legal/
      core.chrome.settings  link to <base>config/ (only with data-suite-settings)
+   The footer labels have built-in es and en defaults below, so an app needs
+   no strings for them. An app may still define its own wording for any of
+   them in its locale files; an app's value wins over the default.
 
    LOCALE
-     Labels are written with data-i18n, so the app's own locale switch
-     re-applies them without any code here. The app must re-apply every
-     [data-i18n] node when the language changes.
+     The footer labels carry data-suite-label, so the app's own translation pass
+     does not touch them. They are redrawn when <html lang> or data-lang changes,
+     which every app does when the reader picks a language. The header name keeps
+     data-i18n, so the app's locale switch re-applies it as before.
 
    Node-free, dependency-free, ES5 like the rest of the suite. Depends only
    on App.i18n.t (optional: falls back to showing the key) and on the
@@ -48,9 +50,40 @@
 
   window.App = window.App || {};
 
+  /* Built-in footer labels, used when the app has no string for a key. */
+  var DEFAULTS = {
+    es: {
+      'core.chrome.about': 'Sobre la app',
+      'core.chrome.legal': 'Protección de datos',
+      'core.chrome.settings': 'Ajustes'
+    },
+    en: {
+      'core.chrome.about': 'About the app',
+      'core.chrome.legal': 'Data protection',
+      'core.chrome.settings': 'Settings'
+    }
+  };
+
+  function defaultLabel(key) {
+    var lang = document.documentElement.getAttribute('data-lang') || document.documentElement.getAttribute('lang') || 'es';
+    var table = DEFAULTS[lang.slice(0, 2) === 'en' ? 'en' : 'es'];
+    return table[key] || key;
+  }
+
   function translate(key) {
     var i18n = window.App && window.App.i18n;
-    return i18n && typeof i18n.t === 'function' ? i18n.t(key) : key;
+    var value = i18n && typeof i18n.t === 'function' ? i18n.t(key) : key;
+    return value && value !== key ? value : defaultLabel(key);
+  }
+
+  /* Redraws the footer labels. They carry data-suite-label, not data-i18n, so the
+     app's own translation pass never touches them: the labels are drawn here, in
+     the language of the page, and redrawn whenever <html lang> or data-lang changes. */
+  function refreshLabels() {
+    var labels = document.querySelectorAll('[data-suite-label]');
+    for (var i = 0; i < labels.length; i++) {
+      labels[i].textContent = translate(labels[i].getAttribute('data-suite-label'));
+    }
   }
 
   /* Creates an element with optional class, attributes and translatable text. */
@@ -88,19 +121,19 @@
     mount.appendChild(controls);
   }
 
-  function linkItem(href, i18nKey) {
+  function linkItem(href, labelKey) {
     var item = make('li');
-    item.appendChild(make('a', null, { href: href }, i18nKey));
+    var link = make('a', null, { href: href, 'data-suite-label': labelKey });
+    link.textContent = translate(labelKey);
+    item.appendChild(link);
     return item;
   }
 
   function renderFooter(mount) {
     var base = mount.getAttribute('data-suite-base') || './';
-    var portal = mount.getAttribute('data-suite-portal') || 'https://apptonomia.uk/';
     var contact = mount.getAttribute('data-suite-contact');
 
     var list = make('ul', 'suite-chrome-links');
-    list.appendChild(linkItem(portal, 'core.chrome.portal'));
     list.appendChild(linkItem(base + 'about/', 'core.chrome.about'));
     list.appendChild(linkItem(base + 'legal/', 'core.chrome.legal'));
     if (mount.hasAttribute('data-suite-settings')) {
@@ -138,4 +171,14 @@
      covers a script placed in <head>; render() skips mounts that are already filled. */
   render();
   document.addEventListener('DOMContentLoaded', render);
+  window.addEventListener('load', refreshLabels);
+
+  /* Language changes: every app sets <html lang> or data-lang when the reader picks
+     another language, so the footer labels follow without any code in the app. */
+  if (window.MutationObserver) {
+    new MutationObserver(refreshLabels).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['lang', 'data-lang']
+    });
+  }
 })();

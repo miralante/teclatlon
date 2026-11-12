@@ -121,15 +121,15 @@
     /* Before the activity starts there is no letter to match, so a key
        pressed while reading the panel is not a mistake. */
     if (S.game.phase !== 'running' || S.game.waiting) return;
-    S.state.metrics.keys += 1;
+    S.metrics.keys += 1;
     if (ch === S.game.letter) {
-      S.state.metrics.hits += 1;
+      S.metrics.hits += 1;
       S.game.waiting = true;
       App.feedback.success($('#feedback'));
       App.feedback.successSound(null, true);
       S.dictationTimer = setTimeout(function () { speakDictationLetter(true); }, 550);
     } else {
-      S.state.metrics.misses += 1;
+      S.metrics.misses += 1;
       S.game.waiting = true;
       App.feedback.encourage($('#feedback'), true);
       S.dictationTimer = setTimeout(function () { speakDictationLetter(false); }, 300);

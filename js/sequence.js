@@ -14,7 +14,7 @@
   /* ---------- Live metrics (accuracy and speed) ---------- */
   /* Prepared, but no UI yet. Kept on purpose for the future live-metrics
      feature (accuracy % and keys per minute):
-       - S.state.metrics is filled in every game (startMetrics, gameKey,
+       - S.metrics is filled in every game (startMetrics, gameKey,
          dictation.js, challenge.js) even though nothing shows it yet.
        - updateLiveMetrics() paints into #liveMetrics, which does not exist
          in index.html today, and nothing calls it. To activate it, call it
@@ -27,18 +27,18 @@
      The tests debug.spec.js and scripts/ui-smoke.js expect those elements
      and will fail until the UI is implemented. */
   function startMetrics() {
-    S.state.metrics = { keys: 0, hits: 0, misses: 0, startMs: Date.now() };
+    S.metrics = { keys: 0, hits: 0, misses: 0, startMs: Date.now() };
   }
 
   function updateLiveMetrics() {
     var zone = $('#liveMetrics');
     if (!zone) return;
-    if (!S.state.options.metrics || !S.game || !S.state.metrics) {
+    if (!S.state.options.metrics || !S.game || !S.metrics) {
       zone.classList.add('hidden');
       return;
     }
     zone.classList.remove('hidden');
-    var m = S.state.metrics;
+    var m = S.metrics;
     var accuracy = m.keys ? Math.round((m.hits / m.keys) * 100) : 100;
     var minutes = Math.max((Date.now() - m.startMs) / 60000, 1 / 60);
     var kpm = Math.round(m.keys / minutes);
@@ -195,17 +195,17 @@
   function gameKey(ch, shiftHeld) {
     if (S.game.waiting) return;
     var p = currentStep();
-    S.state.metrics.keys += 1;
+    S.metrics.keys += 1;
 
     if (isSpecialStep(p)) {
       /* Single-action step: no character sequence to walk through,
          it's done as soon as the right key is detected. */
       if (ch === p.specialKey) {
-        S.state.metrics.hits += 1;
+        S.metrics.hits += 1;
         App.feedback.successSound(T.panOf(ch));
         stepCompleted(ch);
       } else {
-        S.state.metrics.misses += 1;
+        S.metrics.misses += 1;
         App.feedback.encourage($('#feedback'));
       }
       return;
@@ -219,14 +219,14 @@
        still counts as correct, matching the app's general policy of
        not penalising things the exercise didn't ask about. */
     if (ch === expected.toLowerCase() && (!needsShift || shiftHeld)) {
-      S.state.metrics.hits += 1;
+      S.metrics.hits += 1;
       App.feedback.successSound(T.panOf(ch));
       S.game.pos += 1;
       renderTarget();
       if (S.game.pos >= seq.length) stepCompleted(ch);
       else updateGuide();
     } else {
-      S.state.metrics.misses += 1;
+      S.metrics.misses += 1;
       T.keysOf(ch).forEach(function (t) {
         t.classList.add('miss');
         setTimeout(function () { t.classList.remove('miss'); }, 500);
@@ -236,6 +236,7 @@
   }
 
   function stepCompleted(lastCh) {
+    var game = S.game;
     S.game.waiting = true;
     T.markTarget(null);
     /* The success tone for the last key of the step is panned to that
@@ -244,7 +245,9 @@
        "ding" is panned. */
     App.feedback.success($('#feedback'), T.panOf(lastCh));
     setTimeout(function () {
-      if (!S.game) return;
+      /* Only this round may move on: if the person left it and started another
+         within the half second, the new round must not be advanced. */
+      if (S.game !== game) return;
       S.game.waiting = false;
       S.game.idx += 1;
       if (S.game.idx >= S.game.cfg.steps.length) {
@@ -259,7 +262,7 @@
   function endSequence() {
     var cfg = S.game.cfg;
     S.game = null;
-    var m = S.state.metrics;
+    var m = S.metrics;
     var earned = T.award(cfg.starKey);
     var acc = m && m.keys ? Math.round((m.hits / m.keys) * 100) : 0;
     App.achievements.onActivityFinished({ state: S.state, lessons: T.lessons().map(function (l) { return l.id; }), perfect: acc === 100 });

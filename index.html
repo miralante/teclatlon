@@ -200,7 +200,7 @@
                must still be reachable when the person asks for it. Its
                label is written by app.js (sessionTimerAria). -->
           <span class="session-timer hidden" id="sessionTimer" role="timer" aria-live="off"></span>
-          <div id="locale-picker"></div>
+          <div data-suite-header data-suite-brand="off"></div>
         </div>
       </div>
     </header>
@@ -395,9 +395,10 @@
       </div>
     </section>
     <footer class="app-footer">
-      <a href="https://apptonomia.uk/about/" class="footer-link" data-i18n="aboutApp">Sobre la App</a>
-      <a href="legal/" class="footer-link" data-i18n="core.dataProtection">Protección de datos</a>
+      <div data-suite-footer data-suite-base="./" data-suite-portal="https://apptonomia.uk/" data-suite-settings></div>
+      <div class="footer-extra">
       <button type="button" class="btn btn-secondary btn-compact btn-clear-all" id="btnClearAll" data-i18n="btnClearProgress">🗑️ Borrar mi progreso</button>
+      </div>
     </footer>
   </div>
 
@@ -546,6 +547,7 @@
        External file: the CSP is `script-src 'self'`, so an inline
        <script> would be dropped in production and the component would
        fall back to its defaults. See assets/js/locale-picker-config.js. -->
+  <script src="assets/js/suite-chrome.js?v=teclatlon-v125"></script>
   <script src="assets/js/locale-picker-config.js?v=1aa"></script>
   <script src="assets/js/locale-picker.js?v=teclatlon-v4aaa" defer></script>
   <!-- SW registration, also external for the same CSP reason. Resolves

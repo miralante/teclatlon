@@ -10,7 +10,7 @@
 
   // The one shared mutable store. Every module reads and writes these
   // through S, so a reassignment (state = {...}) is seen everywhere.
-  var S = T.store = { state: null, game: null, doneThisSession: {}, dictationTimer: null, dictationUnlock: null, lastHand: null };
+  var S = T.store = { state: null, game: null, doneThisSession: {}, dictationTimer: null, dictationUnlock: null, lastHand: null, metrics: null };
   var $ = App.utils.$;
   var $$ = App.utils.$$;
 
@@ -97,6 +97,10 @@
   /* Practice clock in the header. Off by default: the clock is an extra
      the person asks for, and until they ask there is nothing on screen. */
   S.state.options.showTimer = !!S.state.options.showTimer;
+  /* Round metrics (accuracy and key counts) live in memory only, in S.metrics.
+     Older versions kept them in the state, which save() wrote to localStorage;
+     drop that leftover so nothing of them stays on disk. */
+  delete S.state.metrics;
 
   /* Activities finished in THIS page load. Only the ⭐ badges and the
      "done" counts read it: a new session starts with a clean board so
@@ -240,6 +244,9 @@
 
   /* ---------- Screens ---------- */
   function showScreen(id) {
+    /* A new screen starts at the top. Without this, a screen opened from the
+       bottom of a long list (the lessons) shows its lower part first. */
+    window.scrollTo(0, 0);
     SCREENS.forEach(function (p) {
       var el = document.getElementById(p);
       if (!el) return;
