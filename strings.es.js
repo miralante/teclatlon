@@ -56,7 +56,7 @@
     "modeFreeDetail": "Escribe y escucha tu texto.",
     "modeTemplatesName": "Textos reales",
     "modeTemplatesDetail": "Practica con un correo o una carta.",
-    "btnMyName": "✏️ Mi nombre",
+    "changeNameAria": "Cambiar mi nombre",
     "btnMenu": "← Menú",
     "lessonsInstruction": "Termina una lección para abrir la siguiente.",
     "lessonLockedAria": "Lección {n} cerrada. Termina la anterior.",

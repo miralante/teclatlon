@@ -226,12 +226,16 @@
 
     <!-- Screen: game menu -->
     <section id="screenMenu" class="hidden stack">
-      <div class="row centered-row">
-        <h2 id="greeting" data-i18n="greetingHello">¡Hola!</h2>      </div>
-      <p class="instruction centered" data-i18n="chooseGame">Elige un juego.</p>
-      <div class="row centered-row">
-        <button type="button" class="btn btn-secondary btn-compact" id="btnChangeName" data-i18n="btnMyName">✏️ Mi nombre</button>
+      <div class="row centered-row greeting-row">
+        <h2 id="greeting" data-i18n="greetingHello">¡Hola!</h2>
+        <button type="button" class="btn-name-edit" id="btnChangeName" data-i18n-aria="changeNameAria" aria-label="Cambiar mi nombre">
+          <svg class="icon-pencil" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false">
+            <path d="M4 20h4L19.5 8.5a2.1 2.1 0 0 0-3-3L5 17v3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M14.5 6.5l3 3" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </button>
       </div>
+      <p class="instruction centered" data-i18n="chooseGame">Elige un juego.</p>
       <div class="grid-cards" id="gameMenu">
         <button type="button" class="mode-card" data-mode="allKeys">
           <span class="picto" aria-hidden="true">🌈</span>
