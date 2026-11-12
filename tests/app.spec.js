@@ -164,14 +164,14 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await page.locator('.locale-picker-btn').click();
     await expect(page.locator('[data-locale="en"]')).toBeVisible();
     await page.evaluate(() => document.querySelector('[data-locale="en"]').dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true })));
-    await expect(page.locator('#greeting')).toContainText('Hi!'); // EN greeting
+    await expect(page.locator('#greeting')).toContainText('What do you want to do today?'); // EN greeting
 
     // EN → ES (drawer closes + page reloads after setLocale; reopen first)
     await page.locator('.locale-settings-trigger').click();
     await page.locator('.locale-picker-btn').click();
     await expect(page.locator('[data-locale="es"]')).toBeVisible();
     await page.evaluate(() => document.querySelector('[data-locale="es"]').dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true })));
-    await expect(page.locator('#greeting')).toContainText('¡Hola');
+    await expect(page.locator('#greeting')).toContainText('¿Qué quieres hacer hoy?');
   });
 
   test('2.2b — idioma de navegador no implementado usa EN', async () => {
@@ -580,7 +580,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     // After clearing: state.name is '', renderMenu() was called → menu visible.
     await expect(page.locator('#screenMenu')).toBeVisible({ timeout: 5000 });
     // Greeting should no longer contain the old name — it resets to the base greeting.
-    await expect(page.locator('#greeting')).toContainText(/Hola/i);
+    await expect(page.locator('#greeting')).toContainText(/qué quieres hacer hoy/i);
   });
 
   // -----------------------------------------------------------------
@@ -601,7 +601,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     page = await openFreshApp();
     await page.locator('#inputName').fill('Test');
     await page.locator('#btnSaveName').click();
-    await expect(page.locator('#greeting')).toContainText(/Hola/i);
+    await expect(page.locator('#greeting')).toContainText(/qué quieres hacer hoy/i);
     await page.locator('[data-mode="lessons"]').click();
     await page.locator('#lessonsList .btn-lesson:not(.locked)').first().click();
     await expect(page.locator('#screenGame')).toBeVisible();
@@ -633,7 +633,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
 
     await page.locator('#inputName').fill('Test');
     await page.locator('#btnSaveName').click();
-    await expect(page.locator('#greeting')).toContainText('Hi, Test!');
+    await expect(page.locator('#greeting')).toContainText('Hi Test, what do you want to do today?');
     await page.locator('[data-mode="lessons"]').click();
     await page.locator('#lessonsList .btn-lesson:not(.locked)').first().click();
     await page.locator('#btnExitGame').click();
