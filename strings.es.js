@@ -122,10 +122,10 @@
     /* Sonido espacial: el tono de acierto suena por el lado (izquierda
        o derecha) de la tecla pulsada, para reforzar la posición de la
        mano sin depender de la vista. */
-    "keySoundLabel": "⌨️ Sonido de teclas",
-    "keySoundLabelAria": "Activar o desactivar el sonido de teclas",
-    "keySoundLabelOn": "✅ Sonido de teclas: encendido",
-    "keySoundLabelOff": "⬜ Sonido de teclas: apagado",
+    "keySoundLabel": "Sonido de acierto",
+    "keySoundLabelAria": "Activar o desactivar el sonido de acierto",
+    "keySoundLabelOn": "✅ Sonido de acierto: activado",
+    "keySoundLabelOff": "⬜ Sonido de acierto: desactivado",
 
     "openSettingsAria": "Abrir ajustes",
     "closeSettingsAria": "Cerrar ajustes",

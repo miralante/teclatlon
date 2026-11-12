@@ -123,10 +123,10 @@
     /* Spatial sound: the success tone plays from the side (left or
        right) of the key that was pressed, reinforcing hand position
        without relying on sight. */
-    "keySoundLabel": "⌨️ Key sounds",
-    "keySoundLabelAria": "Turn key sounds on or off",
-    "keySoundLabelOn": "✅ Key sounds: on",
-    "keySoundLabelOff": "⬜ Key sounds: off",
+    "keySoundLabel": "Correct answer sound",
+    "keySoundLabelAria": "Turn the correct answer sound on or off",
+    "keySoundLabelOn": "✅ Correct answer sound: on",
+    "keySoundLabelOff": "⬜ Correct answer sound: off",
 
     "openSettingsAria": "Open settings",
     "closeSettingsAria": "Close settings",

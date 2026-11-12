@@ -303,7 +303,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     // Key sound: toggle via JS and verify textContent changes
     await page.evaluate(() => document.querySelector('#btnKeySound').click());
     const afterFirst = await page.locator('#btnKeySound').textContent();
-    expect(afterFirst).not.toBe('⌨️ Sonido de teclas');
+    expect(afterFirst).not.toBe('Sonido de acierto: activado');
     await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('apptonomia:sounds'))))
       .toEqual({ success: false, error: false });
     await page.evaluate(() => {

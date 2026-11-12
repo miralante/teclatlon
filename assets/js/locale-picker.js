@@ -485,6 +485,15 @@
           if (el) (el.closest('.locale-settings-row') || el).remove();
         });
     }
+    /* Sound toggles off (soundSettings: false): drop their checkboxes too.
+       renderSettings() returns early without standardRows, so it never
+       removes them, and they would show up as unlabeled checkboxes. */
+    if (!SOUND_SETTINGS_ENABLED) {
+      Array.prototype.forEach.call(drawer.querySelectorAll('[data-settings-success], [data-settings-error]'), function (input) {
+        var row = input.closest('label');
+        if (row) row.remove();
+      });
+    }
     /* Move the app's own rows into the drawer body (ids and listeners survive a move). */
     if (EXTRA_ROWS_ID) {
       var extraRows = document.getElementById(EXTRA_ROWS_ID);
