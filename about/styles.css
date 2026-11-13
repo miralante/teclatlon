@@ -169,6 +169,17 @@
 .about .sibling .detalle { font-size: var(--about-small); color: var(--about-text-soft); }
 .about .sibling .flecha-externa { font-size: 1.2em; color: var(--about-text-soft); flex-shrink: 0; }
 
+/* Enlace a la portada de la app (arriba y abajo de la página) ------------- */
+.about .volver-portada { margin: 0; text-align: center; }
+.about .volver-portada a {
+  display: inline-flex; align-items: center; gap: 8px; box-sizing: border-box;
+  min-height: 44px; padding: 6px 16px;
+  border-radius: var(--about-radius); background: var(--about-surface);
+  border: 2px solid var(--about-border); color: var(--about-text);
+  font-size: var(--about-small); font-weight: 700; text-decoration: none;
+}
+.about .volver-portada a:hover, .about .volver-portada a:focus-visible { border-color: var(--about-focus); }
+
 /* Footer -------------------------------------------------------------------- */
 .about .pie-about {
   display: flex; flex-wrap: wrap; justify-content: center; gap: var(--about-space);
