@@ -280,7 +280,7 @@ html[data-a11y-contrast="high"] {
   --color-surface-2: #F2F2F2; --color-text: #000000; --color-texto: #000000; --ink: #000000;
   --color-text-soft: #202020; --color-texto-suave: #202020; --muted: #202020;
   --color-border: #000000; --color-borde: #000000; --line: #000000;
-  --color-focus: #0044AA; --accent: #005A9C; --accent-soft: #E6F0FF;
+  --color-focus: #0044AA;
 }
 html[data-a11y-contrast="high"] body { color: #000 !important; background: #FFF !important; }
 html[data-a11y-contrast="high"] a { text-decoration: underline; }

@@ -26,7 +26,9 @@ test('borrar progreso restaura los valores por defecto de la primera vez', async
   await page.goto(BASE);
   await expect(page.locator('#screenMenu')).toBeVisible();
 
+  // The clear button lives in the settings drawer: open it first.
   // Two presses: the first asks for confirmation, the second clears.
+  await page.locator('.locale-settings-trigger').click();
   await page.locator('#btnClearAll').click();
   await page.locator('#btnClearAll').click();
 
@@ -51,6 +53,7 @@ test('borrar progreso también borra los logros ganados', async ({ context }) =>
   await page.goto(BASE);
   await expect(page.locator('#screenMenu')).toBeVisible();
 
+  await page.locator('.locale-settings-trigger').click();
   await page.locator('#btnClearAll').click();
   await page.locator('#btnClearAll').click();
 

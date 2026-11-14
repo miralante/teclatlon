@@ -117,6 +117,12 @@
     }
 
     var controls = make('div', 'suite-chrome-controls');
+    /* An app's star counter (data-suite-stars, wherever the app puts it) moves
+       into this row, before the settings gear, so the counter and the gear share
+       one line on every page. The node is moved, not copied: the app keeps its
+       reference and its id, so its own script keeps updating the same element. */
+    var stars = document.querySelector('[data-suite-stars]');
+    if (stars) controls.appendChild(stars);
     controls.appendChild(make('div', null, { id: 'locale-picker' }));
     mount.appendChild(controls);
   }

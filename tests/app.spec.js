@@ -565,6 +565,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     // First click shows confirmation text; second click clears state and
     // calls renderMenu() — the app stays on the menu screen (never calls goName).
     // Use evaluate + dispatched click to bypass the 4-second auto-reset timeout.
+    await page.locator('.locale-settings-trigger').click();
     await page.locator('#btnClearAll').click();
     await page.waitForFunction(
       () => {

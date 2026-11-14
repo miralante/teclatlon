@@ -192,7 +192,7 @@
       <div class="tool-header-row">
         <div class="suite-brand"><img src="assets/img/icono.svg?v=teclatlon-vd6d39b14" alt="" width="44" height="44"><div class="suite-brand-copy"><h1>Teclatlon</h1><p class="suite-attribution"><span data-i18n="suiteBy">Una app de</span> <a href="https://apptonomia.uk/">Apptonomia</a>.</p></div></div>
         <div class="header-data suite-controls">
-          <span class="stars" id="stars">⭐ 0</span>
+          <span class="stars" data-suite-stars id="stars">⭐ 0</span>
           <!-- The practice clock, next to the stars because it is the same
                kind of thing: something about this session. role="timer"
                with aria-live="off" is deliberate — a number that moves
@@ -399,9 +399,6 @@
     </section>
     <footer class="app-footer">
       <div data-suite-footer data-suite-base="./" data-suite-portal="https://apptonomia.uk/" data-suite-settings></div>
-      <div class="footer-extra">
-      <button type="button" class="btn btn-secondary btn-compact btn-clear-all" id="btnClearAll" data-i18n="btnClearProgress">🗑️ Borrar mi progreso</button>
-      </div>
     </footer>
   </div>
 
@@ -516,6 +513,10 @@
         <button type="button" class="btn-icon btn-color" data-color="hands" data-i18n="btnColorsHands" aria-pressed="true">🎨 Manos</button>
         <button type="button" class="btn-icon btn-color" data-color="fingers" data-i18n="btnColorsFingers" aria-pressed="false">🎨 Dedos</button>
       </span>
+    </div>
+
+    <div class="setting-row">
+      <button type="button" id="btnClearAll" class="btn btn-secondary btn-compact btn-clear-all" data-i18n="btnClearProgress">🗑️ Borrar mi progreso</button>
     </div>
 
     <p class="help-text" data-i18n="settingsHelp">Estos ajustes se guardan en este dispositivo.</p>
