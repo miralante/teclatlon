@@ -6,20 +6,36 @@
 
    USAGE (in the page, inside <body>):
 
-     <header data-suite-header data-suite-mark="A"></header>
+     <div data-suite-header data-suite-logo="assets/img/icono.svg" data-suite-byline></div>
+     <div class="suite-chrome-activity" data-suite-activity>   (optional, subpages)
+       <a class="back-link" href="../">← Volver</a>
+       <h1>Activity title</h1>
+     </div>
+     <span class="stars" data-suite-stars id="stars">⭐ 0</span> (optional)
      <main> ... </main>
      <footer data-suite-footer
              data-suite-base="./"
              data-suite-settings
              data-suite-contact="hello@apptonomia.uk"></footer>
 
-   Both mounts are optional. A mount that already has children is skipped,
-   so a page can keep its own markup while it migrates.
+   Both mounts are optional. A header mount that already has children is
+   skipped, so a page can keep its own markup while it migrates.
+
+   The activity block ([data-suite-activity]) sits OUTSIDE the mount. The
+   header moves it into the centre of the header row, between the brand and
+   the controls. The stars counter ([data-suite-stars]) is moved into the
+   controls row, left of the settings gear. Both are moved, not copied: the
+   app keeps its references and ids.
 
    ATTRIBUTES
      header:
        data-suite-mark     short non-translatable glyph in the brand tile (optional)
-       data-suite-brand    "off": draw only the locale picker, no app name (the page title names the app)
+       data-suite-logo     image URL for the brand tile (optional; wins over the glyph)
+       data-suite-byline   present: show "Una app de Apptonomia." under the name
+       data-suite-portal   link target of the byline (default "https://apptonomia.uk/")
+       data-suite-brand    "off": draw only the controls row (the page draws its own brand)
+       data-suite-name     the app's name when the page has no locale strings to
+                           translate core.chrome.appName (optional)
      footer:
        data-suite-base     relative path from the page to the app root (default "./")
        data-suite-settings present: show a link to <base>config/
@@ -28,15 +44,16 @@
    STRINGS
      core.chrome.appName   the app's name, shown in the header: each app
                            defines it in its own locale files (es and en)
-      core.chrome.about     link to <base>about/
+     core.chrome.about     link to <base>about/
      core.chrome.legal     link to <base>legal/
      core.chrome.settings  link to <base>config/ (only with data-suite-settings)
-   The footer labels have built-in es and en defaults below, so an app needs
+     core.chrome.byline    the words before "Apptonomia" in the byline
+   The labels above have built-in es and en defaults below, so an app needs
    no strings for them. An app may still define its own wording for any of
    them in its locale files; an app's value wins over the default.
 
    LOCALE
-     The footer labels carry data-suite-label, so the app's own translation pass
+     The labels carry data-suite-label, so the app's own translation pass
      does not touch them. They are redrawn when <html lang> or data-lang changes,
      which every app does when the reader picks a language. The header name keeps
      data-i18n, so the app's locale switch re-applies it as before.
@@ -50,19 +67,23 @@
 
   window.App = window.App || {};
 
-  /* Built-in footer labels, used when the app has no string for a key. */
+  /* Built-in labels, used when the app has no string for a key. */
   var DEFAULTS = {
     es: {
       'core.chrome.about': 'Sobre la app',
       'core.chrome.legal': 'Protección de datos',
-      'core.chrome.settings': 'Ajustes'
+      'core.chrome.settings': 'Ajustes',
+      'core.chrome.byline': 'Una app de'
     },
     en: {
       'core.chrome.about': 'About the app',
       'core.chrome.legal': 'Data protection',
-      'core.chrome.settings': 'Settings'
+      'core.chrome.settings': 'Settings',
+      'core.chrome.byline': 'An app by'
     }
   };
+
+  var PORTAL = 'https://apptonomia.uk/';
 
   function defaultLabel(key) {
     var lang = document.documentElement.getAttribute('data-lang') || document.documentElement.getAttribute('lang') || 'es';
@@ -76,7 +97,7 @@
     return value && value !== key ? value : defaultLabel(key);
   }
 
-  /* Redraws the footer labels. They carry data-suite-label, not data-i18n, so the
+  /* Redraws the labels. They carry data-suite-label, not data-i18n, so the
      app's own translation pass never touches them: the labels are drawn here, in
      the language of the page, and redrawn whenever <html lang> or data-lang changes. */
   function refreshLabels() {
@@ -102,19 +123,50 @@
     return node;
   }
 
-  /* A header mount draws the brand (unless data-suite-brand="off") and the
-     locale picker. Pages whose own title already names the app switch the
-     brand off, so the picker can take the place of the old control block. */
+  /* "Una app de Apptonomia." — the label is redrawn with the language, the
+     portal name is not translated. */
+  function byline(portal) {
+    var p = make('p', 'suite-chrome-byline');
+    p.appendChild(make('span', null, { 'data-suite-label': 'core.chrome.byline' })).textContent = translate('core.chrome.byline');
+    p.appendChild(document.createTextNode(' '));
+    var link = make('a', null, { href: portal });
+    link.textContent = 'Apptonomia';
+    p.appendChild(link);
+    p.appendChild(document.createTextNode('.'));
+    return p;
+  }
+
+  /* A header mount draws the brand (unless data-suite-brand="off"), the activity
+     block of a subpage (if the page has one), and the controls row: the stars
+     counter and the locale picker. */
   function renderHeader(mount) {
     if (mount.getAttribute('data-suite-brand') !== 'off') {
       var brand = make('div', 'suite-chrome-brand');
+      var logo = mount.getAttribute('data-suite-logo');
       var glyph = mount.getAttribute('data-suite-mark');
-      if (glyph) {
+      if (logo) {
+        brand.appendChild(make('img', 'suite-chrome-logo', { src: logo, alt: '', width: '44', height: '44' }));
+      } else if (glyph) {
         brand.appendChild(make('span', 'suite-chrome-mark', { 'aria-hidden': 'true' })).textContent = glyph;
       }
-      brand.appendChild(make('p', 'suite-chrome-name', null, 'core.chrome.appName'));
+      var copy = make('div', 'suite-chrome-brand-copy');
+      var name = make('p', 'suite-chrome-name', null, 'core.chrome.appName');
+      /* A page with no locale strings (an about/ or legal/ page that loads no
+         i18n core) has no core.chrome.appName to show, so it names the app itself. */
+      var fallbackName = mount.getAttribute('data-suite-name');
+      if (fallbackName && translate('core.chrome.appName') === 'core.chrome.appName') name.textContent = fallbackName;
+      copy.appendChild(name);
+      if (mount.hasAttribute('data-suite-byline')) {
+        copy.appendChild(byline(mount.getAttribute('data-suite-portal') || PORTAL));
+      }
+      brand.appendChild(copy);
       mount.appendChild(brand);
     }
+
+    /* The activity block (back link, icon, title of a subpage) goes in the middle
+       of the row. The page keeps the node: it is moved, not copied. */
+    var activity = document.querySelector('[data-suite-activity]');
+    if (activity) mount.appendChild(activity);
 
     var controls = make('div', 'suite-chrome-controls');
     /* An app's star counter (data-suite-stars, wherever the app puts it) moves

@@ -3,7 +3,7 @@
 
    Derivada de la hoja About (doc/templates/about/styles.css): misma estructura,
    mismas variables --about-* (se llaman así por compatibilidad), con el ámbito
-   .legal y las clases header-legal / logo-legal. Idéntica en las apps que
+   .legal y la clase .about-intro bajo la cabecera compartida. Idéntica en las apps que
    tienen Protección de datos (legal/styles.css). Cambia aquí y copia a las apps.
    ========================================================================== */
 
@@ -24,20 +24,15 @@
   max-width: 880px;
 }
 
-/* Cabecera tipo manifiesto ------------------------------------------------- */
-.legal .header-legal { padding: 24px 0 var(--about-space); text-align: center; }
-.legal .header-legal h1 {
-  font-size: var(--about-title);
-  margin: 12px 0 0;
-  letter-spacing: -0.02em;
-}
-.legal .header-legal .tagline {
+/* Introducción bajo la cabecera compartida (marca y título: suite-chrome) --- */
+.legal .about-intro { padding: 0 0 var(--about-space); text-align: center; }
+.legal .about-intro .tagline {
   font-size: var(--about-large);
   font-weight: 700;
   color: var(--about-text-soft);
   margin: 8px 0 0;
 }
-.legal .header-legal .lead {
+.legal .about-intro .lead {
   font-size: var(--about-base);
   max-width: 640px;
   margin: var(--about-space) auto 0;
@@ -49,9 +44,6 @@
   color: var(--about-text-soft);
   margin: 0;
 }
-.legal .logo-legal { margin-top: 8px; font-size: 64px; line-height: 1; }
-.legal img.logo-legal { width: 80px; height: 80px; }
-
 .legal .aviso-ruta {
   display: inline-block; padding: 8px 16px;
   background: var(--about-surface); color: var(--about-text);
@@ -95,7 +87,6 @@
 
 /* Móvil --------------------------------------------------------------------- */
 @media (max-width: 640px) {
-  .legal .header-legal h1 { font-size: 2em; }
-  .legal .header-legal .tagline { font-size: 1.2em; }
+  .legal .about-intro .tagline { font-size: 1.2em; }
   .legal section { padding: var(--about-space); }
 }
