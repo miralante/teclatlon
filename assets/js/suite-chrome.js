@@ -7,8 +7,13 @@
    USAGE (in the page, inside <body>):
 
      <div data-suite-header data-suite-logo="assets/img/icono.svg" data-suite-byline></div>
+     <div class="progress-bar" data-suite-progress>             (optional: moved under the header)
+       <div class="progress-fill" id="..."></div>
+     </div>
      <div class="suite-chrome-activity" data-suite-activity>   (optional, subpages)
-       <a class="back-link" href="../">← Volver</a>
+       <a class="back-link" href="../">← Volver</a>   (href: the parent level, used
+                                                        when the reader did not come from
+                                                        a page of this app)
        <h1>Activity title</h1>
      </div>
      <span class="stars" data-suite-stars id="stars">⭐ 0</span> (optional)
@@ -179,6 +184,31 @@
     mount.appendChild(controls);
   }
 
+  /* The back link of a subpage returns to the screen the reader came from, when
+     that was another page of this same app (a same-origin referrer and a history
+     entry to return to). Otherwise it follows its href: the parent level. The link
+     keeps its href, so a middle click or a missing script still reaches that level. */
+  function cameFromThisApp() {
+    var ref = document.referrer;
+    return !!ref && ref.indexOf(window.location.origin + '/') === 0;
+  }
+
+  function goBack(event) {
+    if (!cameFromThisApp() || window.history.length < 2) return;
+    event.preventDefault();
+    window.history.back();
+  }
+
+  /* Binds each back link once: render() runs again on DOMContentLoaded. */
+  function bindBackLinks() {
+    var links = document.querySelectorAll('[data-suite-activity] .back-link');
+    for (var i = 0; i < links.length; i++) {
+      if (links[i].getAttribute('data-suite-back') !== null) continue;
+      links[i].setAttribute('data-suite-back', '');
+      links[i].addEventListener('click', goBack);
+    }
+  }
+
   function linkItem(href, labelKey) {
     var item = make('li');
     var link = make('a', null, { href: href, 'data-suite-label': labelKey });
@@ -206,6 +236,33 @@
     mount.appendChild(list);
   }
 
+  /* A page's progress bar ([data-suite-progress]) is a component of its own: it is
+     moved right under the header, before <main>. It keeps the visibility of the
+     screen it sat in (the nearest <section>): hidden with that screen, shown with it.
+     The node is moved, not copied, so the app keeps its ids and its own updates. */
+  function followScreen(bar, screen) {
+    function sync() { bar.classList.toggle('hidden', screen.classList.contains('hidden')); }
+    sync();
+    if (window.MutationObserver) {
+      new MutationObserver(sync).observe(screen, { attributes: true, attributeFilter: ['class'] });
+    }
+  }
+
+  function placeProgress() {
+    var header = document.querySelector('[data-suite-header]');
+    if (!header || !header.parentNode) return;
+    var bars = document.querySelectorAll('[data-suite-progress]');
+    for (var i = 0; i < bars.length; i++) {
+      var bar = bars[i];
+      if (bar.getAttribute('data-suite-placed') !== null) continue;
+      var screen = bar.parentNode;
+      while (screen && screen.nodeName !== 'SECTION') screen = screen.parentNode;
+      bar.setAttribute('data-suite-placed', '');
+      header.parentNode.insertBefore(bar, header.nextSibling);
+      if (screen) followScreen(bar, screen);
+    }
+  }
+
   /* Fills every empty [data-suite-header] and [data-suite-footer] mount. */
   function render() {
     var headers = document.querySelectorAll('[data-suite-header]');
@@ -220,6 +277,8 @@
       footers[f].classList.add('suite-chrome-footer');
       renderFooter(footers[f]);
     }
+    bindBackLinks();
+    placeProgress();
   }
 
   window.App.chrome = { render: render };
