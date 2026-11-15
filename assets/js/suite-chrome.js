@@ -263,9 +263,15 @@
       var body = bar.parentNode;
       while (body && body.nodeName !== 'MAIN') body = body.parentNode;
       bar.setAttribute('data-suite-placed', '');
-      if (body) body.insertBefore(bar, body.firstChild);
-      else header.parentNode.insertBefore(bar, header.nextSibling);
-      if (screen) followScreen(bar, screen);
+      /* The bar goes into its own row, the progress component: the row sits right under
+         the header and takes the body's width. A page with no <main> gets a row that
+         takes the body's own width, so the bar still lines up with the content. */
+      var row = document.createElement('div');
+      row.className = 'suite-chrome-progress' + (body ? '' : ' suite-body');
+      row.appendChild(bar);
+      if (body) body.insertBefore(row, body.firstChild);
+      else header.parentNode.insertBefore(row, header.nextSibling);
+      if (screen) followScreen(row, screen);
     }
   }
 
