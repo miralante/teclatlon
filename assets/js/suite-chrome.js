@@ -237,9 +237,12 @@
   }
 
   /* A page's progress bar ([data-suite-progress]) is a component of its own: it is
-     moved right under the header, before <main>. It keeps the visibility of the
-     screen it sat in (the nearest <section>): hidden with that screen, shown with it.
-     The node is moved, not copied, so the app keeps its ids and its own updates. */
+     moved to the top of the page body (its <main>), right under the header. Inside
+     the body it keeps the body's width and gutters, the same width as the content
+     below it. A page with no <main> gets it right after the header. It keeps the
+     visibility of the screen it sat in (the nearest <section>): hidden with that
+     screen, shown with it. The node is moved, not copied, so the app keeps its ids
+     and its own updates. */
   function followScreen(bar, screen) {
     function sync() { bar.classList.toggle('hidden', screen.classList.contains('hidden')); }
     sync();
@@ -257,8 +260,11 @@
       if (bar.getAttribute('data-suite-placed') !== null) continue;
       var screen = bar.parentNode;
       while (screen && screen.nodeName !== 'SECTION') screen = screen.parentNode;
+      var body = bar.parentNode;
+      while (body && body.nodeName !== 'MAIN') body = body.parentNode;
       bar.setAttribute('data-suite-placed', '');
-      header.parentNode.insertBefore(bar, header.nextSibling);
+      if (body) body.insertBefore(bar, body.firstChild);
+      else header.parentNode.insertBefore(bar, header.nextSibling);
       if (screen) followScreen(bar, screen);
     }
   }
