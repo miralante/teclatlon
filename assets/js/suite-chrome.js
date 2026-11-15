@@ -39,6 +39,7 @@
        data-suite-byline   present: show "Una app de Apptonomia." under the name
        data-suite-portal   link target of the byline (default "https://apptonomia.uk/")
        data-suite-brand    "off": draw only the controls row (the page draws its own brand)
+       data-suite-heading  present on a home page: the app's name is its h1
        data-suite-name     the app's name when the page has no locale strings to
                            translate core.chrome.appName (optional)
      footer:
@@ -155,7 +156,9 @@
         brand.appendChild(make('span', 'suite-chrome-mark', { 'aria-hidden': 'true' })).textContent = glyph;
       }
       var copy = make('div', 'suite-chrome-brand-copy');
-      var name = make('p', 'suite-chrome-name', null, 'core.chrome.appName');
+      /* On a home page the app's name is the page's main heading (h1); elsewhere it is a
+         plain paragraph, since the page's own title is the heading. */
+      var name = make(mount.hasAttribute('data-suite-heading') ? 'h1' : 'p', 'suite-chrome-name', null, 'core.chrome.appName');
       /* A page with no locale strings (an about/ or legal/ page that loads no
          i18n core) has no core.chrome.appName to show, so it names the app itself. */
       var fallbackName = mount.getAttribute('data-suite-name');
