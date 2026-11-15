@@ -937,4 +937,26 @@ button.bloqueada {
   .suite-chrome-activity h1 { font-size: 1.25rem; }
   .suite-chrome-controls { margin-inline-start: auto; }
 }
+
+/* The body: the page's content region, between the header and the footer.
+   Every suite page marks it with class="suite-body" on its <main>. The class
+   is generic on purpose: it sets the width, the side gutters and min-width:0
+   (so nothing pushes the page sideways). It never sets a grid, a flex or a
+   vertical rhythm: each app keeps its own inner layout (stack, pila, modulos,
+   cards, decks). An app sets its width with --suite-body-max in its tokens.
+   A body placed directly inside a .container takes no gutters of its own, since
+   the container already provides them for the header, the body and the footer. */
+.suite-body {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--suite-body-max, 100%);
+  margin-inline: auto;
+  padding-inline: var(--suite-body-gutter, clamp(12px, 3vw, 24px));
+  padding-block: var(--suite-body-pad-block, 0);
+  min-width: 0;
+}
+
+:where(.container) > .suite-body {
+  padding-inline: 0;
+}
 /* suite:suite-chrome:end */
