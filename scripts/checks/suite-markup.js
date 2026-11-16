@@ -11,6 +11,9 @@
 //   - the shared script suite-chrome.js and the locale picker are loaded;
 //   - no data-pie-app (the old footer component);
 //   - a subpage's back link sits inside its data-suite-activity block;
+//   - a subpage's back link leads to the level above it: the target page exists
+//     and lists this page's folder (a group hub or the app home), so the button
+//     never skips a level when the reader arrives without a history to return to;
 //   - a header that draws the brand names a logo or mark, and a byline (not
 //     Apptonomia, which is the portal and not an app of the suite), and the logo
 //     file exists;
@@ -38,14 +41,19 @@ const EXEMPT = {
   },
 };
 
-function htmlPages(dir, out = []) {
+/* Every file of the app whose name passes `keep`, skipping the folders in SKIP_DIRS. */
+function appFiles(dir, keep, out = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     if (SKIP_DIRS.has(entry.name)) continue;
     const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) htmlPages(full, out);
-    else if (entry.name.endsWith('.html')) out.push(full);
+    if (entry.isDirectory()) appFiles(full, keep, out);
+    else if (keep(entry.name)) out.push(full);
   }
   return out;
+}
+
+function htmlPages(dir) {
+  return appFiles(dir, (name) => name.endsWith('.html'));
 }
 
 /* A subpage's back link belongs inside its [data-suite-activity] block: the shared
@@ -58,6 +66,48 @@ function backLinkOutsideActivity(html) {
   if (open === -1 || open > back) return true;
   const close = html.indexOf('</div>', open);
   return close === -1 || back > close;
+}
+
+/* Escapes a string for use inside a RegExp. */
+function reEscape(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/* True when `text` names the folder `slug` as a path segment ("/los-numeros/") or as a
+   quoted string ('los-numeros'): how a hub, the app home or a data file lists it. */
+function listsSlug(text, slug) {
+  return new RegExp("(['\"/])" + reEscape(slug) + "(['\"/?])").test(text);
+}
+
+/* A subpage's back link must lead to the level above it. The href is resolved from the
+   page and the target must exist. An activity (a folder that the app lists somewhere
+   else: a group hub or the app home) must be listed by its target, in the target page
+   or in its data.js, so the button cannot skip a level. A top-level page (about/,
+   legal/) is not listed anywhere; its level above is the app home, which needs no
+   listing. Returns the problem, or null when the link is fine or there is none. */
+function backLinkProblem(file, html, isActivity) {
+  const tag = html.match(/<a\b([^>]*\bclass="[^"]*\bback-link\b[^"]*"[^>]*)>/);
+  if (!tag) return null;
+  const href = attrOf(tag[1], 'href');
+  if (!href || href.startsWith('#') || /^[a-z]+:/i.test(href)) return null;
+  const clean = href.split(/[?#]/)[0];
+  let target = path.resolve(path.dirname(file), clean);
+  if (clean === '' || clean.endsWith('/') || (fs.existsSync(target) && fs.statSync(target).isDirectory())) {
+    target = path.join(target, 'index.html');
+  }
+  if (!fs.existsSync(target)) return 'back link target not found: ' + href;
+  if (path.resolve(target) === path.resolve(file)) return 'back link points to its own page: ' + href;
+
+  const slug = path.basename(path.dirname(file));
+  if (!isActivity(slug, path.dirname(file))) return null;
+  const sources = [target];
+  const data = path.join(path.dirname(target), 'data.js');
+  if (fs.existsSync(data)) sources.push(data);
+  if (!sources.some((f) => listsSlug(fs.readFileSync(f, 'utf8'), slug))) {
+    return 'back link ' + href + ' does not lead to the level above: ' +
+      path.basename(path.dirname(target)) + '/ does not list "' + slug + '"';
+  }
+  return null;
 }
 
 /* The attributes of the tag that carries a mount. Returns the text between the tag name
@@ -112,8 +162,9 @@ function mountProblems(file, appRoot, appName, html) {
   return out;
 }
 
-/* Returns the list of problems of one page, empty when it conforms. */
-function pageProblems(file, appRoot, appName) {
+/* Returns the list of problems of one page, empty when it conforms. `isActivity(slug, folder)`
+   tells whether the app lists the folder `slug` somewhere outside `folder` itself. */
+function pageProblems(file, appRoot, appName, isActivity = () => false) {
   const html = fs.readFileSync(file, 'utf8');
   const footerMount = /<[a-z]+\b[^>]*\bdata-suite-footer\b/.test(html);
   const headerMount = /<[a-z]+\b[^>]*\bdata-suite-header\b/.test(html);
@@ -127,6 +178,8 @@ function pageProblems(file, appRoot, appName) {
   if (!picker) out.push('no locale-picker.js script');
   if (oldPie) out.push('still uses data-pie-app');
   if (backLinkOutsideActivity(html)) out.push('back link outside its data-suite-activity block');
+  const back = backLinkProblem(file, html, isActivity);
+  if (back) out.push(back);
   return out.concat(mountProblems(file, appRoot, appName, html));
 }
 
@@ -136,11 +189,19 @@ function auditApp(appRoot, appName) {
   const exempt = EXEMPT[name] || {};
   const problems = [];
   let pages = 0;
+  /* The app's catalogue: its home page and every data.js (a hub draws its cards from
+     data.js). A link in another page, such as a footer's about/ or legal/, is not a
+     catalogue entry. */
+  const listing = appFiles(appRoot, (n) => n === 'index.html' || n === 'data.js')
+    .filter((f) => path.basename(f) === 'data.js' || path.resolve(path.dirname(f)) === path.resolve(appRoot))
+    .map((f) => ({ dir: path.resolve(path.dirname(f)), text: fs.readFileSync(f, 'utf8') }));
+  const isActivity = (slug, folder) =>
+    listing.some((l) => l.dir !== path.resolve(folder) && listsSlug(l.text, slug));
   for (const file of htmlPages(appRoot)) {
     const rel = path.relative(appRoot, file).split(path.sep).join('/');
     if (exempt[rel]) continue;
     pages += 1;
-    const why = pageProblems(file, appRoot, name);
+    const why = pageProblems(file, appRoot, name, isActivity);
     if (why.length) problems.push({ rel, why: why.join('; ') });
   }
   return { pages, problems };

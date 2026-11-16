@@ -11,9 +11,9 @@
        <div class="progress-fill" id="..."></div>
      </div>
      <div class="suite-chrome-activity" data-suite-activity>   (optional, subpages)
-       <a class="back-link" href="../">← Volver</a>   (href: the parent level, used
-                                                        when the reader did not come from
-                                                        a page of this app)
+       <a class="back-link" href="../">← Volver</a>   (href: the parent level. The
+                                                        link always goes there; it does
+                                                        not use the browser history)
        <h1>Activity title</h1>
      </div>
      <span class="stars" data-suite-stars id="stars">⭐ 0</span> (optional)
@@ -187,31 +187,9 @@
     mount.appendChild(controls);
   }
 
-  /* The back link of a subpage returns to the screen the reader came from, when
-     that was another page of this same app (a same-origin referrer and a history
-     entry to return to). Otherwise it follows its href: the parent level. The link
-     keeps its href, so a middle click or a missing script still reaches that level. */
-  function cameFromThisApp() {
-    var ref = document.referrer;
-    return !!ref && ref.indexOf(window.location.origin + '/') === 0;
-  }
-
-  function goBack(event) {
-    if (!cameFromThisApp() || window.history.length < 2) return;
-    event.preventDefault();
-    window.history.back();
-  }
-
-  /* Binds each back link once: render() runs again on DOMContentLoaded. */
-  function bindBackLinks() {
-    var links = document.querySelectorAll('[data-suite-activity] .back-link');
-    for (var i = 0; i < links.length; i++) {
-      if (links[i].getAttribute('data-suite-back') !== null) continue;
-      links[i].setAttribute('data-suite-back', '');
-      links[i].addEventListener('click', goBack);
-    }
-  }
-
+  /* The back link of a subpage is a plain link to its parent level (its href). It never
+     goes back through the browser history: the reader came from a group hub, a tab
+     opened on purpose, or another activity, and "Volver" must still land one level up. */
   function linkItem(href, labelKey) {
     var item = make('li');
     var link = make('a', null, { href: href, 'data-suite-label': labelKey });
@@ -292,7 +270,6 @@
       footers[f].classList.add('suite-chrome-footer');
       renderFooter(footers[f]);
     }
-    bindBackLinks();
     placeProgress();
   }
 
