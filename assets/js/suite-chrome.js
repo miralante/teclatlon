@@ -275,6 +275,17 @@
 
   window.App.chrome = { render: render };
 
+  /* The back link of a subpage goes one level up. When the reader is inside a step
+     of the page (a practice, a level, a task) that has a level above it on the same
+     page, the page says so with App.backStep: it moves to that level and returns true,
+     and the link does not navigate. It returns false everywhere else, and the link
+     goes to its href as usual. */
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest ? e.target.closest('[data-suite-activity] .back-link') : null;
+    if (!link || typeof window.App.backStep !== 'function') return;
+    if (window.App.backStep()) e.preventDefault();
+  });
+
   /* The script sits at the end of <body>, so the mounts above it already exist and
      the picker is drawn before the deferred locale-picker.js runs. DOMContentLoaded
      covers a script placed in <head>; render() skips mounts that are already filled. */
