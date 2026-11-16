@@ -785,6 +785,23 @@ button.bloqueada {
   font-weight: 700;
   color: var(--color-acierto, var(--color-success, var(--exito, #1f6f43)));
 }
+
+.celebration .goal {
+  max-width: 32rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.celebration .goal.hidden {
+  display: none;
+}
+
+.celebration .celebration-more {
+  min-height: 56px;
+  min-width: min(100%, 14rem);
+  font-size: 1.25rem;
+}
 /* suite:celebrate:end */
 
 /* Neutral notice for a new achievement, shown once when an activity finishes. */
