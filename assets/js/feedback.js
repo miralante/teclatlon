@@ -453,7 +453,8 @@
        restDue()               true when this celebration carries the rest reminder
                                (counts the rounds, or the minutes, as the app decides)
        restDone()              resets the rest reminder after it was shown
-     The app's own strings must carry core.moreGoal ("A por más" / "Go for more"). */
+     The app's own strings must carry core.moreGoal ("A por más" / "Go for more") and,
+     when the app has stars, core.starEarned ("¡Has conseguido una nueva estrella!"). */
 
   /* The navigation of the activity (doc/en/navigation-flow.md). "A por más" goes back
      to the entry point: the page as it starts, with its first screen. */
@@ -473,6 +474,12 @@
    * @param {string} [goal] - the progress line, e.g. "Ya tienes 8 estrellas · A por las 15 estrellas"
    */
   function celebrate(message, after, goal) {
+    /* A new star is congratulated first: "¡Has conseguido una nueva estrella!". The
+       stars engine knows when the total went up (see stars-engine.js, takeNewStar). */
+    if (window.ApptonomiaStars && window.ApptonomiaStars.takeNewStar && window.ApptonomiaStars.takeNewStar()) {
+      var star = window.App.i18n ? window.App.i18n.t('core.starEarned') : '';
+      if (star && star !== 'core.starEarned') message = (star + ' ' + message).trim();
+    }
     if (restDue()) {
       var rest = window.App.i18n ? window.App.i18n.t('core.rest') : '';
       if (rest) message = message + ' ' + rest;

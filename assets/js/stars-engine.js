@@ -10,11 +10,12 @@
    Rules (suite-wide, same in every app):
      - Achievements ("logros") are multiples of 10: 10, 20, 30...
        The text says "ya tienes XX estrellas" with the last one reached.
-     - The next goal ("a por") is the nearest number above the total that
-       ends in 5: 5, 15, 25... The text says "a por las XX estrellas".
+     - The next goal ("a por") is the nearest multiple of 5 above the total:
+       with 16 stars the goal is 20; with 20 it is 25. The text says
+       "a por las XX estrellas".
 
    API (window.ApptonomiaStars):
-     goalFor(total)                  next goal above total, always ends in 5
+     goalFor(total)                  next goal above total: the next multiple of 5
      milestoneFor(total)             last achievement reached (0 if none)
      crossedMilestone(prev, next)    achievement reached going prev -> next, or 0
      line(total, strings)            one line of text, e.g.
@@ -36,11 +37,10 @@
     return n > 0 ? n : 0;
   }
 
-  /** Next goal above `total`: the nearest number that ends in 5. */
+  /** Next goal above `total`: the nearest multiple of 5 that is strictly above it. */
   function goalFor(total) {
     var n = whole(total);
-    var base = n - (n % 10);
-    return n % 10 < 5 ? base + 5 : base + 15;
+    return (Math.floor(n / 5) + 1) * 5;
   }
 
   /** Last achievement reached: the largest multiple of 10 not above `total`. */
@@ -60,10 +60,43 @@
     return String(text).replace('{n}', String(n));
   }
 
+  var LAST_KEY = 'apptonomia:stars:last';
+  var pending = null; // the total of the last goal line, until a celebration takes it
+
+  function readLast() {
+    try {
+      var v = localStorage.getItem(LAST_KEY);
+      return v === null ? null : Number(v);
+    } catch (e) { return null; }
+  }
+
+  function writeLast(n) {
+    try { localStorage.setItem(LAST_KEY, String(n)); } catch (e) { /* storage may be off */ }
+  }
+
+  /** Records the total that a goal line is built for. */
+  function mark(total) {
+    pending = whole(total);
+    return pending;
+  }
+
+  /**
+   * True when the stars went up since the last celebration: a new star to congratulate.
+   * It looks at the total of the last goal line built, and reading it stores that total.
+   */
+  function takeNewStar() {
+    if (pending === null) return false;
+    var total = pending, last = readLast();
+    pending = null;
+    writeLast(total);
+    return last === null ? total > 0 : total > last;
+  }
+
   /** The text for `total`: last achievement (if any), then the next goal. */
   function line(total, strings) {
     var s = strings || {};
     var parts = [];
+    mark(total);
     var reached = milestoneFor(total);
     if (reached > 0 && s.reached) parts.push(fill(s.reached, reached));
     if (s.goal) parts.push(fill(s.goal, goalFor(total)));
@@ -88,7 +121,9 @@
     milestoneFor: milestoneFor,
     crossedMilestone: crossedMilestone,
     line: line,
-    goal: goal
+    goal: goal,
+    mark: mark,
+    takeNewStar: takeNewStar
   };
 
   root.ApptonomiaStars = api;
