@@ -542,11 +542,16 @@
     var button = layer.querySelector('.celebration-more');
     button.textContent = window.App.i18n ? window.App.i18n.t('core.moreGoal') : 'A por más';
     button.onclick = function () {
-      layer.classList.add('hidden');
-      stage.classList.remove('is-celebrating');
       releaseBackStep();
-      if (after) after();
-      else navigation.entry();
+      if (after) {
+        layer.classList.add('hidden');
+        stage.classList.remove('is-celebrating');
+        after();
+      } else {
+        // Leaving the activity: the achievement stays on screen until the page changes,
+        // so the last slide never shows before the entry point.
+        navigation.entry();
+      }
     };
     holdBackStep();
     stage.classList.add('is-celebrating');
