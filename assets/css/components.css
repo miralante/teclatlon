@@ -33,10 +33,12 @@
 .btn:hover { transform: scale(1.03); box-shadow: var(--shadow); }
 .btn:active { transform: scale(0.98); }
 
+/* Secondary buttons take the progress bar's colour (--accent, the same token as .progress-fill) and the text
+   that reads on accents in each theme (--color-on-accent). */
 .btn-secondary {
-  background: var(--color-surface);
-  color: var(--color-text);
-  border-color: var(--color-border);
+  background: var(--accent);
+  color: var(--color-on-accent);
+  border-color: var(--accent);
 }
 
 .btn-success { background: var(--color-success); }
