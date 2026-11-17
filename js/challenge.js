@@ -22,7 +22,8 @@
       completed = true;
       if (after) after();
     }
-    var shown = App.feedback.celebrate(T.finalMessage() + ' ' + App.i18n.t('transferMessage') + ' ' + T.starClosing(earned), finish);
+    var shown = App.feedback.celebrate(T.finalMessage() + ' ' + App.i18n.t('transferMessage') +
+      (earned ? ' ' + App.i18n.t('starEarned') : ''), finish, T.starLine());
     /* Keep navigation reliable if a browser suppresses the celebration
        timer while a special-key event is being dispatched. The fallback
        waits as long as the message stays up, so it never cuts it short. */

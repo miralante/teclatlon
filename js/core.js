@@ -172,14 +172,6 @@
     });
   }
 
-  /* Closing star text for every completed activity, not only when a star
-     is new: it always says how many stars there are and what is next, so
-     the goal is never missing. A new star gets its own sentence first. */
-  function starClosing(earned) {
-    var line = starLine();
-    return earned ? App.i18n.t('starEarned') + ' ' + line : line;
-  }
-
   /* Returns true when this award earned a star (a lesson or challenge is only starred once). */
   function award(key) {
     S.doneThisSession[key] = true;
@@ -270,7 +262,6 @@
   T.save = save;
   T.showScreen = showScreen;
   T.starLine = starLine;
-  T.starClosing = starClosing;
   T.stripAccents = stripAccents;
   T.templates = templates;
   T.typeableKeys = typeableKeys;
