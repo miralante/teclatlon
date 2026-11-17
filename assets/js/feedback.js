@@ -456,14 +456,44 @@
      The app's own strings must carry core.moreGoal ("A por más" / "Go for more") and,
      when the app has stars, core.starEarned ("¡Has conseguido una nueva estrella!"). */
 
-  /* The navigation of the activity (doc/en/navigation-flow.md). "A por más" goes back
-     to the entry point: the page as it starts, with its first screen. */
+  /* The entry point of an activity is the card in its hub that started it (doc/en/
+     navigation-flow.md). "A por más" goes back there: to the hub, restored where the card
+     was when it was pressed (history back), when the hub is the page the person came from;
+     otherwise to the hub's link. */
+  function urlPath(u) {
+    try { return u ? new URL(u, window.location.href).pathname : null; } catch (e) { return null; }
+  }
+
+  function pageHref(selector) {
+    var el = document.querySelector(selector);
+    return el && el.getAttribute('href') ? el.href : null;
+  }
+
   var navigation = {
-    /** Returns the activity to its entry point: its page as it starts. */
+    /** Goes back to the hub card that started the activity. */
     entry: function () {
+      var up = pageHref('.back-link');
+      if (up && urlPath(document.referrer) === urlPath(up) && window.history.length > 1) {
+        window.history.back();
+        return;
+      }
+      if (up) { window.location.href = up; return; }
       window.location.reload();
     }
   };
+
+  /* While the achievement shows, "← Volver" must leave the activity, not step back inside
+     it (App.backStep of the page is held off). The page's own step returns when it closes. */
+  var heldBackStep;
+  function holdBackStep() {
+    if (window.App.backStep === holdFalse) return;
+    heldBackStep = window.App.backStep;
+    window.App.backStep = holdFalse;
+  }
+  function releaseBackStep() {
+    if (window.App.backStep === holdFalse) window.App.backStep = heldBackStep;
+  }
+  function holdFalse() { return false; }
 
   /**
    * Shows the achievement screen in the page until the person presses "A por más".
@@ -474,11 +504,17 @@
    * @param {string} [goal] - the progress line, e.g. "Ya tienes 8 estrellas · A por las 15 estrellas"
    */
   function celebrate(message, after, goal) {
-    /* A new star is congratulated first: "¡Has conseguido una nueva estrella!". The
-       stars engine knows when the total went up (see stars-engine.js, takeNewStar). */
+    /* A new star is congratulated: "¡Has conseguido una nueva estrella!". The stars engine
+       knows when the total went up (see stars-engine.js, takeNewStar). The generic finish
+       message ("¡Has terminado!", "¡Ronda completada!") is replaced by it, because the star
+       already says the round is done; an app's own message is kept after it. */
     if (window.ApptonomiaStars && window.ApptonomiaStars.takeNewStar && window.ApptonomiaStars.takeNewStar()) {
-      var star = window.App.i18n ? window.App.i18n.t('core.starEarned') : '';
-      if (star && star !== 'core.starEarned') message = (star + ' ' + message).trim();
+      var i18n = window.App.i18n;
+      var star = i18n ? i18n.t('core.starEarned') : '';
+      if (star && star !== 'core.starEarned') {
+        var generic = i18n ? [i18n.t('core.roundComplete'), i18n.t('endTitle')] : [];
+        message = (!message || generic.indexOf(message) !== -1) ? star : (star + ' ' + message).trim();
+      }
     }
     if (restDue()) {
       var rest = window.App.i18n ? window.App.i18n.t('core.rest') : '';
@@ -508,9 +544,11 @@
     button.onclick = function () {
       layer.classList.add('hidden');
       stage.classList.remove('is-celebrating');
+      releaseBackStep();
       if (after) after();
       else navigation.entry();
     };
+    holdBackStep();
     stage.classList.add('is-celebrating');
     layer.classList.remove('hidden');
     playCelebrationSound();
