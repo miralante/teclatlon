@@ -882,10 +882,12 @@ main.is-celebrating > :not(.celebration) {
   font-weight: 700;
 }
 
-/* The subpage's activity block: centred between the brand and the controls. */
+/* The subpage's activity block: centred between the brand and the controls. It takes
+   the room left over (flex-basis 0), so the stars and the gear keep the first row;
+   a long title wraps inside its own space instead of pushing the controls down. */
 .suite-chrome-activity {
   display: flex;
-  flex: 1 1 auto;
+  flex: 1 1 0;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
@@ -965,7 +967,10 @@ main.is-celebrating > :not(.celebration) {
   .suite-chrome-header { padding-block: 2px; }
   .suite-chrome-name { font-size: 1rem; }
   .suite-chrome-activity h1 { font-size: 1.25rem; }
-  .suite-chrome-controls { margin-inline-start: auto; }
+  /* Phones: brand and controls share the first row; the activity block (back link,
+     title) takes a full row under them, so the title never gets a sliver of width. */
+  .suite-chrome-controls { margin-inline-start: auto; order: 1; }
+  .suite-chrome-activity { flex: 1 0 100%; order: 2; }
 }
 
 /* The body: the page's content region, between the header and the footer.
