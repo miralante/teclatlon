@@ -450,10 +450,33 @@
      The app's own strings must carry core.moreGoal ("A por más" / "Go for more").
      The overlay, its text and its button are the same everywhere. */
 
+  /* The navigation of the flow (doc/en/navigation-flow.md). A page names the next point
+     of the flow with <link rel="next" href="…"> and the level above with its back link
+     (.back-link). The achievement screen resumes there when it has no action of its own. */
+  var navigation = {
+    /** Where the flow goes from this page: the next point, else the level above, else null. */
+    target: function () {
+      return pageHref('link[rel="next"]') || pageHref('.back-link');
+    },
+    /** Goes to the next point of the flow. Returns false when there is none (the screen just closes). */
+    resume: function () {
+      var href = navigation.target();
+      if (!href) return false;
+      window.location.href = href;
+      return true;
+    }
+  };
+
+  function pageHref(selector) {
+    var el = document.querySelector(selector);
+    return el && el.getAttribute('href') ? el.href : null;
+  }
+
   /**
-   * Shows the achievement screen until the person presses "A por más".
+   * Shows the achievement screen until the person presses "A por más". Without an
+   * action of its own, "A por más" goes to the next point of the flow.
    * @param {string} message - the congratulation
-   * @param {function} [after] - called when "A por más" is pressed (e.g. start the next round)
+   * @param {function} [after] - the action of "A por más" (e.g. start the next round). Given: it replaces the flow.
    * @param {string} [goal] - the progress line, e.g. "Ya tienes 8 estrellas · A por las 15 estrellas"
    */
   function celebrate(message, after, goal) {
@@ -485,6 +508,7 @@
     button.onclick = function () {
       layer.classList.add('hidden');
       if (after) after();
+      else navigation.resume();
     };
     layer.classList.remove('hidden');
     playCelebrationSound();
@@ -492,6 +516,7 @@
   }
 
   window.App.feedback.celebrate = celebrate;
+  window.App.navigation = navigation;
   /* suite:celebrate:end */
 
 })();
