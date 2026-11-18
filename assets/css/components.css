@@ -967,10 +967,14 @@ main.is-celebrating > :not(.celebration) {
   .suite-chrome-header { padding-block: 2px; }
   .suite-chrome-name { font-size: 1rem; }
   .suite-chrome-activity h1 { font-size: 1.25rem; }
-  /* Phones: brand and controls share the first row; the activity block (back link,
-     title) takes a full row under them, so the title never gets a sliver of width. */
+  /* Phones: the brand gives up width (its byline wraps) so the stars and the gear keep
+     the first row. The activity block takes the row below: the back link keeps its
+     size and the title text wraps inside the space that is left beside it. */
+  .suite-chrome-brand { flex: 1 1 0; }
   .suite-chrome-controls { margin-inline-start: auto; order: 1; }
-  .suite-chrome-activity { flex: 1 0 100%; order: 2; }
+  .suite-chrome-activity { flex: 1 0 100%; order: 2; flex-wrap: nowrap; justify-content: flex-start; }
+  .suite-chrome-activity .back-link { flex: none; }
+  .suite-chrome-activity h1 { flex: 1 1 0; min-width: 0; text-align: start; }
 }
 
 /* The body: the page's content region, between the header and the footer.
