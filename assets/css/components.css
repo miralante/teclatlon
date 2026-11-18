@@ -888,16 +888,21 @@ main.is-celebrating > :not(.celebration) {
 .suite-chrome-activity {
   display: flex;
   flex: 1 1 0;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 8px 12px;
   min-width: 0;
-  text-align: center;
+  text-align: start;
 }
+
+.suite-chrome-activity .back-link { flex: none; }
 
 .suite-chrome-activity h1 {
   margin: 0;
+  flex: 1 1 0;
+  min-width: 0;
+  text-align: start;
   font-size: var(--texto-grande, 1.5rem);
   line-height: 1.2;
   color: var(--accent, var(--acento, inherit));
@@ -972,9 +977,7 @@ main.is-celebrating > :not(.celebration) {
      size and the title text wraps inside the space that is left beside it. */
   .suite-chrome-brand { flex: 1 1 0; }
   .suite-chrome-controls { margin-inline-start: auto; order: 1; }
-  .suite-chrome-activity { flex: 1 0 100%; order: 2; flex-wrap: nowrap; justify-content: flex-start; }
-  .suite-chrome-activity .back-link { flex: none; }
-  .suite-chrome-activity h1 { flex: 1 1 0; min-width: 0; text-align: start; }
+  .suite-chrome-activity { flex: 1 0 100%; order: 2; }
 }
 
 /* The body: the page's content region, between the header and the footer.
