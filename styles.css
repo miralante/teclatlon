@@ -48,6 +48,8 @@
 
 /* ---- Lessons ---- */
 .grid-lessons { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--space); }
+.lesson-block + .lesson-block { margin-top: var(--space-large); }
+.lesson-block-title { font-size: var(--text-large); margin: 0 0 var(--space); }
 .btn-lesson {
   display: flex; align-items: center; gap: 10px;
   min-height: var(--button-min); padding: 12px;

@@ -51,34 +51,56 @@
     T.updateStars();
   }
 
+  /* Step-by-step list: the lessons are drawn under their block titles
+     (DATA.lessonBlocks). Numbering and unlocking still use the flat
+     DATA.lessons order, so the block layout changes nothing else. */
   function renderLessons() {
     var container = $('#lessonsList');
     container.innerHTML = '';
     var allLessons = T.lessons();
-    allLessons.forEach(function (l, i) {
-      var unlocked = i === 0 || !!S.state.completed[allLessons[i - 1].id];
-      var done = !!S.doneThisSession[l.id];
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'btn-lesson' + (done ? ' done' : '') + (!unlocked ? ' locked' : '');
-      var num = document.createElement('span');
-      num.className = 'num';
-      num.textContent = String(i + 1);
-      var titleEl = document.createElement('span');
-      titleEl.className = 'title';
-      titleEl.textContent = l.title;
-      var statusEl = document.createElement('span');
-      statusEl.setAttribute('aria-hidden', 'true');
-      statusEl.textContent = done ? '⭐' : (unlocked ? '' : '🔒');
-      b.appendChild(num); b.appendChild(titleEl); b.appendChild(statusEl);
-      if (unlocked) {
-        b.addEventListener('click', function () { T.playLesson(l); });
-      } else {
-        b.disabled = true;
-        b.setAttribute('aria-label', App.i18n.t('lessonLockedAria').replace('{n}', i + 1));
-      }
-      container.appendChild(b);
+    var blocks = DATA.lessonBlocks[App.i18n.locale()] || DATA.lessonBlocks.es;
+    blocks.forEach(function (block) {
+      var section = document.createElement('section');
+      section.className = 'lesson-block';
+      var heading = document.createElement('h3');
+      heading.className = 'lesson-block-title';
+      heading.textContent = block.title;
+      var grid = document.createElement('div');
+      grid.className = 'grid-lessons';
+      section.appendChild(heading);
+      section.appendChild(grid);
+      block.lessons.forEach(function (id) {
+        var i = allLessons.findIndex(function (l) { return l.id === id; });
+        if (i >= 0) grid.appendChild(lessonButton(allLessons, i));
+      });
+      container.appendChild(section);
     });
+  }
+
+  function lessonButton(allLessons, i) {
+    var l = allLessons[i];
+    var unlocked = i === 0 || !!S.state.completed[allLessons[i - 1].id];
+    var done = !!S.doneThisSession[l.id];
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'btn-lesson' + (done ? ' done' : '') + (!unlocked ? ' locked' : '');
+    var num = document.createElement('span');
+    num.className = 'num';
+    num.textContent = String(i + 1);
+    var titleEl = document.createElement('span');
+    titleEl.className = 'title';
+    titleEl.textContent = l.title;
+    var statusEl = document.createElement('span');
+    statusEl.setAttribute('aria-hidden', 'true');
+    statusEl.textContent = done ? '⭐' : (unlocked ? '' : '🔒');
+    b.appendChild(num); b.appendChild(titleEl); b.appendChild(statusEl);
+    if (unlocked) {
+      b.addEventListener('click', function () { T.playLesson(l); });
+    } else {
+      b.disabled = true;
+      b.setAttribute('aria-label', App.i18n.t('lessonLockedAria').replace('{n}', i + 1));
+    }
+    return b;
   }
 
   /* "Real texts" (templates): unlike renderLessons(), every entry

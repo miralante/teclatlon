@@ -18,7 +18,8 @@
      lp/lr/lm/li/ri/rm/rr/rp/th used in 'finger').
    - DATA.numpad / DATA.numpadFingers: number pad (right hand).
    - Per-language practice content (instruction text and words):
-     DATA.placement, DATA.lessons, DATA.words, DATA.numpadSteps are
+     DATA.placement, DATA.lessons, DATA.lessonBlocks, DATA.words,
+     DATA.numpadSteps are
      objects { es: [...], en: [...] }. app.js reads them with
      DATA.placement[App.i18n.locale()], etc.
    - DATA.layouts: the selectable visual keyboards (simple / normal /
@@ -202,6 +203,28 @@ const DATA = {
         steps: ['A', 'J', 'Sa', 'Hello', 'Good morning'] },
       { id: 'l17', title: 'Special keys', intro: 'These keys don\'t have a fixed finger: use whichever hand is comfortable. Switch to the "With numbers on the side" keyboard view to see them drawn.',
         steps: [{ specialKey: 'home' }, { specialKey: 'end' }, { specialKey: 'pageUp' }, { specialKey: 'pageDown' }, { specialKey: 'delete' }] }
+    ]
+  },
+
+  /* Grouping of DATA.lessons on the "Step by step" screen. It only
+     changes how the list is shown: numbering, order and unlocking still
+     follow DATA.lessons (lesson n+1 opens after lesson n). Every lesson
+     id must appear in exactly one block; menu.js draws the blocks in
+     this order, each with its title as a heading. */
+  lessonBlocks: {
+    es: [
+      { title: 'Fila guía', lessons: ['l1', 'l2', 'l3', 'l4', 'l5', 'l6'] },
+      { title: 'Fila superior e inferior', lessons: ['l7', 'l8', 'l9', 'l10', 'l11', 'l12', 'l13', 'l14'] },
+      { title: 'Frases cortas', lessons: ['l15'] },
+      { title: 'Mayúsculas', lessons: ['l16'] },
+      { title: 'Teclas especiales', lessons: ['l17'] }
+    ],
+    en: [
+      { title: 'Home row', lessons: ['l1', 'l2', 'l3', 'l4', 'l5', 'l6'] },
+      { title: 'Top and bottom rows', lessons: ['l7', 'l8', 'l9', 'l10', 'l11', 'l12', 'l13', 'l14'] },
+      { title: 'Short sentences', lessons: ['l15'] },
+      { title: 'Capitals', lessons: ['l16'] },
+      { title: 'Special keys', lessons: ['l17'] }
     ]
   },
 
