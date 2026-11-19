@@ -494,6 +494,16 @@ del aviso de descanso**, porque es el mismo contador visto del otro lado:
 el aviso decide cuándo hablar, el reloj enseña el número sobre el que se
 decide. Los dos se reinician a la vez.
 
+Esa posición no sale sola del HTML. El cromo compartido
+(`assets/js/suite-chrome.js`) mueve el contador de estrellas (`[data-suite-stars]`)
+a su propia fila de controles —a la derecha de la marca y a la izquierda del
+engranaje de ajustes—, y el reloj tiene que seguirlo allí. Por eso `app.js` lo
+traslada con `placeSessionTimer()` cuando el cromo ya está montado
+(`DOMContentLoaded`), **justo antes de las estrellas**. Sin ese traslado el reloj
+se queda en la celda propia de la app y aparece en el extremo derecho de la
+página, detrás del engranaje: el sitio donde no debe estar. Orden en pantalla,
+de izquierda a derecha: **reloj, estrellas, engranaje**.
+
 Deliberadamente **no es un segundo contador**. `App.feedback.practiceSeconds()`
 devuelve el mismo `restElapsed` sobre el que espera el aviso, pasando por el
 mismo `tick()`, así que los dos heredan gratis las mismas reglas: una

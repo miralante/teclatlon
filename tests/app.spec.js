@@ -971,6 +971,55 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await expect(page.locator('#screenLessons')).toBeVisible();
   });
 
+  test('13d — el reloj de la cabecera va a la izquierda de las estrellas, no tras el engranaje', async ({ page }) => {
+    /* The shared suite chrome moves the star counter into its controls row
+       (to the right of the brand, to the left of the settings gear). The
+       practice clock has to follow it there: it belongs next to the stars,
+       and it used to end up on the far right of the page, after the gear. */
+    const ctx = await _browser.newContext();
+    _lastCtx = ctx;
+    const p = await ctx.newPage();
+    await ctx.addInitScript(() => {
+      localStorage.setItem('teclatlon:keyboard', JSON.stringify({
+        name: 'Ana',
+        stars: 3,
+        completed: {},
+        options: { theme: 'light', showTimer: true, lang: 'es' }
+      }));
+    });
+    await p.goto(BASE);
+    await p.waitForTimeout(500);
+    if (await p.locator('#screenName').isVisible()) await p.locator('#btnSkipName').click();
+    await expect(p.locator('#screenMenu')).toBeVisible();
+
+    // The clock is on (showTimer), so it is on screen.
+    await expect(p.locator('#sessionTimer')).toBeVisible();
+
+    const geo = await p.evaluate(() => {
+      function box(sel) {
+        const el = document.querySelector(sel);
+        if (!el) return null;
+        const r = el.getBoundingClientRect();
+        return { x: r.x, right: r.right };
+      }
+      return {
+        timer: box('#sessionTimer'),
+        stars: box('#stars'),
+        gear: box('.locale-settings-trigger'),
+        // Same row as the stars and the gear: the chrome's controls row.
+        sameRow: !!document.querySelector('.suite-chrome-controls #sessionTimer')
+      };
+    });
+
+    expect(geo.sameRow).toBe(true);
+    expect(geo.timer).not.toBeNull();
+    expect(geo.stars).not.toBeNull();
+    expect(geo.gear).not.toBeNull();
+    // Left to right: clock, stars, gear.
+    expect(geo.timer.right).toBeLessThanOrEqual(geo.stars.x + 1);
+    expect(geo.stars.right).toBeLessThanOrEqual(geo.gear.x + 1);
+  });
+
   // -----------------------------------------------------------------
   // 14. TEMPLATE — complete first template
   // -----------------------------------------------------------------

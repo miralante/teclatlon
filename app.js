@@ -153,6 +153,32 @@
     });
   });
 
+  /* ---------- Header layout ---------- */
+  /* The shared suite chrome (assets/js/suite-chrome.js) draws the header
+     and moves the star counter into its controls row: to the right of the
+     brand, to the left of the settings gear. The practice clock belongs to
+     that same row — it is the other fact about this session — but the chrome
+     does not know about it, so it would stay in the app's own header cell
+     and end up on the far right of the page, after the gear. This move
+     puts it back where it belongs, just before the stars.
+     The chrome script runs after this one, so the move waits for the DOM. */
+  function placeSessionTimer() {
+    var timer = $('#sessionTimer');
+    var controls = document.querySelector('.suite-chrome-controls');
+    if (!timer || !controls || timer.parentNode === controls) return;
+    var stars = $('#stars');
+    if (stars && stars.parentNode === controls) controls.insertBefore(timer, stars);
+    else controls.insertBefore(timer, controls.firstChild);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', placeSessionTimer);
+  } else {
+    placeSessionTimer();
+  }
+  /* Second try, for the case where the chrome had not mounted yet. The
+     function does nothing when the clock is already in place. */
+  window.addEventListener('load', placeSessionTimer);
+
   /* ---------- Boot ---------- */
   /* Computer-only gate (SPEC.md section 2): the pre-paint script
      in index.html sets <html data-app-blocked="mobile"> on

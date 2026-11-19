@@ -194,9 +194,13 @@
         <div class="header-data suite-controls">
           <span class="stars" data-suite-stars id="stars">⭐ 0</span>
           <!-- The practice clock, next to the stars because it is the same
-               kind of thing: something about this session. role="timer"
-               with aria-live="off" is deliberate — a number that moves
-               every second must not be read out on every change, but it
+               kind of thing: something about this session. The shared suite
+               chrome (assets/js/suite-chrome.js) moves the star counter into
+               its own controls row — to the right of the brand, to the left
+               of the settings gear — and app.js moves this clock there too,
+               right before the stars, so it never ends up after the gear.
+               role="timer" with aria-live="off" is deliberate — a number that
+               moves every second must not be read out on every change, but it
                must still be reachable when the person asks for it. Its
                label is written by app.js (sessionTimerAria). -->
           <span class="session-timer hidden" id="sessionTimer" role="timer" aria-live="off"></span>

@@ -478,6 +478,16 @@ already shows "one fact about this session", and in the settings drawer
 the other side: the reminder decides when to speak, the clock shows the
 number that decision is made on. Both restart together.
 
+That position does not come from the HTML on its own. The shared chrome
+(`assets/js/suite-chrome.js`) moves the star counter (`[data-suite-stars]`)
+into its own controls row — to the right of the brand, to the left of the
+settings gear — and the clock has to follow it there. That is why `app.js`
+moves it with `placeSessionTimer()` once the chrome is mounted
+(`DOMContentLoaded`), **right before the stars**. Without that move the clock
+stays in the app's own header cell and shows up at the far right of the
+page, after the gear: the one place it must not be. On screen, left to
+right: **clock, stars, gear**.
+
 It is deliberately **not a second counter**. `App.feedback.practiceSeconds()`
 returns the very same `restElapsed` the reminder waits on, through the very
 same `tick()`, so the two inherit the same rules for free — a hidden tab
