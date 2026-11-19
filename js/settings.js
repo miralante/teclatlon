@@ -37,6 +37,12 @@
     html.setAttribute('data-theme', S.state.options.theme);
     if (S.state.options.textSize === 'normal') html.removeAttribute('data-text-size');
     else html.setAttribute('data-text-size', S.state.options.textSize);
+    /* High-contrast hand palette. The attribute is only there when the
+       setting is on, so the default colours are exactly the ones the app
+       has always had. assets/css/gate.js sets it before the first paint;
+       this keeps it in step afterwards. */
+    if (S.state.options.handContrast) html.setAttribute('data-hand-contrast', 'high');
+    else html.removeAttribute('data-hand-contrast');
     html.classList.toggle('hide-legend', S.state.options.hideLegend);
     html.classList.toggle('hide-numpad', S.state.options.hideNumpad);
     html.classList.toggle('dim-celebration', S.state.options.dimCelebration);
@@ -75,6 +81,7 @@
       if (restDown) restDown.disabled = restValue <= App.feedback.REST_MIN;
     }
     updateSettingsButton('#btnShowTimer', 'showTimerLabel', S.state.options.showTimer);
+    updateSettingsButton('#btnHandContrast', 'handContrastLabel', S.state.options.handContrast);
     ensureTimerTicking();
   }
 
@@ -177,6 +184,17 @@
     if (e.target.closest('#btnErrorSound')) { S.state.options.errorSound = !S.state.options.errorSound; T.save(); applyOptions(); return; }
     if (e.target.closest('#btnFingerText')) { S.state.options.showFingerText = !S.state.options.showFingerText; T.save(); applyOptions(); return; }
     if (e.target.closest('#btnShowTimer')) { S.state.options.showTimer = !S.state.options.showTimer; T.save(); applyOptions(); return; }
+    if (e.target.closest('#btnHandContrast')) {
+      S.state.options.handContrast = !S.state.options.handContrast;
+      T.save();
+      applyOptions();
+      /* The colours repaint through the data-hand-contrast attribute, so
+         the keyboard does not need a re-render (a re-render would wipe
+         the marks of the round in progress). The legend under the
+         keyboard names the colours, so that sentence is corrected. */
+      if (T.updateKeyboardLegend) T.updateKeyboardLegend();
+      return;
+    }
   });
 
   /* ---------- Rest reminder number box ---------- */

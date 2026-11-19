@@ -233,6 +233,13 @@ open (see [`technical.md` §2.2](technical.md)).
 - **Keyboard view** (simple, normal, extended), **physical keyboard
   layout** (Spanish or English; follows the browser language by default)
   and **hand colours** (hands or fingers).
+- **Hand contrast** (off by default): a second palette for the two hand
+  colours. The teaching team reported that blue (left hand) and green
+  (right hand) are hard to tell apart, so this switch offers deep blue
+  and orange, a pair that stays apart even with colour blindness. The
+  colours are never the only cue: the legend names the hands, the guide
+  says which finger, and the key's place on the keyboard says it too.
+  See [`technical.md` §2.10](technical.md).
 - **Vibration**: removed. `navigator.vibrate()` only fires on touch
   devices, and Teclatlon is computer-only (see §2).
 - **Dyslexia-friendly font**: removed. No font was bundled and the
@@ -247,6 +254,12 @@ See `legal/index.html` for the exact data items saved.
 ## 6. Gamification (no pressure)
 
 - **Stars**: one per lesson or mode completed for the first time.
+- **Achievement screen**: when a star is earned, a congratulation screen
+  appears with the stars the person has (the same number as the header)
+  and the next goal. It stays until "Go for more" is pressed; that
+  button returns to the list the round was started from, without
+  restarting the app or the practice clock. See
+  [`technical.md` §2.11](technical.md).
 - **Badges**: removed. A table of 7 planned badges existed but was
   never wired to any UI: the "Badges" section on the main menu always
   showed the empty grid and the "No badges yet" notice, contradicting

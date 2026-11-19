@@ -240,6 +240,13 @@ abierto (ver [`tecnico.md` §2.2](tecnico.md)).
 - **Vista del teclado** (simple, normal, extendido), **distribución del
   teclado físico** (español o inglés; por defecto, según el idioma del
   navegador) y **color** (manos o dedos).
+- **Contraste de manos** (apagado por defecto): una segunda paleta para
+  los dos colores de las manos. El equipo docente avisó de que el azul
+  (mano izquierda) y el verde (mano derecha) se confunden, así que este
+  conmutador ofrece azul oscuro y naranja: un par que se distingue
+  incluso con daltonismo. El color nunca es la única pista: la leyenda
+  nombra las manos, la guía dice qué dedo es y la posición de la tecla
+  en el teclado también lo dice. Ver [`tecnico.md` §2.10](tecnico.md).
 - **Vibración**: retirada. `navigator.vibrate()` solo funciona en
   dispositivos táctiles y Teclatlon es solo para el teclado físico
   del ordenador (ver §2).
@@ -256,6 +263,12 @@ Ver `legal/index.html` para qué datos se guardan exactamente.
 ## 6. Gamificación (sin presión)
 
 - **Estrellas**: una por lección o modo completado por primera vez.
+- **Pantalla de logros**: al ganar una estrella aparece una pantalla de
+  felicitación con las estrellas que tiene la persona (el mismo número
+  que la cabecera) y el objetivo siguiente. Se queda hasta que se pulsa
+  «A por más»; ese botón devuelve a la lista de donde empezó la ronda,
+  sin reiniciar la app ni el reloj de práctica. Ver
+  [`tecnico.md` §2.11](tecnico.md).
 - **Insignias**: retiradas. Existió una tabla de 7 insignias
   planeadas, pero nunca se conectó a ninguna interfaz: la sección
   "Insignias" del menú principal mostraba siempre el grid vacío y el

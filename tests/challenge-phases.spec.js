@@ -147,8 +147,13 @@ test.describe('Teclatlon — reto de todas las teclas', () => {
     expect(await page.locator('#screenGame')).toBeVisible();
     expect((await starStates(page)).filter((s) => s.earned).length).toBe(2);
 
-    // Phase 3 done: the challenge ends and awards the mode.
-    await pressUntil(page, async () => await page.locator('#screenMenu').isVisible(), 200);
+    // Phase 3 done: the challenge ends and awards the mode. The
+    // achievement screen comes up and stays there until the person
+    // presses "A por más"; that button closes it and leaves the person
+    // on the menu.
+    await pressUntil(page, async () => await page.locator('#app-celebration').isVisible(), 200);
+    await expect(page.locator('#app-celebration')).toBeVisible({ timeout: 10000 });
+    await page.locator('#app-celebration .celebration-more').click();
     await expect(page.locator('#screenMenu')).toBeVisible({ timeout: 10000 });
     // The last phase earns its star too, so the row was full before the
     // challenge closed.

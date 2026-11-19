@@ -349,9 +349,17 @@
              `overflow: hidden`: the stars needed 36px and were clipped
              away entirely, and the fill was pushed 44px down the same
              6px window, so the challenge showed an empty grey strip and
-             no progress at all. The stars now live in the wrapper. -->
+             no progress at all. The stars now live in the wrapper.
+
+             No `data-suite-progress` here on purpose: that attribute is
+             the suite chrome's signal to MOVE a page-level bar to the
+             top of the page, under the header. This bar is not a
+             page-level bar, it is part of the challenge panel: it sits
+             in the same row as the phase stars (bar on the left, stars
+             on the right). Moved to the top of the page it left the
+             stars alone down here and broke that row. -->
         <div id="challengeZone" class="challenge-zone hidden">
-          <div class="progress-bar" data-suite-progress>
+          <div class="progress-bar">
             <div class="progress-fill" id="challengeFill"></div>
             <span class="progress-text" id="challengeText">0 de 0</span>
           </div>
@@ -514,6 +522,19 @@
         <button type="button" class="btn-icon btn-color" data-color="hands" data-i18n="btnColorsHands" aria-pressed="true">🎨 Manos</button>
         <button type="button" class="btn-icon btn-color" data-color="fingers" data-i18n="btnColorsFingers" aria-pressed="false">🎨 Dedos</button>
       </span>
+    </div>
+
+    <!-- Hand colours: the left hand is blue and the right hand green.
+         The teaching team reported that those two are too close to tell
+         apart at a glance, so this switch offers a second palette with a
+         much bigger gap (deep blue vs orange). Off by default: the app
+         keeps the colours it has always had until the person asks for
+         the other ones. See assets/css/tokens.css for the palette and
+         doc/en/technical.md §2.10 for why these two colours were picked. -->
+    <div class="setting-row">
+      <span class="setting-label" data-i18n="handContrastLabel">🎨 Contraste de manos</span>
+      <button type="button" id="btnHandContrast" class="btn-icon" aria-pressed="false" data-i18n-aria="handContrastLabelAria" aria-label="Activar o desactivar el contraste alto entre los colores de las manos">Contraste de manos: desactivado</button>
+      <p class="help-text" data-i18n="handContrastHelp">Los dos colores de las manos se distinguen mejor. La mano izquierda es azul. La mano derecha es naranja.</p>
     </div>
 
     <div class="setting-row">

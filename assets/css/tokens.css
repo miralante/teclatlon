@@ -14,8 +14,15 @@
   /* Accent + hand/finger palette (used to color the visual keyboard by
      hand or by finger; --accent also doubles as the primary UI
      accent for buttons, links and focus states). */
-  --accent: #1B6CA8;         /* blue — left hand / thumbs */
+  --accent: #1B6CA8;         /* blue — UI accent (buttons, links, focus) */
   --accent-soft: #E3EEF6;
+  /* The left hand has its own pair of tokens, even though it starts out
+     with the same values as the accent. The accent is the colour of the
+     interface; this pair is the colour of the hand. Keeping them apart
+     is what lets the high-contrast palette (below) repaint the hands
+     without repainting every button in the app. */
+  --color-hand-left: #1B6CA8;       /* blue — left hand / thumbs */
+  --color-hand-left-soft: #E3EEF6;
   /* Texto legible ENCIMA de --accent / --color-success. En claro los
      acentos son oscuros y el texto va en blanco; en oscuro y contraste
      los acentos se aclaran para destacar sobre el fondo, así que el
@@ -77,6 +84,10 @@
   --color-border: #2E3346;
   --accent: #6BB4F2;
   --accent-soft: #19354D;
+  /* The left hand follows the accent in this theme (light blue on the
+     dark keyboard), so both pairs stay in step. */
+  --color-hand-left: #6BB4F2;
+  --color-hand-left-soft: #19354D;
   /* Sobre el azul claro y el verde claro hace falta texto oscuro. */
   --color-on-accent: #14161E;
   --color-on-success: #14161E;
@@ -116,6 +127,9 @@
   --color-encourage-soft: #000000;
   --color-shadow: rgba(255, 255, 255, 0.5);
   --color-focus: #FFFF00;
+  /* The left hand follows the accent here too (yellow on black). */
+  --color-hand-left: #FFFF00;
+  --color-hand-left-soft: #000000;
   /* Same hand/finger key backgrounds as above: must go black, otherwise
      the white key symbols disappear against their light default soft
      colors (this was the actual bug — right-hand/finger-colored keys
@@ -124,6 +138,93 @@
   --color-finger-ring-soft: #000000;
   --color-finger-middle-soft: #000000;
   --color-finger-pinky-soft: #000000;
+}
+
+/* ================================================================
+   High-contrast hand palette (opt-in: the "Contraste de manos"
+   setting, off by default).
+
+   WHY A SECOND PALETTE. The teaching team reported that the two
+   hand colours are hard to tell apart: the left hand is blue
+   (#1B6CA8) and the right hand is green (#2E7D32). Measured, the
+   two sit at a luminance ratio of 1.09:1 — the darkest and the
+   lightest of the pair are the same brightness — and their hues
+   are only 82° apart. Under deuteranopia (the most common colour
+   blindness) they collapse to 1.16:1: for a person who cannot
+   separate them, the left-hand keys and the right-hand keys are
+   the same colour.
+
+   The pair below replaces blue/green with deep blue/orange: the
+   two hues are 169° apart and, under deuteranopia, they still
+   keep 3.09:1 between them. Blue/orange is also the classic
+   colour-blind-safe pair.
+
+   THE RING FINGER CHANGES TOO. The right hand took the orange,
+   so the ring finger (orange until now) moves to green. Without
+   that swap two fingers would share a colour and the "each finger
+   has its own colour" legend would be a lie.
+
+   ACCESSIBILITY. The colour of a key is never the only channel:
+   the legend names the hands ("Blue: left hand. Orange: right
+   hand."), the guide under the hand picture says which hand and
+   which finger, and the physical position of the key on the
+   keyboard says it too (WCAG 1.4.1). Every tint below keeps the
+   key glyph at AAA (≥ 7:1) against the text colour, and every
+   solid colour clears 4.5:1 against the background it is drawn
+   on.
+
+   HOW IT SWITCHES. `data-hand-contrast="high"` on <html>, set by
+   `applyOptions()` (js/settings.js) and, before the first paint,
+   by `assets/js/gate.js`. The attribute is only present when the
+   person turns the setting on: the default look does not change.
+   ================================================================ */
+html[data-hand-contrast="high"] {
+  --color-hand-left: #0A4E8B;        /* deep blue — left hand */
+  --color-hand-left-soft: #D3E6F7;
+  --color-hand-right: #C2410C;       /* vivid orange — right hand */
+  --color-hand-right-soft: #FBE1CE;
+  --color-finger-ring: #15803D;      /* green — ring fingers (freed by the swap) */
+  --color-finger-ring-soft: #D6EFDC;
+  --color-finger-middle: #6D28D9;    /* violet — middle fingers */
+  --color-finger-middle-soft: #E7DCFA;
+  --color-finger-pinky: #BE185D;     /* magenta — little fingers */
+  --color-finger-pinky-soft: #F7D9E6;
+}
+
+/* The same pair in the dark theme: the colours are lightened so
+   they read on the dark keyboard, and the tints stay dark enough
+   for the near-white text of this theme (all of them ≥ 11:1). */
+html[data-theme="dark"][data-hand-contrast="high"] {
+  --color-hand-left: #7FC1F5;
+  --color-hand-left-soft: #16344E;
+  --color-hand-right: #F5A15C;
+  --color-hand-right-soft: #3A2415;
+  --color-finger-ring: #5FC97A;
+  --color-finger-ring-soft: #17351F;
+  --color-finger-middle: #B694F5;
+  --color-finger-middle-soft: #2A1E4A;
+  --color-finger-pinky: #F07AB0;
+  --color-finger-pinky-soft: #3E1C2E;
+}
+
+/* And in the forced-contrast theme. Here the tints are not black
+   but very dark: the white key glyphs keep 14:1 on them (AAA), and
+   the hands can be told apart at all — with the default palette
+   both hands are black in this theme, and the distinction is lost.
+   The solid colours are the bright versions, because the fingers
+   of the hand picture are painted with them on a black background
+   (the default purple and green are 2.8:1 and 4.1:1 there). */
+html[data-theme="contrast"][data-hand-contrast="high"] {
+  --color-hand-left: #4FC3FF;
+  --color-hand-left-soft: #002B4D;
+  --color-hand-right: #FFAB40;
+  --color-hand-right-soft: #3D1C00;
+  --color-finger-ring: #4BE08A;
+  --color-finger-ring-soft: #00281A;
+  --color-finger-middle: #C08CFF;
+  --color-finger-middle-soft: #1A0E3A;
+  --color-finger-pinky: #FF7EB6;
+  --color-finger-pinky-soft: #3A0F26;
 }
 
 

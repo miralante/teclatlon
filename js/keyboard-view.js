@@ -92,6 +92,21 @@
     if (S.game && S.game.type === 'challenge') T.reapplyChallenge();
   }
 
+  /* The legend under the keyboard names the colours that are on screen.
+     It has to follow the palette: with the high-contrast hand colours
+     the right hand is orange, not green, so the sentence is a different
+     one. Kept as its own function because the hand-contrast setting
+     repaints the keyboard through CSS alone (no re-render needed) but
+     still has to correct this sentence. */
+  function updateKeyboardLegend() {
+    var key = 'legendHands';
+    if (S.state.options.color === 'fingers') key = 'legendFingers';
+    else if (S.state.options.handContrast) key = 'legendHandsHigh';
+    $$('.keyboard-legend').forEach(function (l) {
+      l.textContent = App.i18n.t(key);
+    });
+  }
+
   function updateOptionsUI() {
     $$('.btn-keyboard').forEach(function (b) {
       b.setAttribute('aria-pressed', String(b.dataset.keyboard === S.state.options.keyboard));
@@ -102,9 +117,7 @@
     $$('.btn-color').forEach(function (b) {
       b.setAttribute('aria-pressed', String(b.dataset.color === S.state.options.color));
     });
-    $$('.keyboard-legend').forEach(function (l) {
-      l.textContent = App.i18n.t(S.state.options.color === 'fingers' ? 'legendFingers' : 'legendHands');
-    });
+    updateKeyboardLegend();
   }
 
   function keysOf(ch) {
@@ -199,4 +212,5 @@
   T.renderHands = renderHands;
   T.renderKeyboards = renderKeyboards;
   T.renderRows = renderRows;
+  T.updateKeyboardLegend = updateKeyboardLegend;
 })(window.Teclatlon);

@@ -198,7 +198,7 @@ Where each part lives:
 | `dictation.js` | `playDictation`, `dictationKey`, `speakDictationLetter` |
 | `challenge.js` | `playChallenge`, `challengeKey`, `updateChallenge`, `challengeGuide`, `endChallenge` |
 | `keyboard-input.js` | physical `keydown`/`keyup`, `normalizeKey`, keyboard, layout and colour buttons |
-| `menu.js` | `renderMenu`, `renderLessons`, `renderTemplates`, `goMenu`/`goLessons`/`goTemplates`/`goName`/`goFree` |
+| `menu.js` | `renderMenu`, `renderLessons` (groups the lessons by `DATA.lessonBlocks`, display only), `renderTemplates`, `goMenu`/`goLessons`/`goTemplates`/`goName`/`goFree` |
 | `app.js` | Name, reset progress, mode menu, leave a round, dictation buttons, free writing, language, boot and `routeHash` |
 
 The on-screen keyboard only ever *reflects* key presses (`flashKey`);
@@ -529,11 +529,10 @@ If the keyboard view changes mid-challenge, `reapplyChallenge()` drops
 #### The progress bar is a leaf
 
 `.progress-bar` is the suite's **compact progress track**: 6px tall,
-`overflow: hidden`, `position: relative`, with a striped
-`.progress-fill` pinned to its left edge. In every Calculia activity it is a
-leaf holding only the fill and the (hidden) `.progress-text` — it is never
-used as a wrapper for other blocks, because the height and the overflow are
-the whole point of it.
+`position: relative`, with a `.progress-fill` pinned to its left edge. In every
+Calculia activity it is a leaf holding only the fill and the (hidden)
+`.progress-text` — it is never used as a wrapper for other blocks, because the
+height is the whole point of it.
 
 `#challengeZone` used to point the id at the track itself and put
 `.challenge-stars` and `.progress-fill` inside it. That put the three
@@ -543,20 +542,29 @@ empty grey strip and showed no progress at all. The shape is now:
 
 ```html
 <div id="challengeZone" class="challenge-zone hidden">
-  <div class="challenge-stars" id="challengeStars"></div>
   <div class="progress-bar">
     <div class="progress-fill" id="challengeFill"></div>
     <span class="progress-text" id="challengeText">0 de 0</span>
   </div>
+  <div class="challenge-stars" id="challengeStars"></div>
 </div>
 ```
 
-`.challenge-zone` is a flex column with an 8px gap (which replaced the
-stars' old `margin-bottom`), and `.progress-fill` now carries the
+`.challenge-zone` is a flex **row** (bar on the left, stars on the right, 12px
+gap), and `.progress-fill` now carries the
 `position: absolute; inset: 0 auto 0 0;` that Calculia's copy already had.
 `tests/timer-and-progress.spec.js` asserts both the shape and the
 consequence, because the shape alone would pass again the day someone
 re-nests the markup.
+
+**No `data-suite-progress`.** That attribute is the signal the shared chrome
+(`assets/js/suite-chrome.js`) uses to **move** a page-level bar into its own
+row under the header. The challenge's bar is not a page-level bar: it is part
+of the challenge panel and belongs in the same row as the phase stars. With
+the attribute on, the chrome moved it to the top of the page and left the
+stars alone down here, breaking that row (and the three bar tests). The bar
+still follows its screen because it lives inside `#challengeZone`, inside
+`#screenGame`.
 
 ### 2.8 Finger text: always written, the box is what hides
 
@@ -653,6 +661,116 @@ remove code that looks unused, check whether it is on that list.
 4. Run `node scripts/check.js`. It checks the syntax and that the path is in
    `FILES`.
 5. Update the §2.2 table and the §2 tree.
+
+### 2.10 Hand colours: two palettes, one setting
+
+The keyboard and the hand guide are coloured by hand (left/right) or by
+finger. The colours live in `assets/css/tokens.css` as two families of
+custom properties:
+
+| Token | Paints |
+|---|---|
+| `--color-hand-left` / `--color-hand-left-soft` | the left hand (the thumb's keys, the thumb of the hand picture) |
+| `--color-hand-right` / `--color-hand-right-soft` | the right hand (the index fingers' keys, the index fingers of the hand picture) |
+| `--color-finger-ring`, `--color-finger-middle`, `--color-finger-pinky` (+ `-soft`) | the other three fingers, in "colours: fingers" mode |
+
+The left hand has its own pair even though it starts out with the same
+values as `--accent` / `--accent-soft`. The accent is the colour of the
+*interface* (buttons, links, focus); the hand pair is the colour of the
+*hand*. Keeping them apart is what lets the second palette repaint the
+hands without repainting every button in the app.
+
+**Two palettes.** `state.options.handContrast` (off by default) picks
+between them:
+
+- **Default**: left hand blue (`#1B6CA8`), right hand green (`#2E7D32`).
+- **High contrast** (`data-hand-contrast="high"`): left hand deep blue
+  (`#0A4E8B`), right hand vivid orange (`#C2410C`).
+
+The reason for the second palette is measured, not a matter of taste.
+The default blue and green sit at a luminance ratio of **1.09:1** and
+their hues are only 82° apart; under deuteranopia they collapse to
+**1.16:1**, so for a person who cannot separate them the left-hand and
+right-hand keys are the same colour. The teaching team reported exactly
+this. The new pair is 169° apart in hue and keeps **3.09:1** under
+deuteranopia, and blue/orange is the classic colour-blind-safe pair.
+
+**The ring finger changes too.** The right hand takes the orange, so the
+ring finger (orange until now) moves to green. Without the swap, two
+fingers would share a colour and the "each finger has its own colour"
+legend would be false.
+
+**Accessibility rules this palette follows.**
+
+- *Colour is never the only channel* (WCAG 1.4.1): the legend under the
+  keyboard names the hands ("Blue: left hand. Orange: right hand."), the
+  guide under the hand picture names the hand and the finger, and the
+  key's physical position on the keyboard says it too. The legend text
+  follows the palette (`legendHands` / `legendHandsHigh`), so it is
+  `updateKeyboardLegend()` in `js/keyboard-view.js` that keeps it true.
+- *Contrast* (WCAG 1.4.6): every tint keeps the key glyph at AAA (≥ 7:1)
+  against the text colour of its theme, and every solid colour clears
+  4.5:1 against the background it is drawn on. The three themes each
+  have their own set, because a colour that reads on cream does not
+  read on near-black.
+
+**How it switches.** `applyOptions()` (in `js/settings.js`) sets or
+removes `data-hand-contrast` on `<html>`; `assets/js/gate.js` sets it
+too, before the first paint, so the keyboard never shows the old colours
+for a moment and then changes under the person's eyes. The attribute is
+only present when the setting is on: the default look does not change.
+
+Because the repaint is pure CSS, the keyboard does not need a re-render
+when the setting changes — and it must not have one: a re-render would
+wipe the marks of the round in progress. Only the legend sentence is
+rewritten (`T.updateKeyboardLegend()`).
+
+**One fix that came with it.** `.key.target` (the key to type) was white
+with an accent-coloured letter. In the forced-contrast theme the accent
+is yellow, and yellow on white is 1.1:1: the letter the person is asked
+to type disappeared. There the key is black with the yellow letter and
+border instead (19.6:1).
+
+### 2.11 The achievement screen: the same stars, and no restart
+
+Two rules govern the screen that appears when a star is earned (the
+shared block `suite:celebrate` in `assets/js/feedback.js`).
+
+**It says the stars the person has.** The line under the congratulation
+is "Ya tienes X estrellas · A por las Y estrellas", with X = the stars
+the person has now and Y = the next goal (the nearest multiple of five).
+`starLine()` in `js/core.js` builds it with the real total and calls
+`ApptonomiaStars.mark(total)` (what tells the celebration that a new
+star appeared).
+
+It used to call `ApptonomiaStars.line()`, which prints the last
+**milestone** reached — a multiple of ten. With 12 stars the header said
+12 and the screen said 10: two numbers for the same thing, on screen at
+the same time. The suite's other apps (calculia, okeymoney) print the
+real total, so this one does too. The milestone rule still applies to
+the *achievements* (`assets/js/achievements.js`): the badge "Diez
+estrellas" is unlocked at ten, not at twelve.
+
+`starsReachedOne` is the singular form ("Ya tienes 1 estrella"), used
+when the total is exactly one.
+
+**"A por más" does not restart the app.** The shared block's default
+leaves the activity the way a multi-page app does: it looks for a
+`.back-link` and, when there is none, reloads the page. This app has no
+back link — it is a single page with its own screens — so the reload was
+what happened. The whole app restarted from the name screen and the
+practice clock went back to zero: that number lives in memory, in
+`feedback.js` (`restElapsed`), and a reload throws it away.
+
+So the app passes its own action to `celebrate()`: `cfg.onFinish`, which
+is the hub the round was started from (the lesson list, the template
+list, the menu). The challenge already did this (`T.goMenu`). "A por
+más" now closes the celebration and brings the person back to that hub,
+in the page, with the clock still counting.
+
+The celebration has **no timer**: it stays until the person presses the
+button. The tests press it the way a person does
+(`dismissCelebration()` in `tests/app.spec.js`).
 
 ## 3. Internationalization
 

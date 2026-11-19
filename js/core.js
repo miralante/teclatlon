@@ -48,6 +48,7 @@
         layout: (App.i18n && App.i18n.locale && App.i18n.locale() === 'en') ? 'us' : 'es',
         hideLegend: false, hideNumpad: false, dimCelebration: false, keySound: true,
         errorSound: false, metrics: false, showTimer: false, showFingerText: true,
+        handContrast: false,
         restMinutes: App.feedback.DEFAULT_REST_MINUTES
       },
       goal: { accuracyMin: 0, speedMin: 0 },
@@ -88,6 +89,10 @@
   S.state.options.keySound = S.state.options.keySound === undefined ? true : !!S.state.options.keySound;
   S.state.options.errorSound = !!S.state.options.errorSound;
   S.state.options.showFingerText = S.state.options.showFingerText === undefined ? true : !!S.state.options.showFingerText;
+  /* High-contrast hand palette. Off by default: the colours the app has
+     always had stay until the person asks for the other ones. See
+     assets/css/tokens.css (the palette) and technical.md §2.10. */
+  S.state.options.handContrast = !!S.state.options.handContrast;
   /* Rest reminder interval (minutes). The default and the allowed range
      live in feedback.js, the module that owns the notice, so the panel
      and the countdown can't drift apart. Anything unusable (a value from
@@ -164,12 +169,25 @@
   }
 
   /* "Ya tienes X estrellas · A por las Y estrellas" (stars-engine.js). It goes
-     with the star message when a star is earned, not in the header. */
+     with the star message when a star is earned, not in the header.
+
+     X is the number of stars the person has NOW, the same number the
+     header shows. The shared stars-engine line() prints the last milestone
+     reached instead (a multiple of ten), so with 12 stars the header said
+     12 and this screen said 10: two different numbers for the same thing,
+     on screen at the same time. The suite's other apps (calculia,
+     okeymoney) print the real total here, and so does this one.
+
+     Y is still the next goal (the nearest multiple of five above the
+     total), and mark() is what tells the celebration that a new star
+     appeared — without it the "you earned a star" message never shows. */
   function starLine() {
-    return window.ApptonomiaStars.line(S.state.stars, {
-      reached: App.i18n.t('starsReached'),
-      goal: App.i18n.t('starsGoal')
-    });
+    var total = S.state.stars;
+    if (!window.ApptonomiaStars) return '';
+    window.ApptonomiaStars.mark(total);
+    var reached = total === 1 ? App.i18n.t('starsReachedOne') : App.i18n.t('starsReached');
+    return reached.replace('{n}', total) + ' · ' +
+      App.i18n.t('starsGoal').replace('{n}', window.ApptonomiaStars.goalFor(total));
   }
 
   /* Returns true when this award earned a star (a lesson or challenge is only starred once). */

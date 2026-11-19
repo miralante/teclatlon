@@ -74,6 +74,18 @@ async function waitForAsyncErrors(page) {
   await page.waitForTimeout(300);
 }
 
+/** The shared achievement screen has no timer: it stays on screen until the
+    person presses "A por más". That button closes it and returns to the
+    entry point of the activity (the list the round was started from). The
+    tests below press it the way a person does, instead of waiting for a
+    timer that no longer exists. */
+async function dismissCelebration(page) {
+  const more = page.locator('#app-celebration .celebration-more');
+  await expect(more).toBeVisible({ timeout: 20000 });
+  await more.click();
+  await expect(page.locator('#app-celebration')).toBeHidden();
+}
+
 // ---------------------------------------------------------------------------
 // Test suite: Complete Teclatlon app smoke tests
 // ---------------------------------------------------------------------------
@@ -392,6 +404,85 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await expect(fingersButton).toHaveAttribute('aria-pressed', 'true');
   });
 
+  test('2.8 — contraste de manos: segunda paleta, apagada por defecto', async ({ page }) => {
+    page = await openFreshApp();
+    await page.locator('.locale-settings-trigger').click();
+
+    const html = page.locator('html');
+    const toggle = page.locator('#btnHandContrast');
+    const leftKey = page.locator('#screenName .keyboard .key.f-lp').first();
+    const rightKey = page.locator('#screenName .keyboard .key.f-ri').first();
+    const legend = page.locator('#screenName .keyboard-legend');
+
+    // Off by default: the colours the app has always had are the ones on
+    // screen, and the attribute that swaps the palette is not there.
+    await expect(html).not.toHaveAttribute('data-hand-contrast');
+    await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+    const defaultLeft = await leftKey.evaluate(el => getComputedStyle(el).backgroundColor);
+    const defaultRight = await rightKey.evaluate(el => getComputedStyle(el).backgroundColor);
+    expect(defaultLeft).not.toBe(defaultRight);
+    await expect(legend).toContainText(/Verde|Green/);
+
+    // Turning it on swaps the palette for both hands at once.
+    await toggle.click();
+    await expect(html).toHaveAttribute('data-hand-contrast', 'high');
+    await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+    const highLeft = await leftKey.evaluate(el => getComputedStyle(el).backgroundColor);
+    const highRight = await rightKey.evaluate(el => getComputedStyle(el).backgroundColor);
+    expect(highLeft).not.toBe(defaultLeft);
+    expect(highRight).not.toBe(defaultRight);
+    expect(highLeft).not.toBe(highRight);
+    // The legend names the colours it is showing.
+    await expect(legend).toContainText(/Naranja|Orange/);
+    // The setting is saved with the rest of the options.
+    await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('teclatlon:keyboard')).options.handContrast)).toBe(true);
+
+    // It survives a reload, and it is applied before the first paint.
+    await page.reload();
+    await expect(page.locator('html')).toHaveAttribute('data-hand-contrast', 'high');
+
+    // And it can be turned off again, going back to the original colours.
+    await page.locator('.locale-settings-trigger').click();
+    await page.locator('#btnHandContrast').click();
+    await expect(html).not.toHaveAttribute('data-hand-contrast');
+    await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('teclatlon:keyboard')).options.handContrast)).toBe(false);
+    await expect(leftKey).toHaveCSS('background-color', defaultLeft);
+    await expect(rightKey).toHaveCSS('background-color', defaultRight);
+  });
+
+  test('2.8b — el contraste alto deja la letra de la tecla legible (AAA)', async ({ page }) => {
+    page = await openFreshApp();
+    await page.locator('.locale-settings-trigger').click();
+    // Light theme: the palette the teaching team was looking at.
+    await page.locator('.btn-theme[data-theme="light"]').click();
+    await page.locator('#btnHandContrast').click();
+
+    // The key glyph is the text colour of the theme; it has to clear AAA
+    // (7:1) against the background of the key it is painted on.
+    const ratios = await page.evaluate(() => {
+      function lum(rgb) {
+        const m = rgb.match(/\d+/g).slice(0, 3).map(Number).map(function (v) {
+          const s = v / 255;
+          return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+        });
+        return 0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2];
+      }
+      function ratio(a, b) {
+        const la = lum(a), lb = lum(b);
+        return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+      }
+      const out = [];
+      document.querySelectorAll('#screenName .keyboard .key').forEach(function (el) {
+        const s = getComputedStyle(el);
+        out.push({ r: ratio(s.color, s.backgroundColor), c: s.color, b: s.backgroundColor });
+      });
+      return out;
+    });
+    expect(ratios.length).toBeGreaterThan(20);
+    const worst = ratios.reduce((a, b) => (a.r < b.r ? a : b));
+    expect(worst.r, 'peor ratio ' + worst.r.toFixed(2) + ' (' + worst.c + ' sobre ' + worst.b + ')').toBeGreaterThanOrEqual(7);
+  });
+
   test('2.9 — Sobre la App carga sin la sección de logros', async ({ page }) => {
     // The achievements section left the About page (about/index.html has no
     // #logros block and about/about.js is gone). About must still load and
@@ -451,6 +542,15 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await expect(lessons).not.toHaveCount(0);
     // First lesson should not be locked
     await expect(lessons.first()).not.toHaveClass(/locked/);
+  });
+
+  test('4.2 — las lecciones se agrupan en 5 bloques con título, sin perder ninguna', async ({ page }) => {
+    page = await skipToMenu();
+    await page.locator('[data-mode="lessons"]').click();
+    const blocks = page.locator('#lessonsList .lesson-block');
+    await expect(blocks).toHaveCount(5);
+    await expect(blocks.locator('.lesson-block-title').first()).not.toHaveText('');
+    await expect(page.locator('#lessonsList .btn-lesson')).toHaveCount(17);
   });
 
   // -----------------------------------------------------------------
@@ -696,6 +796,10 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
         return el ? el.dataset.ch : null;
       });
       if (target === null) {
+        // The challenge is over when the achievement screen comes up. The
+        // screen takes the place of the menu's content while it is there,
+        // so the menu is not visible until "A por más" closes it.
+        if (await page.locator('#app-celebration').isVisible()) break;
         if (await page.locator('#screenMenu').isVisible()) break;
         await page.waitForTimeout(200);
         continue;
@@ -711,7 +815,8 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
       await page.waitForTimeout(30);
     }
 
-    // endChallenge() → celebrateWithTransfer → goMenu shows #screenMenu.
+    // endChallenge() → the achievement screen → "A por más" → the menu.
+    await dismissCelebration(page);
     await expect(page.locator('#screenMenu')).toBeVisible({ timeout: 10000 });
 
     // allKeys mode is marked complete — verify via the ⭐ badge on the mode card
@@ -765,8 +870,105 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
       await page.waitForTimeout(30);
     }
 
-    // endSequence → celebrateWithTransfer(goLessons) → 2000ms → goLessons.
+    // The celebration stays up until the person presses the button (the
+    // shared achievement screen has no timer), and it takes the place of
+    // the activity's content while it is there. "A por más" closes it and
+    // brings the lesson list back — in the page, without restarting it.
+    await expect(page.locator('#app-celebration')).toBeVisible({ timeout: 20000 });
+    await page.locator('#app-celebration .celebration-more').click();
     await expect(page.locator('#screenLessons')).toBeVisible({ timeout: 20000 });
+    await expect(page.locator('#stars')).toContainText('1');
+  });
+
+  // -----------------------------------------------------------------
+  // 13b. LOGROS — the achievement screen agrees with the header, and
+  //      "A por más" does not restart the app (which zeroed the clock)
+  // -----------------------------------------------------------------
+  test('13b — la pantalla de logros dice las mismas estrellas que la cabecera', async ({ page }) => {
+    /* 12 stars already earned: the milestone (10) and the real total
+       (12) are different numbers, which is exactly when the two
+       screens disagreed. */
+    const ctx = await _browser.newContext();
+    _lastCtx = ctx;
+    const p = await ctx.newPage();
+    await ctx.addInitScript(() => {
+      localStorage.setItem('teclatlon:keyboard', JSON.stringify({
+        name: 'Ana',
+        stars: 12,
+        completed: { l1: true, l2: true, l3: true },
+        options: { theme: 'light', showTimer: true, lang: 'es' }
+      }));
+    });
+    await p.goto(BASE);
+    await p.waitForTimeout(500);
+    if (await p.locator('#screenName').isVisible()) await p.locator('#btnSkipName').click();
+    await expect(p.locator('#screenMenu')).toBeVisible();
+
+    // The header is the reference: it shows the stars the person has.
+    const header = (await p.locator('#stars').textContent()).trim();
+    expect(header).toBe('⭐ 12');
+
+    // The achievement screen has to say the same number.
+    await p.evaluate(() => {
+      window.App.feedback.celebrate('¡Bien hecho!', window.Teclatlon.goMenu, window.Teclatlon.starLine());
+    });
+    await expect(p.locator('#app-celebration')).toBeVisible();
+    await expect(p.locator('#app-celebration .goal')).toContainText('12');
+    await expect(p.locator('#app-celebration .goal')).not.toContainText('10');
+    // The goal stays the next multiple of five.
+    await expect(p.locator('#app-celebration .goal')).toContainText('15');
+  });
+
+  test('13c — "A por más" no recarga la app ni pone a cero el reloj', async ({ page }) => {
+    page = await skipToMenu();
+    await page.locator('[data-mode="lessons"]').click();
+    await page.locator('#lessonsList .btn-lesson:not(.locked)').first().click();
+    await expect(page.locator('#screenGame')).toBeVisible();
+
+    // Lesson 1 ES steps, the same ones test 13 plays.
+    const steps = ['f', 'j', 'fj', 'ffjj', 'fjfj'];
+    for (const step of steps) {
+      for (const ch of step) {
+        await page.evaluate((c) => {
+          document.dispatchEvent(new KeyboardEvent('keydown', {
+            key: c, code: 'Key' + c.toUpperCase(), bubbles: true, cancelable: true
+          }));
+        }, ch);
+        await page.waitForTimeout(30);
+      }
+      await page.waitForTimeout(1600);
+    }
+    for (const ch of 'fj') {
+      await page.evaluate((c) => {
+        document.dispatchEvent(new KeyboardEvent('keydown', {
+          key: c, code: 'Key' + c.toUpperCase(), bubbles: true, cancelable: true
+        }));
+      }, ch);
+      await page.waitForTimeout(30);
+    }
+
+    // The celebration is up. It takes the place of the activity's own
+    // content (main.is-celebrating hides it), so the lesson list only
+    // comes back when the person presses the button.
+    await expect(page.locator('#app-celebration')).toBeVisible({ timeout: 20000 });
+    await expect(page.locator('#screenLessons')).toBeHidden();
+
+    // The practice clock: the number lives in memory, so a reload would
+    // take it back to zero.
+    const secondsBefore = await page.evaluate(() => window.App.feedback.practiceSeconds());
+    expect(secondsBefore).toBeGreaterThan(0);
+
+    // A marker on the window survives only if the page is NOT reloaded.
+    await page.evaluate(() => { window.__noReload = true; });
+    await page.locator('#app-celebration .celebration-more').click();
+    await page.waitForTimeout(800);
+
+    expect(await page.evaluate(() => window.__noReload === true)).toBe(true);
+    const secondsAfter = await page.evaluate(() => window.App.feedback.practiceSeconds());
+    expect(secondsAfter).toBeGreaterThanOrEqual(secondsBefore);
+    // The celebration is closed and the person is back on the lesson list.
+    await expect(page.locator('#app-celebration')).toBeHidden();
+    await expect(page.locator('#screenLessons')).toBeVisible();
   });
 
   // -----------------------------------------------------------------
@@ -807,7 +1009,9 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
       await page.waitForTimeout(1200);
     }
 
-    // Template complete → endSequence → celebrateWithTransfer(goTemplates) → 2000ms → goTemplates.
+    // Template complete → endSequence → the achievement screen → "A por más"
+    // → the template list.
+    await dismissCelebration(page);
     await expect(page.locator('#screenTemplates')).toBeVisible({ timeout: 20000 });
   });
 
@@ -868,6 +1072,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     }
 
     // endSequence → celebrateWithTransfer(goMenu) → 2000ms → goMenu.
+    await dismissCelebration(page);
     await expect(page.locator('#screenMenu')).toBeVisible({ timeout: 20000 });
   });
 
@@ -961,6 +1166,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
       await page.waitForTimeout(30);
     }
     // endSequence → celebrateWithTransfer(goLessons) → 2000ms → goLessons → #screenLessons visible.
+    await dismissCelebration(page);
     await expect(page.locator('#screenLessons')).toBeVisible({ timeout: 20000 });
 
     const achievement = await page.evaluate(() => {
@@ -1061,7 +1267,8 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
       }, ch);
       await page.waitForTimeout(30);
     }
-    // endSequence → celebrateWithTransfer(goLessons) → 2000ms → goLessons → #screenLessons visible.
+    // endSequence → the achievement screen → "A por más" → the lesson list.
+    await dismissCelebration(page);
     await expect(page.locator('#screenLessons')).toBeVisible({ timeout: 20000 });
 
     const starsAfter = await page.evaluate(() => {
@@ -1108,8 +1315,10 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
       await page.waitForTimeout(1200); // wait for step-complete animation
     }
 
-    // After Delete (the last special-key step), endSequence → celebrateWithTransfer(goLessons).
-    // Wait for the lesson to actually end: celebration (2000ms) + navigation → #screenLessons.
+    // After Delete (the last special-key step), endSequence → the
+    // achievement screen. "A por más" closes it and brings the lesson
+    // list back.
+    await dismissCelebration(page);
     await expect(page.locator('#screenLessons')).toBeVisible({ timeout: 8000 });
   });
 
@@ -1160,6 +1369,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
       }, { key: ch, code });
       await page.waitForTimeout(50);
     }
+    await dismissCelebration(page);
     await expect(page.locator('#screenLessons')).toBeVisible({ timeout: 20000 });
 
     // The suite has no streak achievement (assets/js/achievements.js: "no streaks"),
@@ -1206,6 +1416,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
       }, k);
       await page.waitForTimeout(1200);
     }
+    await dismissCelebration(page);
     await expect(page.locator('#screenLessons')).toBeVisible({ timeout: 15000 });
 
     // Verify allLessons achievement was saved (set on app load when all 17 were complete).

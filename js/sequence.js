@@ -270,7 +270,17 @@
        learner stranded behind a browser-dependent celebration timer. The
        celebration remains visible on the destination screen. */
     if (cfg.onFinish) cfg.onFinish();
-    App.feedback.celebrate(T.finalMessage() + ' ' + App.i18n.t('transferMessage'), null, T.starLine());
+    /* "A por más" gets the app's own action, not the shared default. The
+       default of the shared celebration block is to leave the activity the
+       way a multi-page app does: it looks for a ".back-link" and, when
+       there is none, reloads the page. This app has no back link (it is a
+       single page with its own screens), so the reload was what happened:
+       the whole app restarted from the name screen and the practice clock
+       — a number that lives in memory, in feedback.js — went back to zero.
+       The activity's entry point here is the hub the round was started
+       from (the lesson list, the template list, the menu), which is what
+       cfg.onFinish already returns to. */
+    App.feedback.celebrate(T.finalMessage() + ' ' + App.i18n.t('transferMessage'), cfg.onFinish || null, T.starLine());
   }
 
   T.clearFeedback = clearFeedback;

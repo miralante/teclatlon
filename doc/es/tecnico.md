@@ -205,7 +205,7 @@ Dónde vive cada función:
 | `dictation.js` | `playDictation`, `dictationKey`, `speakDictationLetter` |
 | `challenge.js` | `playChallenge`, `challengeKey`, `updateChallenge`, `challengeGuide`, `endChallenge` |
 | `keyboard-input.js` | `keydown`/`keyup` físicos, `normalizeKey`, botones de teclado, distribución y color |
-| `menu.js` | `renderMenu`, `renderLessons`, `renderTemplates`, `goMenu`/`goLessons`/`goTemplates`/`goName`/`goFree` |
+| `menu.js` | `renderMenu`, `renderLessons` (agrupa las lecciones por `DATA.lessonBlocks`, solo en la vista), `renderTemplates`, `goMenu`/`goLessons`/`goTemplates`/`goName`/`goFree` |
 | `app.js` | Nombre, borrar progreso, menú de modos, salir de partida, botones de dictado, texto libre, idioma, arranque y `routeHash` |
 
 El teclado en pantalla solo *refleja* pulsaciones (`flashKey`); no hay ruta
@@ -544,11 +544,10 @@ descarta `game.order` para que se reconstruya sobre el diseño nuevo.
 #### La barra de progreso es una hoja
 
 `.progress-bar` es la **barra compacta** de la suite: 6px de alto,
-`overflow: hidden`, `position: relative`, con un `.progress-fill` a rayas
-pegado a su borde izquierdo. En toda actividad de Calculia es una hoja que
-solo contiene el relleno y el `.progress-text` (oculto): nunca se usa como
-envoltorio de otros bloques, porque el alto y el desbordamiento son
-justamente su razón de ser.
+`position: relative`, con un `.progress-fill` pegado a su borde izquierdo.
+En toda actividad de Calculia es una hoja que solo contiene el relleno y
+el `.progress-text` (oculto): nunca se usa como envoltorio de otros
+bloques, porque el alto es justamente su razón de ser.
 
 `#challengeZone` apuntaba antes al identificador de la propia barra y
 metía dentro `.challenge-stars` y `.progress-fill`. Eso metía las tres
@@ -559,20 +558,29 @@ es:
 
 ```html
 <div id="challengeZone" class="challenge-zone hidden">
-  <div class="challenge-stars" id="challengeStars"></div>
   <div class="progress-bar">
     <div class="progress-fill" id="challengeFill"></div>
     <span class="progress-text" id="challengeText">0 de 0</span>
   </div>
+  <div class="challenge-stars" id="challengeStars"></div>
 </div>
 ```
 
-`.challenge-zone` es una columna flex con 8px de separación (que sustituye
-al `margin-bottom` de las estrellas), y `.progress-fill` lleva ya el
+`.challenge-zone` es una **fila** flex (barra a la izquierda, estrellas a la
+derecha, 12px de separación) y `.progress-fill` lleva ya el
 `position: absolute; inset: 0 auto 0 0;` que la copia de Calculia sí tenía.
 `tests/timer-and-progress.spec.js` comprueba tanto la forma como su
 consecuencia, porque la forma sola volvería a pasar el día que alguien
 anidara otra vez el marcado.
+
+**Sin `data-suite-progress`.** Ese atributo es la señal que usa el cromo
+compartido (`assets/js/suite-chrome.js`) para **mover** una barra de nivel
+de página a su propia fila, bajo la cabecera. La barra del reto no es de
+nivel de página: es parte del panel del reto y va en la misma fila que las
+estrellas de fase. Con el atributo puesto, el cromo la subía a lo alto de
+la página y dejaba las estrellas solas abajo, rompiendo esa fila (y los
+tres tests de la barra). La barra sigue a su pantalla porque vive dentro
+de `#challengeZone`, dentro de `#screenGame`.
 
 ### 2.8 Texto del dedo: se escribe siempre, se oculta la caja
 
@@ -677,6 +685,121 @@ lista.
 4. Ejecuta `node scripts/check.js`. Comprueba la sintaxis y que la ruta esté
    en `FILES`.
 5. Actualiza la tabla de §2.2 y el árbol de §2.
+
+### 2.10 Colores de las manos: dos paletas, un ajuste
+
+El teclado y la guía de manos se colorean por mano (izquierda/derecha) o
+por dedo. Los colores viven en `assets/css/tokens.css` como dos familias
+de variables:
+
+| Token | Pinta |
+|---|---|
+| `--color-hand-left` / `--color-hand-left-soft` | la mano izquierda (las teclas del pulgar, el pulgar del dibujo) |
+| `--color-hand-right` / `--color-hand-right-soft` | la mano derecha (las teclas de los índices, los índices del dibujo) |
+| `--color-finger-ring`, `--color-finger-middle`, `--color-finger-pinky` (+ `-soft`) | los otros tres dedos, en el modo «colores: dedos» |
+
+La mano izquierda tiene su propia pareja aunque empiece con los mismos
+valores que `--accent` / `--accent-soft`. El acento es el color de la
+*interfaz* (botones, enlaces, foco); la pareja de la mano es el color de
+la *mano*. Mantenerlos separados es lo que permite que la segunda paleta
+repinte las manos sin repintar todos los botones de la app.
+
+**Dos paletas.** `state.options.handContrast` (apagado por defecto)
+elige entre ellas:
+
+- **Por defecto**: mano izquierda azul (`#1B6CA8`), mano derecha verde
+  (`#2E7D32`).
+- **Alto contraste** (`data-hand-contrast="high"`): mano izquierda azul
+  oscuro (`#0A4E8B`), mano derecha naranja vivo (`#C2410C`).
+
+El motivo de la segunda paleta está medido, no es cuestión de gusto. El
+azul y el verde por defecto están a una relación de luminancia de
+**1.09:1** y sus tonos apenas distan 82°; bajo deuteranopía se
+colapsan a **1.16:1**, así que para quien no los distingue las teclas de
+la izquierda y las de la derecha son del mismo color. El equipo docente
+avisó justo de eso. El par nuevo dista 169° de tono y conserva **3.09:1**
+bajo deuteranopía, y azul/naranja es el par clásico a prueba de
+daltonismo.
+
+**El dedo anular cambia también.** La mano derecha toma el naranja, así
+que el anular (naranja hasta ahora) pasa a verde. Sin ese cambio dos
+dedos compartirían color y la leyenda «cada dedo tiene su color» sería
+falsa.
+
+**Reglas de accesibilidad que sigue esta paleta.**
+
+- *El color nunca es la única pista* (WCAG 1.4.1): la leyenda bajo el
+  teclado nombra las manos («Azul: mano izquierda. Naranja: mano
+  derecha.»), la guía bajo el dibujo de las manos dice qué mano y qué
+  dedo es, y la posición de la tecla en el teclado también lo dice. El
+  texto de la leyenda sigue a la paleta (`legendHands` /
+  `legendHandsHigh`); de eso se encarga `updateKeyboardLegend()` en
+  `js/keyboard-view.js`.
+- *Contraste* (WCAG 1.4.6): cada tinte mantiene el glifo de la tecla en
+  AAA (≥ 7:1) contra el color de texto de su tema, y cada color sólido
+  supera 4.5:1 contra el fondo sobre el que se dibuja. Cada uno de los
+  tres temas tiene su propio juego, porque un color que se lee sobre el
+  crema no se lee sobre el casi negro.
+
+**Cómo se activa.** `applyOptions()` (en `js/settings.js`) pone o quita
+`data-hand-contrast` en `<html>`; `assets/js/gate.js` también lo hace,
+antes del primer pintado, para que el teclado nunca muestre los colores
+viejos un momento y luego cambien delante de la persona. El atributo
+solo está presente cuando el ajuste está activo: el aspecto por defecto
+no cambia.
+
+Como el repintado es solo CSS, el teclado no necesita volver a pintarse
+cuando cambia el ajuste — y no debe: repintarlo borraría las marcas de
+la partida en curso. Solo se reescribe la frase de la leyenda
+(`T.updateKeyboardLegend()`).
+
+**Una corrección que vino con esto.** `.key.target` (la tecla que hay
+que pulsar) era blanca con la letra en color de acento. En el tema de
+alto contraste forzado el acento es amarillo, y el amarillo sobre
+blanco da 1.1:1: la letra que hay que escribir desaparecía. Allí la
+tecla es negra, con la letra y el borde amarillos (19.6:1).
+
+### 2.11 La pantalla de logros: las mismas estrellas y sin reiniciar
+
+Dos reglas gobiernan la pantalla que aparece cuando se gana una estrella
+(el bloque compartido `suite:celebrate` de `assets/js/feedback.js`).
+
+**Dice las estrellas que tiene la persona.** La línea bajo la
+felicitación es «Ya tienes X estrellas · A por las Y estrellas», con X =
+las estrellas que tiene ahora y Y = el objetivo siguiente (el múltiplo de
+cinco más cercano). `starLine()` en `js/core.js` la construye con el
+total real y llama a `ApptonomiaStars.mark(total)` (lo que le avisa a la
+celebración de que hay una estrella nueva).
+
+Antes llamaba a `ApptonomiaStars.line()`, que imprime el último
+**hito** alcanzado — un múltiplo de diez. Con 12 estrellas la cabecera
+decía 12 y la pantalla decía 10: dos números para lo mismo, en pantalla
+a la vez. Las demás apps de la suite (calculia, okeymoney) imprimen el
+total real, así que esta también. La regla del hito sigue vigente para
+los *logros* (`assets/js/achievements.js`): la insignia «Diez estrellas»
+se desbloquea con diez, no con doce.
+
+`starsReachedOne` es la forma en singular («Ya tienes 1 estrella»), que
+se usa cuando el total es exactamente uno.
+
+**«A por más» no reinicia la app.** El comportamiento por defecto del
+bloque compartido es salir de la actividad como en una app de varias
+páginas: busca un `.back-link` y, cuando no lo hay, recarga la página.
+Esta app no tiene back link —es una sola página con sus propias
+pantallas—, así que lo que pasaba era la recarga. Toda la app volvía a
+arrancar desde la pantalla de nombre y el reloj de práctica se
+reiniciaba: ese número vive en memoria, en `feedback.js`
+(`restElapsed`), y una recarga lo tira.
+
+Así que la app le pasa su propia acción a `celebrate()`: `cfg.onFinish`,
+que es el hub desde el que empezó la ronda (la lista de lecciones, la
+lista de plantillas, el menú). El reto ya lo hacía (`T.goMenu`). «A por
+más» cierra ahora la celebración y devuelve a la persona a ese hub, en
+la misma página y con el reloj sigue contando.
+
+La celebración **no tiene temporizador**: se queda hasta que la persona
+pulsa el botón. Los tests lo pulsan como lo hace una persona
+(`dismissCelebration()` en `tests/app.spec.js`).
 
 ## 3. Internacionalización
 

@@ -157,5 +157,9 @@
     if (hideLegend) html.classList.add('hide-legend');
     if (hideNumpad) html.classList.add('hide-numpad');
     if (dimCelebration) html.classList.add('dim-celebration');
+    /* High-contrast hand palette: the attribute has to be there before
+       the first paint, or the keyboard would show the old colours for a
+       moment and then change under the person's eyes. */
+    if (rawOptions.handContrast) html.setAttribute('data-hand-contrast', 'high');
   } catch (e) { /* ignore */ }
 })();
