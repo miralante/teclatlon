@@ -2,6 +2,8 @@
     "name": "teclatlon-ui-smoke",
     "private": true,
     "scripts": {
+        "lint": "node scripts/check.js",
+        "lint:markup": "node scripts/checks/suite-markup.js",
         "test:ui": "playwright test",
         "test:ui:headed": "playwright test --headed",
         "test:sw-redirects": "node scripts/check-sw-redirects.js"

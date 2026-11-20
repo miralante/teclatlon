@@ -35,7 +35,7 @@ concurrency:
 
 jobs:
   check:
-    name: node scripts/check.js
+    name: npm run lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -47,7 +47,7 @@ jobs:
           node-version: "20"
 
       - name: Run structural and i18n checks
-        run: node scripts/check.js
+        run: npm run lint
 
       - name: Suite header and footer markup
         run: node scripts/checks/suite-markup.js
