@@ -67,9 +67,7 @@ dashboard; la nota sobre `sw.js` y la redirección del SW — vive en
 cosas:
 
 - `_headers` en la raíz del repo controla la caché y los headers de
-  seguridad (HTML/SW/manifest con `must-revalidate`; `*.js`/`*.css`
-  con caché corta `max-age=300`; imágenes/fuentes con caché
-  inmutable de 1 año).
+  seguridad (todos los ficheros: `no-cache, must-revalidate`).
 - `manifest.json` y `sw.js` deben usar rutas relativas (empezar con
   `./`) para que la app funcione en cualquier host sin cambios.
 - `404.html`, `robots.txt` y `sitemap.xml` siguen el mismo patrón que
@@ -1134,7 +1132,7 @@ la **plantilla**; las desviaciones se indican donde apliquen.
   <link rel="stylesheet" href="../assets/css/base.css">
   <link rel="stylesheet" href="../assets/css/components.css">
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="../assets/css/locale-picker.css?v=teclatlon-v4aa">
+  <link rel="stylesheet" href="../assets/css/locale-picker.css">
 </head>
 <body>
   <div class="container {legal|about}">
@@ -1173,11 +1171,9 @@ la **plantilla**; las desviaciones se indican donde apliquen.
   <script src="strings.en.js"></script>
   <!-- El desplegable necesita su configuracion ANTES que el
        componente. Los dos van diferidos, y los diferidos se ejecutan
-       en orden de documento, con listarlos en ese orden basta. El ?v=
-       no es opcional: los .js y .css se sirven immutable un ano, sin el
-       la pagina sirve la version vieja desde la cache. -->
-  <script src="../assets/js/locale-picker-config.js?v=teclatlon-v4aa"></script>
-  <script src="../assets/js/locale-picker.js?v=teclatlon-v4aa" defer></script>
+       en orden de documento, con listarlos en ese orden basta. Los recursos se sirven sin caché, así que no hace falta ningún token de versión. -->
+  <script src="../assets/js/locale-picker-config.js"></script>
+  <script src="../assets/js/locale-picker.js" defer></script>
   <script>
     /* Register the SW from this entry point so it is active for any
        later navigation, matching what the main index.html and the

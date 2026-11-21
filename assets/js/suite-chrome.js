@@ -175,6 +175,8 @@
        of the row. The page keeps the node: it is moved, not copied. */
     var activity = document.querySelector('[data-suite-activity]');
     if (activity) mount.appendChild(activity);
+    var back = activity && activity.querySelector('.back-link');
+    if (back) namedFile(back);
 
     var controls = make('div', 'suite-chrome-controls');
     /* An app's star counter (data-suite-stars, wherever the app puts it) moves
@@ -185,6 +187,14 @@
     if (stars) controls.appendChild(stars);
     controls.appendChild(make('div', null, { id: 'locale-picker' }));
     mount.appendChild(controls);
+  }
+
+  /* A parent level written as a folder ("../common-group/") is opened at its index.html:
+     a server that does not map a folder to its index would otherwise show another page.
+     Every app gets this from the one shared definition, so no page has to write the file. */
+  function namedFile(link) {
+    var href = link.getAttribute('href');
+    if (href && /\/$/.test(href)) link.setAttribute('href', href + 'index.html');
   }
 
   /* The back link of a subpage is a plain link to its parent level (its href). It never

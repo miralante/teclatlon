@@ -1,81 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>404 — Teclatlon</title>
   <meta name="robots" content="noindex">
-  <meta http-equiv="refresh" content="0; url=./">
-  <style>
-    :root {
-      --color-bg: #FAF7F2;
-      --color-surface: #FFFFFF;
-      --color-text: #1A1A2E;
-      --color-text-soft: #4A4A68;
-      --color-border: #D8D2C8;
-      --color-accent: #1B6CA8;
-      --font: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: var(--font);
-      color: var(--color-text);
-      background: var(--color-bg);
-      min-height: 100vh;
-      line-height: 1.5;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      justify-content: center;
-      padding: 24px;
-      -webkit-font-smoothing: antialiased;
-    }
-    .card {
-      margin-inline: auto;
-      max-width: 480px;
-      width: 100%;
-      background: var(--color-surface);
-      border: 1px solid var(--color-border);
-      border-radius: 16px;
-      padding: 32px;
-      text-align: center;
-    }
-    h1 { font-size: 28px; margin-bottom: 16px; letter-spacing: -0.02em; }
-    p { color: var(--color-text-soft); margin-bottom: 24px; }
-    a {
-      display: inline-block;
-      background: var(--color-accent);
-      color: #fff;
-      padding: 14px 28px;
-      border-radius: 12px;
-      font-weight: 600;
-      text-decoration: none;
-      min-height: 56px;
-      line-height: 28px;
-    }
-    a:hover { text-decoration: none; opacity: 0.92; }
-    :focus-visible {
-      outline: 3px solid var(--color-accent);
-      outline-offset: 3px;
-      border-radius: 4px;
-    }
-  </style>
-<link rel="stylesheet" href="/assets/css/components.css?v=1">
-  <link rel="stylesheet" href="/assets/css/locale-picker.css?v=teclatlon-v4aaa">
+  <link rel="stylesheet" href="/assets/css/componentes.css">
+  <link rel="stylesheet" href="/assets/css/locale-picker.css">
 </head>
 <body>
-<div class="container">
-  <div data-suite-header data-suite-logo="/assets/img/icono.svg?v=teclatlon-vd6d39b14" data-suite-byline></div>
-  <main class="suite-body card">
+  <header data-suite-header data-suite-logo="/assets/img/icono.svg" data-suite-byline></header>
+
+  <main id="contenido" class="suite-body">
     <h1>Página no encontrada</h1>
     <p>La ruta que has visitado no existe. La página principal de Teclatlon sigue disponible.</p>
-    <a href="./">Volver a Teclatlon</a>
+    <p><a href="/">Volver a Teclatlon</a></p>
   </main>
+
   <footer data-suite-footer data-suite-base="/" data-suite-portal="https://apptonomia.uk/" data-suite-settings></footer>
-</div>
-  <script src="assets/js/register-sw.js?v=1"></script>
-<script src="/assets/js/suite-chrome.js?v=teclatlon-v125" defer></script>
-<script src="/assets/js/locale-picker-config.js?v=1aa"></script>
-<script src="/assets/js/locale-picker.js?v=teclatlon-v4aaa" defer></script>
+  <script src="/assets/js/register-sw.js"></script>
+  <script src="/assets/js/suite-chrome.js" defer></script>
+  <script src="/assets/js/locale-picker-config.js"></script>
+  <script src="/assets/js/locale-picker.js" defer></script>
 </body>
 </html>

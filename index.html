@@ -155,10 +155,10 @@
 }
   </script>
 
-  <link rel="stylesheet" href="assets/css/tokens.css?v=teclatlon-v2b">
+  <link rel="stylesheet" href="assets/css/tokens.css">
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/components.css">
-  <link rel="stylesheet" href="assets/css/locale-picker.css?v=teclatlon-v3baa">
+  <link rel="stylesheet" href="assets/css/locale-picker.css">
   <link rel="stylesheet" href="styles.css">
       <!-- Pre-paint bootstrap (device gate + locale + saved accessibility
        settings). External file so the CSP can keep `script-src 'self'`
@@ -167,7 +167,7 @@
        size attributes) lands before the stylesheet cascade evaluates
        and before the first paint — no flash of the app on phones.
        See assets/js/gate.js for the detection logic. -->
-  <script src="assets/js/gate.js?v=2"></script>
+  <script src="assets/js/gate.js"></script>
   <link rel="manifest" href="./manifest.json">
 </head>
 <body>
@@ -190,7 +190,7 @@
   <div class="container suite-home">
     <header class="tool-header suite-header">
       <div class="tool-header-row">
-        <div data-suite-header data-suite-logo="assets/img/icono.svg?v=teclatlon-vd6d39b14" data-suite-name="Teclatlon" data-suite-heading data-suite-byline></div>
+        <div data-suite-header data-suite-logo="assets/img/icono.svg" data-suite-name="Teclatlon" data-suite-heading data-suite-byline></div>
         <div class="header-data suite-controls">
           <span class="stars" data-suite-stars id="stars">⭐ 0</span>
           <!-- The practice clock, next to the stars because it is the same
@@ -549,7 +549,7 @@
   </div>
 
   <script src="assets/js/utils.js"></script>
-  <script src="assets/js/i18n.js?v=2"></script>
+  <script src="assets/js/i18n.js"></script>
   <script src="assets/js/tts.js"></script>
   <script src="assets/js/storage.js"></script>
   <script src="assets/js/feedback.js"></script>
@@ -577,11 +577,11 @@
        External file: the CSP is `script-src 'self'`, so an inline
        <script> would be dropped in production and the component would
        fall back to its defaults. See assets/js/locale-picker-config.js. -->
-  <script src="assets/js/suite-chrome.js?v=teclatlon-v125"></script>
-  <script src="assets/js/locale-picker-config.js?v=1aa"></script>
-  <script src="assets/js/locale-picker.js?v=teclatlon-v4aaa" defer></script>
+  <script src="assets/js/suite-chrome.js"></script>
+  <script src="assets/js/locale-picker-config.js"></script>
+  <script src="assets/js/locale-picker.js" defer></script>
   <!-- SW registration, also external for the same CSP reason. Resolves
        the root sw.js from its own src, so it needs no path here. -->
-  <script src="assets/js/register-sw.js?v=1"></script>
+  <script src="assets/js/register-sw.js"></script>
 </body>
 </html>

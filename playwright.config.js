@@ -31,7 +31,7 @@ module.exports = defineConfig({
     },
   },
   webServer: {
-    command: 'node scripts/ui-server.js',
+    command: `node scripts/serve.js ${PORT}`,
     url: BASE_URL,
     reuseExistingServer: false,
     timeout: 30000,

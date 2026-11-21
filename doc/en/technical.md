@@ -64,8 +64,7 @@ configuration; the `sw.js` and SW-redirect note — live in
 [`CLOUDFLARE.md`](../../CLOUDFLARE.md). Three things suffice here:
 
 - `_headers` at the repo root controls cache and security headers
-  (HTML/SW/manifest with `must-revalidate`; `*.js`/`*.css` with a
-  short `max-age=300`; images/fonts with a 1-year immutable cache).
+  (every file: `no-cache, must-revalidate`).
 - `manifest.json` and `sw.js` must use relative paths (start `./`) so
   the app works on any host without changes.
 - `404.html`, `robots.txt` and `sitemap.xml` follow the same pattern
@@ -1092,7 +1091,7 @@ the **template**; deviations are called out where they apply.
   <link rel="stylesheet" href="../assets/css/base.css">
   <link rel="stylesheet" href="../assets/css/components.css">
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="../assets/css/locale-picker.css?v=teclatlon-v4aa">
+  <link rel="stylesheet" href="../assets/css/locale-picker.css">
 </head>
 <body>
   <div class="container {legal|about}">
@@ -1134,11 +1133,9 @@ the **template**; deviations are called out where they apply.
   <script src="strings.en.js"></script>
   <!-- The dropdown needs its config BEFORE the component. Both
        are deferred, and deferred scripts run in document order, so
-       listing them in that order is enough. The ?v= is not optional:
-       .js and .css are served immutable for a year, and without it the
-       page serves the stale copy from cache. -->
-  <script src="../assets/js/locale-picker-config.js?v=teclatlon-v4aa"></script>
-  <script src="../assets/js/locale-picker.js?v=teclatlon-v4aa" defer></script>
+       listing them in that order is enough. Assets are served no-cache, so no version token is needed. -->
+  <script src="../assets/js/locale-picker-config.js"></script>
+  <script src="../assets/js/locale-picker.js" defer></script>
   <script>
     /* Register the SW from this entry point so it is active for any
        later navigation, matching what the main index.html and the

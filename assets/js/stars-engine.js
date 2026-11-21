@@ -2,8 +2,8 @@
    Apptonomia stars engine. ONE definition for every suite app.
 
    Canonical source: apptonomia/scripts/suite/stars-engine.js
-   Copies: assets/js/stars-engine.js (calculia, memofun, routime, teclatlon)
-           js/stars-engine.js        (sinonimia)
+   Copies: the TARGETS list of apptonomia/scripts/sync-stars-engine.js (the apps
+           with stars, and apptonomia/doc/templates for new apps).
    Keep every copy byte-identical: run `node apptonomia/scripts/sync-stars-engine.js --apply`
    after editing this file. Never edit a copy by hand.
 
@@ -22,6 +22,16 @@
                                      "Ya tienes 10 estrellas · A por las 15 estrellas"
      goal(anchorEl, total, strings)  shows that line in a <span class="stars-goal">
                                      placed right after anchorEl (created once)
+     takeNewStar()                   true once when the total went up since the last
+                                     celebration (the celebrate block calls it)
+     useStorageKey(key)              where the last celebrated total is kept. Default
+                                     'apptonomia:stars:last'; an app passes a key with
+                                     its own prefix ('<slug>:stars:last') so its
+                                     config/ reset clears it with the rest of its data.
+     storageKey()                    the key in use
+
+   Note: line() and goal() also record `total` as the total to celebrate next
+   (mark): build the goal line for the counter the person sees, and only for it.
 
    strings = { reached: 'Ya tienes {n} estrellas', goal: 'A por las {n} estrellas' }
    The words live in each app's own strings files; this file has no copy.
@@ -56,11 +66,17 @@
     return after > before ? after : 0;
   }
 
+  /* Replaces every {n}. A function replacement, so a "$" in the text is kept as is. */
   function fill(text, n) {
-    return String(text).replace('{n}', String(n));
+    return String(text).replace(/\{n\}/g, function () { return String(n); });
   }
 
   var LAST_KEY = 'apptonomia:stars:last';
+
+  function useStorageKey(key) {
+    if (typeof key === 'string' && key) LAST_KEY = key;
+    return LAST_KEY;
+  }
   var pending = null; // the total of the last goal line, until a celebration takes it
 
   function readLast() {
@@ -123,7 +139,9 @@
     line: line,
     goal: goal,
     mark: mark,
-    takeNewStar: takeNewStar
+    takeNewStar: takeNewStar,
+    useStorageKey: useStorageKey,
+    storageKey: function () { return LAST_KEY; }
   };
 
   root.ApptonomiaStars = api;
