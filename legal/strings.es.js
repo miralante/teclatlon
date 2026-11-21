@@ -30,6 +30,7 @@
     "dataP4": "Esta información se guarda mientras no se borre, y sirve únicamente para que el progreso no se pierda al cerrar la aplicación.",
     "rightsTitle": "Tus derechos y cómo ejercerlos",
     "rightsP1": "Como todo lo guardado está en tu dispositivo y no en un servidor, tú tienes el control directo: puedes verlo, cambiarlo o borrarlo en cualquier momento, sin pedírnoslo a nosotros.",
+    "rightsP1a": "Puedes hacerlo desde el icono de engranaje de la cabecera.",
     "rightsP2": "También puedes borrar estos datos borrando los datos de navegación de tu navegador para este sitio, desde su configuración.",
     "minorsTitle": "Todas las edades y capacidades",
     "minorsP1": "Teclatlon está pensada para que la use de forma autónoma cualquier persona, sin importar su edad ni sus capacidades.",

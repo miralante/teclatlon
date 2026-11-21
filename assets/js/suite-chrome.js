@@ -23,7 +23,7 @@
              data-suite-settings
              data-suite-contact="hello@apptonomia.uk"></footer>
 
-   Both mounts are optional. A header mount that already has children is
+   Both mounts are optional. A header mount that already has content of its own is
    skipped, so a page can keep its own markup while it migrates.
 
    The activity block ([data-suite-activity]) sits OUTSIDE the mount. The
@@ -215,9 +215,6 @@
     var list = make('ul', 'suite-chrome-links');
     list.appendChild(linkItem(base + 'about/', 'core.chrome.about'));
     list.appendChild(linkItem(base + 'legal/', 'core.chrome.legal'));
-    if (mount.hasAttribute('data-suite-settings')) {
-      list.appendChild(linkItem(base + 'config/', 'core.chrome.settings'));
-    }
     if (contact) {
       var mail = make('li');
       mail.appendChild(make('a', null, { href: 'mailto:' + contact }));

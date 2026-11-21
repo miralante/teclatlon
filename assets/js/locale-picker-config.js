@@ -10,6 +10,7 @@
    index.html, so path: 'strings'. storageKey matches assets/js/i18n.js. */
 window.LocalePickerConfig = {
   storageKey: 'teclatlon:locale',
+  storagePrefix: 'teclatlon:',
   path: 'strings',
   defaultLocale: 'en',
   languageInDrawer: true,

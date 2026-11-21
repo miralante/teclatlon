@@ -89,6 +89,9 @@
   var SETTINGS_KEY = cfg.settingsStorageKey || (STORAGE_KEY + ':accessibility');
   var SOUND_SETTINGS_KEY = cfg.soundStorageKey || 'apptonomia:sounds';
   var SOUND_SETTINGS_ENABLED = cfg.soundSettings !== false;
+  /* Prefijo de las claves que guarda la app. Si existe, el cajón muestra
+     «Borrar todo y empezar de cero»; si no, la fila no aparece. */
+  var RESET_PREFIX = cfg.storagePrefix || null;
   var settingsState = null;
   var soundState = null;
   var baseRootFontSize = null;
@@ -233,14 +236,20 @@
       small: 'Pequeño', normal: 'Normal', large: 'Grande',
       theme: 'Tema', themeLight: 'Claro', themeDark: 'Oscuro',
       language: '🌐 Idioma',
-      contrast: 'Alto contraste', successSound: 'Sonido de acierto', errorSound: 'Sonido de error', help: 'Se guarda en este dispositivo.'
+      contrast: 'Alto contraste', successSound: 'Sonido de acierto', errorSound: 'Sonido de error', help: 'Se guarda en este dispositivo.',
+      resetLabel: 'Borra el progreso, las estrellas y los ajustes de este dispositivo. La app vuelve a empezar de cero.',
+      resetButton: 'Borrar todo y empezar de cero', resetWarn: '¿Seguro? Se borrará todo lo guardado en este dispositivo. No se puede deshacer.',
+      resetYes: 'Sí, borrar todo', resetNo: 'No, cancelar'
     },
     en: {
       title: 'Settings', close: 'Close settings', textSize: 'Text size',
       small: 'Small', normal: 'Normal', large: 'Large',
       theme: 'Theme', themeLight: 'Light', themeDark: 'Dark',
       language: '🌐 Language',
-      contrast: 'High contrast', successSound: 'Correct answer sound', errorSound: 'Error sound', help: 'Saved on this device.'
+      contrast: 'High contrast', successSound: 'Correct answer sound', errorSound: 'Error sound', help: 'Saved on this device.',
+      resetLabel: 'Deletes the progress, stars and settings saved on this device. The app starts again from zero.',
+      resetButton: 'Delete everything and start from zero', resetWarn: 'Are you sure? Everything saved on this device will be deleted. This cannot be undone.',
+      resetYes: 'Yes, delete everything', resetNo: 'No, cancel'
     }
   };
 
@@ -338,6 +347,20 @@
     applyTheme();
   }
 
+  /* Borra solo las claves de esta app (por prefijo), nunca localStorage.clear(). */
+  function clearAppStorage(prefix) {
+    var keys = [];
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        if (key && key.indexOf(prefix) === 0) keys.push(key);
+      }
+    } catch (e) { /* storage may be off */ }
+    keys.forEach(function (key) {
+      try { localStorage.removeItem(key); } catch (e) { /* tolerated */ }
+    });
+  }
+
   function renderSettings(drawer) {
     var copy = SETTINGS_COPY[settingsLocale()];
     drawer.querySelector('[data-settings-title]').textContent = copy.title;
@@ -366,6 +389,13 @@
       });
     }
     drawer.querySelector('[data-settings-help]').textContent = copy.help;
+    if (RESET_PREFIX) {
+      drawer.querySelector('[data-settings-reset-label]').textContent = copy.resetLabel;
+      drawer.querySelector('[data-settings-reset]').textContent = copy.resetButton;
+      drawer.querySelector('[data-settings-reset-warn]').textContent = copy.resetWarn;
+      drawer.querySelector('[data-settings-reset-yes]').textContent = copy.resetYes;
+      drawer.querySelector('[data-settings-reset-no]').textContent = copy.resetNo;
+    }
     drawer.querySelectorAll('[data-settings-size]').forEach(function (button) {
       button.setAttribute('aria-pressed', String(button.getAttribute('data-settings-size') === settingsState.textSize));
     });
@@ -474,6 +504,17 @@
           '<input type="checkbox" data-settings-success></label>' +
         '<label class="locale-settings-row locale-settings-check"><span data-settings-error-label></span>' +
           '<input type="checkbox" data-settings-error></label>' +
+        '<div class="locale-settings-row locale-settings-reset" data-settings-reset-row>' +
+          '<p data-settings-reset-label></p>' +
+          '<button type="button" data-settings-reset></button>' +
+          '<div class="locale-settings-reset-confirm" data-settings-reset-confirm hidden>' +
+            '<p data-settings-reset-warn></p>' +
+            '<div class="locale-settings-options" role="group">' +
+              '<button type="button" data-settings-reset-no></button>' +
+              '<button type="button" data-settings-reset-yes></button>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
         '<p class="locale-settings-help" data-settings-help></p>' +
       '</div>';
 
@@ -513,6 +554,29 @@
       drawer.querySelector('[data-settings-language-row]').appendChild(headerLocalePicker);
     }
     renderSettings(drawer);
+
+    /* Reset de datos: dos pasos. «No» es la opción por defecto y tiene el foco. */
+    if (!RESET_PREFIX) {
+      var resetRow = drawer.querySelector('[data-settings-reset-row]');
+      if (resetRow) resetRow.remove();
+    } else {
+      var resetButton = drawer.querySelector('[data-settings-reset]');
+      var resetConfirm = drawer.querySelector('[data-settings-reset-confirm]');
+      resetButton.addEventListener('click', function () {
+        resetButton.hidden = true;
+        resetConfirm.hidden = false;
+        drawer.querySelector('[data-settings-reset-no]').focus();
+      });
+      drawer.querySelector('[data-settings-reset-no]').addEventListener('click', function () {
+        resetConfirm.hidden = true;
+        resetButton.hidden = false;
+        resetButton.focus();
+      });
+      drawer.querySelector('[data-settings-reset-yes]').addEventListener('click', function () {
+        clearAppStorage(RESET_PREFIX);
+        window.location.reload();
+      });
+    }
 
     function open() {
       renderSettings(drawer);
