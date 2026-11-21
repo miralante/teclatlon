@@ -257,6 +257,20 @@
   .hands { display: none; }
 }
 
+/* ---- Very narrow screens (<= 400px) ----
+   The keyboard IS the app: a row of 13 keys plus their gaps needs more than
+   the viewport, and the automatic minimum size of a flex item (min-width:
+   auto) kept the whole board wider than the screen, so the page scrolled
+   sideways by a pixel. Letting the board and its rows shrink, and clipping
+   the labels that do not fit, keeps the page still: the keys stay in their
+   places and the letter of each key still fits in its key. */
+@media (max-width: 400px) {
+  .row-keyboard-view .keyboard, .keyboard .row-keys { min-width: 0; }
+  .keyboard, .row-keys { gap: 2px; }
+  .key { font-size: 13px; overflow: hidden; }
+  .key.wide, .key.medium { font-size: 10px; }
+}
+
 /* ---- Wide desktop (>= 1024px) ----
    On a 1080p+ monitor the on-screen keyboard scales up comfortably with
    flex/grid and the .container doesn't need to grow (the keyboard IS

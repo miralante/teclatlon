@@ -50,7 +50,7 @@ jobs:
         run: npm run lint
 
       - name: Suite header and footer markup
-        run: node scripts/checks/suite-markup.js
+        run: npm run lint:markup
 
   cache-bump:
     name: sw.js VERSION bump check
@@ -91,6 +91,12 @@ jobs:
 
       - name: Run real-browser UI suite
         run: npm run test:ui
+
+      - name: Run the route crawler
+        run: npm run test:crawl
+
+      - name: Run service-worker precache smoke
+        run: npm run test:sw
 
       - name: Run service-worker redirect check
         # Serves the project through a server that reproduces Cloudflare's 307
