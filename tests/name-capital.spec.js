@@ -1,6 +1,6 @@
 'use strict';
 
-const { test, expect } = require('playwright/test');
+const { test, expect } = require('./playwright.js');
 
 // Regression: in the "Escribe tu nombre." step of the words game the saved name
 // was shown in lowercase ("carlos") even though it is written with a capital.

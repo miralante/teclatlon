@@ -3,7 +3,7 @@
 // show its ⭐ (or the "done" count) when the app opens again, but it stays
 // unlocked, so the next lesson is still reachable. See doc/*/technical.md
 // (award / doneThisSession).
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./playwright.js');
 
 test('a new session shows no ⭐ for old completions but keeps the next lesson unlocked', async ({ page }) => {
   await page.goto('/');

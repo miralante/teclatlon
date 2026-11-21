@@ -1,6 +1,6 @@
 'use strict';
 
-const { test, expect } = require('playwright/test');
+const { test, expect } = require('./playwright.js');
 
 // Regression: in the "finger placement" activity the guide lit the N key
 // (and pointed at the middle finger) when the lesson asked for Ñ, so a real N

@@ -1,6 +1,6 @@
 'use strict';
 
-const { test, expect } = require('playwright/test');
+const { test, expect } = require('./playwright.js');
 
 // Regressions for three boot and navigation edge cases:
 // - a stored value that is not an object ("null") used to stop the app from

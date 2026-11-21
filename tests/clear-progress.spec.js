@@ -1,6 +1,6 @@
 'use strict';
 
-const { test, expect } = require('playwright/test');
+const { test, expect } = require('./playwright.js');
 
 // Regression: "Borrar mi progreso" rebuilt the options by hand and left out the
 // rest interval, the finger-text switch and the physical layout. The rest box

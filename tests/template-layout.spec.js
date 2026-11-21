@@ -1,6 +1,6 @@
 'use strict';
 
-const { test, expect } = require('playwright/test');
+const { test, expect } = require('./playwright.js');
 
 // Regression: the Spanish "real texts" were not filtered by the keyboard. On
 // the US layout a Spanish template with ñ or an accent could never be finished.

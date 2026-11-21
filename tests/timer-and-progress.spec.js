@@ -1,6 +1,6 @@
 'use strict';
 
-const { test, expect } = require('playwright/test');
+const { test, expect } = require('./playwright.js');
 
 // ---------------------------------------------------------------------------
 // Practice clock (header) + the "all keys" progress bar

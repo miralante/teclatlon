@@ -1,6 +1,6 @@
 'use strict';
 
-const { test, expect } = require('playwright/test');
+const { test, expect } = require('./playwright.js');
 
 // The physical keyboard follows the browser language: an English browser
 // gets the US layout (Ñ is a semicolon key), a Spanish one gets the Spanish

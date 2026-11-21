@@ -3,7 +3,7 @@
    color, así que un token pisado por un color hardcodeado pasa todas las
    validaciones. Este test mide lo que el ojo ve: color computed contra
    el fondo efectivo, para cada tema. */
-const { test, expect } = require('playwright/test');
+const { test, expect } = require('./playwright.js');
 
 const THEMES = ['light', 'dark', 'contrast'];
 

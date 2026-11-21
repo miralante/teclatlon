@@ -1,6 +1,12 @@
 'use strict';
 
-const { defineConfig } = require('playwright/test');
+/* El config usa el helper del kit (tests/playwright.js) y no `playwright/test`
+   a pelo: el CI instala `playwright` aparte de `@playwright/test`, asi que
+   puede haber dos copias del API de tests en el arbol. Las specs tienen que
+   usar la MISMA copia que el runner, o Playwright se niega a correr
+   ("Requiring @playwright/test second time"). El helper saca la copia del
+   propio runner, la que ya esta cargada. */
+const { defineConfig } = require('./tests/playwright.js');
 
 /* The preview port is overridable so two sessions (or two sibling
    projects) can run their suites at the same time. Hardcoding 4173 made

@@ -1,6 +1,6 @@
 'use strict';
 
-const { test, expect } = require('playwright/test');
+const { test, expect } = require('./playwright.js');
 
 // ---------------------------------------------------------------------------
 // Dictation: a letter is asked for by ear.

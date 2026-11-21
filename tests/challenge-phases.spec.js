@@ -1,6 +1,6 @@
 'use strict';
 
-const { test, expect } = require('playwright/test');
+const { test, expect } = require('./playwright.js');
 
 // ---------------------------------------------------------------------------
 // "All keys" challenge: phases, phase stars and the finger guide

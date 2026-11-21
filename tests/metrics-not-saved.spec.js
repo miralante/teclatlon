@@ -2,7 +2,7 @@
 // Round metrics (accuracy and key counts) live in memory only. The legal page
 // promises that accuracy and time are never stored, so nothing of them may
 // reach localStorage, not even a leftover from an older version.
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./playwright.js');
 
 test('las métricas de la ronda no llegan a localStorage', async ({ page }) => {
   await page.goto('/');

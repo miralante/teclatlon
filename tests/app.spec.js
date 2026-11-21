@@ -1,6 +1,6 @@
 'use strict';
 
-const { test, expect } = require('playwright/test');
+const { test, expect } = require('./playwright.js');
 
 // ---------------------------------------------------------------------------
 // Module-level browser reference — set in beforeEach before each test
