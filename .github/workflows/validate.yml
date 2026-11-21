@@ -84,7 +84,12 @@ jobs:
           node-version: "20"
 
       - name: Install Playwright
-        run: npm install --no-save --no-audit --no-fund playwright
+        # The project's own dependencies, like every other app of the suite:
+        # installing `playwright` apart from `@playwright/test` leaves two
+        # copies of the test API in the tree (Playwright then refuses to run
+        # with "Requiring @playwright/test second time") and the browser that
+        # gets downloaded does not match the one the crawler resolves.
+        run: npm install --no-audit --no-fund
 
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
