@@ -183,9 +183,25 @@ function pageProblems(file, appRoot, appName, isActivity = () => false) {
   return out.concat(mountProblems(file, appRoot, appName, html));
 }
 
+/* La identidad de la app: la declara ella misma (data-suite-name), no la carpeta
+   en la que está desplegada. El repo miralante/enroca es la app Ludia, y el CI
+   lo despliega como `enroca` mientras el espacio de trabajo lo llama `ludia`:
+   con el nombre de la carpeta, sus exenciones (legal/ y refresh.html, que son
+   stubs de redirección) no se aplicaban y el lint los daba por buenos páginas. */
+function appId(appRoot) {
+  try {
+    const html = fs.readFileSync(path.join(appRoot, 'index.html'), 'utf8');
+    const declared = html.match(/data-suite-name="([^"]+)"/);
+    if (declared && declared[1].trim()) return declared[1].trim().toLowerCase();
+  } catch (error) {
+    /* La app no tiene index.html: se cae al nombre de la carpeta. */
+  }
+  return path.basename(path.resolve(appRoot));
+}
+
 /* Audits every page of one app. Returns { pages, problems: [{ rel, why }] }. */
 function auditApp(appRoot, appName) {
-  const name = appName || path.basename(path.resolve(appRoot));
+  const name = appName || appId(appRoot);
   const exempt = EXEMPT[name] || {};
   const problems = [];
   let pages = 0;
@@ -211,7 +227,7 @@ module.exports = { auditApp, pageProblems };
 
 if (require.main === module) {
   const appRoot = path.resolve(process.argv[2] || '.');
-  const { pages, problems } = auditApp(appRoot, path.basename(appRoot));
+  const { pages, problems } = auditApp(appRoot, appId(appRoot));
   for (const p of problems) console.log('✗ ' + p.rel + ': ' + p.why);
   if (problems.length) {
     console.log('\n' + problems.length + ' page(s) without the shared header/footer rules. Fix the page or add it to EXEMPT with a reason.');
