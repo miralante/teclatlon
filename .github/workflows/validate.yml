@@ -1,7 +1,7 @@
 # Canonical CI gate for the Miralante suite — Teclatlon flavour.
 #
 # Runs the project's structural and i18n checks plus the sw.js
-# VERSION bump gate on every push and PR against master/main.
+# VERSION bump gate on every push and PR against main.
 # Deploy is handled by the Cloudflare Git connector reading _headers
 # from the repo root; this workflow does not deploy.
 #
@@ -24,9 +24,9 @@ name: Validate
 
 on:
   push:
-    branches: [master, main]
+    branches: [main]
   pull_request:
-    branches: [master, main]
+    branches: [main]
   workflow_dispatch:
 
 concurrency:

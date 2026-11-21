@@ -298,7 +298,7 @@ just the original product this group grew out of.
 | [Teclatlon](https://teclatlon.apptonomia.uk/) | Touch-typing with a physical keyboard | [github.com/miralante/teclatlon](https://github.com/miralante/teclatlon) |
 
 The canonical Cloudflare / deploy guide for the group lives in
-[Apptonomia's `CLOUDFLARE.md`](https://github.com/miralante/apptonomia/blob/master/CLOUDFLARE.md).
+[Apptonomia's `CLOUDFLARE.md`](https://github.com/miralante/apptonomia/blob/main/CLOUDFLARE.md).
 This repo uses the **Workers + static assets** model (`wrangler.toml`
 + `[assets]`), which is a different shape than
 Apptonomia/Teclatlon's classic Pages model — see [`CLOUDFLARE.md`](CLOUDFLARE.md)

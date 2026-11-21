@@ -917,7 +917,7 @@ la expectativa multi-navegador.
 Ver [`CLOUDFLARE.md`](../../CLOUDFLARE.md) para el detalle de
 operación (configuración del dashboard, advertencias de deploy, nota
 sobre el SW). Recapitulando: la raíz del repo es la salida del build,
-un push a `master` dispara el build vía el conector de Git de
+un push a `main` dispara el build vía el conector de Git de
 Cloudflare, los pull requests obtienen un canal de previsualización
 automático. Un despliegue — incluso a un canal de previsualización —
 es una operación de red: pide confirmación antes de ejecutarlo.
@@ -930,7 +930,7 @@ Teclatlon es una de las apps de la suite Miralante (junto a Apptonomia,
 Calculia, Okeymoney, Sinonimia y Memofun), todas con la misma filosofía
 de accesibilidad y sin backend, y el mismo despliegue en Cloudflare
 Workers (static assets). La guía canónica del grupo vive en el
-[`technical.md` de Apptonomia](https://github.com/thenkdframe/apptonomia/blob/master/doc/en/technical.md);
+[`technical.md` de Apptonomia](https://github.com/miralante/apptonomia/blob/main/doc/en/technical.md);
 esta sección es el delta específico del proyecto: la tabla de abajo
 recoge las **diferencias reales** entre este repo y las otras apps de
 la suite, para saber qué se comparte, qué se recorta y qué se hace

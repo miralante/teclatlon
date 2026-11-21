@@ -882,7 +882,7 @@ cross-browser expectation.
 
 See [`CLOUDFLARE.md`](../../CLOUDFLARE.md) for the operational
 details (dashboard configuration, deploy warnings, SW note). TL;DR:
-the repo root is the build output, a push to `master` triggers the
+the repo root is the build output, a push to `main` triggers the
 build via the Cloudflare Git connector, pull requests get an
 automatic preview channel. A deploy — even to a preview channel — is
 a network operation: ask before running one.
@@ -895,7 +895,7 @@ Teclatlon is one of the apps of the Miralante suite (alongside
 Apptonomia, Calculia, Okeymoney, Sinonimia and Memofun), all sharing
 the accessibility-first / no-backend philosophy and the same Cloudflare
 Workers (static assets) deploy. The canonical guide for the group lives in
-[Apptonomia's `technical.md`](https://github.com/thenkdframe/apptonomia/blob/master/doc/en/technical.md);
+[Apptonomia's `technical.md`](https://github.com/miralante/apptonomia/blob/main/doc/en/technical.md);
 this section is the project-specific delta — the table below records
 the **real** differences between this repo and the other apps of the
 suite so you know what is shared, what is trimmed, and what is

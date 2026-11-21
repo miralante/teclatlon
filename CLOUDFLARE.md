@@ -17,7 +17,7 @@
 > Sinonimia, Teclatlon) that share the same author, the same
 > accessibility-first / no-backend philosophy, and the same Cloudflare
 > deploy story. The canonical group-wide guide lives in
-> [Apptonomia's `CLOUDFLARE.md`](https://github.com/miralante/apptonomia/blob/master/CLOUDFLARE.md)
+> [Apptonomia's `CLOUDFLARE.md`](https://github.com/miralante/apptonomia/blob/main/CLOUDFLARE.md)
 > (the metaproject root, this very file); the per-sibling
 > `CLOUDFLARE.md` documents only the project-specific bits
 > (custom domain, build command, CI workflow name).
