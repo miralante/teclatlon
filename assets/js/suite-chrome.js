@@ -17,6 +17,9 @@
        <h1>Activity title</h1>
      </div>
      <span class="stars" data-suite-stars id="stars">⭐ 0</span> (optional)
+     <div data-suite-details>                                  (optional, home pages: the
+       <p class="saludo" data-i18n="...">Hola</p>               greeting or tagline row under the brand)
+     </div>
      <main> ... </main>
      <footer data-suite-footer
              data-suite-base="./"
@@ -169,6 +172,23 @@
       }
       brand.appendChild(copy);
       mount.appendChild(brand);
+    }
+
+    /* The page's details row (data-suite-details: the greeting or tagline of a home
+       page) sits under the brand, on its own row. The app writes the text; the
+       layout and the size are the block's. Moved, not copied. */
+    var details = document.querySelector('[data-suite-details]');
+    if (details) {
+      details.classList.add('suite-chrome-details');
+      mount.appendChild(details);
+    }
+
+    /* The page's navigation row (data-suite-nav: the links to the app's main sections)
+       sits in the header after the brand. The links are the app's; the row is the block's. */
+    var nav = document.querySelector('[data-suite-nav]');
+    if (nav) {
+      nav.classList.add('suite-chrome-nav');
+      mount.appendChild(nav);
     }
 
     /* The activity block (back link, icon, title of a subpage) goes in the middle

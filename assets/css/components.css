@@ -194,48 +194,6 @@
   100% { transform: scale(1); opacity: 1; }
 }
 
-/* ---- Standard tool header ---- */
-.tool-header {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-bottom: var(--space);
-}
-
-/* Row 1: title + data badges + settings button.
-   Row 2: keyboard-view selector (.keyboard-options--header). Kept on
-   its own line so it stays readable on narrow screens and never
-   pushes the title aside. */
-.tool-header-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.tool-header h1 {
-  flex: 1;
-  font-size: 20px;
-  margin: 0;
-  line-height: 1.2;
-}
-
-/* Header variant of the keyboard-view selector: smaller chips so it
-   sits comfortably in the header on small screens and stops looking
-   like a primary CTA. Visually a peer of the data badges (⚙️ / ⭐) but
-   bigger, since it actually does something. */
-.keyboard-options--header {
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.keyboard-options--header .btn {
-  padding: 4px 10px;
-  font-size: 13px;
-  min-height: 32px;
-  border-width: 2px;
-}
-
 /* Compact button variant for chrome-only rows (header, game top bar).
    These are NOT the primary CTAs -- accessibility rule of 64px min
    applies to primary buttons; chrome can sit at 36px so it doesn't
@@ -252,32 +210,6 @@
 }
 .btn-compact.btn-audio { font-size: 16px; }
 
-/* ---- Responsive header ----
-   The header has two rows (title row + keyboard-view chips). At desktop
-   sizes the title row fits on one line and the chips fit on the next.
-   At intermediate sizes (641–1024 px) the title still fits but the
-   chips need to pack tighter; on small screens the title wraps and the
-   chips become a wrap-friendly cluster under it. The 640 px breakpoint
-   here intentionally matches styles.css's own breakpoint so both pass
-   through the same gate. */
-
-@media (max-width: 1024px) {
-  .tool-header { gap: 4px; margin-bottom: 6px; }
-  .tool-header h1 { font-size: 18px; }
-  .keyboard-options--header .btn { padding: 3px 8px; font-size: 12px; min-height: 28px; }
-}
-
-@media (max-width: 640px) {
-  /* Title takes its own row, badges wrap below it on the same row,
-     chips cluster underneath and are allowed to wrap freely. */
-  .tool-header-row { flex-direction: column; align-items: flex-start; gap: 4px; }
-  .tool-header h1 { flex: none; font-size: 16px; }
-  .header-data { gap: 6px; }
-  .header-data .stat { padding: 3px 8px; font-size: 12px; }
-  .keyboard-options--header { width: 100%; gap: 6px; }
-  .keyboard-options--header .btn { padding: 4px 8px; font-size: 12px; }
-}
-
 /* ---- Grid of large cards (game menu) ---- */
 .grid-cards {
   display: grid;
@@ -285,13 +217,6 @@
   gap: var(--space-large);
 }
 
-/* ---- Legal footer link (present on every page) ---- */
-.app-footer {
-  display: flex;
-  justify-content: center;
-  padding: 4px 0 4px;
-  margin-top: 4px;
-}
 
 .footer-link {
   color: var(--color-text-soft);
@@ -437,14 +362,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .drawer-backdrop, .settings-drawer { transition: none; }
-}
-
-/* ---- Header badges (streak + metrics summary) ---- */
-.header-data {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
 }
 
 .stat {
@@ -948,6 +865,86 @@ main.is-celebrating > :not(.celebration) {
   margin-inline-start: auto;
 }
 
+/* The details row of a home page: the greeting or tagline under the brand. The app
+   writes the text (in its own language); the size, weight and layout are shared.
+   The colour comes from the app's tokens, with a neutral fallback. */
+.suite-chrome-details {
+  flex: 1 0 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.suite-chrome-details > p {
+  margin: 0;
+  font-weight: 400;
+  font-size: var(--suite-tagline-size, 18px);
+  line-height: 1.35;
+  text-align: start;
+  color: var(--suite-tagline-color, var(--color-text-soft, var(--color-texto-suave, var(--texto-secundario, inherit))));
+}
+
+/* The navigation row of the header (data-suite-nav): the links to the app's main sections.
+   The links are the app's; the row, its spacing and the current-page mark are the block's. */
+.suite-chrome-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+}
+
+.suite-chrome-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 8px 14px;
+  border-radius: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  color: inherit;
+}
+
+.suite-chrome-nav a[aria-current="page"] {
+  background: var(--suite-nav-current, var(--green-light, #eae6fc));
+}
+
+.suite-chrome-nav a:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* The language picker's two labels: the full one on wide screens, the short one on phones. */
+.locale-short { display: none; }
+
+@media (max-width: 650px) {
+  .locale-full { display: none; }
+  .locale-short { display: inline; }
+}
+
+/* The stars counter in the header: the same size in every app (the star and the number
+   share it). The colour is the app's pill colour, from its tokens. */
+.suite-chrome-controls .stars {
+  flex: 0 0 auto;
+  min-height: 0;
+  margin: 0;
+  padding: 2px 8px;
+  font-size: var(--suite-stars-size, 18px);
+  line-height: 1.3;
+  white-space: nowrap;
+  border-radius: 999px;
+  background: var(--accent-2-soft, var(--acento-2-suave, var(--accent-soft, #F7EFDD)));
+}
+
+.suite-chrome-controls .stars .stars-icon,
+.suite-chrome-controls .stars .stars-count {
+  font-size: inherit;
+}
+
 .suite-chrome-footer {
   margin-block-start: 32px;
   padding-block: 16px;
@@ -974,6 +971,7 @@ main.is-celebrating > :not(.celebration) {
 
 @media (max-width: 480px) {
   .suite-chrome-header { padding-block: 2px; }
+  .suite-chrome-details > p { font-size: var(--suite-tagline-size-phone, 16px); }
   .suite-chrome-name { font-size: 1rem; }
   .suite-chrome-activity h1 { font-size: 1.25rem; }
   /* Phones: the brand gives up width (its byline wraps) so the stars and the gear keep

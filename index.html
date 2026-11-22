@@ -188,24 +188,14 @@
     </div>
   </div>
   <div class="container suite-home">
-    <header class="tool-header suite-header">
-      <div class="tool-header-row">
-        <div data-suite-header data-suite-logo="assets/img/icono.svg" data-suite-name="Teclatlon" data-suite-heading data-suite-byline></div>
-        <div class="header-data suite-controls">
-          <span class="stars" data-suite-stars id="stars">⭐ 0</span>
-          <!-- The practice clock, next to the stars because it is the same
-               kind of thing: something about this session. The shared suite
-               chrome (assets/js/suite-chrome.js) moves the star counter into
-               its own controls row — to the right of the brand, to the left
-               of the settings gear — and app.js moves this clock there too,
-               right before the stars, so it never ends up after the gear.
-               role="timer" with aria-live="off" is deliberate — a number that
-               moves every second must not be read out on every change, but it
-               must still be reachable when the person asks for it. Its
-               label is written by app.js (sessionTimerAria). -->
-          <span class="session-timer hidden" id="sessionTimer" role="timer" aria-live="off"></span>
-        </div>
-      </div>
+    <header>
+      <div data-suite-header data-suite-logo="assets/img/icono.svg" data-suite-name="Teclatlon" data-suite-heading data-suite-byline></div>
+      <!-- The stars and the practice clock move into the shared controls row
+           (suite-chrome.js moves the stars; app.js moves the clock right before
+           them). The clock is role="timer" with aria-live="off" on purpose: a number
+           that moves every second must not be read out on every change. -->
+      <span class="stars" data-suite-stars id="stars">⭐ 0</span>
+      <span class="session-timer hidden" id="sessionTimer" role="timer" aria-live="off"></span>
     </header>
     <main class="suite-body">
 
@@ -410,7 +400,7 @@
       </div>
     </section>
     </main>
-    <footer class="app-footer">
+    <footer>
       <div data-suite-footer data-suite-base="./" data-suite-portal="https://apptonomia.uk/"></div>
     </footer>
   </div>
