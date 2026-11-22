@@ -376,3 +376,33 @@ html[data-app-blocked="mobile"] .container { display: none !important; }
 }
 .btn-name-edit:hover { border-color: var(--color-border); color: var(--accent); }
 .btn-name-edit:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* Star notebook: the icon beside the star counter, and the list it opens. */
+.btn-carnet {
+  min-width: 44px; min-height: 44px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; line-height: 1;
+  background: var(--color-surface); color: var(--color-text);
+  border: 3px solid var(--color-border); border-radius: var(--radius);
+  cursor: pointer;
+}
+.btn-carnet:hover { border-color: var(--accent); }
+.btn-carnet:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.carnet-section { margin-bottom: 1.25rem; }
+.carnet-section-title { font-size: var(--text-lg, 1.25rem); margin: 0 0 0.5rem; }
+.carnet-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.carnet-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+}
+.carnet-status { font-weight: 600; }
+.carnet-status.is-pending { color: var(--color-text-soft, var(--color-text)); }
+.carnet-status.is-done { color: var(--color-success); }
+.carnet-stars { font-weight: 700; color: var(--color-star); white-space: nowrap; }

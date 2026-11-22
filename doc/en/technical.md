@@ -221,8 +221,10 @@ Interactions with the engine:
   does not exist, so no live accuracy or keys-per-minute appears. See
   *Kept-for-later code* in §2.9.
 - `award(key)` marks a mode as completed: it records the id in
-  `state.completed` (persistent; unlocks the next lesson, and the star
-  is awarded only the first time) and in `doneThisSession` (in memory,
+  `state.completed` (persistent; unlocks the next lesson), in
+  `state.starsBy[key]` (persistent; adds one star on every completion,
+  repeats included, and is what the star notebook reads) and in
+  `doneThisSession` (in memory,
   lost on reload). The menu's ⭐ marks and "done X of Y" counts read
   `doneThisSession`, so every new session starts with a clean board and
   nobody thinks an activity is already finished.

@@ -85,6 +85,8 @@
   $('#btnChangeName').addEventListener('click', T.goName);
   $('#btnBackToMenu').addEventListener('click', T.goMenu);
   $('#btnBackToMenuTemplates').addEventListener('click', T.goMenu);
+  $('#btnCarnet').addEventListener('click', T.goCarnet);
+  $('#btnBackFromCarnet').addEventListener('click', T.goMenu);
 
   $('#btnExitGame').addEventListener('click', function () {
     var mode = S.game && S.game.cfg ? S.game.cfg.mode : null;
@@ -217,6 +219,7 @@
     if (h === 'screenMenu' || h === 'menu')            { T.goMenu(); return true; }
     if (h === 'screenLessons' || h === 'lessons')      { T.goLessons(); return true; }
     if (h === 'screenTemplates' || h === 'templates')  { T.goTemplates(); return true; }
+    if (h === 'screenCarnet' || h === 'carnet')        { T.goCarnet(); return true; }
     if (h === 'screenName' || h === 'name')             { T.goName(); return true; }
     if (h === 'screenFree' || h === 'free')              { T.goFree(); return true; }
     /* A game only exists while it runs, so a deep link to one has nothing

@@ -141,6 +141,110 @@
     T.showScreen('screenTemplates');
   }
 
+  /* ---------- Star notebook (carnet) ----------
+     A read-only view of progress that already exists: every lesson, mode
+     and real text, with whether it is done and how many stars it has.
+     Repeats add stars (award() in core.js), so a count can be above one.
+     Only completed keys and the star counts are read; nothing is stored here. */
+  function starsFor(key) {
+    var n = S.state.starsBy[key] || 0;
+    /* Saves from before the counter: a completed key counts as one star. */
+    if (!n && S.state.completed[key]) n = 1;
+    return n;
+  }
+
+  function carnetItem(name, key) {
+    var li = document.createElement('li');
+    li.className = 'carnet-item';
+    var done = !!S.state.completed[key];
+    var nameEl = document.createElement('span');
+    nameEl.className = 'carnet-name';
+    nameEl.textContent = name;
+    var statusEl = document.createElement('span');
+    statusEl.className = 'carnet-status ' + (done ? 'is-done' : 'is-pending');
+    statusEl.textContent = done ? App.i18n.t('carnetDone') : App.i18n.t('carnetPending');
+    var starsEl = document.createElement('span');
+    starsEl.className = 'carnet-stars';
+    starsEl.textContent = '⭐ ' + starsFor(key);
+    li.appendChild(nameEl);
+    li.appendChild(statusEl);
+    li.appendChild(starsEl);
+    return li;
+  }
+
+  function carnetSection(title, items) {
+    var section = document.createElement('section');
+    section.className = 'carnet-section';
+    var heading = document.createElement('h3');
+    heading.className = 'carnet-section-title';
+    heading.textContent = title;
+    var list = document.createElement('ul');
+    list.className = 'carnet-list';
+    items.forEach(function (it) { list.appendChild(carnetItem(it.name, it.key)); });
+    section.appendChild(heading);
+    section.appendChild(list);
+    return section;
+  }
+
+  function renderCarnet() {
+    var container = $('#carnetList');
+    container.innerHTML = '';
+    var total = 0;
+    var done = 0;
+    function count(key) {
+      total += 1;
+      if (S.state.completed[key]) done += 1;
+    }
+
+    /* Lessons, under the same block titles as Paso a paso. */
+    var byId = {};
+    T.lessons().forEach(function (l) { byId[l.id] = l; });
+    var blocks = DATA.lessonBlocks[App.i18n.locale()] || DATA.lessonBlocks.es;
+    blocks.forEach(function (block) {
+      var items = [];
+      block.lessons.forEach(function (id) {
+        if (!byId[id]) return;
+        count(id);
+        items.push({ name: byId[id].title, key: id });
+      });
+      container.appendChild(carnetSection(block.title, items));
+    });
+
+    /* Modes that give a star. Dictation and free writing give none. */
+    var modes = [
+      ['placement', 'modePlacementName'],
+      ['allKeys', 'modeAllKeysName'],
+      ['words', 'modeWordsName'],
+      ['numbers', 'modeNumbersName']
+    ];
+    var modeItems = modes.map(function (m) {
+      count(m[0]);
+      return { name: App.i18n.t(m[1]), key: m[0] };
+    });
+    container.appendChild(carnetSection(App.i18n.t('carnetSectionModes'), modeItems));
+
+    /* Real texts: one star each. */
+    var templateItems = T.templates().map(function (p) {
+      count('template_' + p.id);
+      return { name: p.title, key: 'template_' + p.id };
+    });
+    container.appendChild(carnetSection(App.i18n.t('carnetSectionTemplates'), templateItems));
+
+    $('#carnetSummary').textContent = App.i18n.t('carnetSummary')
+      .replace('{stars}', S.state.stars)
+      .replace('{done}', done)
+      .replace('{total}', total);
+  }
+
+  function goCarnet() {
+    renderCarnet();
+    T.showScreen('screenCarnet');
+    var title = $('#screenCarnet .game-title');
+    title.setAttribute('tabindex', '-1');
+    title.focus();
+  }
+
+  T.goCarnet = goCarnet;
   T.goFree = goFree;
   T.goLessons = goLessons;
   T.goMenu = goMenu;

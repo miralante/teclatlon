@@ -905,7 +905,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await expect(p.locator('#screenMenu')).toBeVisible();
 
     // The header is the reference: it shows the stars the person has.
-    const header = (await p.locator('#stars').textContent()).trim();
+    const header = (await p.locator('#starsCount').textContent()).trim();
     expect(header).toBe('⭐ 12');
 
     // The achievement screen has to say the same number.
@@ -1275,7 +1275,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
   // -----------------------------------------------------------------
   // 21. PROGRESS — star not duplicated on re-completion
   // -----------------------------------------------------------------
-  test('21 — completar lección ya completada no duplica estrella', async ({ page }) => {
+  test('21 — repetir una lección ya completada suma otra estrella', async ({ page }) => {
     page = await skipToMenu();
 
     // Pre-complete lesson 1 via direct localStorage (App is not global, cannot use App.storage.set in evaluate).
@@ -1326,7 +1326,8 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
       const raw = localStorage.getItem('teclatlon:keyboard');
       return raw ? JSON.parse(raw).stars : 0;
     });
-    expect(starsAfter).toBe(starsBefore);
+    /* Repeats count: every completion earns a star (core.js award). */
+    expect(starsAfter).toBe(starsBefore + 1);
   });
 
   // -----------------------------------------------------------------

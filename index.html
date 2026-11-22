@@ -194,7 +194,7 @@
            (suite-chrome.js moves the stars; app.js moves the clock right before
            them). The clock is role="timer" with aria-live="off" on purpose: a number
            that moves every second must not be read out on every change. -->
-      <span class="stars" data-suite-stars id="stars">⭐ 0</span>
+      <span class="stars" data-suite-stars id="stars"><span id="starsCount">⭐ 0</span><button type="button" class="btn-carnet" id="btnCarnet" data-i18n-aria="carnetOpenAria" aria-label="Mi cuaderno de estrellas"><span aria-hidden="true">📒</span></button></span>
       <span class="session-timer hidden" id="sessionTimer" role="timer" aria-live="off"></span>
     </header>
     <main class="suite-body">
@@ -300,6 +300,17 @@
       </div>
       <p class="instruction" data-i18n="templatesInstruction">Elige un texto para practicar.</p>
       <div class="grid-lessons" id="templatesList"></div>
+    </section>
+
+    <!-- Screen: star notebook (carnet). Read-only: what is done, what is pending
+         and the stars each activity has. Filled by menu.js renderCarnet. -->
+    <section id="screenCarnet" class="hidden stack">
+      <div class="row game-screen-bar">
+        <button type="button" class="btn btn-secondary btn-compact" id="btnBackFromCarnet" data-i18n="btnMenu">← Menú</button>
+        <h2 class="game-title" data-i18n="carnetTitle">Mi cuaderno de estrellas</h2>
+      </div>
+      <p class="instruction" id="carnetSummary" aria-live="polite"></p>
+      <div id="carnetList"></div>
     </section>
 
     <!-- Screen: game (position, lessons, words, challenge, numbers and dictation) -->

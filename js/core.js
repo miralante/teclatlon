@@ -15,7 +15,7 @@
   var $$ = App.utils.$$;
 
   var SLUG = 'keyboard';
-  var SCREENS = ['screenName', 'screenMenu', 'screenLessons', 'screenTemplates', 'screenGame', 'screenFree'];
+  var SCREENS = ['screenName', 'screenMenu', 'screenLessons', 'screenTemplates', 'screenCarnet', 'screenGame', 'screenFree'];
   /* ---------- State and progress ---------- */
   /* One-time migration from the legacy Spanish-keyed shape (nombre,
      estrellas, completado, opciones.{teclado,tema,texto,foco,espacial,
@@ -60,6 +60,11 @@
   S.state.name = typeof S.state.name === 'string' ? S.state.name : '';
   S.state.stars = S.state.stars || 0;
   S.state.completed = S.state.completed || {};
+  /* Stars per activity key (lesson, mode, real text). Every completion adds
+     one, repeats included, so this is the number the carnet shows. Older
+     saves have no entry: the carnet reads a completed key without a count
+     as one star (see menu.js starsFor). */
+  S.state.starsBy = S.state.starsBy || {};
   S.state.options = S.state.options || {};
   if (!DATA.layouts[S.state.options.keyboard]) {
     S.state.options.keyboard = 'normal';
@@ -165,7 +170,7 @@
   }
 
   function updateStars() {
-    $('#stars').textContent = '⭐ ' + S.state.stars;
+    $('#starsCount').textContent = '⭐ ' + S.state.stars;
   }
 
   /* "Ya tienes X estrellas · A por las Y estrellas" (stars-engine.js). It goes
@@ -190,17 +195,17 @@
       App.i18n.t('starsGoal').replace('{n}', window.ApptonomiaStars.goalFor(total));
   }
 
-  /* Returns true when this award earned a star (a lesson or challenge is only starred once). */
+  /* Every completion earns a star, repeats included, so practising is
+     always rewarded. `completed` still records the first completion, which
+     is what unlocks the next lesson. */
   function award(key) {
     S.doneThisSession[key] = true;
-    if (!S.state.completed[key]) {
-      S.state.completed[key] = true;
-      S.state.stars += 1;
-      save();
-      updateStars();
-      return true;
-    }
-    return false;
+    S.state.completed[key] = true;
+    S.state.starsBy[key] = (S.state.starsBy[key] || 0) + 1;
+    S.state.stars += 1;
+    save();
+    updateStars();
+    return true;
   }
 
   /* ---------- Key data ---------- */

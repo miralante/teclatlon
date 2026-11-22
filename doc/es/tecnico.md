@@ -228,8 +228,10 @@ partida. Interacciones con el motor:
   `#liveMetrics` no existe, así que no aparece precisión ni teclas por
   minuto en vivo. Ver *Código en reserva* en §2.9.
 - `award(key)` marca un modo como completado: lo anota en
-  `state.completed` (persistente; desbloquea la lección siguiente y da
-  la estrella solo la primera vez) y en `doneThisSession` (en memoria,
+  `state.completed` (persistente; desbloquea la lección siguiente), en
+  `state.starsBy[key]` (persistente; suma una estrella en cada
+  completado, también en las repeticiones, y es lo que lee el cuaderno)
+  y en `doneThisSession` (en memoria,
   se pierde al recargar). Son las ⭐ y los contadores «hechas X de Y»
   del menú los que leen `doneThisSession`, así que cada sesión nueva
   empieza sin marcas y nadie cree que una actividad ya está hecha.

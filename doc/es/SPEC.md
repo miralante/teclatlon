@@ -262,7 +262,7 @@ Ver `legal/index.html` para qué datos se guardan exactamente.
 
 ## 6. Gamificación (sin presión)
 
-- **Estrellas**: una por lección o modo completado por primera vez.
+- **Estrellas**: una cada vez que se completa una lección, un modo o un texto real, también al repetirlo. El cuaderno de estrellas (📒, junto al contador) muestra cada actividad con si está hecha y sus estrellas.
 - **Pantalla de logros**: al ganar una estrella aparece una pantalla de
   felicitación con las estrellas que tiene la persona (el mismo número
   que la cabecera) y el objetivo siguiente. Se queda hasta que se pulsa
