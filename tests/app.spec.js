@@ -600,7 +600,7 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await page.locator('[data-mode="allKeys"]').click();
     await expect(page.locator('#screenGame')).toBeVisible();
     await expect(page.locator('#challengeZone')).toBeVisible();
-    await expect(page.locator('#challengeText')).toContainText('0');
+    await expect(page.locator('#gameProgress')).toHaveAttribute('aria-valuenow', '0');
 
     const firstKey = await page.locator('#keyboardPanel .key[data-ch]').first().getAttribute('data-ch');
     await page.keyboard.press(firstKey === ' ' ? 'Space' : firstKey);
@@ -685,12 +685,12 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
   });
 
   // -----------------------------------------------------------------
-  // 10. PERSONAL-DATA PAGE
+  // 10. SETTINGS DRAWER
   // -----------------------------------------------------------------
-  test('10.1 — personal-data page loads and shows branding', async ({ page }) => {
-    await page.goto('/datos-persona/index.html');
-    await expect(page.locator('h1')).toBeVisible();
-    await expect(page.locator('h1')).not.toHaveText('');
+  test('10.1 — the gear drawer holds the reset of the person’s data', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('.locale-settings-trigger').click();
+    await expect(page.locator('[data-settings-person]')).toBeVisible();
   });
 
   // -----------------------------------------------------------------
@@ -1058,8 +1058,10 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
       await page.waitForTimeout(1200);
     }
 
-    // Template complete → endSequence → the achievement screen → "A por más"
-    // → the template list.
+    // Template complete → endSequence → the review of the lines typed →
+    // "Ver mi logro" → the achievement screen → "A por más" → the template list.
+    await expect(page.locator('#reviewZone')).toBeVisible({ timeout: 20000 });
+    await page.locator('#btnReviewDone').click();
     await dismissCelebration(page);
     await expect(page.locator('#screenTemplates')).toBeVisible({ timeout: 20000 });
   });

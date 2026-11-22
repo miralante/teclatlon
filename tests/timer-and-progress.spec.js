@@ -227,35 +227,33 @@ test.describe('Teclatlon — barra de progreso del reto', () => {
     return page;
   }
 
-  test('la barra es una hoja: las estrellas están fuera, no dentro', async () => {
+  test('la barra es la compartida: las estrellas están fuera de ella', async () => {
     const page = await startChallenge();
 
     const shape = await page.evaluate(() => {
-      const zone = document.querySelector('#challengeZone');
-      const track = zone.querySelector('.progress-bar');
+      const bar = document.querySelector('#gameProgress');
       const stars = document.querySelector('#challengeStars');
-      const fill = document.querySelector('#challengeFill');
       return {
-        /* The defect: #challengeZone WAS the track, so the stars were
-           inside a 6px box with overflow: hidden. */
-        zoneIsTrack: zone.classList.contains('progress-bar'),
-        trackInsideZone: !!track && track !== zone,
-        starsInsideTrack: track ? track.contains(stars) : null,
-        fillInsideTrack: track ? track.contains(fill) : null,
-        trackHeight: track ? track.getBoundingClientRect().height : null
+        /* The challenge uses the same bar as every other activity, not a
+           second one inside #challengeZone. */
+        sharedIsTrack: !!bar && bar.classList.contains('progress-bar'),
+        visible: !!bar && bar.getClientRects().length > 0,
+        noOwnTrack: document.querySelectorAll('#challengeZone .progress-bar').length === 0,
+        starsInsideTrack: bar ? bar.contains(stars) : null,
+        trackHeight: bar ? bar.getBoundingClientRect().height : null
       };
     });
 
-    expect(shape.zoneIsTrack).toBe(false);
-    expect(shape.trackInsideZone).toBe(true);
+    expect(shape.sharedIsTrack).toBe(true);
+    expect(shape.visible).toBe(true);
+    expect(shape.noOwnTrack).toBe(true);
     expect(shape.starsInsideTrack).toBe(false);
-    expect(shape.fillInsideTrack).toBe(true);
     // Still the suite's compact track, not something taller "to fit" the
     // stars in.
     expect(shape.trackHeight).toBeLessThanOrEqual(8);
   });
 
-  test('las estrellas se ven a la derecha de la barra', async () => {
+  test('las estrellas van debajo de la barra compartida, en su propia fila', async () => {
     const page = await startChallenge();
     await page.waitForTimeout(300);
 
@@ -267,11 +265,9 @@ test.describe('Teclatlon — barra de progreso del reto', () => {
         return { top: r.top, bottom: r.bottom, height: r.height, width: r.width, left: r.left, right: r.right };
       };
       return {
-        zone: box('#challengeZone'),
         stars: box('#challengeStars'),
         firstStar: box('#challengeStars .challenge-star'),
-        track: box('#challengeZone .progress-bar'),
-        fill: box('#challengeFill'),
+        track: box('#gameProgress'),
         starsCount: document.querySelectorAll('#challengeStars .challenge-star').length
       };
     });
@@ -280,35 +276,23 @@ test.describe('Teclatlon — barra de progreso del reto', () => {
     expect(geo.firstStar).not.toBeNull();
     expect(geo.firstStar.height).toBeGreaterThan(15);
     expect(geo.stars.height).toBeGreaterThan(15);
-    // Horizontal layout: bar first (left), stars to the right. The track
-    // is 6px; the stars are taller and centered on the same baseline.
-    expect(geo.track.right).toBeLessThan(geo.stars.left + 2);
-    expect(geo.track.left).toBeLessThan(geo.stars.left);
-    // The fill sits on the track, same vertical band.
-    expect(geo.fill.top).toBeGreaterThanOrEqual(geo.track.top - 0.5);
-    expect(geo.fill.bottom).toBeLessThanOrEqual(geo.track.bottom + 0.5);
-    // Stars and fill share the same horizontal row (aligned baselines).
-    expect(geo.stars.top).toBeLessThanOrEqual(geo.track.top + 2);
-    expect(geo.stars.bottom).toBeGreaterThanOrEqual(geo.track.bottom - 2);
+    // The bar sits above the card, as in every activity; the stars come
+    // below it, not beside it.
+    expect(geo.stars.top).toBeGreaterThanOrEqual(geo.track.bottom - 1);
   });
 
   test('el relleno crece al pulsar teclas', async () => {
     const page = await startChallenge();
 
     const readWidth = () => page.evaluate(() => {
-      const el = document.querySelector('#challengeFill');
+      const el = document.querySelector('#gameProgressFill');
       return el ? el.getBoundingClientRect().width : -1;
     });
-    const readTotal = () => page.evaluate(() => {
-      const t = document.querySelector('#challengeText').textContent || '';
-      const m = /(\d+)\D+(\d+)/.exec(t);
-      return m ? { done: Number(m[1]), total: Number(m[2]) } : null;
-    });
+    const readValue = () => page.evaluate(() =>
+      Number(document.querySelector('#gameProgress').getAttribute('aria-valuenow')));
 
     const before = await readWidth();
-    const start = await readTotal();
-    expect(start.total).toBeGreaterThan(0);
-    expect(start.done).toBe(0);
+    expect(await readValue()).toBe(0);
 
     // Advance the challenge by dispatching KeyboardEvents at document level.
     // The game's document keydown listener handles them the same way as a
@@ -334,15 +318,14 @@ test.describe('Teclatlon — barra de progreso del reto', () => {
     // The fill CSS transition is 0.4s — wait for it to settle.
     await page.waitForTimeout(700);
     const grown = await readWidth();
-    const after = await readTotal();
-    expect(after.done).toBeGreaterThan(0);
+    const value = await readValue();
+    expect(value).toBeGreaterThan(0);
     expect(grown).toBeGreaterThan(before);
-    // app.js writes Math.round(pct) as a whole number, so the painted width
-    // matches that integer percent. On an 830px track 1% = 8px, far more than
-    // the sub-pixel tolerance we allow (1.5px).
+    // The painted width matches the integer percent in aria-valuenow. On an
+    // 830px track 1% = 8px, far more than the sub-pixel tolerance (1.5px).
     const trackWidth = await page.evaluate(() =>
-      document.querySelector('#challengeZone .progress-bar').getBoundingClientRect().width);
-    const expected = Math.round(after.done / after.total * 100) / 100 * trackWidth;
+      document.querySelector('#gameProgress').getBoundingClientRect().width);
+    const expected = value / 100 * trackWidth;
     expect(Math.abs(grown - expected)).toBeLessThan(1.5);
   });
 });

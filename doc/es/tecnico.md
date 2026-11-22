@@ -197,7 +197,7 @@ Dónde vive cada función:
 | `core.js` | `SCREENS`, `state` y migración de datos antiguos, `save`/`award`/`achieve`, `showScreen`, `physical`/`physicalRows`/`visibleRows`/`typeableKeys`, `stripAccents`, `lessons()`/`templates()` |
 | `keyboard-view.js` | `renderKeyboards`, `renderRows`, `createKey`, `fingerOf`, `panOf`, `keysOf`, `flashKey`, `markTarget`, `handsSVG`, `renderHands` |
 | `settings.js` | `applyOptions`, panel de ajustes (`openSettings`/`closeSettings`), reloj de práctica, aviso de descanso |
-| `sequence.js` | `startSequence`, `loadStep`, `renderTarget`, `updateGuide`, `gameKey`, `stepCompleted`, `endSequence`, métricas |
+| `sequence.js` | `startSequence`, `loadStep`, `renderTarget`, `updateGuide`, `updateProgress` (barra de progreso compartida, en todos los modos de secuencia), `gameKey`, `stepCompleted`, `endSequence`, `showReview` (repaso de los textos reales antes del logro), métricas |
 | `practice-sets.js` | `seqFitsLayout`, `scoreSeq`, `pickWordSet`: funciones puras, sin DOM ni estado |
 | `modes.js` | `playPosition`, `playLesson`, `buildLessonReview`, `keepStepsOnLayout`, `playWords`, `playTemplate`, `playNumbers` |
 | `dictation.js` | `playDictation`, `dictationKey`, `speakDictationLetter` |
@@ -549,46 +549,29 @@ da la ⭐ del modo y el logro `allKeys`, solo se llama tras la tercera.
 Si se cambia la vista del teclado a mitad de reto, `reapplyChallenge()`
 descarta `game.order` para que se reconstruya sobre el diseño nuevo.
 
-#### La barra de progreso es una hoja
+#### La barra de progreso compartida
+
+Una sola barra sirve a todas las actividades: `#gameProgress`, el
+`.progress-bar` de `components.css` bajo la instrucción, en la pantalla de
+juego. Las secuencias (colocación, lecciones, palabras, números, textos
+reales) la pintan desde `updateProgress()`, letra a letra. El reto de todas
+las teclas la pinta desde `updateChallenge()` con `T.paintProgress()` y su
+texto "X de Y" va en `aria-valuetext`. `#challengeZone` ya no tiene barra
+propia: solo contiene `.challenge-stars`, bajo la barra, sin meter ninguna
+estrella dentro de su pista.
 
 `.progress-bar` es la **barra compacta** de la suite: 6px de alto,
 `position: relative`, con un `.progress-fill` pegado a su borde izquierdo.
-En toda actividad de Calculia es una hoja que solo contiene el relleno y
-el `.progress-text` (oculto): nunca se usa como envoltorio de otros
-bloques, porque el alto es justamente su razón de ser.
-
-`#challengeZone` apuntaba antes al identificador de la propia barra y
-metía dentro `.challenge-stars` y `.progress-fill`. Eso metía las tres
-estrellas de 24px en una ventana de 6px: se recortaban enteras, y el
-relleno caía 44px más abajo de esa misma caja de 6px, así que el reto
-pintaba una raya gris vacía y no mostraba progreso ninguno. La forma ahora
-es:
-
-```html
-<div id="challengeZone" class="challenge-zone hidden">
-  <div class="progress-bar">
-    <div class="progress-fill" id="challengeFill"></div>
-    <span class="progress-text" id="challengeText">0 de 0</span>
-  </div>
-  <div class="challenge-stars" id="challengeStars"></div>
-</div>
-```
-
-`.challenge-zone` es una **fila** flex (barra a la izquierda, estrellas a la
-derecha, 12px de separación) y `.progress-fill` lleva ya el
-`position: absolute; inset: 0 auto 0 0;` que la copia de Calculia sí tenía.
-`tests/timer-and-progress.spec.js` comprueba tanto la forma como su
-consecuencia, porque la forma sola volvería a pasar el día que alguien
-anidara otra vez el marcado.
+Es una hoja: nunca envoltorio de otros bloques, porque el alto es justamente
+su razón de ser. Las estrellas dentro de ella se recortaban (historial del
+defecto: 24px de estrella en una caja de 6px con `overflow: hidden`).
+`tests/timer-and-progress.spec.js` comprueba que la barra es la compartida
+y que las estrellas están fuera de su pista.
 
 **Sin `data-suite-progress`.** Ese atributo es la señal que usa el cromo
 compartido (`assets/js/suite-chrome.js`) para **mover** una barra de nivel
-de página a su propia fila, bajo la cabecera. La barra del reto no es de
-nivel de página: es parte del panel del reto y va en la misma fila que las
-estrellas de fase. Con el atributo puesto, el cromo la subía a lo alto de
-la página y dejaba las estrellas solas abajo, rompiendo esa fila (y los
-tres tests de la barra). La barra sigue a su pantalla porque vive dentro
-de `#challengeZone`, dentro de `#screenGame`.
+de página a su propia fila, bajo la cabecera. La barra de la pantalla de
+juego no es de nivel de página: vive dentro de `#screenGame`.
 
 ### 2.8 Texto del dedo: se escribe siempre, se oculta la caja
 

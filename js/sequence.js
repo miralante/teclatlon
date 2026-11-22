@@ -64,6 +64,10 @@
      be left behind by whichever mode ran before it. */
   function showGameCard() {
     $('#gameCard').classList.remove('hidden');
+    /* The real-text review and the progress bar belong to one round only:
+       every mode that opens the game screen clears them first. */
+    $('#reviewZone').classList.add('hidden');
+    $('#gameProgress').classList.add('hidden');
     T.dictationPanel(false);
   }
 
@@ -71,7 +75,7 @@
     /* Nothing to type means nothing to start: loadStep() needs a current
        step, and an empty list would fail as soon as the screen opens. */
     if (!cfg.steps || !cfg.steps.length) return;
-    S.game = { type: 'seq', cfg: cfg, idx: 0, pos: 0, waiting: false };
+    S.game = { type: 'seq', cfg: cfg, idx: 0, pos: 0, waiting: false, stepMisses: [] };
     $('#gameTitle').textContent = cfg.title;
     var inNumpad = cfg.mode === 'numbers';
     showGameCard();
@@ -107,6 +111,36 @@
     $('#gameInstruction').textContent = currentStep().text || '';
     renderTarget();
     updateGuide();
+    updateProgress();
+  }
+
+  /* The shared progress bar (assets/css/components.css) for every sequence
+     activity (placement, lessons, words, numbers, real texts): the share of
+     the round done so far, letter by letter. Special-key steps count as one
+     letter. The challenge and dictation rounds do not come through here. */
+  function updateProgress() {
+    var on = !!S.game && S.game.type === 'seq';
+    if (!on) {
+      $('#gameProgress').classList.add('hidden');
+      return;
+    }
+    var p = currentStep();
+    var len = p && p.seq ? p.seq.length : 1;
+    paintProgress((S.game.idx + S.game.pos / len) / S.game.cfg.steps.length);
+  }
+
+  /* Paints the shared progress bar (assets/css/components.css) with the
+     share of the round done, 0 to 1. Every activity that shows it calls
+     this: sequences here, the all-keys challenge in challenge.js. */
+  function paintProgress(share, valueText) {
+    var bar = $('#gameProgress');
+    var pct = Math.max(0, Math.min(100, Math.round(share * 100)));
+    bar.classList.remove('hidden');
+    $('#gameProgressFill').style.width = pct + '%';
+    bar.setAttribute('aria-valuenow', String(pct));
+    bar.setAttribute('aria-label', App.i18n.t('gameProgressAria'));
+    if (valueText) bar.setAttribute('aria-valuetext', valueText);
+    else bar.removeAttribute('aria-valuetext');
   }
 
   function renderTarget() {
@@ -223,10 +257,13 @@
       App.feedback.successSound(T.panOf(ch));
       S.game.pos += 1;
       renderTarget();
+      updateProgress();
       if (S.game.pos >= seq.length) stepCompleted(ch);
       else updateGuide();
     } else {
       S.metrics.misses += 1;
+      /* Per step, so the real-text review can mark the lines that needed a correction. */
+      S.game.stepMisses[S.game.idx] = (S.game.stepMisses[S.game.idx] || 0) + 1;
       T.keysOf(ch).forEach(function (t) {
         t.classList.add('miss');
         setTimeout(function () { t.classList.remove('miss'); }, 500);
@@ -251,7 +288,7 @@
       S.game.waiting = false;
       S.game.idx += 1;
       if (S.game.idx >= S.game.cfg.steps.length) {
-        endSequence();
+        endSequence(S.game.stepMisses);
       } else {
         clearFeedback();
         loadStep();
@@ -259,9 +296,43 @@
     }, 500);
   }
 
-  function endSequence() {
+  /* Real texts show the lines typed before the achievement (showReview);
+     the award is already given here, so the review changes no stars. */
+  function showReview(cfg, stepMisses, finish) {
+    $('#gameCard').classList.add('hidden');
+    $('#keyboardPanel').classList.add('hidden');
+    $('#guide').classList.add('hidden');
+    $('#gameInstruction').textContent = App.i18n.t('reviewIntro');
+    var list = $('#reviewLines');
+    list.innerHTML = '';
+    cfg.steps.forEach(function (step, i) {
+      var misses = stepMisses[i] || 0;
+      var li = document.createElement('li');
+      li.className = 'review-line' + (misses ? ' review-line--missed' : '');
+      li.textContent = step.seq;
+      if (misses) {
+        var note = document.createElement('span');
+        note.className = 'review-note';
+        note.textContent = App.i18n.t('reviewMissed').replace('{n}', misses);
+        li.appendChild(note);
+      }
+      list.appendChild(li);
+    });
+    $('#reviewZone').classList.remove('hidden');
+    $('#btnReviewRepeat').onclick = function () { cfg.review.retry(); };
+    $('#btnReviewDone').onclick = function () {
+      $('#reviewZone').classList.add('hidden');
+      finish();
+    };
+    var title = $('#reviewTitle');
+    title.setAttribute('tabindex', '-1');
+    title.focus();
+  }
+
+  function endSequence(stepMisses) {
     var cfg = S.game.cfg;
     S.game = null;
+    updateProgress();
     var m = S.metrics;
     var earned = T.award(cfg.starKey);
     var acc = m && m.keys ? Math.round((m.hits / m.keys) * 100) : 0;
@@ -269,7 +340,15 @@
     /* Return to the mode list immediately so completion never leaves the
        learner stranded behind a browser-dependent celebration timer. The
        celebration remains visible on the destination screen. */
-    if (cfg.onFinish) cfg.onFinish();
+    var finish = function () {
+      if (cfg.onFinish) cfg.onFinish();
+      afterFinish(cfg);
+    };
+    if (cfg.review) { showReview(cfg, stepMisses || [], finish); return; }
+    finish();
+  }
+
+  function afterFinish(cfg) {
     /* "A por más" gets the app's own action, not the shared default. The
        default of the shared celebration block is to leave the activity the
        way a multi-page app does: it looks for a ".back-link" and, when
@@ -284,6 +363,7 @@
   }
 
   T.clearFeedback = clearFeedback;
+  T.paintProgress = paintProgress;
   T.gameKey = gameKey;
   T.isSpecialStep = isSpecialStep;
   T.showGameCard = showGameCard;

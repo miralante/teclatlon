@@ -191,7 +191,7 @@ Where each part lives:
 | `core.js` | `SCREENS`, `state` and legacy-data migration, `save`/`award`/`achieve`, `showScreen`, `physical`/`physicalRows`/`visibleRows`/`typeableKeys`, `stripAccents`, `lessons()`/`templates()` |
 | `keyboard-view.js` | `renderKeyboards`, `renderRows`, `createKey`, `fingerOf`, `panOf`, `keysOf`, `flashKey`, `markTarget`, `handsSVG`, `renderHands` |
 | `settings.js` | `applyOptions`, the settings drawer (`openSettings`/`closeSettings`), the practice clock, the rest reminder |
-| `sequence.js` | `startSequence`, `loadStep`, `renderTarget`, `updateGuide`, `gameKey`, `stepCompleted`, `endSequence`, metrics |
+| `sequence.js` | `startSequence`, `loadStep`, `renderTarget`, `updateGuide`, `updateProgress` (the shared progress bar, in every sequence mode), `gameKey`, `stepCompleted`, `endSequence`, `showReview` (the review of the real texts before the achievement), metrics |
 | `practice-sets.js` | `seqFitsLayout`, `scoreSeq`, `pickWordSet`: pure functions, no DOM or state |
 | `modes.js` | `playPosition`, `playLesson`, `buildLessonReview`, `keepStepsOnLayout`, `playWords`, `playTemplate`, `playNumbers` |
 | `dictation.js` | `playDictation`, `dictationKey`, `speakDictationLetter` |
@@ -535,45 +535,28 @@ and the `allKeys` achievement, only runs after the third one.
 If the keyboard view changes mid-challenge, `reapplyChallenge()` drops
 `game.order` so it is rebuilt on the new layout.
 
-#### The progress bar is a leaf
+#### The shared progress bar
+
+One bar serves every activity: `#gameProgress`, the `.progress-bar` from
+`components.css` under the instruction on the game screen. The sequences
+(placement, lessons, words, numbers, real texts) paint it from
+`updateProgress()`, letter by letter. The all-keys challenge paints it from
+`updateChallenge()` through `T.paintProgress()`, and its "X of Y" text goes
+into `aria-valuetext`. `#challengeZone` no longer has a bar of its own: it
+holds only `.challenge-stars`, under the bar, with no star inside its track.
 
 `.progress-bar` is the suite's **compact progress track**: 6px tall,
-`position: relative`, with a `.progress-fill` pinned to its left edge. In every
-Calculia activity it is a leaf holding only the fill and the (hidden)
-`.progress-text` — it is never used as a wrapper for other blocks, because the
-height is the whole point of it.
-
-`#challengeZone` used to point the id at the track itself and put
-`.challenge-stars` and `.progress-fill` inside it. That put the three
-24px phase stars in a 6px window: they were clipped away entirely, and the
-fill was pushed 44px down the same 6px box, so the challenge painted an
-empty grey strip and showed no progress at all. The shape is now:
-
-```html
-<div id="challengeZone" class="challenge-zone hidden">
-  <div class="progress-bar">
-    <div class="progress-fill" id="challengeFill"></div>
-    <span class="progress-text" id="challengeText">0 de 0</span>
-  </div>
-  <div class="challenge-stars" id="challengeStars"></div>
-</div>
-```
-
-`.challenge-zone` is a flex **row** (bar on the left, stars on the right, 12px
-gap), and `.progress-fill` now carries the
-`position: absolute; inset: 0 auto 0 0;` that Calculia's copy already had.
-`tests/timer-and-progress.spec.js` asserts both the shape and the
-consequence, because the shape alone would pass again the day someone
-re-nests the markup.
+`position: relative`, with a `.progress-fill` pinned to its left edge. It is
+a leaf: never a wrapper for other blocks, because the height is the whole
+point of it. Stars inside it were clipped (history of the defect: 24px stars
+in a 6px box with `overflow: hidden`).
+`tests/timer-and-progress.spec.js` checks that the bar is the shared one and
+that the stars sit outside its track.
 
 **No `data-suite-progress`.** That attribute is the signal the shared chrome
 (`assets/js/suite-chrome.js`) uses to **move** a page-level bar into its own
-row under the header. The challenge's bar is not a page-level bar: it is part
-of the challenge panel and belongs in the same row as the phase stars. With
-the attribute on, the chrome moved it to the top of the page and left the
-stars alone down here, breaking that row (and the three bar tests). The bar
-still follows its screen because it lives inside `#challengeZone`, inside
-`#screenGame`.
+row under the header. The game-screen bar is not a page-level bar: it lives
+inside `#screenGame`.
 
 ### 2.8 Finger text: always written, the box is what hides
 

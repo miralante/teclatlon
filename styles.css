@@ -142,6 +142,24 @@
   text-transform: lowercase;
 }
 
+/* ---- Real-text review (before the achievement) ---- */
+/* Each line typed is shown as written. A line that needed a correction is
+   marked by its border and by the text "Fallos: n", never by colour alone. */
+.review-zone { display: flex; flex-direction: column; gap: var(--space); }
+.review-title { margin: 0; font-size: var(--text-base); }
+.review-lines { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.review-line {
+  padding: 8px 12px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  font-size: var(--text-base);
+  overflow-wrap: anywhere;
+}
+.review-line--missed { border-color: var(--accent); background: var(--accent-soft); }
+.review-note { display: block; margin-top: 4px; font-size: var(--text-small); font-weight: 700; color: var(--color-text-soft); }
+.review-actions { justify-content: center; flex-wrap: wrap; gap: var(--space); }
+
 /* ---- Hand guide ---- */
 .guide { justify-content: center; gap: 12px; align-items: flex-start; }
 .hands { width: 160px; max-width: 38%; flex-shrink: 0; }

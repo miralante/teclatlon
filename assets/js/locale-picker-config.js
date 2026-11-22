@@ -16,5 +16,14 @@ window.LocalePickerConfig = {
   languageInDrawer: true,
   standardRows: false,
   extraRowsId: 'settingsExtra',
-  soundSettings: false
+  soundSettings: false,
+  /* The person's data: the name and the visual options. Stars and completed lessons are kept. */
+  personalReset: function () {
+    try {
+      var raw = localStorage.getItem('teclatlon:keyboard');
+      var data = raw ? JSON.parse(raw) : {};
+      localStorage.setItem('teclatlon:keyboard', JSON.stringify({ stars: data.stars || 0, completed: data.completed || {} }));
+    } catch (e) { /* storage unavailable */ }
+    return true;
+  }
 };

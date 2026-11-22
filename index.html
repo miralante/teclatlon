@@ -230,12 +230,6 @@
         </button>
       </div>
       <div class="grid-cards" id="gameMenu">
-        <button type="button" class="mode-card" data-mode="allKeys">
-          <span class="picto" aria-hidden="true">🌈</span>
-          <span class="name" data-i18n="modeAllKeysName">Todas las teclas</span>
-          <span class="detail" data-i18n="modeAllKeysDetail">Enciende todas las teclas.</span>
-          <span class="done"></span>
-        </button>
         <button type="button" class="mode-card" data-mode="placement">
           <span class="picto" aria-hidden="true">🖐️</span>
           <span class="name" data-i18n="modePlacementName">Coloca los dedos</span>
@@ -246,6 +240,18 @@
           <span class="picto" aria-hidden="true">🔤</span>
           <span class="name" data-i18n="modeLessonsName">Paso a paso</span>
           <span class="detail" data-i18n="modeLessonsDetail">Aprende las letras en orden.</span>
+          <span class="done"></span>
+        </button>
+        <button type="button" class="mode-card" data-mode="numbers">
+          <span class="picto" aria-hidden="true">🔢</span>
+          <span class="name" data-i18n="modeNumbersName">Números</span>
+          <span class="detail" data-i18n="modeNumbersDetail">Usa el teclado de números.</span>
+          <span class="done"></span>
+        </button>
+        <button type="button" class="mode-card" data-mode="allKeys">
+          <span class="picto" aria-hidden="true">🌈</span>
+          <span class="name" data-i18n="modeAllKeysName">Todas las teclas</span>
+          <span class="detail" data-i18n="modeAllKeysDetail">Enciende todas las teclas.</span>
           <span class="done"></span>
         </button>
         <button type="button" class="mode-card" data-mode="words">
@@ -260,22 +266,16 @@
           <span class="detail" data-i18n="modeTemplatesDetail">Practica con un correo o una carta.</span>
           <span class="done"></span>
         </button>
-        <button type="button" class="mode-card" data-mode="free">
-          <span class="picto" aria-hidden="true">✍️</span>
-          <span class="name" data-i18n="modeFreeName">Escribe libre</span>
-          <span class="detail" data-i18n="modeFreeDetail">Escribe y escucha tu texto.</span>
-          <span class="done"></span>
-        </button>
-        <button type="button" class="mode-card" data-mode="numbers">
-          <span class="picto" aria-hidden="true">🔢</span>
-          <span class="name" data-i18n="modeNumbersName">Números</span>
-          <span class="detail" data-i18n="modeNumbersDetail">Usa el teclado de números.</span>
-          <span class="done"></span>
-        </button>
         <button type="button" class="mode-card" data-mode="dictation">
           <span class="picto" aria-hidden="true">🔊</span>
           <span class="name" data-i18n="modeDictationName">Dictado</span>
           <span class="detail" data-i18n="modeDictationDetail">Escucha una letra y púlsala.</span>
+          <span class="done"></span>
+        </button>
+        <button type="button" class="mode-card" data-mode="free">
+          <span class="picto" aria-hidden="true">✍️</span>
+          <span class="name" data-i18n="modeFreeName">Escribe libre</span>
+          <span class="detail" data-i18n="modeFreeDetail">Escribe y escucha tu texto.</span>
           <span class="done"></span>
         </button>
       </div>
@@ -308,6 +308,11 @@
         <button type="button" class="btn btn-secondary btn-compact" id="btnExitGame" data-i18n="btnMenu">← Menú</button>
         <h2 class="game-title" id="gameTitle" data-i18n="gameTitleDefault">Juego</h2>      </div>
       <p class="instruction centered" id="gameInstruction"></p>
+      <!-- Shared progress bar component (assets/css/components.css). Shown
+           by sequence.js only in the words and real-text modes. -->
+      <div class="progress-bar hidden" id="gameProgress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="progress-fill" id="gameProgressFill"></div>
+      </div>
       <!-- Dictation only. This mode asks for a letter through sound, so
            the screen has to say out loud what the activity is, and give a
            second chance to hear the letter: without these two blocks, a
@@ -336,30 +341,22 @@
       </div>
       <div class="card centered" id="gameCard">
         <div id="targetZone" class="target-zone"></div>
-        <!-- The track is a leaf, exactly as in every Calculia activity
-             (<div class="progress-bar"> holding only the fill and the
-             text). It used to be this element instead, which put the
-             phase stars and the fill inside a 6px box with
-             `overflow: hidden`: the stars needed 36px and were clipped
-             away entirely, and the fill was pushed 44px down the same
-             6px window, so the challenge showed an empty grey strip and
-             no progress at all. The stars now live in the wrapper.
-
-             No `data-suite-progress` here on purpose: that attribute is
-             the suite chrome's signal to MOVE a page-level bar to the
-             top of the page, under the header. This bar is not a
-             page-level bar, it is part of the challenge panel: it sits
-             in the same row as the phase stars (bar on the left, stars
-             on the right). Moved to the top of the page it left the
-             stars alone down here and broke that row. -->
+        <!-- The challenge's progress is the shared bar above (#gameProgress),
+             the same one every activity uses. This row holds only the phase
+             stars, which sit under the bar and never inside its track. -->
         <div id="challengeZone" class="challenge-zone hidden">
-          <div class="progress-bar">
-            <div class="progress-fill" id="challengeFill"></div>
-            <span class="progress-text" id="challengeText">0 de 0</span>
-          </div>
           <div class="challenge-stars" id="challengeStars"></div>
         </div>
       </div>
+      <!-- Real-text review: shown after the last line, before the achievement. -->
+      <section class="card review-zone hidden" id="reviewZone" aria-labelledby="reviewTitle">
+        <h3 class="review-title" id="reviewTitle" data-i18n="reviewTitle">Esto es lo que has escrito</h3>
+        <ol class="review-lines" id="reviewLines"></ol>
+        <div class="row review-actions">
+          <button type="button" class="btn btn-secondary" id="btnReviewRepeat" data-i18n="reviewRepeat">🔁 Repetir este texto</button>
+          <button type="button" class="btn" id="btnReviewDone" data-i18n="reviewDone">⭐ Ver mi logro</button>
+        </div>
+      </section>
       <div class="feedback" id="feedback" aria-live="polite"></div>
       <div class="row guide" id="guide">
         <div class="hands" id="handsSvg" aria-hidden="true"></div>

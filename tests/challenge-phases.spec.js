@@ -140,7 +140,7 @@ test.describe('Teclatlon — reto de todas las teclas', () => {
     // and the challenge is still running.
     await pressUntil(page, async () => (await starStates(page))[0].earned, 120);
     expect(await page.locator('#screenGame')).toBeVisible();
-    await expect(page.locator('#challengeText')).not.toContainText('0 de');
+    await expect(page.locator('#gameProgress')).not.toHaveAttribute('aria-valuenow', '0');
 
     // Phase 2 done: two stars, still playing.
     await pressUntil(page, async () => (await starStates(page))[1].earned, 120);

@@ -197,7 +197,10 @@
     if (!steps.length) return;
     T.startSequence({
       mode: 'template', title: p.title,
-      steps: steps, starKey: 'template_' + p.id, onFinish: T.goTemplates
+      steps: steps, starKey: 'template_' + p.id, onFinish: T.goTemplates,
+      /* Before the achievement the person sees every line typed, and can
+         repeat the same text to reinforce it (see sequence.js showReview). */
+      review: { retry: function () { playTemplate(p); } }
     });
   }
 

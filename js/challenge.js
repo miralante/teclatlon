@@ -221,8 +221,8 @@
         if (S.game.set[k.ch]) done += 1;
       });
     });
-    $('#challengeFill').style.width = (total ? Math.round(done / total * 100) : 0) + '%';
-    $('#challengeText').textContent = App.i18n.t('doneOfTotal').replace('{done}', done).replace('{total}', total);
+    T.paintProgress(total ? done / total : 0,
+      App.i18n.t('doneOfTotal').replace('{done}', done).replace('{total}', total));
     updateChallengeStars();
     if (total > 0 && done === total) {
       /* Clear the next-key highlight and the hand guide so the

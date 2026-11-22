@@ -239,7 +239,10 @@
       contrast: 'Alto contraste', successSound: 'Sonido de acierto', errorSound: 'Sonido de error', help: 'Se guarda en este dispositivo.',
       resetLabel: 'Borra el progreso, las estrellas y los ajustes de este dispositivo. La app vuelve a empezar de cero.',
       resetButton: 'Borrar todo y empezar de cero', resetWarn: '¿Seguro? Se borrará todo lo guardado en este dispositivo. No se puede deshacer.',
-      resetYes: 'Sí, borrar todo', resetNo: 'No, cancelar'
+      resetYes: 'Sí, borrar todo', resetNo: 'No, cancelar',
+      personalLabel: 'Borra el nombre y los datos personales guardados en este dispositivo. El progreso se conserva.',
+      personalButton: 'Borrar los datos de la persona', personalWarn: '¿Seguro? Se borrarán los datos personales de este dispositivo. El progreso se conserva.',
+      personalYes: 'Sí, borrar', personalNo: 'No, cancelar', personalDone: 'Hecho. Se han borrado los datos personales.'
     },
     en: {
       title: 'Settings', close: 'Close settings', textSize: 'Text size',
@@ -249,7 +252,10 @@
       contrast: 'High contrast', successSound: 'Correct answer sound', errorSound: 'Error sound', help: 'Saved on this device.',
       resetLabel: 'Deletes the progress, stars and settings saved on this device. The app starts again from zero.',
       resetButton: 'Delete everything and start from zero', resetWarn: 'Are you sure? Everything saved on this device will be deleted. This cannot be undone.',
-      resetYes: 'Yes, delete everything', resetNo: 'No, cancel'
+      resetYes: 'Yes, delete everything', resetNo: 'No, cancel',
+      personalLabel: 'Deletes the name and personal data saved on this device. The progress is kept.',
+      personalButton: 'Erase the person’s data', personalWarn: 'Are you sure? The personal data saved on this device will be deleted. The progress is kept.',
+      personalYes: 'Yes, erase', personalNo: 'No, cancel', personalDone: 'Done. The personal data has been erased.'
     }
   };
 
@@ -369,6 +375,25 @@
        tiene fila de idioma y no hay nada que traducir. */
     var languageLabel = drawer.querySelector('[data-settings-language-label]');
     if (languageLabel) languageLabel.textContent = copy.language;
+    /* App-specific rows (help, reset, person data) are filled before the
+       standard-rows early return below, so a drawer with standardRows:false
+       still gets their text. */
+    var help = drawer.querySelector('[data-settings-help]');
+    if (help) help.textContent = copy.help;
+    if (RESET_PREFIX) {
+      drawer.querySelector('[data-settings-reset-label]').textContent = copy.resetLabel;
+      drawer.querySelector('[data-settings-reset]').textContent = copy.resetButton;
+      drawer.querySelector('[data-settings-reset-warn]').textContent = copy.resetWarn;
+      drawer.querySelector('[data-settings-reset-yes]').textContent = copy.resetYes;
+      drawer.querySelector('[data-settings-reset-no]').textContent = copy.resetNo;
+    }
+    if (typeof cfg.personalReset === 'function') {
+      drawer.querySelector('[data-settings-person-label]').textContent = copy.personalLabel;
+      drawer.querySelector('[data-settings-person]').textContent = copy.personalButton;
+      drawer.querySelector('[data-settings-person-warn]').textContent = copy.personalWarn;
+      drawer.querySelector('[data-settings-person-yes]').textContent = copy.personalYes;
+      drawer.querySelector('[data-settings-person-no]').textContent = copy.personalNo;
+    }
     if (!STANDARD_ROWS) return;
     drawer.querySelector('[data-settings-size-label]').textContent = copy.textSize;
     drawer.querySelector('[data-settings-theme-label]').textContent = copy.theme;
@@ -387,14 +412,6 @@
         var row = input.closest('label');
         if (row) row.remove();
       });
-    }
-    drawer.querySelector('[data-settings-help]').textContent = copy.help;
-    if (RESET_PREFIX) {
-      drawer.querySelector('[data-settings-reset-label]').textContent = copy.resetLabel;
-      drawer.querySelector('[data-settings-reset]').textContent = copy.resetButton;
-      drawer.querySelector('[data-settings-reset-warn]').textContent = copy.resetWarn;
-      drawer.querySelector('[data-settings-reset-yes]').textContent = copy.resetYes;
-      drawer.querySelector('[data-settings-reset-no]').textContent = copy.resetNo;
     }
     drawer.querySelectorAll('[data-settings-size]').forEach(function (button) {
       button.setAttribute('aria-pressed', String(button.getAttribute('data-settings-size') === settingsState.textSize));
@@ -504,6 +521,18 @@
           '<input type="checkbox" data-settings-success></label>' +
         '<label class="locale-settings-row locale-settings-check"><span data-settings-error-label></span>' +
           '<input type="checkbox" data-settings-error></label>' +
+        '<div class="locale-settings-row locale-settings-reset" data-settings-person-row>' +
+          '<p data-settings-person-label></p>' +
+          '<button type="button" data-settings-person></button>' +
+          '<div class="locale-settings-reset-confirm" data-settings-person-confirm hidden>' +
+            '<p data-settings-person-warn></p>' +
+            '<div class="locale-settings-options" role="group">' +
+              '<button type="button" data-settings-person-no></button>' +
+              '<button type="button" data-settings-person-yes></button>' +
+            '</div>' +
+          '</div>' +
+          '<p class="locale-settings-person-done" data-settings-person-done aria-live="polite"></p>' +
+        '</div>' +
         '<div class="locale-settings-row locale-settings-reset" data-settings-reset-row>' +
           '<p data-settings-reset-label></p>' +
           '<button type="button" data-settings-reset></button>' +
@@ -575,6 +604,34 @@
       drawer.querySelector('[data-settings-reset-yes]').addEventListener('click', function () {
         clearAppStorage(RESET_PREFIX);
         window.location.reload();
+      });
+    }
+
+    /* Datos de la persona: dos pasos, como el borrado de arriba, pero no recarga
+       la app: solo borra lo que la app declara en cfg.personalReset. */
+    var personRow = drawer.querySelector('[data-settings-person-row]');
+    if (typeof cfg.personalReset !== 'function') {
+      if (personRow) personRow.remove();
+    } else {
+      var personButton = drawer.querySelector('[data-settings-person]');
+      var personConfirm = drawer.querySelector('[data-settings-person-confirm]');
+      var personDone = drawer.querySelector('[data-settings-person-done]');
+      personButton.addEventListener('click', function () {
+        personButton.hidden = true;
+        personConfirm.hidden = false;
+        drawer.querySelector('[data-settings-person-no]').focus();
+      });
+      drawer.querySelector('[data-settings-person-no]').addEventListener('click', function () {
+        personConfirm.hidden = true;
+        personButton.hidden = false;
+        personButton.focus();
+      });
+      drawer.querySelector('[data-settings-person-yes]').addEventListener('click', function () {
+        if (cfg.personalReset() === true) { window.location.reload(); return; }
+        personConfirm.hidden = true;
+        personButton.hidden = false;
+        renderSettings(drawer);
+        personDone.textContent = SETTINGS_COPY[settingsLocale()].personalDone;
       });
     }
 

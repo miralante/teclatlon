@@ -183,7 +183,7 @@ function compareLocales(dir, label) {
 
 compareLocales(ROOT, 'strings.<locale>.js');
 compareLocales(path.join(ROOT, 'legal'), 'legal/');
-/* Teclatlon additionally ships hidden routes datos-persona/ and about/ with
+/* Teclatlon additionally ships the hidden route about/ with
    their own strings.<locale>.js pairs. Until 2026-09 those were not
    covered here, leaving a coverage gap that hid missing translations
    (for example datos-persona/index.html references data-i18n="core.loading"
@@ -191,7 +191,6 @@ compareLocales(path.join(ROOT, 'legal'), 'legal/');
    The function returns silently if the directory has fewer than two
    strings.<locale>.js files, so legacy paths without i18n are still
    safe. */
-compareLocales(path.join(ROOT, 'datos-persona'), 'datos-persona/');
 compareLocales(path.join(ROOT, 'about'), 'about/');
 
 /* --- 3. sw.js <-> disk parity --- */

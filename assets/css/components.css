@@ -131,13 +131,14 @@
 }
 
 /* ---- Challenge phase stars ---- */
-/* Horizontal layout: bar on the left, stars on the right. Stars are not
-   inside .progress-bar (the track is a leaf, and they would be clipped).
-   The track has no background or border — the fill floats on its own. */
+/* The challenge's progress is the shared .progress-bar of the game screen;
+   this row holds only the phase stars, centred under it. Stars are never
+   inside .progress-bar (the track is a leaf, and they would be clipped). */
 .challenge-zone {
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
   gap: 12px;
 }
 
