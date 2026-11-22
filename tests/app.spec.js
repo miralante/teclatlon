@@ -544,11 +544,11 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
     await expect(lessons.first()).not.toHaveClass(/locked/);
   });
 
-  test('4.2 — las lecciones se agrupan en 5 bloques con título, sin perder ninguna', async ({ page }) => {
+  test('4.2 — las lecciones se agrupan en 6 bloques con título, sin perder ninguna', async ({ page }) => {
     page = await skipToMenu();
     await page.locator('[data-mode="lessons"]').click();
     const blocks = page.locator('#lessonsList .lesson-block');
-    await expect(blocks).toHaveCount(5);
+    await expect(blocks).toHaveCount(6);
     await expect(blocks.locator('.lesson-block-title').first()).not.toHaveText('');
     await expect(page.locator('#lessonsList .btn-lesson')).toHaveCount(17);
   });

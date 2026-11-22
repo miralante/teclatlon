@@ -214,14 +214,16 @@ const DATA = {
   lessonBlocks: {
     es: [
       { title: 'Fila guía', lessons: ['l1', 'l2', 'l3', 'l4', 'l5', 'l6'] },
-      { title: 'Fila superior e inferior', lessons: ['l7', 'l8', 'l9', 'l10', 'l11', 'l12', 'l13', 'l14'] },
+      { title: 'Fila superior', lessons: ['l7', 'l8', 'l9', 'l10', 'l11'] },
+      { title: 'Fila inferior', lessons: ['l12', 'l13', 'l14'] },
       { title: 'Frases cortas', lessons: ['l15'] },
       { title: 'Mayúsculas', lessons: ['l16'] },
       { title: 'Teclas especiales', lessons: ['l17'] }
     ],
     en: [
       { title: 'Home row', lessons: ['l1', 'l2', 'l3', 'l4', 'l5', 'l6'] },
-      { title: 'Top and bottom rows', lessons: ['l7', 'l8', 'l9', 'l10', 'l11', 'l12', 'l13', 'l14'] },
+      { title: 'Top row', lessons: ['l7', 'l8', 'l9', 'l10', 'l11'] },
+      { title: 'Bottom row', lessons: ['l12', 'l13', 'l14'] },
       { title: 'Short sentences', lessons: ['l15'] },
       { title: 'Capitals', lessons: ['l16'] },
       { title: 'Special keys', lessons: ['l17'] }
