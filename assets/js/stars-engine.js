@@ -27,7 +27,7 @@
      useStorageKey(key)              where the last celebrated total is kept. Default
                                      'apptonomia:stars:last'; an app passes a key with
                                      its own prefix ('<slug>:stars:last') so its
-                                     config/ reset clears it with the rest of its data.
+                                     gear reset clears it with the rest of its data.
      storageKey()                    the key in use
 
    Note: line() and goal() also record `total` as the total to celebrate next

@@ -685,10 +685,10 @@ test.describe('Teclatlon — Full App Smoke Suite', () => {
   });
 
   // -----------------------------------------------------------------
-  // 10. CONFIG PAGE
+  // 10. PERSONAL-DATA PAGE
   // -----------------------------------------------------------------
-  test('10.1 — config page loads and shows branding', async ({ page }) => {
-    await page.goto('/config/index.html');
+  test('10.1 — personal-data page loads and shows branding', async ({ page }) => {
+    await page.goto('/datos-persona/index.html');
     await expect(page.locator('h1')).toBeVisible();
     await expect(page.locator('h1')).not.toHaveText('');
   });

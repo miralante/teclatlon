@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es" data-i18n-title="personal.title">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teclatlon</title>
+  <!-- Hidden route: not linked from the main menu and should not be indexed.
+       Aimed at families, teachers or therapists managing the device. -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#FAF7F2">
+  <link rel="stylesheet" href="../assets/css/tokens.css">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/ajustes.css">
+  <link rel="stylesheet" href="../assets/css/locale-picker.css">
+</head>
+<body>
+  <div class="container settings">
+    <header class="cabecera-settings">
+      <div data-suite-header data-suite-logo="../assets/img/icono.svg" data-suite-name="Teclatlon" data-suite-byline></div>
+      <p class="aviso-ruta" data-i18n="personal.routeNotice">Página de ajustes. No aparece en el menú de la aplicación: solo se llega escribiendo esta dirección.</p>
+      <h1 data-i18n="personal.title">Borrar los datos de la persona</h1>
+    </header>
+
+    <main class="suite-body">
+      <section id="datos-persona" class="card guia">
+        <p data-i18n="personal.intro">Borra el nombre guardado, el tamaño del texto, el tema visual y los demás ajustes. Se conservan las estrellas y las lecciones completadas.</p>
+        <button type="button" id="btnBorrarPersona" class="btn btn-secondary" data-i18n="personal.button">Borrar mis datos personales</button>
+        <p id="feedbackPersona" class="feedback" aria-live="polite"></p>
+      </section>
+    </main>
+  <footer data-suite-footer data-suite-base="../"></footer>
+  </div>
+
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/i18n.js"></script>
+  <script src="strings.es.js"></script>
+  <script src="strings.en.js"></script>
+  <script src="app.js"></script>
+  <script src="../assets/js/locale-picker-config.js"></script>
+  <script src="../assets/js/locale-picker.js" defer></script>
+  <script src="../assets/js/suite-chrome.js"></script>
+</body>
+</html>
