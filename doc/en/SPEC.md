@@ -253,7 +253,7 @@ See `legal/index.html` for the exact data items saved.
 
 ## 6. Gamification (no pressure)
 
-- **Stars**: one every time a lesson, mode or real text is completed, repeats included. The star notebook (📒, next to the star counter) lists every activity with whether it is done and its stars.
+- **Stars**: one every time a lesson, mode or real text is completed, repeats included. The star notebook (📓, next to the star counter) lists every activity with whether it is done and its stars.
 - **Achievement screen**: when a star is earned, a congratulation screen
   appears with the stars the person has (the same number as the header)
   and the next goal. It stays until "Go for more" is pressed; that

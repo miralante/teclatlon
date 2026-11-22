@@ -27,7 +27,7 @@ session or lesson list that matches it.
 | **Numbers (number-pad game)** | Number-pad practice with the right-hand home position. | [`technical.md`](technical.md) §"Numbers mode". |
 | **All keys** | Mixed practice that exercises the **complete** keyboard of the currently selected layout — every letter, every number when the layout shows them, the space bar, and every punctuation key. | [`SPEC.md`](SPEC.md) §3.7. |
 | **Free writing** | Free text + read-aloud of what was typed. | [`technical.md`](technical.md) §"Free writing mode". |
-| **Dictation** | Hears a randomly chosen letter and asks the learner to press it on the physical keyboard. The on-screen keyboard and hand guide stay hidden; correct and incorrect answers have distinct sounds. The screen explains what the activity is and offers to hear the letter again. | `playDictation()` in `js/dictation.js`. |
+| **Dictation** | Dictates every letter of the keyboard once, in random order, and asks the learner to press each one on the physical keyboard. A progress bar counts the letters done; finishing the whole keyboard gives one star. The on-screen keyboard and hand guide stay hidden; correct and incorrect answers have distinct sounds. The screen explains what the activity is and offers to hear the letter again. | `playDictation()` in `js/dictation.js`. |
 
 Each mode is intentionally short and replayable. There is no
 "level completed" gate that locks the next mode — the learner can
@@ -75,11 +75,11 @@ keyboard of the currently selected layout and asks the learner to
 type it through. The passage is short, the feedback is per-key, and
 there is no time pressure.
 
-Dictation is also an ongoing practice session. It speaks one random
-letter at a time, accepts the matching physical key, and repeats the
+Dictation goes through the whole keyboard. It speaks each letter once,
+in random order, accepts the matching physical key, and repeats the
 letter after an incorrect press. It includes every letter on the
-Spanish keyboard, including ñ, and avoids repeating the same letter
-twice in a row.
+Spanish keyboard, including ñ. A progress bar counts the letters done,
+and finishing the keyboard gives one star.
 
 It is the only mode that asks for a key **by ear**, so its screen has
 to cover what the sound does not. Three rules, all of them part of the

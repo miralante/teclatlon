@@ -210,12 +210,13 @@
       container.appendChild(carnetSection(block.title, items));
     });
 
-    /* Modes that give a star. Dictation and free writing give none. */
+    /* Modes that give a star. Free writing gives none. */
     var modes = [
       ['placement', 'modePlacementName'],
       ['allKeys', 'modeAllKeysName'],
       ['words', 'modeWordsName'],
-      ['numbers', 'modeNumbersName']
+      ['numbers', 'modeNumbersName'],
+      ['dictation', 'modeDictationName']
     ];
     var modeItems = modes.map(function (m) {
       count(m[0]);
@@ -232,8 +233,7 @@
 
     $('#carnetSummary').textContent = App.i18n.t('carnetSummary')
       .replace('{stars}', S.state.stars)
-      .replace('{done}', done)
-      .replace('{total}', total);
+      .replace('{done}', done);
   }
 
   function goCarnet() {

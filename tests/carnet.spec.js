@@ -23,7 +23,7 @@ test('the carnet icon sits beside the star counter and opens the notebook', asyn
   await expect(page.locator('#screenCarnet')).toBeVisible();
   await expect(page.locator('#screenMenu')).toBeHidden();
   await expect(page.locator('#carnetSummary')).toContainText('Estrellas: 2');
-  await expect(page.locator('#carnetSummary')).toContainText('Hechas: 1 de');
+  await expect(page.locator('#carnetSummary')).toContainText('Hechas: 1');
 });
 
 test('each lesson shows done or pending, and the stars it has', async ({ page }) => {

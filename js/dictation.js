@@ -38,7 +38,31 @@
 
   function dictationPanel(show) {
     $('#dictationPanel').classList.toggle('hidden', !show);
-    if (!show) dictationLetter(null);
+    if (!show) {
+      dictationLetter(null);
+      $('#gameProgress').classList.add('hidden');
+    }
+  }
+
+  /* A round is one pass over the whole keyboard: every letter once, in a
+     random order. The queue is that order; its first letter is the one
+     being asked for. A right key takes it off the queue, a wrong key asks
+     the same letter again. */
+  function shuffled(list) {
+    var out = list.slice();
+    for (var i = out.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = out[i]; out[i] = out[j]; out[j] = tmp;
+    }
+    return out;
+  }
+
+  /* The shared progress bar: letters done out of the whole keyboard. */
+  function paintDictationProgress() {
+    var total = S.game.letters.length;
+    var done = total - S.game.queue.length;
+    T.paintProgress(total ? done / total : 0,
+      App.i18n.t('dictationProgress').replace('{done}', done).replace('{total}', total));
   }
 
   /** Puts the current letter on screen, or hides it with no argument.
@@ -56,12 +80,11 @@
     $('#dictationFallback').classList.toggle('hidden', !letter);
   }
 
-  function speakDictationLetter(nextLetter) {
+  /* Says the current letter (the head of the queue). It does not pick
+     another one: a letter stays the same until it is typed right. */
+  function speakDictationLetter() {
     if (!S.game || S.game.type !== 'dictation') return;
-    if (nextLetter || !S.game.letter) {
-      var letters = S.game.letters.filter(function (letter) { return letter !== S.game.letter; });
-      S.game.letter = letters[Math.floor(Math.random() * letters.length)];
-    }
+    if (!S.game.letter) S.game.letter = S.game.queue[0];
     S.game.phase = 'running';
     S.game.waiting = true;
     renderDictationActions();
@@ -86,7 +109,9 @@
     /* phase 'ready': the panel explains the activity and waits. Nothing
        is asked for and no key counts until the person starts, so a key
        pressed while reading the instructions is not read as a mistake. */
-    S.game = { type: 'dictation', letters: dictationLetters(), letter: null, waiting: true, phase: 'ready' };
+    var letters = dictationLetters();
+    S.game = { type: 'dictation', letters: letters, queue: shuffled(letters), letter: null, waiting: true, phase: 'ready' };
+    paintDictationProgress();
     $('#gameTitle').textContent = App.i18n.t('modeDictationName');
     $('#gameInstruction').textContent = App.i18n.t('dictationInstruction');
     /* The card only ever holds the target and the challenge progress,
@@ -127,13 +152,39 @@
       S.game.waiting = true;
       App.feedback.success($('#feedback'));
       App.feedback.successSound(null, true);
-      S.dictationTimer = setTimeout(function () { speakDictationLetter(true); }, 550);
+      S.dictationTimer = setTimeout(nextDictationLetter, 550);
     } else {
       S.metrics.misses += 1;
       S.game.waiting = true;
       App.feedback.encourage($('#feedback'), true);
-      S.dictationTimer = setTimeout(function () { speakDictationLetter(false); }, 300);
+      S.dictationTimer = setTimeout(speakDictationLetter, 300);
     }
+  }
+
+  /* The letter was typed right: it leaves the queue. The round ends when
+     the queue is empty, so the activity has an end and gives its star. */
+  function nextDictationLetter() {
+    if (!S.game || S.game.type !== 'dictation') return;
+    S.game.queue.shift();
+    paintDictationProgress();
+    if (S.game.queue.length === 0) {
+      finishDictation();
+      return;
+    }
+    S.game.letter = S.game.queue[0];
+    speakDictationLetter();
+  }
+
+  /* The whole keyboard is done: the star for the mode, the same closing
+     screen as the other activities, then back to the menu. */
+  function finishDictation() {
+    S.game = null;
+    dictationPanel(false);
+    var m = S.metrics;
+    var acc = m && m.keys ? Math.round((m.hits / m.keys) * 100) : 0;
+    T.award('dictation');
+    App.achievements.onActivityFinished({ state: S.state, lessons: T.lessons().map(function (l) { return l.id; }), perfect: acc === 100 });
+    App.feedback.celebrate(T.finalMessage() + ' ' + App.i18n.t('transferMessage'), T.goMenu, T.starLine());
   }
 
   T.dictationKey = dictationKey;

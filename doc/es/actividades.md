@@ -28,7 +28,7 @@ la sesión o lista de lecciones que le corresponde.
 | **Números (juego del teclado numérico)** | Práctica del teclado numérico con la posición base de la mano derecha. | [`tecnico.md`](tecnico.md) §"Modo números". |
 | **Todas las teclas** | Práctica mixta que ejercita el **teclado completo** del diseño activo — todas las letras, todos los números cuando el diseño los muestra, la barra espaciadora y todas las teclas de puntuación. | [`SPEC.md`](SPEC.md) §3.7. |
 | **Escritura libre** | Texto libre + lectura en voz alta de lo que se ha escrito. | [`tecnico.md`](tecnico.md) §"Modo escritura libre". |
-| **Dictado** | Escucha una letra aleatoria y pide pulsarla en el teclado físico. El teclado en pantalla y la guía de manos permanecen ocultos; los aciertos y errores tienen sonidos distintos. La pantalla explica en qué consiste la actividad y ofrece volver a oír la letra. | `playDictation()` en `js/dictation.js`. |
+| **Dictado** | Dicta cada letra del teclado una vez, en orden aleatorio, y pide pulsarla en el teclado físico. Una barra de progreso cuenta las letras hechas; al terminar todo el teclado da una estrella. El teclado en pantalla y la guía de manos permanecen ocultos; los aciertos y errores tienen sonidos distintos. La pantalla explica en qué consiste la actividad y ofrece volver a oír la letra. | `playDictation()` en `js/dictation.js`. |
 
 Cada modo es corto y reutilizable a propósito. No hay una
 "compuerta de nivel completado" que bloquee el siguiente modo — la
@@ -78,10 +78,11 @@ completo** del diseño activo y le pide a quien aprende que lo
 escriba entero. El fragmento es corto, el feedback es por tecla y
 no hay presión de tiempo.
 
-El dictado también es una sesión continua. Dice una letra aleatoria
-cada vez y espera a que la persona pulse su tecla. Si se equivoca,
-vuelve a decir la misma letra. Incluye todas las letras del teclado
-español, también la ñ, y no repite una letra dos veces seguidas.
+El dictado recorre el teclado entero: dice cada letra una sola vez, en
+orden aleatorio, y espera a que la persona pulse su tecla. Si se
+equivoca, vuelve a decir la misma letra. Incluye todas las letras del
+teclado español, también la ñ. Una barra de progreso cuenta las letras
+hechas, y al terminar el teclado da una estrella.
 
 Es el único modo que pide una tecla **por el oído**, así que su
 pantalla tiene que resolver lo que el sonido no resuelva. Tres reglas,

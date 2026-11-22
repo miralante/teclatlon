@@ -194,7 +194,7 @@
            (suite-chrome.js moves the stars; app.js moves the clock right before
            them). The clock is role="timer" with aria-live="off" on purpose: a number
            that moves every second must not be read out on every change. -->
-      <span class="stars" data-suite-stars id="stars"><span id="starsCount">⭐ 0</span><button type="button" class="btn-carnet" id="btnCarnet" data-i18n-aria="carnetOpenAria" aria-label="Mi cuaderno de estrellas"><span aria-hidden="true">📒</span></button></span>
+      <span class="stars" data-suite-stars id="stars"><span id="starsCount">⭐ 0</span><button type="button" class="btn-carnet" id="btnCarnet" data-i18n-aria="carnetOpenAria" aria-label="Mi cuaderno de estrellas"><span aria-hidden="true">📓</span></button></span>
       <span class="session-timer hidden" id="sessionTimer" role="timer" aria-live="off"></span>
     </header>
     <main class="suite-body">
@@ -320,7 +320,8 @@
         <h2 class="game-title" id="gameTitle" data-i18n="gameTitleDefault">Juego</h2>      </div>
       <p class="instruction centered" id="gameInstruction"></p>
       <!-- Shared progress bar component (assets/css/components.css). Shown
-           by sequence.js only in the words and real-text modes. -->
+           by the words and real-text modes (sequence.js), the all-keys
+           challenge and the letter dictation (dictation.js). -->
       <div class="progress-bar hidden" id="gameProgress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
         <div class="progress-fill" id="gameProgressFill"></div>
       </div>

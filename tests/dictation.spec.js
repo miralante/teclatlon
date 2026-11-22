@@ -286,3 +286,43 @@ test('leaving dictation takes its panel with it', async () => {
 
   await ctx.close();
 });
+
+test('a round goes through every letter once, shows progress, and gives one star at the end', async () => {
+  test.setTimeout(180000);
+  const { page, ctx } = await openApp({ withVoices: true });
+  await startDictation(page);
+
+  const total = await page.evaluate(() => window.Teclatlon.store.game.letters.length);
+  expect(total).toBeGreaterThan(20);
+  await expect(page.locator('#gameProgress')).toBeVisible();
+
+  const asked = [];
+  for (let i = 0; i < total; i++) {
+    const before = (await spoken(page)).length;
+    await expect.poll(() => page.evaluate(() => {
+      const g = window.Teclatlon.store.game;
+      return !!g && !g.waiting;
+    })).toBe(true);
+    const key = await askedKey(page);
+    expect(key).toBeTruthy();
+    asked.push(key);
+    await pressLetter(page, key);
+    if (i < total - 1) {
+      /* The next letter is spoken about half a second after a right key. */
+      await expect.poll(async () => (await spoken(page)).length).toBeGreaterThan(before);
+    }
+  }
+
+  // Every letter of the keyboard came up exactly once.
+  expect(new Set(asked).size).toBe(total);
+
+  // The round is over: no letter pending, the star is given, the bar was painted.
+  await expect.poll(() => page.evaluate(() => window.Teclatlon.store.game)).toBeNull();
+  const star = await page.evaluate(() => ({
+    completed: !!window.Teclatlon.store.state.completed.dictation,
+    starsBy: window.Teclatlon.store.state.starsBy.dictation || 0
+  }));
+  expect(star).toEqual({ completed: true, starsBy: 1 });
+
+  await ctx.close();
+});
