@@ -82,6 +82,8 @@
     "freeAreaAria": "Escribe aquí lo que quieras",
     "freeAreaPlaceholder": "Escribe aquí...",
     "wellDone": "¡Muy bien!",
+    "wordsBlockDone": "¡Parte {n} de {total} lista!",
+    "wordsBlockContinue": "Seguir",
     "starsReached": "Ya tienes {n} estrellas",
     "starsReachedOne": "Ya tienes {n} estrella",
     "starsGoal": "A por las {n} estrellas",

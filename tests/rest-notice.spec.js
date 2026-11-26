@@ -6,9 +6,11 @@ const { test, expect } = require('./playwright.js');
 // Rest reminder ("aviso de descanso")
 //
 // The reminder is time-based: after N minutes of *practice* (default 20,
-// configurable in the settings panel) the "you can rest" phrase joins the
-// next celebration, the counter resets, and the phrase comes back N minutes
-// later. The counter lives in memory only, so a new session starts at zero.
+// configurable in the settings panel) a small box suggests a break. It does
+// NOT stop the activity: it has a "Seguir" button that only removes the box.
+// The counter restarts when the box shows, so the next one comes N minutes
+// of practice later. The counter lives in memory only, so a new session
+// starts at zero.
 //
 // Waiting 20 real minutes is not an option, so these tests move the page
 // clock instead. Two helpers model the two kinds of time the counter
@@ -55,7 +57,8 @@ async function installClock(page) {
     no single step exceeds the 1 min idle window the counter allows: that is
     what a real typing session looks like to it. The keydown is dispatched
     non-bubbling on document, so it reaches the counter's capture listener
-    without reaching the game's own key handler. */
+    without reaching the game's own key handler. Then the rest timer is
+    checked once, as the interval would do. */
 async function simulatePractice(page, minutes) {
   await page.evaluate((totalMs) => {
     const step = 30 * 1000;
@@ -66,19 +69,23 @@ async function simulatePractice(page, minutes) {
       document.dispatchEvent(new KeyboardEvent('keydown', { key: 'a' }));
       left -= chunk;
     }
+    App.feedback.tickRest();
   }, minutes * MIN);
 }
 
 /** Advance the clock with nobody at the keyboard. */
 async function simulateIdle(page, minutes) {
-  await page.evaluate((totalMs) => { window.__offset += totalMs; }, minutes * MIN);
+  await page.evaluate((totalMs) => {
+    window.__offset += totalMs;
+    App.feedback.tickRest();
+  }, minutes * MIN);
 }
 
-/** Fire a celebration and read back the message shown in the overlay. */
-async function celebrate(page) {
+/** The rest box, if it is on the screen: its text, or null. */
+function restNotice(page) {
   return page.evaluate(() => {
-    App.feedback.celebrate('¡Muy bien!');
-    return document.querySelector('#app-celebration .message').textContent;
+    const box = document.getElementById('rest-notice');
+    return box ? box.querySelector('.rest-notice-text').textContent : null;
   });
 }
 
@@ -112,11 +119,31 @@ test.describe('Teclatlon — Aviso de descanso', () => {
 
     // Not yet.
     await simulatePractice(page, 19);
-    expect(await celebrate(page)).not.toContain(rest);
+    expect(await restNotice(page)).toBeNull();
 
     // Now.
     await simulatePractice(page, 2);
-    expect(await celebrate(page)).toContain(rest);
+    expect(await restNotice(page)).toBe(rest);
+  });
+
+  test('el aviso no para la actividad: se puede seguir escribiendo y "Seguir" lo quita', async () => {
+    const page = await openApp();
+    await installClock(page);
+    await simulatePractice(page, 21);
+    await expect(page.locator('#rest-notice')).toBeVisible();
+
+    // No overlay: the celebration layer stays hidden and the page is not in
+    // the achievement state, so the activity underneath keeps going.
+    await expect(page.locator('#app-celebration')).toBeHidden();
+    await expect(page.locator('main')).not.toHaveClass(/is-celebrating/);
+
+    // The box does not take the focus from the keyboard.
+    const focusedInside = await page.evaluate(() => !!document.activeElement.closest('#rest-notice'));
+    expect(focusedInside).toBe(false);
+
+    // The offer to carry on closes the box.
+    await page.locator('#rest-notice .rest-notice-more').click();
+    await expect(page.locator('#rest-notice')).toHaveCount(0);
   });
 
   test('el contador se reinicia al mostrar el aviso y vuelve cada N minutos', async () => {
@@ -125,23 +152,23 @@ test.describe('Teclatlon — Aviso de descanso', () => {
     const rest = await restText(page);
 
     await simulatePractice(page, 21);
-    expect(await celebrate(page)).toContain(rest);
+    expect(await restNotice(page)).toBe(rest);
+    await page.locator('#rest-notice .rest-notice-more').click();
 
-    // Counter is back to zero: the very next celebration has no reminder.
-    expect(await celebrate(page)).not.toContain(rest);
+    // Counter is back to zero: nothing shows right after dismissing it.
+    await simulatePractice(page, 1);
+    expect(await restNotice(page)).toBeNull();
 
     // ...and it comes back after the same amount of practice.
-    await simulatePractice(page, 21);
-    expect(await celebrate(page)).toContain(rest);
+    await simulatePractice(page, 20);
+    expect(await restNotice(page)).toBe(rest);
   });
 
   test('el contador no se guarda: cada sesión empieza en cero', async () => {
     const page = await openApp();
     await installClock(page);
-    const rest = await restText(page);
-
     await simulatePractice(page, 21);
-    expect(await celebrate(page)).toContain(rest);
+    await expect(page.locator('#rest-notice')).toBeVisible();
 
     // Only the chosen interval reaches localStorage, never the counter.
     const restKeys = Object.keys(await savedOptions(page)).filter((k) => /rest/i.test(k));
@@ -153,7 +180,7 @@ test.describe('Teclatlon — Aviso de descanso', () => {
 
     // A brand-new session: 19 minutes of practice is not 21 any more.
     await simulatePractice(page, 19);
-    expect(await celebrate(page)).not.toContain(rest);
+    expect(await restNotice(page)).toBeNull();
   });
 
   test('el intervalo se cambia en ajustes y el tiempo sin escribir no cuenta', async () => {
@@ -179,17 +206,18 @@ test.describe('Teclatlon — Aviso de descanso', () => {
 
     // 30 minutes are no longer enough with a 45-minute interval.
     await simulatePractice(page, 30);
-    expect(await celebrate(page)).not.toContain(rest);
+    expect(await restNotice(page)).toBeNull();
 
     await simulatePractice(page, 16);
-    expect(await celebrate(page)).toContain(rest);
+    expect(await restNotice(page)).toBe(rest);
 
     // An open but untouched page is not practice: two idle hours, no reminder.
+    await page.locator('#rest-notice .rest-notice-more').click();
     await page.reload();
     await expect(page.locator('#screenName')).toBeVisible();
     await installClock(page);
     await simulateIdle(page, 120);
-    expect(await celebrate(page)).not.toContain(rest);
+    expect(await restNotice(page)).toBeNull();
   });
 
   test('la caja de minutos acepta cualquier número y sus flechas lo suben y bajan', async () => {

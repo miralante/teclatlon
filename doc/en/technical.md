@@ -277,7 +277,7 @@ Interactions with the engine:
   description (e.g. "You only see the letters. It is the simplest
   view.") is shown via `.keyboard-detail` so each option explains
   itself in everyday words.
-- `DATA.placement` / `DATA.lessons` / `DATA.words` / `DATA.numpadSteps` /
+- `DATA.placement` / `DATA.lessons` / `DATA.words` / `DATA.wordThemes` / `DATA.numpadSteps` /
   `DATA.templates`: per-locale practice content (`{ es: [...], en: [...] }`),
   read via `DATA.<field>[App.i18n.locale()]`.
 - Finger display names live in `strings.<locale>.js` under
@@ -345,19 +345,13 @@ unique and stable — it's reused as the completion/progress key
 
 ### 2.4 Meaningful-learning anchor: `transferMessage`
 
-Every completion (a lesson, the words game, the number pad, or the "all
-keys" challenge) appends `App.i18n.t('transferMessage')` to the closing
-celebration message (in the challenge, `celebrateWithTransfer()` in `js/challenge.js`; in the
-other modes, `endSequence()` in `js/sequence.js`) — a short
-line connecting the exercise to writing real messages on a real
-computer. This activity has no separate "round complete" screen, so the
-line lives in the celebration overlay text itself, not in a dedicated
-DOM element. The closing star text (`T.starClosing(earned)` in `js/core.js`)
-is appended on every completion, not only when a star is new: it always
-shows the stars so far and the next goal, with a "You earned a star!"
-sentence first when one was just won. `feedback.celebrate()` keeps the
-overlay up for a time proportional to the message length (up to 10 s) and
-returns that time, so the closing text can be read.
+The celebration overlay is kept short: when a star is won it says only
+"You got the star!" followed by the app's praise ("Well done!"). The
+`transferMessage` line ("This helps you write real messages to family on the
+computer.") is no longer appended to the overlay in any mode; the key stays
+in the `strings.*.js` files, unused, until it is removed or used elsewhere.
+The star line (`T.starLine()` in `js/core.js`, passed as the overlay's goal
+line) is still shown on every completion: the stars so far and the next goal.
 
 ### 2.5 Computer-only gate and pre-paint i18n bootstrap
 
@@ -404,11 +398,16 @@ colors in case `tokens.css` hasn't loaded yet.
 
 ### 2.6 Rest reminder: practice time, not wall-clock time
 
-`feedback.celebrate()` appends the `core.rest` phrase ("You have been
-playing a while! You can rest if you want.") to the celebration once the
-interval chosen in settings (`state.options.restMinutes`, **20 minutes
-by default**) has elapsed. Showing it resets the counter, so the
-reminder comes back every N minutes of practice.
+Once the interval chosen in settings (`state.options.restMinutes`, **20
+minutes by default**) has elapsed, a small non-blocking box
+(`#rest-notice`) shows the `core.rest` phrase ("You have been playing a
+while! You can rest if you want.") with a "Keep going" button
+(`core.restContinue`). It does not stop the activity: no overlay, no
+focus moved, the keyboard keeps working; the button only removes the box.
+It is not shown while a celebration is open. Showing it resets the
+counter, so the reminder comes back every N minutes of practice. If the
+time falls due inside a celebration, `feedback.celebrate()` still appends
+the phrase to that overlay as a fallback.
 
 Two rules decide what gets counted:
 
@@ -554,6 +553,19 @@ point of it. Stars inside it were clipped (history of the defect: 24px stars
 in a 6px box with `overflow: hidden`).
 `tests/timer-and-progress.spec.js` checks that the bar is the shared one and
 that the stars sit outside its track.
+
+#### Words blocks and their stars
+
+A long words round (`playWords()` in `modes.js`) is cut into blocks of about
+13 words, and the step that starts each new block carries `blockStart`. The
+round stops there (`showBlockPause()`, "Part n of total done!" with "Keep
+going"), without ending or celebrating. Each block earns one star in
+`#challengeStars`, the same row and styles as the all-keys phase stars:
+`paintBlockStars()` in `sequence.js` draws one star per block (`total` =
+`blockStart` steps + 1), lights the finished ones, pulses the one being
+typed, and lights the last one when the round ends. A round with no block
+start hides the row. Stars are drawn from the step index only, so they
+cannot drift from the bar. `tests/words-block-stars.spec.js` checks them.
 
 **No `data-suite-progress`.** That attribute is the signal the shared chrome
 (`assets/js/suite-chrome.js`) uses to **move** a page-level bar into its own

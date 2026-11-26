@@ -85,9 +85,41 @@
     $('#challengeZone').classList.add('hidden');
     $('#guide').classList.remove('hidden');
     clearFeedback();
+    $('#blockPause').classList.add('hidden');
     startMetrics();
+    paintBlockStars();
     T.showScreen('screenGame');
     loadStep();
+  }
+
+  /* A long round (words game) earns stars the way the all-keys challenge
+     does: one star per block, under the progress bar, lit when its block is
+     finished and pulsing on the block being typed. A round with no block
+     starts shows none. Same markup and styles as the phase stars in
+     challenge.js (#challengeStars, .challenge-star). */
+  function paintBlockStars() {
+    var zone = $('#challengeZone');
+    var steps = S.game.cfg.steps;
+    var total = steps.filter(function (p) { return p.blockStart; }).length + 1;
+    if (total === 1) {
+      zone.classList.add('hidden');
+      return;
+    }
+    var idx = S.game.idx;
+    var earned = 0;
+    steps.forEach(function (p, i) { if (p.blockStart && i <= idx) earned += 1; });
+    /* Past the last step the round is over: every block, including the last, is lit. */
+    if (idx >= steps.length) earned = total;
+    var html = '';
+    for (var i = 0; i < total; i++) {
+      var lit = i < earned;
+      html += '<span class="challenge-star' +
+        (lit ? ' earned' : '') +
+        (i === earned && !lit ? ' active' : '') +
+        '">' + (lit ? '★' : '☆') + '</span>';
+    }
+    $('#challengeStars').innerHTML = html;
+    zone.classList.remove('hidden');
   }
 
   function currentStep() { return S.game.cfg.steps[S.game.idx]; }
@@ -108,6 +140,8 @@
 
   function loadStep() {
     S.game.pos = 0;
+    $('#targetZone').classList.remove('hidden');
+    $('#guide').classList.remove('hidden');
     $('#gameInstruction').textContent = currentStep().text || '';
     renderTarget();
     updateGuide();
@@ -287,13 +321,39 @@
       if (S.game !== game) return;
       S.game.waiting = false;
       S.game.idx += 1;
+      paintBlockStars();
       if (S.game.idx >= S.game.cfg.steps.length) {
         endSequence(S.game.stepMisses);
+      } else if (currentStep().blockStart) {
+        showBlockPause();
       } else {
         clearFeedback();
         loadStep();
       }
     }, 500);
+  }
+
+  /* A long round is split into blocks (words game). Before the first step of
+     a new block the round waits here: no key counts until "Seguir" is pressed.
+     The pause is not a celebration and does not end the round. */
+  function showBlockPause() {
+    var game = S.game;
+    var steps = game.cfg.steps;
+    var total = steps.filter(function (p) { return p.blockStart; }).length + 1;
+    var done = steps.slice(0, game.idx + 1).filter(function (p) { return p.blockStart; }).length;
+    S.game.waiting = true;
+    $('#targetZone').classList.add('hidden');
+    $('#guide').classList.add('hidden');
+    $('#gameInstruction').textContent = App.i18n.t('wordsBlockDone').replace('{n}', done).replace('{total}', total);
+    $('#blockPause').classList.remove('hidden');
+    $('#btnBlockContinue').onclick = function () {
+      if (S.game !== game) return;
+      $('#blockPause').classList.add('hidden');
+      S.game.waiting = false;
+      clearFeedback();
+      loadStep();
+    };
+    $('#btnBlockContinue').focus();
   }
 
   /* Real texts show the lines typed before the achievement (showReview);
@@ -359,7 +419,7 @@
        The activity's entry point here is the hub the round was started
        from (the lesson list, the template list, the menu), which is what
        cfg.onFinish already returns to. */
-    App.feedback.celebrate(T.finalMessage() + ' ' + App.i18n.t('transferMessage'), cfg.onFinish || null, T.starLine());
+    App.feedback.celebrate(T.finalMessage(), cfg.onFinish || null, T.starLine());
   }
 
   T.clearFeedback = clearFeedback;

@@ -97,11 +97,15 @@
   function playWords() {
     /* Before: 4 random words. Now (SPEC principle 7, mastery of the
        full keyboard): we select a set from the bank that covers every
-       key of the current layout at least 5 times, with a cap of 50
+       key of the current layout at least 3 times, with a cap of 30
        words so the round isn't endless. Every round is different
-       because the algorithm shuffles ties at random. */
-    var MIN_PER_KEY = 5;
-    var MAX_WORDS = 50;
+       because a theme bank is drawn at random and the algorithm shuffles
+       ties at random. */
+    var MIN_PER_KEY = 3;
+    var MAX_WORDS = 30;
+    /* Rounds longer than this are split into blocks: after each block the
+       round waits for "Seguir", so it never feels endless. */
+    var BLOCK_WORDS = 13;
     var baseTarget = T.typeableKeys(T.visibleRows());
     /* Ñ is only required in Spanish: in English it's a key on the
        Spanish physical keyboard but not a letter of the language, and
@@ -113,7 +117,13 @@
       if (k === 'ñ' && App.i18n.locale() !== 'es') return;
       target[k] = true;
     });
-    var bank = DATA.words[App.i18n.locale()] || DATA.words.es;
+    /* One theme bank is drawn at random for this round and added to the core
+       bank. The core bank keeps the coverage guarantee; the theme gives variety. */
+    var locale = App.i18n.locale();
+    var core = DATA.words[locale] || DATA.words.es;
+    var themes = (DATA.wordThemes && DATA.wordThemes[locale]) || [];
+    var theme = themes.length ? themes[Math.floor(Math.random() * themes.length)] : [];
+    var bank = Array.from(new Set(core.concat(theme)));
     var steps = [];
 
     /* If a name is saved and it fits the layout, it goes first with
@@ -150,8 +160,14 @@
     }
 
     var chosen = T.pickWordSet(bank, target, initialCoverage, MIN_PER_KEY, MAX_WORDS);
-    chosen.forEach(function (w) {
-      steps.push({ text: App.i18n.t('typeTheWord'), seq: w });
+    /* Blocks of about BLOCK_WORDS words: the step that starts a new block is
+       marked, and sequence.js pauses before it. */
+    var blockCount = Math.max(1, Math.round(chosen.length / BLOCK_WORDS));
+    var blockSize = Math.ceil(chosen.length / blockCount);
+    chosen.forEach(function (w, i) {
+      var step = { text: App.i18n.t('typeTheWord'), seq: w };
+      if (i > 0 && i % blockSize === 0) step.blockStart = true;
+      steps.push(step);
     });
 
     T.startSequence({

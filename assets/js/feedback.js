@@ -236,7 +236,59 @@
     if (now - lastActive > IDLE_MS) return;
     restElapsed += delta;
   }
-  setInterval(tick, TICK_MS);
+  /* Rest notice: when the configured practice time is reached, a small box
+     suggests a break and offers "Seguir". It does NOT stop the activity:
+     no overlay, no focus moved, the keyboard keeps working. "Seguir" only
+     removes the box. It is not shown during a celebration; the celebration
+     itself still carries the phrase if the time falls due inside it. */
+  var restNoticeEl = null;
+
+  function restNoticeText(key, fallback) {
+    var i18n = window.App && window.App.i18n;
+    var value = i18n && typeof i18n.t === 'function' ? i18n.t(key) : '';
+    return value && value !== key ? value : fallback;
+  }
+
+  function showRestNotice() {
+    if (restNoticeEl) return;
+    var box = document.createElement('div');
+    box.id = 'rest-notice';
+    box.className = 'rest-notice';
+    box.setAttribute('role', 'status');
+    var text = document.createElement('span');
+    text.className = 'rest-notice-text';
+    text.textContent = restNoticeText('core.rest', '');
+    var more = document.createElement('button');
+    more.type = 'button';
+    more.className = 'btn btn-secondary btn-compact rest-notice-more';
+    more.textContent = restNoticeText('core.restContinue', 'Seguir');
+    more.addEventListener('click', hideRestNotice);
+    box.appendChild(text);
+    box.appendChild(more);
+    document.body.appendChild(box);
+    restNoticeEl = box;
+  }
+
+  function hideRestNotice() {
+    if (restNoticeEl) restNoticeEl.parentNode.removeChild(restNoticeEl);
+    restNoticeEl = null;
+  }
+
+  function checkRestNotice() {
+    var layer = document.getElementById('app-celebration');
+    if (layer && !layer.classList.contains('hidden')) return;
+    if (restElapsed < restMinutes() * 60 * 1000) return;
+    restDone();
+    showRestNotice();
+  }
+
+  /* One step of the rest timer: count the practice time, then check it.
+     The interval runs it; the tests call it instead of waiting. */
+  function tickRest() {
+    tick();
+    checkRestNotice();
+  }
+  setInterval(tickRest, TICK_MS);
 
   function restDue() {
     tick();
@@ -274,7 +326,8 @@
     REST_MIN: REST_MIN,
     REST_MAX: REST_MAX,
     normaliseRestMinutes: normaliseRestMinutes,
-    practiceSeconds: practiceSeconds
+    practiceSeconds: practiceSeconds,
+    tickRest: tickRest
   };
   /* Closing celebration hooks (the celebrate block below calls them). */
   function playCelebrationSound() { successSound(); }

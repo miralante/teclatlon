@@ -82,6 +82,8 @@
     "freeAreaAria": "Type anything you like here",
     "freeAreaPlaceholder": "Type here...",
     "wellDone": "Well done!",
+    "wordsBlockDone": "Part {n} of {total} done!",
+    "wordsBlockContinue": "Keep going",
     "starsReached": "You already have {n} stars",
     "starsReachedOne": "You already have {n} star",
     "starsGoal": "Go for {n} stars",

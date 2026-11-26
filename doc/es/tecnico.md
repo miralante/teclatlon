@@ -286,7 +286,7 @@ partida. Interacciones con el motor:
   frase de una línea (p. ej. "Solo se ven las letras. Es lo más
   sencillo.") mediante `.keyboard-detail`, de modo que cada opción se
   explica con palabras cotidianas.
-- `DATA.placement` / `DATA.lessons` / `DATA.words` / `DATA.numpadSteps` /
+- `DATA.placement` / `DATA.lessons` / `DATA.words` / `DATA.wordThemes` / `DATA.numpadSteps` /
   `DATA.templates`: contenido de práctica por idioma
   (`{ es: [...], en: [...] }`), leído con `DATA.<campo>[App.i18n.locale()]`.
 - Los nombres de los dedos viven en `strings.<locale>.js` bajo
@@ -358,21 +358,14 @@ reutiliza como clave de finalización/progreso (`'template_' + id`).
 
 ### 2.4 Ancla de aprendizaje significativo: `transferMessage`
 
-Cada finalización (una lección, el juego de palabras, el numérico o el
-reto de "todas las teclas") añade `App.i18n.t('transferMessage')` al
-mensaje de celebración de cierre (en el reto, `celebrateWithTransfer()` en
-`js/challenge.js`; en el resto de modos, `endSequence()` en `js/sequence.js`) —
-una frase corta que conecta el ejercicio con escribir
-mensajes reales en un ordenador real. Esta actividad no tiene una
-pantalla separada de "ronda completada", así que la frase vive en el
-propio texto de la superposición de celebración, no en un elemento del
-DOM dedicado. La línea de estrellas de cierre (`T.starClosing(earned)` en
-`js/core.js`) se añade en cada finalización, no solo cuando la estrella es
-nueva: siempre muestra las estrellas que hay y la siguiente meta, con la
-frase "¡Has conseguido una estrella!" delante cuando se acaba de ganar una.
-`feedback.celebrate()` mantiene la superposición el tiempo que dura el
-mensaje (hasta 10 s) y devuelve ese tiempo, para que el texto de cierre
-dé tiempo a leerlo.
+La superposición de celebración es corta: cuando se gana una estrella dice
+solo «¡Has conseguido la estrella!» seguido del elogio de la app («¡Muy
+bien!»). La frase `transferMessage` («Esto te ayuda a escribir mensajes
+reales a la familia en el ordenador.») ya no se añade a la superposición en
+ningún modo; la clave se queda en los `strings.*.js` sin usar, hasta que se
+quite o se use en otro sitio. La línea de estrellas (`T.starLine()` en
+`js/core.js`, que va como línea de meta de la superposición) se sigue
+mostrando en cada finalización: las estrellas que hay y la siguiente meta.
 
 ### 2.5 Gate "solo ordenador" y bootstrap pre-paint de i18n
 
@@ -421,10 +414,16 @@ y tienen colores de fallback por si `tokens.css` aún no ha cargado.
 ### 2.6 Aviso de descanso: tiempo de práctica, no tiempo de reloj
 
 `feedback.celebrate()` añade la frase `core.rest` ("¡Llevas un buen
-rato! Puedes descansar si quieres.") a la celebración cuando se cumple
-el intervalo elegido en ajustes (`state.options.restMinutes`, **20
-minutos por defecto**). Al mostrarse, el contador vuelve a cero, así que
-el aviso se repite cada N minutos de práctica.
+Cuando se cumple el intervalo elegido en ajustes (`state.options.restMinutes`,
+**20 minutos por defecto**), aparece una caja pequeña que no bloquea
+(`#rest-notice`) con la frase `core.rest` ("¡Llevas un buen rato! Puedes
+descansar si quieres.") y un botón «Seguir» (`core.restContinue`). No para
+la actividad: no hay superposición, no se mueve el foco y el teclado sigue
+funcionando; el botón solo quita la caja. No se muestra mientras hay una
+celebración abierta. Al mostrarse, el contador vuelve a cero, así que el
+aviso se repite cada N minutos de práctica. Si el tiempo se cumple dentro
+de una celebración, `feedback.celebrate()` sigue añadiendo la frase a esa
+superposición como respaldo.
 
 Dos reglas definen qué se cuenta:
 
@@ -570,6 +569,20 @@ su razón de ser. Las estrellas dentro de ella se recortaban (historial del
 defecto: 24px de estrella en una caja de 6px con `overflow: hidden`).
 `tests/timer-and-progress.spec.js` comprueba que la barra es la compartida
 y que las estrellas están fuera de su pista.
+
+#### Bloques de palabras y sus estrellas
+
+Una ronda larga de palabras (`playWords()` en `modes.js`) se corta en bloques
+de unas 13 palabras, y el paso que empieza cada bloque lleva `blockStart`. La
+ronda se detiene ahí (`showBlockPause()`, "¡Parte n de total lista!" con
+"Seguir"), sin terminar ni celebrar. Cada bloque gana una estrella en
+`#challengeStars`, la misma fila y los mismos estilos que las estrellas de
+fase de todas las teclas: `paintBlockStars()` en `sequence.js` dibuja una
+estrella por bloque (`total` = pasos con `blockStart` + 1), enciende las
+terminadas, hace pulsar la que se escribe y enciende la última al acabar la
+ronda. Una ronda sin inicio de bloque oculta la fila. Las estrellas se calculan
+solo a partir del índice del paso, así que no pueden desincronizarse de la
+barra. `tests/words-block-stars.spec.js` las comprueba.
 
 **Sin `data-suite-progress`.** Ese atributo es la señal que usa el cromo
 compartido (`assets/js/suite-chrome.js`) para **mover** una barra de nivel

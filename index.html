@@ -311,6 +311,9 @@
       </div>
       <p class="instruction" id="carnetSummary" aria-live="polite"></p>
       <div id="carnetList"></div>
+      <div class="row">
+        <button type="button" class="btn btn-secondary btn-compact" id="btnBackFromCarnetBottom" data-i18n="btnMenu">← Menú</button>
+      </div>
     </section>
 
     <!-- Screen: game (position, lessons, words, challenge, numbers and dictation) -->
@@ -319,6 +322,10 @@
         <button type="button" class="btn btn-secondary btn-compact" id="btnExitGame" data-i18n="btnMenu">← Menú</button>
         <h2 class="game-title" id="gameTitle" data-i18n="gameTitleDefault">Juego</h2>      </div>
       <p class="instruction centered" id="gameInstruction"></p>
+      <!-- Between blocks of a long round (words game): the round waits for "Seguir". -->
+      <div class="row hidden" id="blockPause">
+        <button type="button" class="btn" id="btnBlockContinue" data-i18n="wordsBlockContinue">Seguir</button>
+      </div>
       <!-- Shared progress bar component (assets/css/components.css). Shown
            by the words and real-text modes (sequence.js), the all-keys
            challenge and the letter dictation (dictation.js). -->

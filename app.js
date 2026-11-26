@@ -87,6 +87,7 @@
   $('#btnBackToMenuTemplates').addEventListener('click', T.goMenu);
   $('#btnCarnet').addEventListener('click', T.goCarnet);
   $('#btnBackFromCarnet').addEventListener('click', T.goMenu);
+  $('#btnBackFromCarnetBottom').addEventListener('click', T.goMenu);
 
   $('#btnExitGame').addEventListener('click', function () {
     var mode = S.game && S.game.cfg ? S.game.cfg.mode : null;

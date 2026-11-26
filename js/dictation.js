@@ -184,7 +184,7 @@
     var acc = m && m.keys ? Math.round((m.hits / m.keys) * 100) : 0;
     T.award('dictation');
     App.achievements.onActivityFinished({ state: S.state, lessons: T.lessons().map(function (l) { return l.id; }), perfect: acc === 100 });
-    App.feedback.celebrate(T.finalMessage() + ' ' + App.i18n.t('transferMessage'), T.goMenu, T.starLine());
+    App.feedback.celebrate(T.finalMessage(), T.goMenu, T.starLine());
   }
 
   T.dictationKey = dictationKey;

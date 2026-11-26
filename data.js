@@ -375,6 +375,24 @@ const DATA = {
     ]
   },
 
+  /* Theme banks for the "Words" activity. Each round draws ONE of them at
+     random; it is added to the core bank (DATA.words) as candidates, so the
+     greedy selection in practice-sets.js still covers every key of the
+     layout (min 3 presses, cap 30 words) whichever theme comes up. Themes
+     only add variety: they need no full key coverage of their own. */
+  wordThemes: {
+    es: [
+      ['gorro', 'guante', 'gafas', 'mango', 'hoja', 'huevo', 'hora', 'hoy', 'ayer', 'vaso', 'vela', 'vestido', 'uva', 'zapato', 'jarra', 'ojo', 'vengo, voy.', 'hoy, mañana.', 'no, gracias.', 'ya, ya.', 'mi, tu, su.', 'buen dia.', 'hay, hay.', 'vamos ya.'],
+      ['pizarra', 'profesor', 'clase', 'recreo', 'deberes', 'goma', 'tijeras', 'pegamento', 'futbol', 'baloncesto', 'natacion', 'gimnasia', 'carrera', 'salto', 'gol', 'equipo', 'premio', 'medalla', 'examen', 'fin del juego.', 'uno, dos, tres.', 'un, dos, tres.', 'hasta luego.', 'ves, vuelves.', 'cero-uno-dos', 'fin, adios.', 'si, claro.', 'el, la, lo.'],
+      ['lluvia', 'nieve', 'nube', 'trueno', 'relampago', 'frio', 'calor', 'viento', 'verano', 'ciudad', 'calle', 'semaforo', 'farmacia', 'mercado', 'tienda', 'hospital', 'biblioteca', 'museo', 'gusano', 'gallina', 'ganso', 'hormiga', 'campo', 'casa-jardin', 'lago', 'rey', 'jefe', 'vez', 'pez', 'cruz', 'zarza', 'jugar', 'juguete', 'jersey', 'kiwi', 'taxi', 'texto', 'oxigeno', 'boxeo', 'wifi', 'web', 'whisky', 'wok', 'guitarra', 'gimnasio', 'globo', 'gris', 'grande', 'vaca', 'cuervo', 'vaqueros', 'vida', 'yema', 'yo', 'niño', 'sueño', 'ñu', 'año', 'ñoño.']
+    ],
+    en: [
+      ['hat', 'coat', 'glove', 'glasses', 'mug', 'bowl', 'hour', 'hot', 'yesterday', 'jar', 'vase', 'vest', 'grape', 'shoe', 'yes, please', 'well, yes', 'oh, really', 'see you.', 'done.', 'ready.', 'all good.', 'hi, friend', 'ok, fine'],
+      ['whiteboard', 'teacher', 'class', 'break', 'homework', 'glue', 'scissors', 'football', 'basketball', 'swimming', 'gym', 'race', 'jump', 'goal', 'team', 'prize', 'medal', 'exam', 'game over.', 'one, two, three.', 'see you later.', 'quiz time.', 'wait, wait.', 'one-two-three', 'x-ray', 'zero-one-two', 'yo-yo', 'kiwi', 'quiz'],
+      ['rain', 'snow', 'cloud', 'thunder', 'lightning', 'cold', 'wind', 'summer', 'city', 'street', 'traffic light', 'pharmacy', 'market', 'shop', 'hospital', 'library', 'museum', 'worm', 'hen', 'goose', 'ant', 'field', 'home-garden', 'lake', 'king', 'chief', 'wave', 'fox', 'frog', 'jazz', 'zebra', 'zip', 'fizz', 'quick', 'quiet', 'question', 'xylophone', 'walk', 'whale', 'yacht', 'van', 'vivid']
+    ]
+  },
+
   numpadSteps: {
     es: [
       { text: 'Mira el número 5. Tiene una marca. Pon encima el dedo medio de la mano derecha. Púlsalo.', seq: '5' },
