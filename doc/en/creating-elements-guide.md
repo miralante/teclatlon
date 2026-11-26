@@ -18,16 +18,16 @@
 
 The full didactic, gamification, persuasion and neuromarketing
 techniques that all the apps of the Miralante suite share live in the
-**Routime** repository under
-[`creating-elements-guide.md`](https://github.com/thenkdframe/routime/blob/main/doc/en/creating-elements-guide.md).
+Apptonomia's canonical guide at
+[`creating-elements-guide.md`](https://github.com/miralante/apptonomia/blob/main/doc/en/creating-elements-guide.md).
 
 Read it before designing anything. It covers (non-exhaustive):
 
-- The 13 mandatory accessibility rules (with the rationale for each).
-- The Socratic-method hint ladder (clue → bigger clue → answer).
-- The positive-feedback palette (sounds, animations, micro-copy).
-- The neuromarketing patterns adapted to the audience.
-- The level-design checklist (Easy → Medium → Hard progression).
+- Principles for clear learning objectives and audience adaptation.
+- Accessibility and comprehension guidance for instructions and interactions.
+- A graduated hint sequence, responses to mistakes and respectful reinforcement.
+- Responsible gamification without pressure or penalties.
+- A pre-publication checklist.
 
 ## 2. What's specific to Teclatlon
 
@@ -127,8 +127,8 @@ before writing any code.** Bumping the service worker cache
 
 ## 5. See also
 
-- Canonical pedagogical guide (Routime):
-  [creating-elements-guide.md](https://github.com/thenkdframe/routime/blob/main/doc/en/creating-elements-guide.md).
+- Canonical pedagogical guide (Apptonomia):
+  [creating-elements-guide.md](https://github.com/miralante/apptonomia/blob/main/doc/en/creating-elements-guide.md).
 - Modes and lessons catalogue:
   [`activities.md`](activities.md).
 - Technical recipe:

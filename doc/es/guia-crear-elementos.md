@@ -18,18 +18,16 @@
 
 Las técnicas didácticas, de gamificación, de persuasión y de
 neuromarketing completas que comparten todas las apps de la suite
-de Apptonomia viven en el repositorio de **Routime** en
-[`guia-crear-elementos.md`](https://github.com/thenkdframe/routime/blob/main/doc/es/guia-crear-elementos.md).
+de Apptonomia viven en la guía canónica de **Apptonomia** en
+[`guia-crear-elementos.md`](https://github.com/miralante/apptonomia/blob/main/doc/es/guia-crear-elementos.md).
 
 Léela antes de diseñar nada. Cubre (entre otras cosas):
 
-- Las 13 reglas obligatorias de accesibilidad (con su porqué).
-- La escalera de pistas del método socrático (pista → pista más
-  grande → respuesta).
-- La paleta de refuerzo positivo (sonidos, animaciones, micro-copy).
-- Los patrones de neuromarketing adaptados a la audiencia.
-- La lista de comprobación del diseño de niveles (progresión
-  Fácil → Medio → Difícil).
+- Principios para definir objetivos de aprendizaje y adaptar el contenido al público.
+- Pautas de accesibilidad y comprensión para las consignas y la interacción.
+- Una secuencia de pistas, respuesta al error y refuerzo respetuoso.
+- Gamificación y persuasión responsables, sin presión ni penalizaciones.
+- Una lista de comprobación antes de publicar.
 
 ## 2. Lo específico de Teclatlon
 
@@ -144,8 +142,8 @@ worker forma parte de la receta; ver [`tecnico.md`](tecnico.md)
 
 ## 5. Ver también
 
-- Guía pedagógica canónica (Routime):
-  [guia-crear-elementos.md](https://github.com/thenkdframe/routime/blob/main/doc/es/guia-crear-elementos.md).
+- Guía pedagógica canónica (Apptonomia):
+  [guia-crear-elementos.md](https://github.com/miralante/apptonomia/blob/main/doc/es/guia-crear-elementos.md).
 - Catálogo de modos y lecciones:
   [`actividades.md`](actividades.md).
 - Receta técnica:
