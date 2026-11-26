@@ -28,4 +28,4 @@
 
 ## License
 
-MIT (código). Las lecciones, palabras y textos de práctica son contenido propio bajo CC BY 4.0.
+GNU AGPL v3.0 (código). Las lecciones, palabras y textos de práctica son contenido propio bajo CC BY 4.0.

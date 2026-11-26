@@ -108,6 +108,6 @@ Free text. Type anything you want; the app reads it back to you out loud when yo
 
 ## Credits and licence
 
-Teclatlon is an open source project, distributed under the MIT licence.
+Teclatlon is an open source project, distributed under the GNU AGPL v3.0 licence.
 
 The on-screen keyboard uses standard system emojis and the **QWERTY** / **QWERTY ES** layouts declared in `data.js`. It is a visual aid, never an input device — the real input is always the physical keyboard.

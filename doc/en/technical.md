@@ -1426,7 +1426,7 @@ in one repo, mirror it across the others in the same PR.
 
 ## 9. License
 
-MIT. See [`LICENSE`](../../LICENSE).
+GNU AGPL v3.0. See [`LICENSE`](../../LICENSE).
 
 ## Compact application header
 

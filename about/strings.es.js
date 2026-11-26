@@ -49,7 +49,7 @@
     "techItem4Label": "Sin frameworks ni build step",
     "techItem4Text1": "JavaScript clásico compatible con navegadores antiguos y con el protocolo",
     "techItem4Text2": ". Pensado para que un técnico novel pueda leer y modificar una actividad sin sorpresas.",
-    "techItem5Label": "Código abierto (licencia MIT)",
+    "techItem5Label": "Código abierto (licencia GNU AGPL v3.0)",
     "techItem5Text": "cualquiera puede leerlo, auditarlo y proponer mejoras. Las decisiones de producto están escritas en cada repositorio, no en presentaciones cerradas.",
     "techItem6Label": "Internacionalización desde el inicio",
     "techItem6Text": "cada texto vive en un archivo por idioma. Hoy la suite está disponible en español de España e inglés.",

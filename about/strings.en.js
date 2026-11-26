@@ -49,7 +49,7 @@
     "techItem4Label": "No frameworks, no build step",
     "techItem4Text1": "classic JavaScript compatible with older browsers and with the",
     "techItem4Text2": " protocol. Built so a junior developer can read and modify an activity without surprises.",
-    "techItem5Label": "Open source (MIT license)",
+    "techItem5Label": "Open source (GNU AGPL v3.0 license)",
     "techItem5Text": "anyone can read it, audit it and suggest improvements. Product decisions are written down in each repository, not in closed-door presentations.",
     "techItem6Label": "Internationalized from day one",
     "techItem6Text": "every piece of text lives in a file per language. Today the suite is available in Spanish (Spain) and English.",

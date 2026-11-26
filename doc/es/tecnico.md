@@ -1480,7 +1480,7 @@ demás en el mismo PR.
 
 ## 9. Licencia
 
-MIT. Ver [`LICENSE`](../../LICENSE).
+GNU AGPL v3.0. Ver [`LICENSE`](../../LICENSE).
 
 ## Cabecera compacta de la aplicación
 

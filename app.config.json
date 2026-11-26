@@ -20,7 +20,7 @@
   "hasItemList": false,
   "dcCreator": "Teclatlon (parte de la suite Apptonomia)",
   "dcSubject": "Aplicación web gratuita para aprender mecanografía con el teclado del ordenador: colocación de dedos, lecciones por letra, palabras, números y escritura libre.",
-  "dcRights": "MIT (código). Las lecciones, palabras y textos de práctica son contenido propio bajo CC BY 4.0.",
+  "dcRights": "GNU AGPL v3.0 (código). Las lecciones, palabras y textos de práctica son contenido propio bajo CC BY 4.0.",
   "dcType": "InteractiveResource",
   "supportEmail": "hello@apptonomia.uk",
   "faq": [
@@ -68,5 +68,5 @@
     { "name": "Memofun", "url": "https://memofun.apptonomia.uk/", "description": "Tarjetas de estudio." },
     { "name": "Teclatlon", "url": "https://teclatlon.apptonomia.uk/", "description": "Esta aplicación." }
   ],
-  "llmsLicense": "MIT (código). Las lecciones, palabras y textos de práctica son contenido propio bajo CC BY 4.0."
+  "llmsLicense": "GNU AGPL v3.0 (código). Las lecciones, palabras y textos de práctica son contenido propio bajo CC BY 4.0."
 }

@@ -108,6 +108,6 @@ Texto libre. Escribe lo que quieras; la aplicación te lo lee en voz alta cuando
 
 ## Créditos y licencia
 
-Teclatlon es un proyecto de código abierto, distribuido bajo la licencia MIT.
+Teclatlon es un proyecto de código abierto, distribuido bajo la licencia GNU AGPL v3.0.
 
 El teclado en pantalla usa emojis estándar del sistema y las distribuciones **QWERTY** / **QWERTY ES** declaradas en `data.js`. Es una ayuda visual, nunca un dispositivo de entrada — la entrada real es siempre el teclado físico.
