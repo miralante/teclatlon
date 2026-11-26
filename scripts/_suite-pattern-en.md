@@ -38,8 +38,9 @@ offline-first PWA** built from the same minimal skeleton:
    one click away from any other.
 4. A **service worker** (`sw.js`, network-first) caches the shell
    (`FILES` list, bumped `VERSION`) so the app works offline.
-5. **No build step**, no `package.json`, no frameworks, no
-   bundlers, no CDN JS. The repo root is the deploy output.
+5. **No app build step or runtime package dependencies.** The root
+   `package.json` contains development test tools only and is excluded
+   from published assets. The repo root is the deploy output.
 
 ### 8.1 The standalone-page shape
 
@@ -391,17 +392,17 @@ of these, stop and re-read this section".
   `subpages.css`.** These all belong to the retired SPA-merge
   model.
 - **No `_redirects` SPA catch-all.** Cloudflare rejects it
-  as a loop; documented in `CLOUDFLARE.md` and in the deploy
+  as a loop; documented in `CI-CD.md` and in the deploy
   recipe.
 - **No `data-app-blocked="mobile"` flash.** The pre-paint
   script is a single inline `<script>` in `<head>`; do not
   split it into a separate `.js` (CSP `script-src 'self'`
   would still allow it, but the synchronous timing guarantee
   only holds for inline scripts in the head).
-- **No `package.json`, no `node_modules`.** The repo is the
-  build output. A package manifest would force Cloudflare to
-  run `npm install` on every build, overshooting the 25 MiB
-  asset limit.
+- **No app runtime dependencies.** The root `package.json` contains
+  development and CI test tooling only. `.assetsignore` excludes the
+  package manifests, `node_modules/`, tests and scripts from uploaded
+  assets.
 - **No JS CDNs.** All fonts, icons and JS ship in `assets/`.
 - **No ES module imports** (`<script type="module">`). The
   app must work from `file://` for offline use; ES modules
@@ -464,7 +465,7 @@ in one repo, mirror it across the others in the same PR.
   build on this pattern.
 - [`I18N.md`](I18N.md) — how to add a new language while keeping
   the i18n invariants intact.
-- [`CLOUDFLARE.md`](../../CLOUDFLARE.md) — deploy and SW/header
+- [`CI-CD.md`](../../CI-CD.md) — deploy and SW/header
   contracts at the Cloudflare Workers level.
 - [`SPEC.md`](SPEC.md) §"Mandatory rule" — the accessibility and
   no-clinical-mention invariants every page must respect.

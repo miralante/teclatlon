@@ -15,7 +15,7 @@
    6. _headers: every quoted Content-Security-Policy source expression
       (e.g. 'self') has exactly one leading and one trailing quote —
       catches malformed quoting like ''self'' that browsers silently
-      drop, turning a directive into "block everything" (see CLOUDFLARE.md
+      drop, turning a directive into "block everything" (see CI-CD.md
       "Also bump VERSION after any _headers change...").
    7. Usage vs. registration: every data-i18n / data-i18n-aria /
       data-i18n-title key referenced in index.html and legal/index.html,

@@ -1,4 +1,12 @@
-# Cloudflare Workers (static assets) — Teclatlon
+# CI/CD and deployment — Teclatlon
+
+This is the project-specific CI/CD and Cloudflare deployment runbook. For the suite-wide test matrix, see the [Miralante CI/CD guide](https://github.com/miralante/apptonomia/blob/main/CI-CD.md).
+
+## CI validation
+
+Run the checks required by `.github/workflows/validate.yml` from this repository before merging. Project-specific checks and the suite-wide Playwright, crawler, service-worker, and release checks are listed in the linked CI/CD guide.
+
+## Cloudflare deployment profile — Teclatlon
 
 > **Deploy:** automatic on every push to `main` through the Cloudflare Git connector; Workers Builds deploys the repo and GitHub Actions only validates. The Cloudflare dashboard is the source of truth for project settings. This is a Worker with static assets, not classic Pages. Live at <https://teclatlon.miralante.workers.dev>.
 
@@ -15,7 +23,7 @@
 
 `wrangler.toml` is the deploy configuration: it pins the Worker name, serves `[assets] directory = "."` without a `main` script, and sets `not_found_handling = "404-page"`. Keep it; do not convert this project to classic Pages (`pages_build_output_dir` or `wrangler pages deploy`). Workers Builds reads it directly.
 
-`_headers` applies security and cache headers at deploy time; no dashboard rules are needed. No environment variables or Cloudflare service-account keys are required. No `_redirects`, `functions/`, or `package.json`.
+`_headers` applies security and cache headers at deploy time; no dashboard rules are needed. The app needs no runtime environment variables. No `_redirects` or `functions/`; `.assetsignore` excludes the test-only package files, dependencies, tests and scripts from published assets.
 
 ## Routing and Workers.dev
 
@@ -37,12 +45,12 @@ There are no API tokens or secrets to rotate. The GitHub integration uses OAuth;
 
 ## Project-specific notes
 
-There is intentionally no `package.json`: Cloudflare would run `npm install`, and Playwright’s workerd binary (~122 MiB) exceeds the 25 MiB asset limit. CI uses only Node standard-library modules. No environment variables or server-side calls; fonts, icons, and activity data are bundled. `not_found_handling = "404-page"` serves the repository’s `404.html`; before that file existed, an unmatched path returned an empty response (`Content-Length: 0`).
+The root `package.json` contains development-only Playwright checks; the app has no runtime npm dependencies. `.assetsignore` excludes the package manifests, `node_modules/`, tests, scripts and documentation from uploaded assets. No server-side calls or runtime environment variables are needed; fonts, icons, and activity data are bundled. `not_found_handling = "404-page"` serves the repository’s `404.html`; before that file existed, an unmatched path returned an empty response (`Content-Length: 0`).
 
 ## References
 
 - [`wrangler.toml`](wrangler.toml) — Worker and asset configuration.
 - [`_headers`](_headers) — security and cache policy.
-- [`.github/workflows/validate.yml`](.github/workflows/validate.yml) — validation; it does not deploy unless stated above.
+- [`.github/workflows/validate.yml`](.github/workflows/validate.yml) — validation; Cloudflare Git connector handles production deployment.
 - [`CLAUDE.md`](CLAUDE.md) — agent workflow and, where applicable, the canonical service-worker cache contract (§B.1).
-- [Miralante's shared Cloudflare runbook](https://github.com/miralante/apptonomia/blob/main/CLOUDFLARE.md) — common setup and recovery steps.
+- [Miralante's shared Cloudflare runbook](https://github.com/miralante/apptonomia/blob/main/CI-CD.md) — common setup and recovery steps.

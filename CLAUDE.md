@@ -1,18 +1,10 @@
 # CLAUDE.md — AI agent workflow
 
-## Shared Playwright installation
+## CI/CD and browser tests
 
-Playwright and its browsers are installed globally for the machine by
-`dev/setups/pc-playwright-first-setup.ps1` or
-`pc-playwright-next-setup.ps1`. Run the project's existing browser-test
-command (for example, `npm run test:ui`) or invoke the global CLI with
-`playwright test`.
-
-Do not add `playwright` or `@playwright/test` to project dependencies, install
-Playwright with `npm`/`npx`, or run `npx playwright install`. The setup scripts
-manage the shared browser cache under `{drive}\apps\playwright_browsers`.
-Always attempt the relevant browser test; if the global CLI or browsers are
-unavailable, report that blocker and continue with the other checks.
+Use this repository's configured test commands. See the
+[project CI/CD guide](CI-CD.md)
+for this project's Cloudflare deployment steps and the suite-wide test matrix.
 
 ## About this project
 
@@ -93,7 +85,7 @@ location.
 | Activity creation guide | [`doc/en/creating-activities-guide.md`](doc/en/creating-activities-guide.md) ↔ [`doc/es/guia-crear-actividades.md`](doc/es/guia-crear-actividades.md) |
 | Coverage and therapeutic guidance | [`doc/en/team.md`](doc/en/team.md) ↔ [`doc/es/equipo.md`](doc/es/equipo.md) |
 | Roadmap and closed product decisions | Git only: every PR leaves a message; reconstruct with `git log`. |
-| Cloudflare deploy / service worker cache contract (network-first with cache fallback) | [`CLOUDFLARE.md`](CLOUDFLARE.md) |
+| Cloudflare deploy / service worker cache contract (network-first with cache fallback) | [`CI-CD.md`](CI-CD.md) |
 | Internationalization (App.i18n core, formatting, recipe to add a third language) | [`doc/en/I18N.md`](doc/en/I18N.md) ↔ [`doc/es/I18N.md`](doc/es/I18N.md) |
 | Human contribution flow | [`CONTRIBUTING.md`](CONTRIBUTING.md) ↔ [`CONTRIBUTING.es.md`](CONTRIBUTING.es.md) |
 | AI agent operational flow | `CLAUDE.md` (this file) |
@@ -122,7 +114,8 @@ keyboard.
 
 #### Commands
 
-There is no build step, no package.json, and no test framework — it's
+There is no app build step or runtime dependency. The root `package.json`
+contains only development test scripts and Playwright; the app remains
 plain HTML/CSS/JS served as static files.
 
 - **Preview**: open `index.html` directly in a browser, or serve the
@@ -218,7 +211,7 @@ belongs to the in-flight work before adding new changes.
    asks the network first and only uses the cache when the network
    is unreachable). The cache only becomes the source of truth if you
    fail to bump `VERSION`, in which case a change stays trapped in
-   old clients. Full contract: `CLOUDFLARE.md` §"Cache contract".
+   old clients. Full contract: `CI-CD.md` §"Cache contract".
 4. **Before pushing**, run the complete local gate and do not push if
    any command fails:
    ```bash
@@ -286,7 +279,7 @@ cached):
 The cost of bumping is one integer; the cost of not bumping is
 "the deployed app keeps serving the old version after a deploy".
 Bump liberally rather than conservatively. Full contract:
-[`CLOUDFLARE.md`](CLOUDFLARE.md) § "Cache contract". This rule is
+[`CI-CD.md`](CI-CD.md) § "Cache contract". This rule is
 also the source of §A.2.3 step 2.
 
 > **Note**: online clients always fetch the server copy, so the bump matters

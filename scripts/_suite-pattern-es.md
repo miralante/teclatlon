@@ -42,8 +42,9 @@ esqueleto mínimo:
 4. Un **service worker** (`sw.js`, network-first) cachea el
    shell (lista `FILES`, `VERSION` bumped) para que la app
    funcione offline.
-5. **Sin paso de build**, sin `package.json`, sin frameworks,
-   sin bundlers, sin CDNs de JS. La raíz del repo es el
+5. **Sin paso de build de la app ni dependencias npm de ejecución.**
+   El `package.json` de la raíz solo contiene herramientas de pruebas
+   y queda excluido de los assets publicados. La raíz del repo es el
    output de deploy.
 
 ### 8.1 La forma de las páginas standalone
@@ -407,17 +408,17 @@ de usar uno de estos, para y vuelve a leer esta sección".
   `subpages.css`.** Todos pertenecen al modelo de fusión
   SPA retirado.
 - **Sin `_redirects` SPA catch-all.** Cloudflare lo
-  rechaza como loop; documentado en `CLOUDFLARE.md` y en
+  rechaza como loop; documentado en `CI-CD.md` y en
   la receta de deploy.
 - **Sin flash de `data-app-blocked="mobile"`.** El script
   pre-paint es un único `<script>` inline en `<head>`; no
   lo dividas en un `.js` aparte (CSP `script-src 'self'`
   lo permitiría, pero la garantía de timing síncrono solo
   se cumple con scripts inline en la cabeza).
-- **Sin `package.json`, sin `node_modules`.** El repo es
-  el output de build. Un package manifest forzaría a
-  Cloudflare a ejecutar `npm install` en cada build,
-  sobrepasando el límite de 25 MiB de assets.
+- **Sin dependencias de ejecución.** El `package.json` de la raíz solo
+  contiene herramientas de desarrollo y CI. `.assetsignore` excluye los
+  manifests, `node_modules/`, las pruebas y los scripts de los assets
+  publicados.
 - **Sin CDNs de JS.** Todas las fuentes, iconos y JS
   vienen en `assets/`.
 - **Sin imports de ES modules** (`<script type="module">`).
@@ -486,7 +487,7 @@ demás en el mismo PR.
   que se construyen sobre este patrón.
 - [`I18N.md`](I18N.md) — Cómo añadir un idioma manteniendo
   las invariantes de i18n intactas.
-- [`CLOUDFLARE.md`](../../CLOUDFLARE.md) — Contratos de
+- [`CI-CD.md`](../../CI-CD.md) — Contratos de
   deploy y SW/headers a nivel de Cloudflare Workers.
 - [`SPEC.md`](SPEC.md) §"Mandatory rule" — Las invariantes
   de accesibilidad y "ninguna mención clínica" que cada

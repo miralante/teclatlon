@@ -3,9 +3,9 @@
    Network-first, cache-fallback strategy for the app shell
    (works offline). When adding new files: add them to FILES
    and bump VERSION so the activate step purges the old cache.
-   See CLOUDFLARE.md §"Cache contract" for the full contract.
+   See CI-CD.md §"Cache contract" for the full contract.
    ============================================================ */
-var VERSION = 'teclatlon-v178';
+var VERSION = 'teclatlon-v183';
 
 var FILES = [
   './',

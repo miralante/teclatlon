@@ -169,7 +169,7 @@ Según tu rol y perfil, te interesa una u otra documentación:
 | [`CONTRIBUTING.es.md`](CONTRIBUTING.es.md) | Familias, terapeutas y desarrolladores que quieran contribuir |
 | [`CODE_OF_CONDUCT.es.md`](CODE_OF_CONDUCT.es.md) | Pacto del colaborador (Contributor Covenant 2.1) |
 | `CLAUDE.md` | Agentes IA: reglas obligatorias y estado del proyecto |
-| [`CLOUDFLARE.md`](CLOUDFLARE.md) | Guía canónica de despliegue en Cloudflare Workers para la suite (Teclatlon + Apptonomia + Calculia, Memofun, Okeymoney, Sinonimia) |
+| [`CI-CD.md`](CI-CD.md) | Guía de CI/CD y despliegue en Cloudflare de este proyecto |
 | Historial del proyecto | En `git log`; no se mantiene una hoja de ruta externa |
 | `doc/es/i18n.md` / `doc/en/i18n.md` | Detalles del sistema multiidioma ES/EN |
 
@@ -239,7 +239,7 @@ Teclatlon es un sitio totalmente estático (HTML/CSS/JS, sin build), así
 que se publica directamente en **[Cloudflare Workers (static assets)](https://developers.cloudflare.com/workers/static-assets/)**
 mediante su integración nativa con GitHub. Las cabeceras de seguridad
 HTTP viven en [`_headers`](_headers), y la metadata del proyecto en
-[`wrangler.toml`](wrangler.toml). Consulta [`CLOUDFLARE.md`](CLOUDFLARE.md)
+[`wrangler.toml`](wrangler.toml). Consulta [`CI-CD.md`](CI-CD.md)
 con la guía completa (rebuild, rollback, dominio personalizado,
 rotación de credenciales).
 
@@ -313,11 +313,7 @@ este es el producto original del que nació el grupo.
 | [Sinonimia](https://sinonimia.apptonomia.uk/) | Diccionario en lectura fácil | [github.com/miralante/sinonimia](https://github.com/miralante/sinonimia) |
 | [Teclatlon](https://teclatlon.apptonomia.uk/) | Mecanografía con el teclado físico | [github.com/miralante/teclatlon](https://github.com/miralante/teclatlon) |
 
-La guía canónica de Cloudflare / despliegue para el grupo vive en
-[`CLOUDFLARE.md` de Apptonomia](https://github.com/miralante/apptonomia/blob/main/CLOUDFLARE.md).
-Este repo usa el modelo **Workers + static assets** (`wrangler.toml`
-+ `[assets]`), que es una forma distinta al modelo Pages clásico de
-Apptonomia/Teclatlon — ver [`CLOUDFLARE.md`](CLOUDFLARE.md) para la
+La matriz CI/CD común está en la guía de Apptonomia. Este proyecto usa Cloudflare Workers con static assets; consulta su [`CI-CD.md`](CI-CD.md) para la configuración, el despliegue y la recuperación.
 guía local.
 
 

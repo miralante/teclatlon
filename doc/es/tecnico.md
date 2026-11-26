@@ -17,10 +17,11 @@ Cada tema tiene una fuente canónica: producto en `SPEC.md`, cuestiones técnica
 
 ## 1. Restricciones técnicas no negociables
 
-- **HTML5 + CSS3 + JavaScript vanilla.** Sin frameworks, sin bundlers,
-  sin paso de build, sin backend, sin dependencias npm. No hay
-  `package.json` en el repo, así que Cloudflare no ejecuta
-  `npm install` durante el build y no hay nada que empaquetar.
+- **HTML5 + CSS3 + JavaScript vanilla.** Sin frameworks, bundlers,
+  build step, backend ni dependencias npm de ejecución. El
+  `package.json` de la raíz es solo para comprobaciones de desarrollo y
+  CI; `.assetsignore` lo excluye junto con las herramientas de prueba de
+  los assets publicados.
 - **Scripts clásicos**, no módulos ES (compatibilidad con `file://` y
   navegadores antiguos). Todo el código compartido se expone en
   `window.App.*`.
@@ -30,7 +31,7 @@ Cada tema tiene una fuente canónica: producto en `SPEC.md`, cuestiones técnica
 - **PWA offline-first**: `manifest.json` + `sw.js` (network-first con
   caché de respaldo para la app shell). El contrato completo de
   caché — qué cachea cada capa, cuándo bumpear `VERSION`, cómo
-  verificar — vive en [`CLOUDFLARE.md` §"Contrato de caché"](../../CLOUDFLARE.md#contrato-de-caché).
+  verificar — vive en [`CI-CD.md` §"Contrato de caché"](../../CI-CD.md#cache-and-service-worker).
 - **En línea el usuario ve la versión nueva automáticamente al recargar.
   No necesitas bumpear `VERSION` para que la actualización llegue.**
   Solo importa bumpearlo para que el usuario offline vea la versión
@@ -60,11 +61,11 @@ assets)** vía el conector de Git — accesible en
 `https://teclatlon.miralante.workers.dev`, no en Cloudflare Pages
 clásico — sin paso de build (la raíz del repo *es* la salida del
 build). El detalle de operación — por qué existe `wrangler.toml`
-(binding de static assets + gestión del 404) y sigue sin haber
-`_redirects`, `functions/` ni `package.json`; la configuración del
-dashboard; la nota sobre `sw.js` y la redirección del SW — vive en
-[`CLOUDFLARE.md`](../../CLOUDFLARE.md). Aquí basta con saber tres
-cosas:
+(binding de static assets y gestión del 404), cómo `.assetsignore`
+excluye las herramientas de prueba y por qué no hay `_redirects` ni
+`functions/`; la configuración del dashboard; la nota sobre `sw.js` y
+la redirección del SW — vive en [`CI-CD.md`](../../CI-CD.md).
+Aquí basta con saber tres cosas:
 
 - `_headers` en la raíz del repo controla la caché y los headers de
   seguridad (todos los ficheros: `no-cache, must-revalidate`).
@@ -897,7 +898,7 @@ la expectativa multi-navegador.
 
 ## 6. Despliegue
 
-Ver [`CLOUDFLARE.md`](../../CLOUDFLARE.md) para el detalle de
+Ver [`CI-CD.md`](../../CI-CD.md) para el detalle de
 operación (configuración del dashboard, advertencias de deploy, nota
 sobre el SW). Recapitulando: la raíz del repo es la salida del build,
 un push a `main` dispara el build vía el conector de Git de
@@ -969,7 +970,7 @@ Las otras apps de la suite:
 | `404.html`, `robots.txt`, `sitemap.xml` | ✅ (servido vía `not_found_handling` en `wrangler.toml`; sin él es un 404 vacío, verificado en producción) | ❌ (Okeymoney depende de `not_found_handling` en `wrangler.toml`) | ❌ (`quick-guide.md`) | ✅ | ❌ |
 | `wrangler.toml` | ✅ (`[assets] directory = "."`, `not_found_handling = "404-page"`, Workers + static assets, comprometido — añadido tras detectar el hueco del 404 al arreglar el CSP de `_headers`) | ✅ (`[assets] directory = "."`, Workers + static assets, comprometido) | ❌ | ✅ | ✅ (presente a propósito, fija el nombre) |
 | `_redirects` | ❌ ausente (no hay SPA en la suite — cada página es su propia URL; ver [§8.5 más abajo](#85-lo-que-está-prohibido-en-toda-la-suite)) | ❌ | ❌ | ❌ | ❌ |
-| `package.json` | ❌ ausente (deliberado: evita que `npm install` se pase del límite de 25 MiB) | ❌ | ❌ | ❌ | ❌ |
+| `package.json` | ✅ herramientas de desarrollo y pruebas | ✅ herramientas de desarrollo y pruebas | ✅ herramientas de desarrollo y pruebas | ✅ herramientas de desarrollo y pruebas | ✅ herramientas de desarrollo y pruebas |
 
 ### Dónde se documentan las diferencias
 
@@ -978,7 +979,7 @@ Las otras apps de la suite:
 | "Sin landing, sin routing por herramienta, sin `/settings/`" | Este archivo §2 y `CLAUDE.md` "Architecture" |
 | "`tools/<slug>/` por actividad se eliminó a propósito" | Este archivo §2 párrafo "Arquitectura" |
 | "`assets/js/` recortado a lo que esta única actividad usa" | Este archivo §2.1 "núcleo compartido" y `CLAUDE.md` |
-| "Por qué existe `wrangler.toml`, sin `_redirects`" | [`CLOUDFLARE.md`](../../CLOUDFLARE.md) "Why `wrangler.toml`?" y "Why no `_redirects`?" |
+| "Por qué existe `wrangler.toml`, sin `_redirects`" | [`CI-CD.md`](../../CI-CD.md) "Why `wrangler.toml`?" y "Why no `_redirects`?" |
 | "Bilingüe por defecto (`es` + `en`); cómo añadir un tercer idioma" | [`I18N.md`](I18N.md) |
 | "Cero menciones de discapacidad / terapia ocupacional / menores en archivos visibles al usuario" | [`SPEC.md`](SPEC.md) §4 y `scripts/check.js` §5 |
 | "Patrón transversal de la suite, qué está prohibido en todas las apps" | [§8.5 más abajo](#85-lo-que-está-prohibido-en-toda-la-suite) |
@@ -1034,8 +1035,9 @@ esqueleto mínimo:
 4. Un **service worker** (`sw.js`, network-first) cachea el
    shell (lista `FILES`, `VERSION` bumped) para que la app
    funcione offline.
-5. **Sin paso de build**, sin `package.json`, sin frameworks,
-   sin bundlers, sin CDNs de JS. La raíz del repo es el
+5. **Sin paso de build de la app ni dependencias npm de ejecución.**
+   El `package.json` de la raíz solo contiene herramientas de pruebas
+   y queda excluido de los assets publicados. La raíz del repo es el
    output de deploy.
 
 ### 8.1 La forma de las páginas standalone
@@ -1386,17 +1388,17 @@ de usar uno de estos, para y vuelve a leer esta sección".
   `subpages.css`.** Todos pertenecen al modelo de fusión
   SPA retirado.
 - **Sin `_redirects` SPA catch-all.** Cloudflare lo
-  rechaza como loop; documentado en `CLOUDFLARE.md` y en
+  rechaza como loop; documentado en `CI-CD.md` y en
   la receta de deploy.
 - **Sin flash de `data-app-blocked="mobile"`.** El script
   pre-paint es un único `<script>` inline en `<head>`; no
   lo dividas en un `.js` aparte (CSP `script-src 'self'`
   lo permitiría, pero la garantía de timing síncrono solo
   se cumple con scripts inline en la cabeza).
-- **Sin `package.json`, sin `node_modules`.** El repo es
-  el output de build. Un package manifest forzaría a
-  Cloudflare a ejecutar `npm install` en cada build,
-  sobrepasando el límite de 25 MiB de assets.
+- **Sin dependencias de ejecución.** El `package.json` de la raíz solo
+  contiene herramientas de desarrollo y CI. `.assetsignore` excluye los
+  manifests, `node_modules/`, las pruebas y los scripts de los assets
+  publicados.
 - **Sin CDNs de JS.** Todas las fuentes, iconos y JS
   vienen en `assets/`.
 - **Sin imports de ES modules** (`<script type="module">`).
@@ -1470,7 +1472,7 @@ demás en el mismo PR.
   que se construyen sobre este patrón.
 - [`I18N.md`](I18N.md) — Cómo añadir un idioma manteniendo
   las invariantes de i18n intactas.
-- [`CLOUDFLARE.md`](../../CLOUDFLARE.md) — Contratos de
+- [`CI-CD.md`](../../CI-CD.md) — Contratos de
   deploy y SW/headers a nivel de Cloudflare Workers.
 - [`SPEC.md`](SPEC.md) §"Mandatory rule" — Las invariantes
   de accesibilidad y "ninguna mención clínica" que cada

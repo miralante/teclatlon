@@ -59,7 +59,7 @@ changes to the UI or the PWA shell.
 
 ## See also
 
-- [`CLOUDFLARE.md`](CLOUDFLARE.md) — the deploy runbook.
+- [`CI-CD.md`](CI-CD.md) — the deploy runbook.
 - [`_headers`](_headers) — the HTTP security headers in effect.
 - `CLAUDE.md` §B — the suite-wide policies (no telemetry, WCAG
   AAA, public-facing wording).
