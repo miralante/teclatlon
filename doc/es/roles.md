@@ -1,42 +1,34 @@
 # Roles del proyecto
 
-Teclatlon tiene **tres roles diferenciados**, igual que el resto de la
-familia de proyectos (Apptonomia, Calculia, Memofun, Okeymoney,
-Sinonimia):
+Todos los proyectos de la suite Miralante tienen los **mismos tres roles**,
+con los mismos nombres. Este archivo es idéntico en los ocho proyectos.
 
-| Rol | Quién es | Cómo participa | Dónde mira primero |
+> ⚠️ **No edites la copia de un solo proyecto.** El archivo canónico es
+> `apptonomia/doc/es/roles.md` (espejo en inglés: `apptonomia/doc/en/roles.md`).
+> Cámbialo ahí y cópialo a los demás proyectos. Los detalles propios de cada
+> proyecto (quién es la persona usuaria, qué pantallas usa, qué archivos
+> leer primero) van en el `README.md` y el `CLAUDE.md` de ese proyecto, no aquí.
+
+| Rol | Quién es | Cómo participa | Dónde mirar primero |
 |---|---|---|---|
-| 👤 **Persona usuaria** (cualquiera que aprende a escribir con el teclado del ordenador, y en particular personas que se benefician de la lectura fácil) | Practica las lecciones con el teclado físico | Abre `index.html` en un navegador y escribe con el teclado **físico**. El teclado en pantalla es decorativo. **No lee código**. | La aplicación — no hace falta leer nada más |
-| ❤️ **Apoyo**: familia, docente, terapeuta | Prepara a la persona usuaria y supervisa el progreso | Define el nombre de quien aprende en el juego de palabras (el slot `name` en `WORDS` de `data.js`); supervisa el progreso por las estrellas ⭐ en la vista de progreso embebida. | [`CONTRIBUTING.es.md`](../../CONTRIBUTING.es.md) (la sección "Apoyo") |
-| 💻 **Construcción**: desarrollador/a | Mantiene los layouts de teclado, las lecciones y el SW | Edita `data.js` (los arrays `LESSONS`, `WORDS`, `NUMPAD`), los módulos de `js/`, `app.js`, `sw.js` y `strings.<locale>.js`; ejecuta [`scripts/check.js`](../../scripts/check.js), sube el `VERSION` en `sw.js` y despliega. | [`CLAUDE.md`](../../CLAUDE.md) · [`tecnico.md`](tecnico.md) · [`tecnico.md` §8](tecnico.md#8-patrón-de-la-suite-cómo-se-construye-cada-app-de-miralante) |
+| 👤 **Persona usuaria** | La persona que usa la app para aprender, practicar o resolver algo. La suite está pensada para lectura fácil. | Usa la app por su cuenta. No participa en el desarrollo. | La propia app — no hay nada más que leer |
+| ❤️ **Apoyo** | Familia, docente, terapeuta o cualquier persona que ayuda a la persona usuaria a elegir y usar la app, sin tomar sus decisiones por ella. | Elige la app o el contenido adecuado para una necesidad, la prepara para la persona usuaria e informa de problemas o de textos poco claros. | [`README.md`](README.md) |
+| 💻 **Construcción** | Desarrolladoras y mantenedoras que cambian el código, el contenido, las pruebas o el despliegue. | Edita el código, revisa las pull requests y despliega, siguiendo las reglas del proyecto. | [`CLAUDE.md`](CLAUDE.md), después [`CONTRIBUTING.md`](CONTRIBUTING.md) |
 
-> 💡 La persona usuaria final es siempre alguien que se beneficia de la
-> lectura fácil, un ritmo sin presión y pantallas sin ruido — ver
-> [`SPEC.md`](SPEC.md) §2. Las decisiones de contenido, lenguaje e
-> interfaz se piensan siempre desde su experiencia. Lo que queda fuera
-> de su participación son las decisiones puramente técnicas (la
-> secuencia de lecciones, la forma de `progress.json`, GitHub) — no
-> por exclusión, sino porque es el ámbito de apoyo/construcción.
+> 💡 **La persona usuaria es el público.** Cada decisión sobre la interfaz,
+> los textos y la accesibilidad se toma pensando en su experiencia. Las
+> decisiones técnicas corresponden al rol de Construcción.
 
-## Por dónde empezar, según tu perfil
+Una persona puede tener más de un rol: un familiar puede ser Apoyo y, además,
+usar la app junto con la persona usuaria.
+
+---
+
+## 🗺️ Por dónde empezar, según perfil
 
 | Si eres… | Empieza por… |
 |---|---|
-| 👤 Persona usuaria o familiar directo | La aplicación — no hace falta leer nada técnico |
-| ❤️ Familia o docente que prepara el nombre de quien aprende y supervisa el progreso | [`README.es.md`](../../README.es.md) (la sección "Preparar / Ampliar contenido") |
-| ❤️ Persona de apoyo que reporta una lección que falta o una redacción poco clara | [`CONTRIBUTING.es.md`](../../CONTRIBUTING.es.md) (la sección "Apoyo") |
-| 🤔 Solo quiero entender qué es Teclatlon | [`README.es.md`](../../README.es.md) |
-| 💻 Desarrollador/a | [`CLAUDE.md`](../../CLAUDE.md) · [`tecnico.md`](tecnico.md) · [`tecnico.md` §8](tecnico.md#8-patrón-de-la-suite-cómo-se-construye-cada-app-de-miralante) |
-
-## 🤝 Un proyecto pequeño y enfocado
-
-A diferencia de un producto con varios equipos, Teclatlon es
-deliberadamente pequeño: una app de una sola actividad, una secuencia
-de lecciones en `data.js`, un shell de PWA, sin backend. El rol de
-**apoyo** es estrecho a propósito — Teclatlon está pensada para
-usarse sola, con el teclado físico, una vez definido el nombre de
-quien aprende; la persona de **apoyo** ayuda en la configuración y
-supervisa el progreso, pero no se sienta al lado de quien aprende en
-cada lección. Los tres roles se documentan por separado para que
-quien se incorpore al proyecto sepa qué se espera de cada perfil, no
-porque tengan que hacerlo tres personas distintas.
+| 👤 Persona usuaria, o familiar que usa la app con ella | La app. No hay nada más que leer. |
+| ❤️ Apoyo | El [`README.md`](README.md) de la app |
+| 💻 Desarrolladora o mantenedora | [`CLAUDE.md`](CLAUDE.md), después [`CONTRIBUTING.md`](CONTRIBUTING.md) |
+| 🤔 Solo quieres entender qué es el proyecto | [`README.md`](README.md) |
