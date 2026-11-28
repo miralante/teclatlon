@@ -5,7 +5,7 @@
    and bump VERSION so the activate step purges the old cache.
    See CI-CD.md §"Cache contract" for the full contract.
    ============================================================ */
-var VERSION = 'teclatlon-v190';
+var VERSION = 'teclatlon-v191';
 
 var FILES = [
   './',

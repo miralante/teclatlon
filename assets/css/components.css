@@ -806,7 +806,9 @@ main.is-celebrating > :not(.celebration) {
    wraps inside its own space instead of dropping under the back link. */
 .suite-chrome-activity {
   display: flex;
-  flex: 1 1 0;
+  /* auto, not 0: with a 0 basis the block shrinks to nothing when the row is full, and the
+     title overlaps the controls. Auto keeps its own width and wraps to its own row instead. */
+  flex: 1 1 auto;
   flex-wrap: nowrap;
   align-items: center;
   justify-content: flex-start;
@@ -958,30 +960,35 @@ main.is-celebrating > :not(.celebration) {
   font-weight: 800;
 }
 
-/* The "← Menú" button (teclatlon's top-bar button, drawn for every suite page). Styled
-   here, not through the app's .btn classes, so every app shows the same button. */
+/* The "← Menú" button (teclatlon's top-bar button, drawn for every suite page). It has the
+   look of the shared back link (.back-link: accent fill, on-accent text), so the header
+   shows one button in one style. Styled here, not through the app's .btn classes. */
 .suite-chrome-menu {
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
-  min-height: 48px;
-  padding: 6px 14px;
+  gap: 8px;
+  min-height: var(--button-min, var(--boton-min, var(--tocable, 44px)));
+  padding: 6px 16px;
   font: inherit;
-  font-size: var(--suite-menu-size, 16px);
+  font-size: var(--text-small, var(--texto-pequeno, var(--texto-300, 1rem)));
   font-weight: 700;
-  color: var(--color-text, inherit);
-  background: var(--color-surface, #fff);
-  border: 2px solid var(--color-border, #7a8a92);
-  border-radius: var(--radius, 10px);
+  color: var(--color-on-accent, #FFFFFF);
+  background: var(--accent, var(--acento, #1B6CA8));
+  border: 2px solid var(--accent, var(--acento, #1B6CA8));
+  border-radius: var(--radius, var(--radio, 12px));
   text-decoration: none;
   cursor: pointer;
 }
 
-.suite-chrome-menu:hover { background: var(--color-surface-alt, #f1f3f4); }
+/* The page's own back link is hidden once the menu button stands in for it (see suite-chrome.js). */
+.suite-chrome-activity .back-link[hidden] { display: none; }
+
+.suite-chrome-menu:hover { filter: brightness(1.08); }
 
 .suite-chrome-menu:focus-visible {
-  outline: 3px solid var(--color-focus, #1a73e8);
-  outline-offset: 2px;
+  outline: 2px solid var(--accent, var(--acento, currentColor));
+  outline-offset: 3px;
 }
 
 .suite-chrome-footer {

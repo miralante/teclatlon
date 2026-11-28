@@ -207,15 +207,25 @@
     if (back) namedFile(back);
 
     var controls = make('div', 'suite-chrome-controls');
-    /* The menu button (teclatlon's "← Menú") leads back to the app's root from any page
-       but its home page. The root is the footer's data-suite-base: the footer is the one
-       place that already states the page's depth, so the header does not repeat it. */
+    /* ONE navigation button in the header: "← Menú", teclatlon's top-bar button. It is drawn
+       on every page except a home page (the menu itself). On a subpage it replaces the page's
+       own back link: it goes where that link went, under the one suite label, so the page
+       never carries a second button or its own wording. Without a back link it goes to the
+       app's root, the footer's data-suite-base. */
     if (!mount.hasAttribute('data-suite-heading')) {
       var footer = document.querySelector('[data-suite-footer]');
       var root = (footer && footer.getAttribute('data-suite-base')) || './';
-      var menu = make('a', 'suite-chrome-menu', { href: root, 'data-suite-label': 'core.chrome.menu' });
+      var menu = make('a', 'suite-chrome-menu', { href: back ? back.getAttribute('href') : root, 'data-suite-label': 'core.chrome.menu' });
       menu.textContent = translate('core.chrome.menu');
+      /* Teclatlon's in-app steps keep their own "level above" (App.backStep): the button
+         asks it first, as the back link used to. */
+      menu.addEventListener('click', function (e) {
+        if (window.App && typeof window.App.backStep === 'function' && window.App.backStep()) e.preventDefault();
+      });
       controls.appendChild(menu);
+      /* The page's own back link stays in the page: the app scripts and the checks read its
+         href and its node. It is only hidden, so the reader sees one button. */
+      if (back) back.hidden = true;
     }
     /* An app's star counter (data-suite-stars, wherever the app puts it) moves
        into this row, before the settings gear, so the counter and the gear share
