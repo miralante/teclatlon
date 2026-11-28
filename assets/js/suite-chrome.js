@@ -45,6 +45,12 @@
        data-suite-heading  present on a home page: the app's name is its h1
        data-suite-name     the app's name when the page has no locale strings to
                            translate core.chrome.appName (optional)
+
+     MENU BUTTON: every header that is not a home page (no data-suite-heading) gets
+     a "← Menú" button in the controls row, the same button as the top bar of each
+     teclatlon screen. It links to the app's root, which is the footer's data-suite-base
+     (default "./"), so no page writes the path. A home page is the menu itself, so it
+     has no button.
      footer:
        data-suite-base     relative path from the page to the app root (default "./")
        data-suite-settings present: show a link to <base>config/
@@ -82,13 +88,15 @@
       'core.chrome.about': 'Sobre la app',
       'core.chrome.legal': 'Protección de datos',
       'core.chrome.settings': 'Ajustes',
-      'core.chrome.byline': 'Una app de'
+      'core.chrome.byline': 'Una app de',
+      'core.chrome.menu': '← Menú'
     },
     en: {
       'core.chrome.about': 'About the app',
       'core.chrome.legal': 'Data protection',
       'core.chrome.settings': 'Settings',
-      'core.chrome.byline': 'An app by'
+      'core.chrome.byline': 'An app by',
+      'core.chrome.menu': '← Menu'
     }
   };
 
@@ -199,6 +207,16 @@
     if (back) namedFile(back);
 
     var controls = make('div', 'suite-chrome-controls');
+    /* The menu button (teclatlon's "← Menú") leads back to the app's root from any page
+       but its home page. The root is the footer's data-suite-base: the footer is the one
+       place that already states the page's depth, so the header does not repeat it. */
+    if (!mount.hasAttribute('data-suite-heading')) {
+      var footer = document.querySelector('[data-suite-footer]');
+      var root = (footer && footer.getAttribute('data-suite-base')) || './';
+      var menu = make('a', 'suite-chrome-menu', { href: root, 'data-suite-label': 'core.chrome.menu' });
+      menu.textContent = translate('core.chrome.menu');
+      controls.appendChild(menu);
+    }
     /* An app's star counter (data-suite-stars, wherever the app puts it) moves
        into this row, before the settings gear, so the counter and the gear share
        one line on every page. The node is moved, not copied: the app keeps its

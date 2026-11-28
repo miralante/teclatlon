@@ -958,6 +958,32 @@ main.is-celebrating > :not(.celebration) {
   font-weight: 800;
 }
 
+/* The "← Menú" button (teclatlon's top-bar button, drawn for every suite page). Styled
+   here, not through the app's .btn classes, so every app shows the same button. */
+.suite-chrome-menu {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 6px 14px;
+  font: inherit;
+  font-size: var(--suite-menu-size, 16px);
+  font-weight: 700;
+  color: var(--color-text, inherit);
+  background: var(--color-surface, #fff);
+  border: 2px solid var(--color-border, #7a8a92);
+  border-radius: var(--radius, 10px);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.suite-chrome-menu:hover { background: var(--color-surface-alt, #f1f3f4); }
+
+.suite-chrome-menu:focus-visible {
+  outline: 3px solid var(--color-focus, #1a73e8);
+  outline-offset: 2px;
+}
+
 .suite-chrome-footer {
   margin-block-start: 32px;
   padding-block: 16px;
