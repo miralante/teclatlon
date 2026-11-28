@@ -63,7 +63,6 @@
     "modeTemplatesName": "Textos reales",
     "modeTemplatesDetail": "Practica con un correo o una carta.",
     "changeNameAria": "Cambiar mi nombre",
-    "btnMenu": "← Menú",
     "carnetOpenAria": "Mi cuaderno de estrellas",
     "carnetTitle": "Mi cuaderno de estrellas",
     "carnetSummary": "Estrellas: {stars} · Hechas: {done}",

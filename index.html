@@ -285,7 +285,7 @@
     <!-- Screen: lesson list -->
     <section id="screenLessons" class="hidden stack">
       <div class="row game-screen-bar">
-        <button type="button" class="btn btn-secondary btn-compact" id="btnBackToMenu" data-i18n="btnMenu">← Menú</button>
+        <span data-suite-menu-slot="btnBackToMenu"></span>
         <h2 class="game-title" data-i18n="modeLessonsName">Paso a paso</h2>
       </div>
       <p class="instruction" data-i18n="lessonsInstruction">Termina una lección para abrir la siguiente.</p>
@@ -295,7 +295,7 @@
     <!-- Screen: template list (real texts: email, letter...) -->
     <section id="screenTemplates" class="hidden stack">
       <div class="row game-screen-bar">
-        <button type="button" class="btn btn-secondary btn-compact" id="btnBackToMenuTemplates" data-i18n="btnMenu">← Menú</button>
+        <span data-suite-menu-slot="btnBackToMenuTemplates"></span>
         <h2 class="game-title" data-i18n="modeTemplatesName">Textos reales</h2>
       </div>
       <p class="instruction" data-i18n="templatesInstruction">Elige un texto para practicar.</p>
@@ -306,20 +306,20 @@
          and the stars each activity has. Filled by menu.js renderCarnet. -->
     <section id="screenCarnet" class="hidden stack">
       <div class="row game-screen-bar">
-        <button type="button" class="btn btn-secondary btn-compact" id="btnBackFromCarnet" data-i18n="btnMenu">← Menú</button>
+        <span data-suite-menu-slot="btnBackFromCarnet"></span>
         <h2 class="game-title" data-i18n="carnetTitle">Mi cuaderno de estrellas</h2>
       </div>
       <p class="instruction" id="carnetSummary" aria-live="polite"></p>
       <div id="carnetList"></div>
       <div class="row">
-        <button type="button" class="btn btn-secondary btn-compact" id="btnBackFromCarnetBottom" data-i18n="btnMenu">← Menú</button>
+        <span data-suite-menu-slot="btnBackFromCarnetBottom"></span>
       </div>
     </section>
 
     <!-- Screen: game (position, lessons, words, challenge, numbers and dictation) -->
     <section id="screenGame" class="hidden stack">
       <div class="row game-screen-bar">
-        <button type="button" class="btn btn-secondary btn-compact" id="btnExitGame" data-i18n="btnMenu">← Menú</button>
+        <span data-suite-menu-slot="btnExitGame"></span>
         <h2 class="game-title" id="gameTitle" data-i18n="gameTitleDefault">Juego</h2>      </div>
       <p class="instruction centered" id="gameInstruction"></p>
       <!-- Between blocks of a long round (words game): the round waits for "Seguir". -->
@@ -396,7 +396,7 @@
     <!-- Screen: free writing -->
     <section id="screenFree" class="hidden stack">
       <div class="row game-screen-bar">
-        <button type="button" class="btn btn-secondary btn-compact" id="btnExitFree" data-i18n="btnMenu">← Menú</button>
+        <span data-suite-menu-slot="btnExitFree"></span>
         <h2 class="game-title" data-i18n="modeFreeName">Escribe libre</h2>        <button type="button" class="btn btn-secondary btn-compact" id="btnClearFree" data-i18n-aria="clearTextAria" aria-label="Borrar el texto">🗑️</button>
       </div>
       <textarea id="freeArea" class="free-area" rows="4" spellcheck="false" data-i18n-aria="freeAreaAria" aria-label="Escribe aquí lo que quieras" placeholder="Escribe aquí..."></textarea>

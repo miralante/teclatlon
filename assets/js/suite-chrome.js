@@ -215,13 +215,7 @@
     if (!mount.hasAttribute('data-suite-heading')) {
       var footer = document.querySelector('[data-suite-footer]');
       var root = (footer && footer.getAttribute('data-suite-base')) || './';
-      var menu = make('a', 'suite-chrome-menu', { href: back ? back.getAttribute('href') : root, 'data-suite-label': 'core.chrome.menu' });
-      menu.textContent = translate('core.chrome.menu');
-      /* Teclatlon's in-app steps keep their own "level above" (App.backStep): the button
-         asks it first, as the back link used to. */
-      menu.addEventListener('click', function (e) {
-        if (window.App && typeof window.App.backStep === 'function' && window.App.backStep()) e.preventDefault();
-      });
+      var menu = menuButton(null, back ? back.getAttribute('href') : root);
       if (activity) activity.insertBefore(menu, activity.firstChild);
       else controls.appendChild(menu);
       /* The page's own back link stays in the page: the app scripts and the checks read its
@@ -312,7 +306,32 @@
     }
   }
 
-  /* Fills every empty [data-suite-header] and [data-suite-footer] mount. */
+  /* The one "← Menú" button of the suite, drawn here for every app. With an href it is a link
+     (a page's way up to the level above). Without one it is a button: the app attaches its own
+     handler to its id (a screen's step inside a single-page app). Its label, look and
+     position are the template's. */
+  function menuButton(id, href) {
+    var attrs = { 'data-suite-label': 'core.chrome.menu' };
+    if (id) attrs.id = id;
+    var node;
+    if (href) {
+      attrs.href = href;
+      node = make('a', 'suite-chrome-menu', attrs);
+      /* The page's in-app steps keep their own "level above" (App.backStep): the link asks
+         it first, as the back link used to. */
+      node.addEventListener('click', function (e) {
+        if (window.App && typeof window.App.backStep === 'function' && window.App.backStep()) e.preventDefault();
+      });
+    } else {
+      attrs.type = 'button';
+      node = make('button', 'suite-chrome-menu', attrs);
+    }
+    node.textContent = translate('core.chrome.menu');
+    return node;
+  }
+
+  /* Fills every empty [data-suite-header], [data-suite-footer] and [data-suite-menu-slot] mount.
+     A slot names its button's id: <span data-suite-menu-slot="btnBackToMenu"></span>. */
   function render() {
     var headers = document.querySelectorAll('[data-suite-header]');
     for (var h = 0; h < headers.length; h++) {
@@ -325,6 +344,11 @@
       if (footers[f].childNodes.length !== 0) continue;
       footers[f].classList.add('suite-chrome-footer');
       renderFooter(footers[f]);
+    }
+    var slots = document.querySelectorAll('[data-suite-menu-slot]');
+    for (var s = 0; s < slots.length; s++) {
+      if (slots[s].childNodes.length !== 0) continue;
+      slots[s].appendChild(menuButton(slots[s].getAttribute('data-suite-menu-slot')));
     }
     placeProgress();
   }
@@ -349,7 +373,7 @@
     target.appendChild(star);
   }
 
-  window.App.chrome = { render: render, paintStars: paintStars };
+  window.App.chrome = { render: render, paintStars: paintStars, menuButton: menuButton };
 
   /* The back link of a subpage goes one level up. When the reader is inside a step
      of the page (a practice, a level, a task) that has a level above it on the same

@@ -63,7 +63,6 @@
     "modeTemplatesName": "Real texts",
     "modeTemplatesDetail": "Practice with an email or a letter.",
     "changeNameAria": "Change my name",
-    "btnMenu": "← Menu",
     "carnetOpenAria": "My star notebook",
     "carnetTitle": "My star notebook",
     "carnetSummary": "Stars: {stars} · Done: {done}",

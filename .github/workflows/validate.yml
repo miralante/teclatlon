@@ -110,3 +110,21 @@ jobs:
         # here can see this: the static servers above serve the file directly,
         # which is exactly why this defect shipped with every gate green.
         run: npm run test:sw-redirects
+
+  suite-drift:
+    name: Shared header copies match the suite template
+    # The template lives in the apptonomia repo (scripts/suite/). Its check compares this app's
+    # copies of suite-chrome.js and of the suite-chrome block of its stylesheet with the template.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Checkout the suite template (apptonomia)
+        uses: actions/checkout@v4
+        with:
+          repository: miralante/apptonomia
+          path: .suite-template
+
+      - name: Compare the shared header copies with the template
+        run: node .suite-template/scripts/suite/check-drift.js --app . --js assets/js/suite-chrome.js --css assets/css/components.css
