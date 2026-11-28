@@ -16,7 +16,7 @@
                                                         not use the browser history)
        <h1>Activity title</h1>
      </div>
-     <span class="stars" data-suite-stars id="stars">⭐ 0</span> (optional)
+     <span class="stars" data-suite-stars id="stars">0 ⭐</span> (optional)
      <div data-suite-details>                                  (optional, home pages: the
        <p class="saludo" data-i18n="...">Hola</p>               greeting or tagline row under the brand)
      </div>
@@ -300,7 +300,27 @@
     placeProgress();
   }
 
-  window.App.chrome = { render: render };
+  /* Draws a star counter in the one format of the suite: the number, then the star
+     ("12 ⭐"), each in its own span so an app can style the star apart from the number.
+     An app passes its count and, when its counter is nested in another element, the
+     element to write into. By default it is the header's counter (data-suite-stars).
+     Every app draws its counter through here, so the format lives in one place. */
+  function paintStars(count, el) {
+    var target = el || document.querySelector('[data-suite-stars]');
+    if (!target) return;
+    target.textContent = '';
+    var number = document.createElement('span');
+    number.className = 'stars-count';
+    number.textContent = String(count);
+    var star = document.createElement('span');
+    star.className = 'stars-star';
+    star.textContent = '⭐';
+    target.appendChild(number);
+    target.appendChild(document.createTextNode(' '));
+    target.appendChild(star);
+  }
+
+  window.App.chrome = { render: render, paintStars: paintStars };
 
   /* The back link of a subpage goes one level up. When the reader is inside a step
      of the page (a practice, a level, a task) that has a level above it on the same

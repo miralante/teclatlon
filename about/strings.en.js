@@ -6,7 +6,7 @@
 
   App.i18n.register({
     "pageTitle": "Project presentation",
-    "backToCover": "← Back",
+    "backToCover": "Teclatlon menu",
     "routeNotice": "This page is not linked from the app. The only way here is typing the address.",
     "tagline": "An app for autonomy.",
     "lead1": "Teclatlon is a ",
