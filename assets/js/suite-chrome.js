@@ -207,11 +207,11 @@
     if (back) namedFile(back);
 
     var controls = make('div', 'suite-chrome-controls');
-    /* ONE navigation button in the header: "← Menú", teclatlon's top-bar button. It is drawn
-       on every page except a home page (the menu itself). On a subpage it replaces the page's
-       own back link: it goes where that link went, under the one suite label, so the page
-       never carries a second button or its own wording. Without a back link it goes to the
-       app's root, the footer's data-suite-base. */
+    /* ONE navigation button: "← Menú", teclatlon's top-bar button. It is drawn on every page
+       except a home page (the menu itself), at the start of the title row, where teclatlon
+       puts it: left of the title. On a subpage it takes the place of the page's own back
+       link: same target, one label, so the page never carries a second button. Without a
+       title row it sits in the controls row. */
     if (!mount.hasAttribute('data-suite-heading')) {
       var footer = document.querySelector('[data-suite-footer]');
       var root = (footer && footer.getAttribute('data-suite-base')) || './';
@@ -222,7 +222,8 @@
       menu.addEventListener('click', function (e) {
         if (window.App && typeof window.App.backStep === 'function' && window.App.backStep()) e.preventDefault();
       });
-      controls.appendChild(menu);
+      if (activity) activity.insertBefore(menu, activity.firstChild);
+      else controls.appendChild(menu);
       /* The page's own back link stays in the page: the app scripts and the checks read its
          href and its node. It is only hidden, so the reader sees one button. */
       if (back) back.hidden = true;
